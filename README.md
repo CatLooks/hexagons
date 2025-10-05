@@ -5,4 +5,4 @@
 ## Dependencies
 
 * Language: C++17
-* Libraries: SFML 3.0
+* Libraries: <a href="https://www.sfml-dev.org/">SFML 3.0</a>
