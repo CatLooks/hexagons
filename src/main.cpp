@@ -15,4 +15,5 @@ int main() {
 		win.clear(sf::Color(29, 31, 37));
 		win.display();
 	};
+	return 0;
 };
