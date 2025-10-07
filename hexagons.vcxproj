@@ -34,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ui\element.hpp" />
+    <ClInclude Include="src\ui\events.hpp" />
     <ClInclude Include="src\ui\units.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -1,5 +1,6 @@
 // include SFML
 #include <SFML/Graphics.hpp>
+#include "ui/element.hpp"
 
 /// Program entry.
 /// @return Exit code.
