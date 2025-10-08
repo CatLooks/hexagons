@@ -1,65 +1,78 @@
+# Compiler
 CC = g++
 
-# project directories
+# Project directories
 SRC = src
 BIN = bin
 OBJ = obj
 
-# list of all .cpp files
-CPP_FILES = \
-	$(SRC)/main.cpp
+# List of all .cpp files
+CPP_FILES = $(wildcard $(SRC)/*.cpp $(SRC)/**/*.cpp)
 
-# paths to SFML folders
-INC_PATH = -IC:/SFML3/include
-LIB_PATH = -LC:/SFML3/lib
+# Detect operating system
+ifeq ($(OS),Windows_NT)
+    # Windows-specific settings
+    INC_PATH = -IC:/SFML3/include
+    LIB_PATH = -LC:/SFML3/lib
+    LIB_SF = -lsfml-audio-s -lsfml-network-s -lsfml-graphics-s -lsfml-window-s -lsfml-system-s
+    LIB_CC = -lopengl32 -lgdi32 -lfreetype -lwinmm
+    LIB_LIST = $(LIB_SF) $(LIB_CC)
+    CFLAGS = -O2 -s -Wall -std=c++17 -D SFML_STATIC $(INC_PATH)
+    LFLAGS = -static-libstdc++ -static-libgcc $(LIB_PATH) $(LIB_LIST)
+    MKDIR = mkdir
+    RM = rmdir /S /Q
+    EXECUTABLE = $(BIN)/hex.exe
+else
+    # Linux-specific settings
+    INC_PATH = $(shell pkg-config --cflags sfml-graphics sfml-window sfml-system)
+    LIB_PATH = $(shell pkg-config --libs sfml-graphics sfml-window sfml-system)
+    CFLAGS = -O2 -Wall -std=c++17 $(INC_PATH)
+    LFLAGS = $(LIB_PATH)
+    MKDIR = mkdir -p
+    RM = rm -rf
+    EXECUTABLE = $(BIN)/hex
+endif
 
-# libraries for linker
-LIB_SF = -lsfml-audio-s -lsfml-network-s -lsfml-graphics-s -lsfml-window-s -lsfml-system-s
-LIB_CC = -lopengl32 -lgdi32 -lfreetype -lwinmm
-LIB_LIST = $(LIB_SF) $(LIB_CC)
-
-# all flags
-CFLAGS = -O2 -s -Wall -std=c++17 -D SFML_STATIC $(INC_PATH)
-LFLAGS = -static-libstdc++ -static-libgcc $(LIB_PATH) $(LIB_LIST)
-
-# key files
+# Key files
 MAIN = $(SRC)/main.cpp
-EXE = $(BIN)/hex.exe
+EXE = $(EXECUTABLE)
 
-# link targets
-OBJ_FILES := $(patsubst $(SRC)/%, $(OBJ)/%,$(CPP_FILES:.cpp=.o))
+# Link targets
+OBJ_FILES := $(patsubst $(SRC)/%.cpp,$(OBJ)/%.o,$(CPP_FILES))
 
-# default rule
+# Default rule
 default: $(OBJ) $(BIN) $(EXE)
 
-# compile object files
-$(OBJ)/%.o: $(CPP_FILES)
-	@echo $^
-	@echo Compiling ^<$<^> into ^<$@^>.
+# Compile object files
+$(OBJ)/%.o: $(SRC)/%.cpp
+	@echo Compiling $< into $@.
 	$(CC) $< -o $@ -c $(CFLAGS)
 
-# link object files
+# Link object files
 $(EXE): $(OBJ_FILES)
-	@echo Linking ^<$^^> into ^<$@^>.
+	@echo Linking $^ into $@.
 	$(CC) $^ -o $@ $(LFLAGS)
 
-# directory generator
+# Directory generator
 $(OBJ):
-	@mkdir $(OBJ)
+	$(MKDIR) $(OBJ)
 $(BIN):
-	@mkdir $(BIN)
+	$(MKDIR) $(BIN)
 
-# compile & run
+# Compile & run
 run: default
 	@echo [===]
+ifeq ($(OS),Windows_NT)
 	@$(EXE)
+else
+	@LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH ./$(EXE)
+endif
 
-# clean-up for binaries
+# Clean-up for binaries
 clean:
-	@if exist $(OBJ) rmdir /S /Q $(OBJ)
-	@if exist $(BIN) rmdir /S /Q $(BIN)
+	$(RM) $(OBJ) $(BIN)
 
-# test info
+# Test info
 test:
 	@echo .cpp: $(CPP_FILES)
 	@echo .obj: $(OBJ_FILES)
