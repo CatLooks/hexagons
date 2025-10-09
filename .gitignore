@@ -1,7 +1,6 @@
-/out
-bin/
-build/
-/.vs
-.idea/
-CMakeSettings.json
-Makefile
+build
+out
+.cache
+.idea
+.vs
+.vscode
