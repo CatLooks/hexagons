@@ -6,6 +6,7 @@
 #include <functional>
 #include "units.hpp"
 #include "events.hpp"
+#include "buffer.hpp"
 
 namespace ui {
 	/// Contains thickness for borders in 4 directions.
@@ -62,26 +63,29 @@ namespace ui {
 
 	public:
 		DimRect bounds;           /// Element bounding box.
+		Borders padding;          /// Element padding.
+		Borders margin;           /// Element margin.
 		bool active      = true;  /// Whether the element responds to events and is drawn.
 		bool ignore      = false; /// Whether the element ignores events.
 		bool transparent = false; /// Whether mouse events can pass through the element.
-		
-		Borders padding; /// Element padding.
-		Borders margin;  /// Element margin.
 
 	protected:
 		/// Draws the element.
+		/// 
+		/// @param target Render buffer.
 		/// @param self Element drawing area.
-		virtual void drawSelf(sf::IntRect self) const {};
+		virtual void drawSelf(RenderBuffer& target, sf::IntRect self) const {};
 
 		/// Draws element children.
-		virtual void drawChildren() const {
+		/// 
+		/// @param target Render buffer.
+		virtual void drawChildren(RenderBuffer& target) const {
 			for (const auto& element : _elements)
-				element->draw();
+				element->draw(target);
 		};
 
 		/// Performs an operation before recalculation.
-		virtual void preRecalc() {};
+		virtual void recalcUpdate() {};
 			
 	public:
 		/// Virtual destructor.
@@ -132,7 +136,7 @@ namespace ui {
 			if (!active) return;
 
 			// update before recalculation
-			preRecalc();
+			recalcUpdate();
 
 			// recalculate element draw areas
 			_outerRect = bounds.get(parent);
@@ -145,13 +149,14 @@ namespace ui {
 		};
 
 		/// Draws the element and its children.
-		void draw() const {
+		/// @param target Render buffer.
+		void draw(RenderBuffer& target) const {
 			// ignore if not active
 			if (!active) return;
 
 			// draw self & children
-			drawSelf(_rect);
-			drawChildren();
+			drawSelf(target, _rect);
+			drawChildren(target);
 		};
 
 		/// Updates element and its children.

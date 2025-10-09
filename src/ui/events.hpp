@@ -14,6 +14,14 @@ namespace ui {
 		struct MouseMove {
 			sf::Vector2i position; /// Mouse position.
 		};
+
+	protected:
+		/// @brief Fires when mouse button is being held down.
+		struct MouseDown : MouseMove {
+			sf::Mouse::Button button; /// Active mouse key.
+		};
+
+	public:
 		/// @brief Fires when mouse first starts hovering over the element.
 		struct MouseEnter : MouseMove {};
 		/// @brief Fires when mouse first stops hovering over the element.
@@ -24,21 +32,14 @@ namespace ui {
 			float delta; /// Mouse wheel scroll change.
 		};
 
-		/// @brief Fires when mouse button is being held down.
-		struct MouseDown : MouseMove {
-			sf::Mouse::Button button; /// Active mouse key.
-		};
 		/// @brief Fires when mouse button gets pressed.
 		struct MousePress : MouseDown {};
 		/// @brief Fires when mouse button gets released.
 		struct MouseRelease : MouseDown {};
 
-		/// @brief Fires when a key is being held down.
-		struct KeyDown {
-			sf::Keyboard::Key key; /// Active key.
-		};
 		/// @brief Fires when a key gets pressed.
-		struct KeyPress : KeyDown {
+		struct KeyPress {
+			sf::Keyboard::Key key; /// Active key.
 			bool alt;     /// Whether the ALT key is being pressed.
 			bool shift;   /// Whether the SHIFT key is being pressed.
 			bool control; /// Whether the CTRL key is being pressed.
@@ -53,10 +54,8 @@ namespace ui {
 			MouseEnter,
 			MouseLeave,
 			MouseWheel,
-			MouseDown,
 			MousePress,
 			MouseRelease,
-			KeyDown,
 			KeyPress,
 			KeyRelease
 		>;
@@ -68,6 +67,9 @@ namespace ui {
 		/// Constructs an event with specified data.
 		/// @param data Event data.
 		Event(Variant data) : data(data) {};
+
+		/// @return Event type ID.
+		size_t id() const { return data.index(); };
 
 		/// @return Event data if event type is `T`, `nullopt` otherwise.
 		/// @tparam T Event type.
@@ -89,7 +91,6 @@ namespace ui {
 			if (const auto ptr = get<MouseEnter>()) return ptr->position;
 			if (const auto ptr = get<MouseLeave>()) return ptr->position;
 			if (const auto ptr = get<MouseWheel>()) return ptr->position;
-			if (const auto ptr = get<MouseDown>()) return ptr->position;
 			if (const auto ptr = get<MousePress>()) return ptr->position;
 			if (const auto ptr = get<MouseRelease>()) return ptr->position;
 			return {};

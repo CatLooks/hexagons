@@ -1,16 +1,13 @@
 // include SFML
 #include <SFML/Graphics.hpp>
-
-sf::RenderWindow win(sf::VideoMode({ 1600, 900 }), "App");
-
 #include "ui/panel.hpp"
 #include "ui/layer.hpp"
 
 /// Program entry.
 /// @return Exit code.
 int main() {
-	ui::Interface UI;
-	ui::Layer* layer = UI.newLayer();
+	ui::Interface interface;
+	ui::Layer* layer = interface.layer(nullptr);
 
 	// test shape
 	ui::Panel* panel = new ui::Panel;
@@ -30,29 +27,52 @@ int main() {
 		return false;
 
 	});
+	layer->add(panel);
 	
 	ui::Panel* child = new ui::Panel;
 	child->bounds = { 30, 30, 0.5ps, 0.5ps };
 	child->color = sf::Color::Yellow;
 	child->transparent = false;
+	child->onEvent([=](ui::Element& _, const ui::Event& evt) {
+
+		if (const auto& data = evt.get<ui::Event::KeyPress>()) {
+			printf("Press: %d\n", data->key);
+
+			return true;
+		};
+
+		return false;
+
+	});
 	panel->add(child);
 
-	layer->add(panel);
+	// test text
+	sf::Font font("assets/font.ttf");
+
+	interface.setStatDrawCall([=](sf::RenderTarget& target, const ui::RenderStats& stats) {
+		sf::Text text(font, std::format("{}Q | {}T | {}F", stats.quads, stats.triangles, stats.text), 24);
+		text.setOutlineThickness(2);
+		target.draw(text);
+	});
 
 	// test window
+	sf::RenderWindow win(sf::VideoMode({ 1600, 900 }), "App");
 	win.setVerticalSyncEnabled(true);
+	win.setKeyRepeatEnabled(false);
+
 	while (win.isOpen()) {
 		win.clear(sf::Color(29, 31, 37));
 
-		UI.recalculate(win.getSize());
+		interface.recalculate(win.getSize());
 		while (const auto event = win.pollEvent()) {
-			if (event->is<sf::Event::Closed>())
+			if (event->is<sf::Event::Closed>()) {
 				win.close();
-			UI.event(*event);
+			};
+			interface.event(*event);
 		};
 
-		UI.update(win, 0);
-		UI.draw();
+		interface.update(win);
+		interface.draw(win);
 
 		win.display();
 	};

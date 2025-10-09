@@ -12,12 +12,11 @@ namespace ui {
 
 	protected:
 		/// Draws the panel.
+		/// 
+		/// @param target Render buffer.
 		/// @param self Panel draw area.
-		void drawSelf(sf::IntRect self) const override {
-			sf::RectangleShape shape((sf::Vector2f)self.size);
-			shape.setPosition((sf::Vector2f)self.position);
-			shape.setFillColor(color);
-			win.draw(shape);
+		void drawSelf(RenderBuffer& target, sf::IntRect self) const override {
+			target.quad(self, {}, color);
 		};
 	};
 };

@@ -33,6 +33,7 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ui\buffer.hpp" />
     <ClInclude Include="src\ui\element.hpp" />
     <ClInclude Include="src\ui\events.hpp" />
     <ClInclude Include="src\ui\layer.hpp" />
