@@ -5,12 +5,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-
 if(UNIX AND NOT APPLE)
     find_package(PkgConfig REQUIRED)
 
-    pkg_check_modules(SFML_DEPS REQUIRED
+    set(REQUIRED_PACKAGES
         x11
         xrandr
         gl
@@ -20,11 +18,18 @@ if(UNIX AND NOT APPLE)
         sndfile
     )
 
+    pkg_check_modules(SFML_DEPS IMPORTED_TARGET ${REQUIRED_PACKAGES})
+
     if(NOT SFML_DEPS_FOUND)
         message(FATAL_ERROR "SFML dependencies not found. On Debian/Ubuntu, please run:\n"
-                            "sudo apt-get install build-essential libx11-dev libxrandr-dev libgl1-mesa-dev libglu1-mesa-dev libfreetype6-dev libopenal-dev libsndfile1-dev")
+                            "sudo apt-get install build-essential libx11-dev libxrandr-dev libgl1-mesa-dev "
+                            "libglu1-mesa-dev libfreetype6-dev libopenal-dev libsndfile1-dev")
     endif()
+
+    include_directories(${SFML_DEPS_INCLUDE_DIRS})
+    link_directories(${SFML_DEPS_LIBRARY_DIRS})
 endif()
+
 
 include(FetchContent)
 FetchContent_Declare(SFML
