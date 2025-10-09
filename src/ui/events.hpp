@@ -19,6 +19,11 @@ namespace ui {
 		/// @brief Fires when mouse first stops hovering over the element.
 		struct MouseLeave : MouseMove {};
 
+		/// @brief Fires when mouse wheel gets scrolled.
+		struct MouseWheel : MouseMove {
+			float delta; /// Mouse wheel scroll change.
+		};
+
 		/// @brief Fires when mouse button is being held down.
 		struct MouseDown : MouseMove {
 			sf::Mouse::Button button; /// Active mouse key.
@@ -47,6 +52,7 @@ namespace ui {
 			MouseMove,
 			MouseEnter,
 			MouseLeave,
+			MouseWheel,
 			MouseDown,
 			MousePress,
 			MouseRelease,
@@ -82,6 +88,7 @@ namespace ui {
 			if (const auto ptr = get<MouseMove>()) return ptr->position;
 			if (const auto ptr = get<MouseEnter>()) return ptr->position;
 			if (const auto ptr = get<MouseLeave>()) return ptr->position;
+			if (const auto ptr = get<MouseWheel>()) return ptr->position;
 			if (const auto ptr = get<MouseDown>()) return ptr->position;
 			if (const auto ptr = get<MousePress>()) return ptr->position;
 			if (const auto ptr = get<MouseRelease>()) return ptr->position;

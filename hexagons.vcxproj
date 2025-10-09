@@ -35,6 +35,8 @@
   <ItemGroup>
     <ClInclude Include="src\ui\element.hpp" />
     <ClInclude Include="src\ui\events.hpp" />
+    <ClInclude Include="src\ui\layer.hpp" />
+    <ClInclude Include="src\ui\panel.hpp" />
     <ClInclude Include="src\ui\units.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

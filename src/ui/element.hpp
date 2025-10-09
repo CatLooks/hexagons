@@ -218,9 +218,13 @@ namespace ui {
 			if (!active || ignore) return false;
 
 			// update children
-			for (const auto& element : _elements)
-				if (element->hover(pos))
+			for (const auto& element : _elements) {
+				if (element->hover(pos)) {
+					if (_hover_old)
+						handle((Event)Event::MouseLeave{ pos });
 					return true;
+				};
+			};
 
 			// update hover state
 			_hover_now = _rect.contains(pos);

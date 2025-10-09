@@ -158,9 +158,18 @@ namespace ui {
 	};
 };
 
-/// Converts a number into a dimension.
+/// Converts a number of pixels into a dimension.
 ui::Dim operator""px(unsigned long long i) { return ui::Dim::from_px((int)i); };
-/// Converts a number into a dimension.
+/// Converts a parent size scalar into a dimension.
+ui::Dim operator""ps(unsigned long long i) { return ui::Dim::from_ps((float)i); };
+/// Converts an element size scalar into a dimension.
+ui::Dim operator""es(unsigned long long i) { return ui::Dim::from_es((float)i); };
+/// Converts a alignment scalar into a dimension.
+ui::Dim operator""as(unsigned long long i) { return ui::Dim(0, (float)i, -(float)i); };
+
+/// Converts a parent size scalar into a dimension.
 ui::Dim operator""ps(long double f) { return ui::Dim::from_ps((float)f); };
-/// Converts a number into a dimension.
+/// Converts an element size scalar into a dimension.
 ui::Dim operator""es(long double f) { return ui::Dim::from_es((float)f); };
+/// Converts a alignment scalar into a dimension.
+ui::Dim operator""as(long double f) { return ui::Dim(0, (float)f, -(float)f); };
