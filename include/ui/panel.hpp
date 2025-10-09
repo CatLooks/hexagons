@@ -1,7 +1,6 @@
 #pragma once
 
 // include dependencies
-#include <SFML/Graphics.hpp>
 #include "element.hpp"
 
 namespace ui {
@@ -15,8 +14,6 @@ namespace ui {
 		/// 
 		/// @param target Render buffer.
 		/// @param self Panel draw area.
-		void drawSelf(RenderBuffer& target, sf::IntRect self) const override {
-			target.quad(self, {}, color);
-		};
+		void drawSelf(RenderBuffer& target, sf::IntRect self) const override;
 	};
 };

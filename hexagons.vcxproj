@@ -28,17 +28,23 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\ui\buffer.cpp" />
+    <ClCompile Include="src\ui\element.cpp" />
+    <ClCompile Include="src\ui\event.cpp" />
+    <ClCompile Include="src\ui\layer.cpp" />
+    <ClCompile Include="src\ui\panel.cpp" />
+    <ClCompile Include="src\ui\units.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\ui\buffer.hpp" />
-    <ClInclude Include="src\ui\element.hpp" />
-    <ClInclude Include="src\ui\events.hpp" />
-    <ClInclude Include="src\ui\layer.hpp" />
-    <ClInclude Include="src\ui\panel.hpp" />
-    <ClInclude Include="src\ui\units.hpp" />
+    <ClInclude Include="include\ui\buffer.hpp" />
+    <ClInclude Include="include\ui\element.hpp" />
+    <ClInclude Include="include\ui\event.hpp" />
+    <ClInclude Include="include\ui\layer.hpp" />
+    <ClInclude Include="include\ui\panel.hpp" />
+    <ClInclude Include="include\ui\units.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -154,7 +160,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:/SFML3/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:/SFML3/include;$(ProjectDir)include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DisableSpecificWarnings>4455;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>

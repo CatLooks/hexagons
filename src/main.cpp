@@ -71,7 +71,7 @@ int main() {
 			interface.event(*event);
 		};
 
-		interface.update(win);
+		interface.update(sf::Mouse::getPosition(win));
 		interface.draw(win);
 
 		win.display();

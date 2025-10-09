@@ -66,10 +66,10 @@ namespace ui {
 	public:
 		/// Constructs an event with specified data.
 		/// @param data Event data.
-		Event(Variant data) : data(data) {};
+		Event(Variant data);
 
 		/// @return Event type ID.
-		size_t id() const { return data.index(); };
+		size_t id() const;
 
 		/// @return Event data if event type is `T`, `nullopt` otherwise.
 		/// @tparam T Event type.
