@@ -88,7 +88,7 @@ namespace ui {
 
 		// update element
 		for (const auto& handler : _update_list)
-			handler(*this, delta);
+			handler(delta);
 
 		// update children
 		for (const auto& element : _elements)
@@ -117,7 +117,7 @@ namespace ui {
 	bool Element::handle(Event evt) {
 		bool absorb = false;
 		for (const auto& handler : _handle_list)
-			if (handler(*this, evt))
+			if (handler(evt))
 				absorb = true;
 		return absorb;
 	};

@@ -26,16 +26,14 @@ namespace ui {
 	public:
 		/// Event handler function type.
 		/// 
-		/// @param self Updated element.
 		/// @param evt Event object.
 		/// 
 		/// @return Whether the event has been absorbed.
-		using EventHandler = std::function<bool(Element& self, const Event& evt)>;
+		using EventHandler = std::function<bool(const Event& evt)>;
 		/// Update handler function type.
 		/// 
-		/// @param self Updated element.
 		/// @param delta Time elapsed since last frame.
-		using UpdateHandler = std::function<void(Element& self, float delta)>;
+		using UpdateHandler = std::function<void(float delta)>;
 
 	private:
 		/// Element's children.

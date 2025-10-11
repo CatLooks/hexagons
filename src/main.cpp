@@ -37,7 +37,7 @@ int main() {
 	ui::Solid* panel = new ui::Solid;
 	panel->bounds = { 0.5as, 0.5as, 400, 300 };
 	panel->color = sf::Color::White;
-	panel->onEvent([=](ui::Element& _, const ui::Event& evt) {
+	panel->onEvent([=](const ui::Event& evt) {
 
 		if (evt.is<ui::Event::MouseEnter>()) {
 			panel->color = sf::Color::Red;
@@ -57,7 +57,7 @@ int main() {
 	child->bounds = { 30, 30, 0.5ps, 0.5ps };
 	child->color = sf::Color::Yellow;
 	child->transparent = true;
-	child->onEvent([=](ui::Element& _, const ui::Event& evt) {
+	child->onEvent([=](const ui::Event& evt) {
 
 		if (const auto& data = evt.get<ui::Event::KeyPress>()) {
 			std::cout << "Key Press: " << (std::string)sf::Keyboard::getDescription(data->scan) << std::endl;
@@ -101,7 +101,7 @@ int main() {
 
 	ui::Element* mask = new ui::Element;
 	mask->bounds = { 0px, 0px, 1ps, 0.5ps };
-	mask->onEvent([=](ui::Element& _, const ui::Event& evt) {
+	mask->onEvent([=](const ui::Event& evt) {
 
 		if (const auto& data = evt.get<ui::Event::MousePress>())
 			return true;
