@@ -11,15 +11,20 @@ namespace ui {
 
 	/// Draws the element.
 	void Element::drawSelf(RenderBuffer& target, sf::IntRect self) const {};
-
 	/// Draws element children.
 	void Element::drawChildren(RenderBuffer& target) const {
 		for (const auto& element : _elements)
 			element->draw(target);
 	};
 
-	/// Performs an operation before recalculation.
-	void Element::recalcUpdate() {};
+	/// Runs when the UI language gets changed.
+	void Element::onTranslate() {};
+	/// Runs when the element gets activated.
+	void Element::onActivate() {};
+	/// Runs when the element gets deactivated.
+	void Element::onDeactivate() {};
+	/// Runs before recalculation.
+	void Element::onRecalculate() {};
 
 	/// Virtual destructor.
 	Element::~Element() {};
@@ -56,10 +61,10 @@ namespace ui {
 	/// Recalculates draw area for the element.
 	void Element::recalculate(sf::IntRect parent) {
 		// ignore if not active
-		if (!active) return;
+		if (!_active) return;
 
 		// update before recalculation
-		recalcUpdate();
+		onRecalculate();
 
 		// recalculate element draw areas
 		_outerRect = bounds.get(parent);
@@ -74,7 +79,7 @@ namespace ui {
 	/// Draws the element and its children.
 	void Element::draw(RenderBuffer& target) const {
 		// ignore if not active
-		if (!active) return;
+		if (!_active) return;
 
 		// draw self & children
 		drawSelf(target, _rect);
@@ -84,7 +89,7 @@ namespace ui {
 	/// Updates element and its children.
 	void Element::update(float delta) {
 		// ignore if not active
-		if (!active) return;
+		if (!_active) return;
 
 		// update element
 		for (const auto& handler : _update_list)
@@ -98,7 +103,7 @@ namespace ui {
 	/// Emits an event to the element.
 	bool Element::event(Event evt) {
 		// ignore if needed
-		if (!active || ignore) return false;
+		if (!_active || ignore) return false;
 
 		// send event to children
 		for (const auto& element : _elements)
@@ -129,7 +134,7 @@ namespace ui {
 		_hover_now = false;
 
 		// ignore if needed
-		if (!active || ignore) return false;
+		if (!_active || ignore) return false;
 
 		// update children
 		for (const auto& element : _elements) {
@@ -153,6 +158,25 @@ namespace ui {
 	void Element::onEvent(const EventHandler& handler) { _handle_list.push_back(handler); };
 	/// Attaches an update handler.
 	void Element::onUpdate(const UpdateHandler& handler) { _update_list.push_back(handler); };
+
+	/// Updates UI language.
+	void Element::translate() {
+		onTranslate();
+		for (auto& element : _elements)
+			element->translate();
+	};
+	/// Activates the element.
+	void Element::activate() {
+		_active = true;
+		onActivate();
+	};
+	/// Deactivates the element.
+	void Element::deactivate() {
+		_active = false;
+		onDeactivate();
+	};
+	/// @return Whether the element is active.
+	bool Element::active() const { return _active; };
 
 	/// @return Element's children.
 	const std::deque<std::unique_ptr<Element>>& Element::children() const { return _elements; };

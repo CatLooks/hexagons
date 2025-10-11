@@ -2,7 +2,7 @@
 
 namespace ui {
 	/// Prepare for layer recalculation.
-	void Layer::recalcUpdate() {
+	void Layer::onRecalculate() {
 		// reset layer bounds (just in case)
 		bounds = { 0px, 0px, 1ps, 1ps };
 		// clear render buffer
@@ -98,6 +98,12 @@ namespace ui {
 
 		// render stats
 		if (info) info(target, stats);
+	};
+
+	/// Updates interface language.
+	void Interface::translate() const {
+		for (const auto& layer : layers)
+			layer->translate();
 	};
 
 	/// Sets rendering statistics rendering callback for the interface.

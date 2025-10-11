@@ -34,6 +34,8 @@ namespace ui {
 		/// 
 		/// @param delta Time elapsed since last frame.
 		using UpdateHandler = std::function<void(float delta)>;
+		/// Static event handler function type.
+		using StaticHandler = std::function<void()>;
 
 	private:
 		/// Element's children.
@@ -45,22 +47,25 @@ namespace ui {
 		sf::IntRect _rect;      /// Draw area after padding.
 		sf::IntRect _innerRect; /// Draw area after padding & margin.
 
-		/// Whether the element was being hovered over.
-		bool _hover_old = false;
-		/// Whether the element is being hovered over.
-		bool _hover_now = false;
 		/// Event handler list.
 		std::deque<EventHandler> _handle_list;
 		/// Post-event update handler list.
 		std::deque<UpdateHandler> _update_list;
 
+		/// Whether the element was being hovered over.
+		bool _hover_old = false;
+		/// Whether the element is being hovered over.
+		bool _hover_now = false;
+
+		/// Whether the element is active.
+		bool _active = true;
+
 	public:
+		bool ignore      = false; /// Whether the element ignores events.
+		bool transparent = false; /// Whether mouse hover events can pass through the element.
 		DimRect bounds;           /// Element bounding box.
 		Borders padding;          /// Element padding.
 		Borders margin;           /// Element margin.
-		bool active      = true;  /// Whether the element responds to events and is drawn.
-		bool ignore      = false; /// Whether the element ignores events.
-		bool transparent = false; /// Whether mouse hover events can pass through the element.
 
 	protected:
 		/// Draws the element.
@@ -68,14 +73,19 @@ namespace ui {
 		/// @param target Render buffer.
 		/// @param self Element drawing area.
 		virtual void drawSelf(RenderBuffer& target, sf::IntRect self) const;
-
 		/// Draws element children.
 		/// 
 		/// @param target Render buffer.
 		virtual void drawChildren(RenderBuffer& target) const;
 
-		/// Performs an operation before recalculation.
-		virtual void recalcUpdate();
+		/// Runs when the UI language gets changed.
+		virtual void onTranslate();
+		/// Runs when the element gets activated.
+		virtual void onActivate();
+		/// Runs when the element gets deactivated.
+		virtual void onDeactivate();
+		/// Runs before recalculation.
+		virtual void onRecalculate();
 			
 	public:
 		/// Virtual destructor.
@@ -132,6 +142,15 @@ namespace ui {
 		/// Attaches an update handler.
 		/// @param handler Update handler.
 		void onUpdate(const UpdateHandler& handler);
+
+		/// Updates UI language.
+		void translate();
+		/// Activates the element.
+		void activate();
+		/// Deactivates the element.
+		void deactivate();
+		/// @return Whether the element is active.
+		bool active() const;
 
 		/// @return Element's children.
 		const std::deque<std::unique_ptr<Element>>& children() const;

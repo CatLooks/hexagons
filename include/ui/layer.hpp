@@ -22,7 +22,7 @@ namespace ui {
 		std::optional<sf::View> _view;
 
 		/// Prepare for layer recalculation.
-		void recalcUpdate() override;
+		void onRecalculate() override;
 
 	public:
 		/// Constructs a new layer.
@@ -75,19 +75,18 @@ namespace ui {
 		/// Recalculates interface.
 		/// @param windowSize Window size.
 		void recalculate(sf::Vector2u windowSize);
-
 		/// Send an event to interface.
 		void event(const sf::Event& evt);
-
 		/// Updates the interface.
 		/// @param mouse Mouse position.
 		void update(sf::Vector2i mouse);
-
 		/// Draws the interface.
 		/// 
 		/// @param target Render target.
 		/// @param def_view Default view.
 		void draw(sf::RenderTarget& target);
+		/// Updates interface language.
+		void translate() const;
 
 		/// Sets rendering statistics rendering callback for the interface.
 		/// 
