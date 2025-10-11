@@ -63,8 +63,8 @@ namespace ui {
 
 		// recalculate element draw areas
 		_outerRect = bounds.get(parent);
-		_rect = padding.apply(_outerRect);
-		_innerRect = margin.apply(_rect);
+		_rect = margin.apply(_outerRect);
+		_innerRect = padding.apply(_rect);
 
 		// recalculate children
 		for (const auto& element : _elements)

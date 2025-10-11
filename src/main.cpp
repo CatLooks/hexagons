@@ -1,13 +1,37 @@
 #include <SFML/Graphics.hpp>
 #include "ui/solid.hpp"
 #include "ui/layer.hpp"
+#include "ui/panel.hpp"
 #include <iostream>
 
 /// Program entry.
 /// @return Exit code.
 int main() {
 	ui::Interface interface;
-	ui::Layer* layer = interface.layer(nullptr);
+
+	sf::Image panel_img(std::string(ASSET_PATH) + "panel.png");
+	sf::Texture panel_tex(panel_img);
+	ui::Layer* layer = interface.layer(&panel_tex);
+
+	// test panel
+	ui::Panel::Map map = {
+		.corner_coords = { { 0, 0 }, { 8, 0 }, { 0, 8 }, { 8, 8 } },
+		.edge_coords = { { 4, 0 }, { 4, 8 }, { 0, 4 }, { 8, 4 } },
+		.corner_size = { 4, 4 },
+		.edge_size = { 4, 4 },
+		.middle = { { 4, 4 }, { 4, 4 } },
+		.scale = 4
+	};
+	ui::Panel* p = new ui::Panel(map);
+	p->bounds = { 1as - 16px, 1as - 16px, 200, 120 };
+	p->color = sf::Color::Yellow;
+	layer->add(p);
+	{
+		ui::Solid* s = new ui::Solid();
+		s->color = sf::Color(0, 0, 0, 64);
+		s->bounds = { 0px, 0px, 1ps, 1ps };
+		p->add(s);
+	};
 
 	// test shape
 	ui::Solid* panel = new ui::Solid;
