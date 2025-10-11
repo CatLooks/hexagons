@@ -1,4 +1,3 @@
-// include SFML
 #include <SFML/Graphics.hpp>
 #include "ui/panel.hpp"
 #include "ui/layer.hpp"
