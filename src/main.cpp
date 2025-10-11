@@ -32,11 +32,41 @@ int main() {
 	ui::Solid* child = new ui::Solid;
 	child->bounds = { 30, 30, 0.5ps, 0.5ps };
 	child->color = sf::Color::Yellow;
-	child->transparent = false;
+	child->transparent = true;
 	child->onEvent([=](ui::Element& _, const ui::Event& evt) {
 
 		if (const auto& data = evt.get<ui::Event::KeyPress>()) {
-			printf("Press: %\n", data->key);
+			std::cout << "Key Press: " << (std::string)sf::Keyboard::getDescription(data->scan) << std::endl;
+			std::cout << "Alt " << data->alt << " | Shift " << data->shift << " | Control " << data->control << " | System " << data->system << std::endl;
+			return true;
+		};
+		if (const auto& data = evt.get<ui::Event::KeyRelease>()) {
+			std::cout << "Key Release: " << (std::string)sf::Keyboard::getDescription(data->scan) << std::endl;
+			std::cout << "Alt " << data->alt << " | Shift " << data->shift << " | Control " << data->control << " | System " << data->system << std::endl;
+			return true;
+		};
+		if (const auto& data = evt.get<ui::Event::MousePress>()) {
+			std::cout << "Mouse Press: " << (int)data->button << " at " << data->position.x << ", " << data->position.y << std::endl;
+			return true;
+		};
+		if (const auto& data = evt.get<ui::Event::MouseRelease>()) {
+			std::cout << "Mouse Release: " << (int)data->button << " at " << data->position.x << ", " << data->position.y << std::endl;
+			return true;
+		};
+		if (const auto& data = evt.get<ui::Event::MouseEnter>()) {
+			std::cout << "Mouse Enter at " << data->position.x << ", " << data->position.y << std::endl;
+			return true;
+		};
+		if (const auto& data = evt.get<ui::Event::MouseLeave>()) {
+			std::cout << "Mouse Leave at " << data->position.x << ", " << data->position.y << std::endl;
+			return true;
+		};
+		if (const auto& data = evt.get<ui::Event::MouseWheel>()) {
+			std::cout << "Mouse Wheel: " << data->delta << " at " << data->position.x << ", " << data->position.y << std::endl;
+			return true;
+		};
+		if (const auto& data = evt.get<ui::Event::MouseMove>()) {
+			//std::cout << "Mouse Move at " << data->position.x << ", " << data->position.y << std::endl;
 			return true;
 		};
 
@@ -44,6 +74,19 @@ int main() {
 
 	});
 	panel->add(child);
+
+	ui::Element* mask = new ui::Element;
+	mask->bounds = { 0px, 0px, 1ps, 0.5ps };
+	mask->onEvent([=](ui::Element& _, const ui::Event& evt) {
+
+		if (const auto& data = evt.get<ui::Event::MousePress>())
+			return true;
+		if (const auto& data = evt.get<ui::Event::MouseRelease>())
+			return true;
+		return false;
+
+	});
+	child->add(mask);
 
 	// test text
 	sf::Font font("assets/font.ttf");

@@ -39,7 +39,8 @@ namespace ui {
 
 		/// @brief Fires when a key gets pressed.
 		struct KeyPress {
-			sf::Keyboard::Key key; /// Active key.
+			sf::Keyboard::Key   key; /// Active key.
+			sf::Keyboard::Scan scan; /// Key scancode.
 			bool alt;     /// Whether the ALT key is being pressed.
 			bool shift;   /// Whether the SHIFT key is being pressed.
 			bool control; /// Whether the CTRL key is being pressed.

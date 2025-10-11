@@ -59,9 +59,9 @@ namespace ui {
 	void Interface::event(const sf::Event& evt) {
 		// check for keyboard events
 		if (const auto* data = evt.getIf<sf::Event::KeyPressed>())
-			return send_event((Event)Event::KeyPress{ data->code });
+			return send_event((Event)Event::KeyPress{ data->code, data->scancode, data->alt, data->shift, data->control, data->system });
 		if (const auto* data = evt.getIf<sf::Event::KeyReleased>())
-			return send_event((Event)Event::KeyRelease{ data->code });
+			return send_event((Event)Event::KeyRelease{ data->code, data->scancode, data->alt, data->shift, data->control, data->system });
 
 		// check for mouse button events
 		if (const auto* data = evt.getIf<sf::Event::MouseButtonPressed>())
