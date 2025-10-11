@@ -62,7 +62,7 @@ namespace ui {
 		Borders margin;           /// Element margin.
 		bool active      = true;  /// Whether the element responds to events and is drawn.
 		bool ignore      = false; /// Whether the element ignores events.
-		bool transparent = false; /// Whether mouse events can pass through the element.
+		bool transparent = false; /// Whether mouse hover events can pass through the element.
 
 	protected:
 		/// Draws the element.
@@ -102,11 +102,9 @@ namespace ui {
 		/// Recalculates draw area for the element.
 		/// @param parent Parent bounding box.
 		void recalculate(sf::IntRect parent);
-
 		/// Draws the element and its children.
 		/// @param target Render buffer.
 		void draw(RenderBuffer& target) const;
-
 		/// Updates element and its children.
 		/// @param delta Time elapsed since last frame.
 		void update(float delta);
@@ -123,7 +121,6 @@ namespace ui {
 		/// 
 		/// @return Whether the event has been absorbed.
 		bool handle(Event evt);
-
 		/// Processes mouse hovering events.
 		/// 
 		/// @param pos Mouse position.
@@ -149,5 +146,8 @@ namespace ui {
 		/// @return Element size.
 		DimVector& size();
 		const DimVector& size() const;
+
+		/// @return Element bounding rectangle (available after recalculation).
+		sf::IntRect rect() const;
 	};
 };

@@ -165,4 +165,7 @@ namespace ui {
 	/// @return Element size.
 	DimVector& Element::size() { return bounds.size; };
 	const DimVector& Element::size() const { return bounds.size; };
+
+	/// @return Element bounding rectangle.
+	sf::IntRect Element::rect() const { return _rect; };
 };

@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
-#include "ui/panel.hpp"
+#include "ui/solid.hpp"
 #include "ui/layer.hpp"
+#include <iostream>
 
 /// Program entry.
 /// @return Exit code.
@@ -9,7 +10,7 @@ int main() {
 	ui::Layer* layer = interface.layer(nullptr);
 
 	// test shape
-	ui::Panel* panel = new ui::Panel;
+	ui::Solid* panel = new ui::Solid;
 	panel->bounds = { 0.5as, 0.5as, 400, 300 };
 	panel->color = sf::Color::White;
 	panel->onEvent([=](ui::Element& _, const ui::Event& evt) {
@@ -28,15 +29,14 @@ int main() {
 	});
 	layer->add(panel);
 	
-	ui::Panel* child = new ui::Panel;
+	ui::Solid* child = new ui::Solid;
 	child->bounds = { 30, 30, 0.5ps, 0.5ps };
 	child->color = sf::Color::Yellow;
 	child->transparent = false;
 	child->onEvent([=](ui::Element& _, const ui::Event& evt) {
 
 		if (const auto& data = evt.get<ui::Event::KeyPress>()) {
-			printf("Press: %d\n", data->key);
-
+			printf("Press: %\n", data->key);
 			return true;
 		};
 
@@ -50,6 +50,7 @@ int main() {
 
 	interface.setStatDrawCall([=](sf::RenderTarget& target, const ui::RenderStats& stats) {
 		sf::Text text(font, std::format("{}Q | {}T | {}F", stats.quads, stats.triangles, stats.text), 24);
+		text.setPosition({ 6, 0 });
 		text.setOutlineThickness(2);
 		target.draw(text);
 	});

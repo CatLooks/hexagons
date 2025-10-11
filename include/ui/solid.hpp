@@ -5,7 +5,7 @@
 
 namespace ui {
 	/// Solid color panel element.
-	class Panel : public Element {
+	class Solid : public Element {
 	public:
 		sf::Color color; /// Panel color.
 
