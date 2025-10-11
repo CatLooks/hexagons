@@ -1,20 +1,11 @@
 #include <SFML/Graphics.hpp>
-#include "addon.h"
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode({ 800u, 600u }), "SFML Works!");
+    sf::RenderWindow window(sf::VideoMode({ 800, 600 }), "SFML Works!");
 
-    std::string fontPath = std::string(RESOURCES_PATH) + "LoveDays-2v7Oe.ttf";
-    sf::Font font;
-    if (!font.openFromFile(fontPath))
-    {
-        return 404;
-    }
-    printer();
-    sf::Text text(font, "Hello, World!");
-    text.setCharacterSize(24);
-    text.setFillColor(sf::Color::White);
+    sf::CircleShape shape(100.f);
+    shape.setFillColor(sf::Color::Green);
 
     while (window.isOpen())
     {
@@ -27,7 +18,7 @@ int main()
         }
 
         window.clear();
-        window.draw(text);
+        window.draw(shape);
         window.display();
     }
 

@@ -52,18 +52,18 @@ target_link_libraries(main PRIVATE SFML::Graphics SFML::Window SFML::System SFML
 option(PRODUCTION_BUILD "Set to ON for release builds" OFF)
 
 if(PRODUCTION_BUILD)
-    target_compile_definitions(main PUBLIC "RESOURCES_PATH=\"./resources/\"")
+    target_compile_definitions(main PUBLIC "ASSET_PATH=\"./assets\"")
 else()
-    target_compile_definitions(main PUBLIC "RESOURCES_PATH=\"${CMAKE_SOURCE_DIR}/resources/\"")
+    target_compile_definitions(main PUBLIC "ASSET_PATH=\"${CMAKE_SOURCE_DIR}/assets/\"")
 endif()
 
-set(RESOURCE_DIR ${CMAKE_SOURCE_DIR}/resources)
+set(ASSET_DIR ${CMAKE_SOURCE_DIR}/assets)
 
 
 if(PRODUCTION_BUILD)
     add_custom_command(TARGET main POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${RESOURCE_DIR} $<TARGET_FILE_DIR:main>/resources
-        COMMENT "Copying resources for production build"
+        ${ASSET_DIR} $<TARGET_FILE_DIR:main>/assets
+        COMMENT "Copying assets for production build"
     )
 endif()
