@@ -7,6 +7,13 @@ namespace ui {
 	/// Linearly interpolates between 2 floats.
 	float lerpf(float a, float b, float t) { return a + (b - a) * t; };
 
+	/// Linearly interpolates between 2 colors.
+	sf::Color lerpc(sf::Color a, sf::Color b, float t) { return {
+		(uint8_t)lerpi(a.r, b.r, t),
+		(uint8_t)lerpi(a.g, b.g, t),
+		(uint8_t)lerpi(a.b, b.b, t)
+	}; };
+
 	/// Returns dimension's true value.
 	int Dim::get(int parent_size, int element_size) const {
 		return (int)(px + ps * parent_size + es * element_size);
@@ -43,7 +50,7 @@ namespace ui {
 	Dim& Dim::operator/=(float scale) { return *this = *this / scale; };
 
 	/// Linearly interpolates between 2 dimensions.
-	Dim Dim::lerp(const Dim& a, const Dim& b, float t) { return a + (b - a) * t; };
+	Dim Dim::lerp(Dim a, Dim b, float t) { return a + (b - a) * t; };
 
 	/// Returns dimension vector's true value.
 	sf::Vector2i DimVector::get(sf::Vector2i parent, sf::Vector2i element) const {
@@ -92,7 +99,7 @@ namespace ui {
 	DimVector DimVector::projY() const { return DimVector({}, y); };
 
 	/// Linearly interpolates between 2 dimensions.
-	DimVector DimVector::lerp(const DimVector& a, const DimVector& b, float t) { return a + (b - a) * t; };
+	DimVector DimVector::lerp(DimVector a, DimVector b, float t) { return a + (b - a) * t; };
 
 	/// Returns dimension rectangle's true value.
 	sf::IntRect DimRect::get(sf::IntRect parent) const {

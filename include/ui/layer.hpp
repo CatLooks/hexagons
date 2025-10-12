@@ -57,8 +57,10 @@ namespace ui {
 		sf::IntRect winRect;
 		/// Default view.
 		sf::View view;
-		/// Delta clock.
-		sf::Clock clock;
+		/// Update clock.
+		sf::Clock upd_clock;
+		/// Animation clock.
+		sf::Clock anim_clock;
 
 		/// Sends the event to all interface layers.
 		/// @param evt Sent event.
@@ -67,7 +69,7 @@ namespace ui {
 	public:
 		/// Creates a new interface layer.
 		/// 
-		/// @param texture Layer rendering texture.
+		/// @param texture Layer rendering texture, or `nullptr` for solid white texture.
 		/// 
 		/// @return Reference to new layer.
 		Layer* layer(const sf::Texture* texture);

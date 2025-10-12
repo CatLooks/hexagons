@@ -50,9 +50,12 @@ namespace ui {
 		// update default view
 		view = sf::View(sf::FloatRect{ {}, (sf::Vector2f)windowSize });
 
+		// calculate delta
+		sf::Time delta = anim_clock.restart();
+
 		// recalculate each layer
 		for (auto& layer : layers)
-			layer->recalculate(winRect);
+			layer->recalculate(delta, winRect);
 	};
 
 	/// Send an event to interface.
@@ -77,7 +80,7 @@ namespace ui {
 	/// Updates the interface.
 	void Interface::update(sf::Vector2i mouse) {
 		// calculate delta
-		float delta = clock.restart().asSeconds();
+		sf::Time delta = upd_clock.restart();
 
 		// update each layer
 		for (auto& layer : layers) {

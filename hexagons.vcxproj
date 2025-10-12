@@ -28,6 +28,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\ui\anim\base.cpp" />
+    <ClCompile Include="src\ui\anim\easing.cpp" />
+    <ClCompile Include="src\ui\anim\timer.cpp" />
     <ClCompile Include="src\ui\buffer.cpp" />
     <ClCompile Include="src\ui\element.cpp" />
     <ClCompile Include="src\ui\event.cpp" />
@@ -40,6 +43,10 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\ui\anim\base.hpp" />
+    <ClInclude Include="include\ui\anim\easing.hpp" />
+    <ClInclude Include="include\ui\anim\linear.hpp" />
+    <ClInclude Include="include\ui\anim\timer.hpp" />
     <ClInclude Include="include\ui\buffer.hpp" />
     <ClInclude Include="include\ui\element.hpp" />
     <ClInclude Include="include\ui\event.hpp" />

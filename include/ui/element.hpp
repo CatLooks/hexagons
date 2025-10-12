@@ -1,11 +1,14 @@
 #pragma once
 
 // include dependencies
+#include <SFML/System/Time.hpp>
 #include "units.hpp"
 #include "event.hpp"
 #include "buffer.hpp"
+#include "anim/base.hpp"
 #include <functional>
 #include <deque>
+#include <list>
 #include <memory>
 
 namespace ui {
@@ -33,13 +36,13 @@ namespace ui {
 		/// Update handler function type.
 		/// 
 		/// @param delta Time elapsed since last frame.
-		using UpdateHandler = std::function<void(float delta)>;
+		using UpdateHandler = std::function<void(const sf::Time& delta)>;
 		/// Static event handler function type.
 		using StaticHandler = std::function<void()>;
 
 	private:
 		/// Element's children.
-		std::deque<std::unique_ptr<Element>> _elements;
+		std::list<std::unique_ptr<Element>> _elements;
 		/// Element's parent.
 		Element* _parent = nullptr;
 
@@ -48,9 +51,11 @@ namespace ui {
 		sf::IntRect _innerRect; /// Draw area after padding & margin.
 
 		/// Event handler list.
-		std::deque<EventHandler> _handle_list;
+		std::list<EventHandler> _handle_list;
 		/// Post-event update handler list.
-		std::deque<UpdateHandler> _update_list;
+		std::list<UpdateHandler> _update_list;
+		/// Active animator list.
+		std::list<std::unique_ptr<Anim>> _anims;
 
 		/// Whether the element was being hovered over.
 		bool _hover_old = false;
@@ -109,15 +114,32 @@ namespace ui {
 		/// Removes all child elements.
 		void clear();
 
+		/// Pushes a new animation.
+		/// 
+		/// Pointer to the animator must be owning.
+		/// @param anim New animator.
+		void push(Anim* anim);
+		/// @return Whether the element has any animations running.
+		bool animated() const;
+
 		/// Recalculates draw area for the element.
+		/// 
+		/// Order of updates:
+		/// 
+		/// 1. recalculation virtual function
+		/// 2. animation update
+		/// 3. element recalculation
+		/// 4. children recalculation
+		/// 
+		/// @param delta Time elapsed since last frame.
 		/// @param parent Parent bounding box.
-		void recalculate(sf::IntRect parent);
+		void recalculate(const sf::Time& delta, sf::IntRect parent);
 		/// Draws the element and its children.
 		/// @param target Render buffer.
 		void draw(RenderBuffer& target) const;
 		/// Updates element and its children.
 		/// @param delta Time elapsed since last frame.
-		void update(float delta);
+		void update(const sf::Time& delta);
 
 		/// Emits an event to the element.
 		/// 
@@ -139,9 +161,15 @@ namespace ui {
 		bool hover(sf::Vector2i pos);
 
 		/// Attaches an event handler.
+		/// 
+		/// Event handler receives an event object.
+		/// 
+		/// If the handler returns `true`, the event stops propagating.
 		/// @param handler Event handler.
 		void onEvent(const EventHandler& handler);
 		/// Attaches an update handler.
+		/// 
+		/// Update handler receives the time delta.
 		/// @param handler Update handler.
 		void onUpdate(const UpdateHandler& handler);
 
@@ -155,7 +183,7 @@ namespace ui {
 		bool active() const;
 
 		/// @return Element's children.
-		const std::deque<std::unique_ptr<Element>>& children() const;
+		const std::list<std::unique_ptr<Element>>& children() const;
 		/// @return Element's parent.
 		Element* parent() const;
 

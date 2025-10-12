@@ -3,6 +3,7 @@
 // include dependencies
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/Color.hpp>
 
 namespace ui {
 	/// Linearly interpolates between 2 integers.
@@ -22,6 +23,15 @@ namespace ui {
 	/// 
 	/// @return Interpolated float.
 	float lerpf(float a, float b, float t);
+
+	/// Linearly interpolates between 2 colors.
+	/// 
+	/// @param a Starting color.
+	/// @param b Ending color.
+	/// @param t Interpolation progress.
+	/// 
+	/// @return Interpolated color.
+	sf::Color lerpc(sf::Color a, sf::Color b, float t);
 
 	/// Axis dimension.
 	/// - Allows to describe position relative to element and its parent size.
@@ -82,7 +92,7 @@ namespace ui {
 		/// @param t Interpolation progress.
 		/// 
 		/// @return Interpolated dimension.
-		static Dim lerp(const Dim& a, const Dim& b, float t);
+		static Dim lerp(Dim a, Dim b, float t);
 	};
 
 	/// Dimension 2D vector.
@@ -147,7 +157,7 @@ namespace ui {
 		/// @param t Interpolation progress.
 		/// 
 		/// @return Interpolated dimension.
-		static DimVector lerp(const DimVector& a, const DimVector& b, float t);
+		static DimVector lerp(DimVector a, DimVector b, float t);
 	};
 
 	/// Dimension AABB (axis aligned bounding box).

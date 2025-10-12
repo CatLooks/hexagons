@@ -59,16 +59,38 @@ namespace ui {
 	};
 	/// Removes all child elements.
 	void Element::clear() {
-		_elements = {};
+		_elements.clear();
+	};
+
+	/// Pushes a new animation.
+	void Element::push(Anim* anim) {
+		_anims.push_back(std::unique_ptr<Anim>(anim));
+	};
+	/// @return Whether the element has any animations running.
+	bool Element::animated() const {
+		return !_anims.empty();
 	};
 
 	/// Recalculates draw area for the element.
-	void Element::recalculate(sf::IntRect parent) {
+	void Element::recalculate(const sf::Time& delta, sf::IntRect parent) {
 		// ignore if not active
 		if (!_active) return;
 
 		// update before recalculation
 		onRecalculate();
+
+		// update animations
+		auto it = _anims.begin();
+		while (it != _anims.end()) {
+			// tick animator
+			(*it)->update(delta);
+			if ((*it)->active())
+				// go to next animator
+				it++;
+			else
+				// delete animator from list
+				it = _anims.erase(it);
+		};
 
 		// recalculate element draw areas
 		_outerRect = bounds.get(parent);
@@ -77,7 +99,7 @@ namespace ui {
 
 		// recalculate children
 		for (const auto& element : _elements)
-			element->recalculate(_innerRect);
+			element->recalculate(delta, _innerRect);
 	};
 
 	/// Draws the element and its children.
@@ -91,7 +113,7 @@ namespace ui {
 	};
 
 	/// Updates element and its children.
-	void Element::update(float delta) {
+	void Element::update(const sf::Time& delta) {
 		// ignore if not active
 		if (!_active) return;
 
@@ -183,7 +205,7 @@ namespace ui {
 	bool Element::active() const { return _active; };
 
 	/// @return Element's children.
-	const std::deque<std::unique_ptr<Element>>& Element::children() const { return _elements; };
+	const std::list<std::unique_ptr<Element>>& Element::children() const { return _elements; };
 	/// @return Element's parent.
 	Element* Element::parent() const { return _parent; };
 
