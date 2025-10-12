@@ -6,6 +6,7 @@ if "%1" equ "" (
 	echo make generate - Generates a build environment.
 	echo make build    - Builds the project.
 	echo make run      - Runs the executable.
+	echo make syntax   - Exports Sublime Text syntax files.
 	exit /b
 )
 if "%1" equ "delete" (
@@ -45,5 +46,9 @@ if "%1" equ "run" (
 		exit /b
 	)
 	build\bin\Debug\main
+	exit /b
+)
+if "%1" equ "syntax" (
+	copy /y TLML.sublime-syntax "%appdata%\Sublime Text 3\Packages\User\TLML.sublime-syntax"
 	exit /b
 )

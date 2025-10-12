@@ -1,0 +1,72 @@
+%YAML 1.2
+---
+name: TLML
+scope: source.tlml
+version: 2
+
+file_extensions:
+  - tlml
+
+variables:
+  name: '\w+'
+
+  id: '(?:(?:\w+\.))*({{name}})'
+
+contexts:
+  main:
+    # punctuation
+    - match: ':'
+      scope: keyword.operator.tlml
+    - match: '\[|\]'
+      scope: punctuation.separator.tlml
+
+    # identifier
+    - match: '\b({{id}})\b(?=\s*:)'
+      captures:
+        1: storage.prefix.tlml
+        2: entity.name.id.tlml
+
+    # namespace
+    - match: '\b({{id}})\b(?=\s*\{)'
+      scope: variable.function.tlml
+
+    # strings
+    - match: '"'
+      scope: punctuation.definition.begin.tlml
+      push: double_quoted_string
+    - match: ''''
+      scope: punctuation.definition.begin.tlml
+      push: single_quoted_string
+
+  # common string syntax
+  string:
+    - match: '\{\}'
+      scope: keyword.tlml
+    - match: '\\.'
+      scope: constant.character.escape.tlml
+    - match: '\$\('
+      scope: variable.function.tlml
+      push: import
+
+  # "..."
+  double_quoted_string:
+    - include: string
+    - meta_scope: string.quoted.tlml
+    - match: '"'
+      scope: punctuation.definition.end.tlml
+      pop: true
+
+  # '...'
+  single_quoted_string:
+    - include: string
+    - meta_scope: string.quoted.tlml
+    - match: ''''
+      scope: punctuation.definition.end.tlml
+      pop: true
+
+  # import clause
+  import:
+    - clear_scopes: 1
+    - match: '\)'
+      scope: variable.function.tlml
+      pop: true
