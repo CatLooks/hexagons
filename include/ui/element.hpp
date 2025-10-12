@@ -106,6 +106,8 @@ namespace ui {
 		/// @param old Old element pointer.
 		/// @param repl New element pointer.
 		void replace(Element* old, Element* repl);
+		/// Removes all child elements.
+		void clear();
 
 		/// Recalculates draw area for the element.
 		/// @param parent Parent bounding box.

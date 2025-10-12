@@ -57,6 +57,10 @@ namespace ui {
 		// add if old was not found
 		add(repl);
 	};
+	/// Removes all child elements.
+	void Element::clear() {
+		_elements = {};
+	};
 
 	/// Recalculates draw area for the element.
 	void Element::recalculate(sf::IntRect parent) {
