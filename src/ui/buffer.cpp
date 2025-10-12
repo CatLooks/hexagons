@@ -31,6 +31,17 @@ namespace ui {
 		_inf.triangles++;
 	};
 
+	/// Queues a quad for rendering.
+	void RenderBuffer::quad(sf::Vertex a, sf::Vertex b, sf::Vertex c, sf::Vertex d) {
+		_arr.push_back(a);
+		_arr.push_back(b);
+		_arr.push_back(c);
+		_arr.push_back(a);
+		_arr.push_back(c);
+		_arr.push_back(d);
+		_inf.quads++;
+	};
+
 	/// Queues a rectangle for rendering.
 	void RenderBuffer::quad(sf::IntRect area, sf::IntRect texture, sf::Color color) {
 		// calculate area rectangle bounds
@@ -45,18 +56,13 @@ namespace ui {
 		float ty0 = (float)texture.position.y;
 		float ty1 = (float)(texture.position.y + texture.size.y);
 
-		// calculate quad vertices
-		sf::Vertex verts[4]{
+		// queue quad triangles
+		quad(
 			{ { ax0, ay0 }, color, { tx0, ty0 } },
 			{ { ax0, ay1 }, color, { tx0, ty1 } },
 			{ { ax1, ay1 }, color, { tx1, ty1 } },
-			{ { ax1, ay0 }, color, { tx1, ty0 } },
-		};
-
-		// queue quad triangles
-		int indices[6]{ 0, 1, 2, 0, 2, 3 };
-		for (int idx : indices)
-			_arr.push_back(verts[idx]);
+			{ { ax1, ay0 }, color, { tx1, ty0 } }
+		);
 		_inf.quads++;
 	};
 

@@ -52,6 +52,11 @@ namespace ui {
 		/// @param a,b,c Triangle vertices.
 		void triangle(sf::Vertex a, sf::Vertex b, sf::Vertex c);
 
+		/// Queues a quad for rendering.
+		/// 
+		/// @param a,b,c,d Quad vertices (in clock order).
+		void quad(sf::Vertex a, sf::Vertex b, sf::Vertex c, sf::Vertex d);
+
 		/// Queues a rectangle for rendering.
 		/// 
 		/// @param area Rectangle drawing area.
