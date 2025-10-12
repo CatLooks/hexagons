@@ -6,7 +6,7 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
-#include <deque>
+#include <list>
 
 namespace ui {
 	/// UI rendering statistics.
@@ -14,7 +14,7 @@ namespace ui {
 		size_t quads     = 0; /// Amount of quads rendered.
 		size_t triangles = 0; /// Amount of triangles rendered.
 		size_t text      = 0; /// Amount of text lines rendered.
-		size_t layers    = 0; /// Amount of layers rendered.
+		size_t batches   = 0; /// Amount of batches rendered.
 
 		/// Compiles rendering stats from another structure.
 		/// @param oth Other structure.
@@ -25,10 +25,17 @@ namespace ui {
 	/// Allows to render a vertex buffer with a single texture.
 	class RenderBuffer {
 	protected:
-		sf::VertexArray      _arr; /// Vertex array.
-		sf::RenderStates     _opt; /// Render states.
-		std::deque<sf::Text> _txt; /// Rendered text.
-		RenderStats          _inf; /// Render stats.
+		/// Forwarding index storage.
+		struct _FI {
+			size_t vert_count; /// Index of first vertex after forwarding.
+			size_t text_count; /// Index of first text line after forwarding.
+		};
+
+		std::vector<sf::Vertex> _arr; /// Vertex array.
+		sf::RenderStates        _opt; /// Render states.
+		std::list<sf::Text>     _txt; /// Rendered text.
+		std::list<_FI>          _fis; /// Forwarding indices.
+		RenderStats             _inf; /// Render stats.
 
 	public:
 		/// Constructs a new render buffer.
@@ -54,8 +61,17 @@ namespace ui {
 
 		/// Queues a text line for rendering.
 		/// 
+		/// Text lines are drawn after quads & triangles.
+		/// 
 		/// @param text Text object.
 		void text(const sf::Text& text);
+
+		/// Forwards current buffer contents as a single batch.
+		///
+		/// Normally, all text lines are drawn after quads & triangles.
+		/// 
+		/// Inserting a forward call, will allow futher quad & triangle calls to be drawn above currently buffered text.
+		void forward();
 
 		/// Renders buffer contents.
 		/// 

@@ -59,7 +59,7 @@ int main() {
 	// test text
 	sf::Font font(std::string(ASSET_PATH) + "font.ttf");
 	interface.setStatDrawCall([=](sf::RenderTarget& target, const ui::RenderStats& stats) {
-		sf::Text text(font, std::format("{}Q | {}T | {}F", stats.quads, stats.triangles, stats.text), 24);
+		sf::Text text(font, std::format("{}Q | {}T | {}F | {}B", stats.quads, stats.triangles, stats.text, stats.batches), 24);
 		text.setPosition({ 6, 0 });
 		text.setOutlineThickness(2);
 		target.draw(text);

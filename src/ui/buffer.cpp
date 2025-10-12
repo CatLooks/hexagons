@@ -6,13 +6,11 @@ namespace ui {
 		quads += oth.quads;
 		triangles += oth.triangles;
 		text += oth.text;
-		layers += oth.layers;
+		batches += oth.batches;
 	};
 
 	/// Constructs a new render buffer.
-	RenderBuffer::RenderBuffer(const sf::Texture* texture, const sf::Shader* shader)
-		: _arr(sf::VertexArray(sf::PrimitiveType::Triangles)) 
-	{
+	RenderBuffer::RenderBuffer(const sf::Texture* texture, const sf::Shader* shader) {
 		_opt.texture = texture;
 		_opt.shader = shader;
 	};
@@ -21,14 +19,15 @@ namespace ui {
 	void RenderBuffer::clear() {
 		_arr.clear();
 		_txt.clear();
+		_fis.clear();
 		_inf = RenderStats();
 	};
 
 	/// Queues a triangle for rendering.
 	void RenderBuffer::triangle(sf::Vertex a, sf::Vertex b, sf::Vertex c) {
-		_arr.append(a);
-		_arr.append(b);
-		_arr.append(c);
+		_arr.push_back(a);
+		_arr.push_back(b);
+		_arr.push_back(c);
 		_inf.triangles++;
 	};
 
@@ -57,7 +56,7 @@ namespace ui {
 		// queue quad triangles
 		int indices[6]{ 0, 1, 2, 0, 2, 3 };
 		for (int idx : indices)
-			_arr.append(verts[idx]);
+			_arr.push_back(verts[idx]);
 		_inf.quads++;
 	};
 
@@ -67,16 +66,55 @@ namespace ui {
 		_inf.text++;
 	};
 
+	/// Forwards current buffer contents as a single batch.
+	void RenderBuffer::forward() {
+		// first forward indices
+		if (_fis.empty()) {
+			_fis.push_back({ _arr.size(), _txt.size() });
+		}
+
+		// add offset from last forward indices
+		else {
+			const _FI& last = _fis.back();
+			_fis.push_back({ _arr.size() - last.vert_count, _txt.size() - last.text_count });
+		};
+	};
+
 	/// Renders buffer contents.
 	RenderStats RenderBuffer::draw(sf::RenderTarget& target) const {
-		target.draw(_arr, _opt);
-		for (const auto& text : _txt)
-			target.draw(text);
+		// current batch start position
+		size_t vert_idx = 0;
+		auto text_it = _txt.begin();
+
+		// batched draw calls
+		size_t batch_count = 0;
+		for (auto it = _fis.begin(); it != _fis.end(); it++) {
+			// draw vertices
+			if (it->vert_count > 0) {
+				target.draw(_arr.data() + vert_idx, it->vert_count, sf::PrimitiveType::Triangles, _opt);
+				vert_idx += it->vert_count;
+				batch_count++;
+			};
+
+			// draw text
+			for (size_t i = 0; i < it->text_count; i++)
+				target.draw(*text_it++);
+		};
+
+		// draw remaining vertices
+		size_t verts_left = _arr.size() - vert_idx;
+		if (verts_left > 0) {
+			target.draw(_arr.data() + vert_idx, verts_left, sf::PrimitiveType::Triangles, _opt);
+			batch_count++;
+		};
+
+		// draw remaining text
+		while (text_it != _txt.end())
+			target.draw(*text_it++);
 
 		// return layer stats
 		RenderStats stats = _inf;
-		if (_arr.getVertexCount())
-			stats.layers++;
+		stats.batches = batch_count;
 		return stats;
 	};
 
