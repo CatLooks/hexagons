@@ -4,10 +4,24 @@
 #include "ui/panel.hpp"
 #include "ui/anim/linear.hpp"
 #include <iostream>
+#include "localization/parser.hpp"
 
 /// Program entry.
 /// @return Exit code.
 int main() {
+
+	// localization test
+	FILE* file;
+	if (int e = fopen_s(&file, "assets/en-us.tlml", "r")) {
+		char msg[256];
+		strerror_s(msg, sizeof(msg), e);
+		printf("error: %s\n", msg);
+		return 1;
+	};
+	localization::State state(file);
+	localization::Section s = localization::load(state);
+	printf("Done\n");
+
 	ui::Interface interface;
 	ui::Layer* layer = interface.layer(nullptr);
 

@@ -45,9 +45,14 @@ add_executable(main ${SOURCES})
 
 target_include_directories(main PRIVATE include)
 
-target_compile_features(main PRIVATE cxx_std_17)
+target_compile_features(main PRIVATE cxx_std_20)
 target_link_libraries(main PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio SFML::Network)
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_options(main PRIVATE /wd4455)
+else()
+    target_compile_options(main PRIVATE -Wno-literal-suffix)
+endif()
 
 option(PRODUCTION_BUILD "Set to ON for release builds" OFF)
 

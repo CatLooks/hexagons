@@ -27,6 +27,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\localization\error.cpp" />
+    <ClCompile Include="src\localization\parser.cpp" />
+    <ClCompile Include="src\localization\token.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ui\anim\base.cpp" />
     <ClCompile Include="src\ui\anim\easing.cpp" />
@@ -44,6 +47,9 @@
     <None Include="TLML.sublime-syntax" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\localization\error.hpp" />
+    <ClInclude Include="include\localization\parser.hpp" />
+    <ClInclude Include="include\localization\token.hpp" />
     <ClInclude Include="include\ui\anim\base.hpp" />
     <ClInclude Include="include\ui\anim\easing.hpp" />
     <ClInclude Include="include\ui\anim\linear.hpp" />

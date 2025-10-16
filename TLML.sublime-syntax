@@ -14,6 +14,11 @@ variables:
 
 contexts:
   main:
+    # comment
+    - match: '#'
+      scope: punctuation.definition.comment.begin.tlml
+      push: comment
+
     # punctuation
     - match: ':'
       scope: keyword.operator.tlml
@@ -40,7 +45,7 @@ contexts:
 
   # common string syntax
   string:
-    - match: '\{\}'
+    - match: '\{[0-9A-Za-z_]+\}'
       scope: keyword.tlml
     - match: '\\.'
       scope: constant.character.escape.tlml
@@ -62,6 +67,12 @@ contexts:
     - meta_scope: string.quoted.tlml
     - match: ''''
       scope: punctuation.definition.end.tlml
+      pop: true
+
+  # comment
+  comment:
+    - meta_scope: comment.tlml
+    - match: '$'
       pop: true
 
   # import clause
