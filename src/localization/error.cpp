@@ -52,6 +52,25 @@ namespace localization {
 			fprintf(out, "definition of parameter \"%s\" is not closed", name.c_str());
 		});
 	};
+	Error* gUnclosedImport() {
+		return new Error([=](FILE* out) {
+			fprintf(out, "import definition is unclosed");
+		});
+	};
+	Error* gEmptyImport(Path path) {
+		return new Error([=](FILE* out) {
+			fprintf(out, "missing key in import path \"");
+
+			// replacement string
+			const char* repl = "?";
+
+			// print import steps
+			for (const auto& sub : path.sub) {
+				fprintf(out, "%s.", sub.empty() ? repl : sub.c_str());
+			};
+			fprintf(out, "%s\"", path.key.empty() ? repl : path.key.c_str());
+		});
+	};
 	Error* gInvalidImport(Path path, size_t step) {
 		return new Error([=](FILE* out) {
 			fprintf(out, "failed to import from path \"");
@@ -78,7 +97,27 @@ namespace localization {
 	Error* gUnexpectedString() {
 		return new Error([=](FILE* out) {
 			fprintf(out, "a key was expected, got string");
-			});
+		});
+	};
+	Error* gUnexpectedToken() {
+		return new Error([=](FILE* out) {
+			fprintf(out, "unexpected token");
+		});
+	};
+	Error* gUnexpectedSection() {
+		return new Error([=](FILE* out) {
+			fprintf(out, "unexpected section");
+		});
+	};
+	Error* gStrayEndBracket() {
+		return new Error([=](FILE* out) {
+			fprintf(out, "unexpected closing parenthesis");
+		});
+	};
+	Error* gEndAfterDefinition() {
+		return new Error([=](FILE* out) {
+			fprintf(out, "section closing bracket must be on a separate line");
+		});
 	};
 	Error* gDuplicateKey(std::string key) {
 		return new Error([=](FILE* out) {

@@ -1,39 +1,88 @@
 #include "localization/token.hpp"
 
 namespace localization {
-	/// Constructs an entry with a text value.
-	Entry::Entry(std::string key, localization::Text text) : key(key), _type(Text) {
-		auto p = new localization::Text;
-		*p = text;
-		_value = p;
-	};
-	/// Constructs an entry with a section value.
-	Entry::Entry(std::string key, localization::Section section) : key(key), _type(Section) {
-		auto p = new localization::Section;
-		*p = section;
-		_value = p;
-	};
+	/// Constructs a new entry.
+	Entry::Entry(std::string key, Text* value)
+		: key(key), value(std::unique_ptr<Text>(value)) {};
+	/// Constructs a new entry.
+	Entry::Entry(std::string key, Section* value)
+		: key(key), value(std::unique_ptr<Section>(value)) {};
+	/// Constructs a new entry.
+	Entry::Entry(std::string key, Text value)
+		: key(key), value(std::make_unique<Text>(std::move(value))) {};
+	/// Constructs a new entry.
+	Entry::Entry(std::string key, Section value)
+		: key(key), value(std::make_unique<Section>(std::move(value))) {};
 
-	/// Destructor.
-	Entry::~Entry() {
-		switch (_type) {
-			case Text: delete (localization::Text*)_value; break;
-			case Section: delete (localization::Section*)_value; break;
+	/// Returns a value denoted by a key.
+	const Value* Section::get(std::string key) const {
+		for (auto& entry : items) {
+			if (entry.key == key)
+				return &entry.value;
 		};
+		return nullptr;
 	};
 
-	/// @return Pointer to stored text if present.
-	Text* Entry::text() const {
-		return _type == Text ? (localization::Text*)_value : nullptr;
+	/// Returns a value denoted by a recursive path.
+	std::variant<const Value*, size_t> Section::get(Path path) const {
+		// route to `get` if no subsections
+		if (path.sub.empty()) {
+			auto value = get(path.key);
+			if (value) return value;
+			return (size_t)0;
+		};
+
+		// find first subsection
+		for (const auto& entry : items) {
+			if (entry.key == path.sub.front()) {
+				// entry contains a section
+				if (const auto* section = std::get_if<std::unique_ptr<Section>>(&entry.value)) {
+					// remove first subsection
+					path.sub.pop_front();
+
+					// access further subsections
+					auto value = section->get()->get(path);
+					if (size_t* err = std::get_if<size_t>(&value))
+						return *err + 1;
+					return value;
+				};
+
+				// entry contains text
+				return (size_t)0;
+			};
+		};
+
+		// subsection not found
+		return (size_t)0;
 	};
 
-	/// @return Pointer to stored section if present.
-	Section* Entry::section() const {
-		return _type == Section ? (localization::Section*)_value : nullptr;
-	};
+	/// Print section data.
+	void Section::print(FILE* stream, size_t tabs) const {
+		// print opening bracket
+		fprintf(stream, "{\n");
 
-	/// @return Entry value type.
-	Entry::Type Entry::type() const {
-		return _type;
+		// print each entry
+		for (const auto& item : items) {
+			// print tabs
+			for (size_t i = 0; i < tabs + 1; i++)
+				fprintf(stream, "  ", i);
+
+			// print entry
+			fprintf(stream, "%s ", item.key.c_str());
+			if (const auto* text = std::get_if<std::unique_ptr<Text>>(&item.value)) {
+				// print text
+				fprintf(stream, ": \"%s\"", text->get()->format.c_str());
+			};
+			if (const auto* section = std::get_if<std::unique_ptr<Section>>(&item.value)) {
+				// print section
+				section->get()->print(stream, tabs + 1);
+			};
+			fprintf(stream, "\n");
+		};
+
+		// print closing bracket
+		for (size_t i = 0; i < tabs; i++)
+			fprintf(stream, "  ", i);
+		fprintf(stream, "}");
 	};
 };

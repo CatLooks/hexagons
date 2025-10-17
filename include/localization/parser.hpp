@@ -49,9 +49,15 @@ namespace localization {
 	/// Reads characters until a new line.
 	/// 
 	/// @param state Parser state.
-	/// 
-	/// @return Stripped read data.
-	std::string skipToNextLine(State& state);
+	void skipToNextLine(State& state);
+
+	/// Reads characters until a new line.
+	///
+	/// @param state Parser state.
+	/// @param c First character.
+	///
+	/// @return Stripped string.
+	std::string readLine(State& state, char c);
 
 	/// Reads a name.
 	/// 
@@ -61,6 +67,15 @@ namespace localization {
 	/// 
 	/// @return Read name.
 	std::string readName(State& state, char& buffer);
+
+	/// Reads a path.
+	/// 
+	/// @param state Parser state.
+	/// @param buffer First character of the path.
+	/// @param quote String quote character.
+	/// 
+	/// @return Read path.
+	Path readPath(State& state, char buffer, char quote);
 
 	/// Reads in a string from a file.
 	/// 

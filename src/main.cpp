@@ -19,8 +19,14 @@ int main() {
 		return 1;
 	};
 	localization::State state(file);
-	localization::Section s = localization::load(state);
-	printf("Done\n");
+	localization::Section root = localization::load(state);
+	for (const auto& err : state.list) {
+		printf("error at line %llu column %llu: ", err->line, err->column);
+		err->print(stdout);
+		printf("\n");
+	};
+	root.print(stdout);
+	printf("\n");
 
 	ui::Interface interface;
 	ui::Layer* layer = interface.layer(nullptr);

@@ -1,1 +1,4 @@
-key: value
+a: value
+b: 'value'
+c: 'value {a}'
+d: 'value $(@a)'

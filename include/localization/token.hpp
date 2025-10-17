@@ -2,24 +2,37 @@
 
 // include dependencies
 #include <vector>
+#include <list>
 #include <string>
 #include <variant>
+#include <optional>
 #include <memory>
 
 namespace localization {
-	/// Localized text value.
+	// forward declarations
 	struct Text;
-	/// Data section value.
 	struct Section;
 
+	/// Variant value type.
+	using Value = std::variant<
+		std::unique_ptr<Text>,
+		std::unique_ptr<Section>
+	>;
+
+	/// Section access key path.
+	struct Path {
+		std::list<std::string> sub; /// Path recursive accesses.
+		std::string key;            /// Final path access.
+		bool local;                 /// Whether the path is local.
+	};
 	/// Text import instruction.
 	struct Import {
-		size_t offset;   /// Offset since last instruction.
-		std::string req; /// Request string.
+		size_t pos; /// Position in format string.
+		Path req;   /// Import path.
 	};
 	/// Text parameter instruction.
 	struct Param {
-		size_t offset;   /// Offset since last instruction.
+		size_t pos;      /// Position in format string.
 		std::string key; /// Parameter key.
 	};
 
@@ -30,57 +43,61 @@ namespace localization {
 	};
 	/// Raw localized string data.
 	struct RawText {
-		std::string format;          /// Format string.
-		std::vector<Import> imports; /// Import list.
-		std::vector<Param> params;   /// Parameter list.
+		/// Format string.
+		std::string format;
+		/// Import & parameter list.
+		std::vector<std::variant<Import, Param>> params;
 	};
 
-	/// Section access key path.
-	struct Path {
-		std::vector<std::string> sub; /// Path recursive accesses.
-		std::string key;              /// Final path access.
-	};
 	/// Section entry data.
-	class Entry {
-	public:
-		/// Entry value type.
-		enum Type {
-			Text,
-			Section
-		};
+	struct Entry {
+		std::string key; /// Entry key.
+		Value value;     /// Entry value.
 
-	private:
-		/// Entry value.
-		void* _value;
-		Type _type;
-
-	public:
-		/// Entry access key.
-		std::string key;
-
-		/// Constructs an entry with a text value.
-		/// 
+		/// Constructs a new entry.
+		///
 		/// @param key Entry key.
-		/// @param text Entry value.
-		Entry(std::string key, localization::Text text);
-		/// Constructs an entry with a section value.
-		/// 
+		/// @param value Entry text value (owning pointer).
+		Entry(std::string key, Text* value);
+		/// Constructs a new entry.
+		///
 		/// @param key Entry key.
-		/// @param section Entry value.
-		Entry(std::string key, localization::Section section);
-
-		/// Destructor.
-		~Entry();
-
-		/// @return Pointer to stored text if present.
-		localization::Text* text() const;
-		/// @return Pointer to stored section if present.
-		localization::Section* section() const;
-		/// @return Entry value type.
-		Type type() const;
+		/// @param value Entry section value (owning pointer).
+		Entry(std::string key, Section* value);
+		/// Constructs a new entry.
+		///
+		/// @param key Entry key.
+		/// @param value Entry text value.
+		Entry(std::string key, Text value);
+		/// Constructs a new entry.
+		///
+		/// @param key Entry key.
+		/// @param value Entry section value.
+		Entry(std::string key, Section value);
 	};
+
 	/// Data section value.
 	struct Section {
 		std::vector<Entry> items; /// Section entries.
+
+		/// Returns a value denoted by a key.
+		///
+		/// @param key Entry key.
+		///
+		/// @return Value or `nullptr` if a key is not found.
+		const Value* get(std::string key) const;
+
+		/// Returns a value denoted by a recursive path.
+		///
+		/// @param path Value path.
+		///
+		/// @return Value pointer or index of a bad access.
+		std::variant<const Value*, size_t> get(Path path) const;
+
+		/// Print section data.
+		///
+		/// @param stream Output stream.
+		/// @param tabs Text tabbing.
+		void print(FILE* stream, size_t tabs = 0) const;
 	};
 };

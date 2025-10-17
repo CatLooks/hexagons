@@ -32,31 +32,42 @@ namespace localization {
 	/// Loads all raw string imports.
 	Text loadImports(State& state, const RawText& text, const Section& root, const Section& local) {
 		Text result;
+		
+		// process all instructions
+		for (const auto& inst : text.params) {
+			// pass through parameters
+			if (const auto* param = std::get_if<Param>(&inst)) {
+				result.params.push_back({ result.format.size(), param->key });
+				continue;
+			};
+
+			// load import
+			if (const auto* import = std::get_if<Import>(&inst)) {
+				// try to load import path
+
+			};
+		};
+
+		// return loaded text string
 		return result;
 	};
 
 	/// Reads characters until a new line.
-	std::string skipToNextLine(State& state) {
-		std::string text;
-
-		// skip first whitespaces
+	void skipToNextLine(State& state) {
 		while (char c = state.read()) {
-			if (c == '\n') return text;
-			if (!isspace(c)) {
-				text.push_back(c);
-				break;
-			};
+			if (c == '\n') break;
 		};
+	};
 
-		// read other data
-		size_t last_nonspace = 0;
+	/// Reads characters until a new line.
+	std::string readLine(State& state, char c) {
+		std::string text;
+		if (c) text.push_back(c);
 		while (char c = state.read()) {
 			if (c == '\n') break;
 			text.push_back(c);
-			if (!isspace(c))
-				last_nonspace = text.size();
 		};
-		return text.substr(0, last_nonspace);
+		return text;
 	};
 
 	/// Reads a name.
@@ -71,6 +82,51 @@ namespace localization {
 			name.push_back(c);
 		};
 		return name;
+	};
+
+	/// Reads a path.
+	Path readPath(State& state, char buffer, char quote) {
+		Path path;
+
+		// load first character
+		if (buffer == '@')
+			path.local = true;
+		else
+			path.key.push_back(buffer);
+
+		// parse characters
+		bool empty_error = false;
+		while (char c = state.read()) {
+			// add character to the key
+			if (isalnum(c) || c == '_') {
+				path.key.push_back(c);
+				continue;
+			};
+
+			// check for subsection split
+			if (c == '.') {
+				if (path.key.empty()) empty_error = true;
+				path.sub.push_back(path.key);
+				path.key.clear();
+			};
+
+			// break if encountered a parenthesis
+			if (c == ')') break;
+
+			// force break if EOS
+			if (c == quote) {
+				state.report(gUnclosedImport()->at(state));
+				break;
+			};
+
+			// invalid character
+			state.report(gInvalidCharacter(c)->at(state));
+		};
+
+		// check for empty key
+		if (path.key.empty() || empty_error)
+			state.report(gEmptyImport(path)->at(state));
+		return path;
 	};
 
 	/// Reads in a string from a file.
@@ -111,8 +167,14 @@ namespace localization {
 
 			// check for an import
 			if (c == '(' && import) {
+				// remove '$' from format string
+				text.format.pop_back();
+
 				// read import path
-				// @todo
+				Path path = readPath(state, c, first);
+
+				// add import path
+				text.params.push_back(Import{ text.format.size(), path });
 				import = false;
 				continue;
 			};
@@ -155,104 +217,191 @@ namespace localization {
 
 	/// Loads localization file.
 	Section load(State& state) {
+		// stack frame data
+		struct data_t {
+			Section* sec;    /// Section reference.
+			std::string key; /// Section key.
+		};
+
 		// section stack
 		Section root;
-		std::stack<Section*> stack;
-		stack.push(&root);
+		std::stack<data_t> stack;
+		stack.push({ &root, "" });
 
 		// parser state
-		std::string key;
-		bool colon = false;
-		bool inhibit_read = false;
+		std::string key;           // Entry key string.
+		bool colon = false;        // ':' has been encountered.
+		bool inhibit_read = false; // Don't fetch next character.
+		bool newline = false;      // Process new line during next cycle.
+		bool entry_end = false;    // Whether the entry has been fully parsed.
+		bool queue_exit = false;   // Exit the loop during next new line check.
 
 		// parse the file
 		char c = 0;
 		while (1) {
+			// handle new line
+			if (newline) {
+				// check for unfinished entry
+				if (!entry_end && !key.empty())
+					state.report(gEmptyValue(key)->at(state));
+
+				// reset flags
+				key.clear();
+				newline = false;
+				entry_end = false;
+				colon = false;
+
+				// check for exit
+				if (queue_exit) break;
+			};
+
 			// read next character
 			if (!inhibit_read) {
 				c = state.read();
-				if (!c) break;
+				if (!c) {
+					c = '\n';
+					queue_exit = true;
+				};
 			};
 			inhibit_read = false;
+
+			// process newlines
+			if (c == '\n') {
+				newline = true;
+				continue;
+			};
+			// ignore comments
+			if (c == '#') {
+				skipToNextLine(state);
+				newline = true;
+				continue;
+			};
 
 			// ignore whitespaces
 			if (isspace(c)) continue;
 
-			// execute if a key is not entered
-			if (key.empty()) {
-				// skip comments
-				if (c == '#') {
-					skipToNextLine(state);
+			// check for a section start
+			if (c == '{') {
+				// check for stray section
+				if (key.empty()) {
+					state.report(gUnexpectedSection()->at(state));
+				};
+
+				// create new stack frame
+				stack.push({ new Section, key });
+				entry_end = true;
+				continue;
+			};
+
+			// check for a section end
+			if (c == '}') {
+				// check for anything before
+				if (!key.empty() || entry_end) {
+					state.report(gEndAfterDefinition()->at(state));
+				};
+
+				// check for stray parenthesis
+				if (stack.size() <= 1) {
+					state.report(gStrayEndBracket()->at(state));
 					continue;
 				};
 
-				// check for a key
-				if (isalnum(c) || c == '_') {
-					// read the key
+				// pop stack frame
+				data_t frame = stack.top();
+				stack.pop();
+
+				// add a section entry
+				stack.top().sec->items.push_back({ frame.key, frame.sec });
+				entry_end = true;
+				continue;
+			};
+
+			// check for a colon
+			if (c == ':') {
+				// check for stray colon
+				if (entry_end) {
+					state.report(gUnexpectedToken()->at(state));
+					skipToNextLine(state);
+					newline = true;
+					continue;
+				};
+
+				// check for an extra colon
+				if (colon)
+					state.report(gInvalidCharacter(c)->at(state));
+				colon = true;
+				continue;
+			};
+
+			// check for a key
+			if (isalnum(c) || c == '_') {
+				// check for stray key
+				if (entry_end) {
+					state.report(gUnexpectedToken()->at(state));
+					skipToNextLine(state);
+					newline = true;
+					continue;
+				};
+
+				// read new entry key
+				if (key.empty()) {
+					// read the rest of the key
 					key = readName(state, c);
 					inhibit_read = true;
 					continue;
 				};
 
-				// check for a string
-				if (c == '\'' || c == '"') {
-					readString(state, c);
-					state.report(gUnexpectedString()->at(state));
-					skipToNextLine(state);
-					continue;
-				};
-			}
-			// execite of a key is entered
-			else {
-				// skip comments
-				if (c == '#') {
-					state.report(gEmptyValue(key)->at(state));
-					skipToNextLine(state);
-					key.clear();
-					continue;
-				};
-
-				// check for a colon
-				if (c == ':') {
-					if (colon)
-						state.report(gInvalidCharacter(c)->at(state));
-					colon = true;
-					continue;
-				};
-
 				// check for an unquoted value
-				if (isalnum(c) || c == '_') {
-					// check for missing colon
-					if (!colon)
-						state.report(gMissingColon()->at(state));
-					colon = false;
-
+				if (colon) {
 					// read the value
-					std::string data = skipToNextLine(state);
+					std::string str = readLine(state, c);
+					newline = true;
 
-					// add a section entry
-					stack.top()->items.push_back({ key, Text(data, {}) });
-					key.clear();
+					// add new entry
+					stack.top().sec->items.push_back({ key, new Text(str, {}) });
+					entry_end = true;
 					continue;
 				};
 
-				// check for a string
-				if (c == '\'' || c == '"') {
-					// read string & load imports
-					RawText raw = readString(state, c);
-					Text text = loadImports(state, raw, root, *stack.top());
+				// unexpected value
+				state.report(gUnexpectedToken()->at(state));
+				continue;
+			};
 
-					// add a section entry
-					stack.top()->items.push_back({ key, text });
-					key.clear();
+			// check for a string
+			if (c == '\'' || c == '"') {
+				// check for a stray string
+				if (entry_end) {
+					state.report(gUnexpectedToken()->at(state));
+					skipToNextLine(state);
+					newline = true;
 					continue;
 				};
+
+				// read the string
+				RawText raw = readString(state, c);
+				// load string imports
+				Text text = loadImports(state, raw, root, *stack.top().sec);
+
+				// add new entry
+				stack.top().sec->items.push_back({ key, text });
+				entry_end = true;
+				continue;
 			};
 
 			// invalid character
 			state.report(gInvalidCharacter(c)->at(state));
+			skipToNextLine(state);
+			newline = true;
 		};
 		
+		// check for unclosed sections
+		while (stack.size() > 1) {
+			state.report(gUnclosedSection(stack.top().key)->at(state));
+			delete stack.top().sec;
+			stack.pop();
+		};
+
 		// return root section
 		return root;
 	};

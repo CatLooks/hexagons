@@ -44,43 +44,45 @@ namespace localization {
 
 	/// Encountered an invalid character.
 	/// @param c Encountered character.
-	/// @return New error object.
 	Error* gInvalidCharacter(char c);
 	/// Encountered an unknown escape sequence.
 	/// @param c Escape character.
-	/// @return New error object.
 	Error* gUnknownEscape(char c);
 	/// Encountered EOL while parsing a string.
-	/// @return New error object.
 	Error* gUnclosedString();
 	/// No parameter name found.
-	/// @return New error object.
 	Error* gMissingParamName();
 	/// Encountered EOS while parsing a parameter.
 	/// @param name Parameter name.
-	/// @return New error object.
 	Error* gUnclosedParam(std::string name);
+	/// Encountered EOS while parsing an import.
+	Error* gUnclosedImport();
+	/// Empty path key.
+	/// @param path Import path.
+	Error* gEmptyImport(Path path);
 	/// Invalid path provided in an import.
 	/// @param path Import path.
 	/// @param step Step index that generated an error.
-	/// @return New error object.
 	Error* gInvalidImport(Path path, size_t step);
 	/// Missing value in a section entry.
 	/// @param key Entry key name.
-	/// @return New error object.
 	Error* gEmptyValue(std::string key);
 	/// Missing a colon between key and value.
-	/// @return New error object.
 	Error* gMissingColon();
 	/// Encountered a string when expecting a key.
-	/// @return New error object.
 	Error* gUnexpectedString();
+	/// Encountered a token when after entry has ended.
+	Error* gUnexpectedToken();
+	/// Encountered a section when expecting a key.
+	Error* gUnexpectedSection();
+	/// Encountered section end after definition.
+	Error* gEndAfterDefinition();
+	/// Encountered a stray closing bracket.
+	Error* gStrayEndBracket();
 	/// Duplicate key declaration.
 	/// @param key Entry key name.
-	/// @return New error object.
 	Error* gDuplicateKey(std::string key);
 	/// Encountered EOF while parsing a section.
 	/// @param name Section name.
-	/// @return New error object.
 	Error* gUnclosedSection(std::string name);
 };
