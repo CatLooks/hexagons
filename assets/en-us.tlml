@@ -13,3 +13,5 @@ sub: {
 	inner_test: '$(@sub.key)'   # "inner"
 	absolute_test: '$(sub.key)' # "local"
 }
+
+button_test: 'Animate'

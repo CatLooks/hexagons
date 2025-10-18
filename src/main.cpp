@@ -2,9 +2,13 @@
 #include "ui/solid.hpp"
 #include "ui/layer.hpp"
 #include "ui/panel.hpp"
+#include "ui/text.hpp"
 #include "ui/anim/linear.hpp"
 #include <iostream>
 #include "localization/parser.hpp"
+
+
+sf::Font font(std::string(ASSET_PATH) + "font.ttf");
 
 /// Program entry.
 /// @return Exit code.
@@ -61,7 +65,7 @@ int main() {
 		layer->add(button);
 
 		button->bounds = { 50px, y, 200px, 50px };
-		button->color = sf::Color::Yellow;
+		button->color = sf::Color(128, 0, 255);
 		button->onEvent([=](const ui::Event& evt) {
 			if (const auto data = evt.get<ui::Event::MousePress>()) {
 				if (data->button == sf::Mouse::Button::Left) {
@@ -76,10 +80,17 @@ int main() {
 
 			return false;
 		});
+		{
+			ui::TextSettings sets(font, 30, root);
+			ui::Text* label = new ui::Text(sets, "button_test");
+			button->add(label);
+
+			label->setOutline(sf::Color::Black, 2.f);
+			label->bounds = { 0px, 0px, 1ps, 1ps };
+		}
 	}
 
 	// test text
-	sf::Font font(std::string(ASSET_PATH) + "font.ttf");
 	interface.setStatDrawCall([=](sf::RenderTarget& target, const ui::RenderStats& stats) {
 		sf::Text text(font, std::format("{}Q | {}T | {}F | {}B", stats.quads, stats.triangles, stats.text, stats.batches), 24);
 		text.setPosition({ 6, 0 });
@@ -99,6 +110,11 @@ int main() {
 		while (const auto event = win.pollEvent()) {
 			if (event->is<sf::Event::Closed>()) {
 				win.close();
+			};
+			if (const auto* data = event->getIf<sf::Event::KeyPressed>()) {
+				if (data->code == sf::Keyboard::Key::R) {
+					interface.translate();
+				};
 			};
 			interface.event(*event);
 		};

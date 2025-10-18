@@ -40,6 +40,7 @@
     <ClCompile Include="src\ui\layer.cpp" />
     <ClCompile Include="src\ui\panel.cpp" />
     <ClCompile Include="src\ui\solid.cpp" />
+    <ClCompile Include="src\ui\text.cpp" />
     <ClCompile Include="src\ui\units.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +62,7 @@
     <ClInclude Include="include\ui\layer.hpp" />
     <ClInclude Include="include\ui\panel.hpp" />
     <ClInclude Include="include\ui\solid.hpp" />
+    <ClInclude Include="include\ui\text.hpp" />
     <ClInclude Include="include\ui\units.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
