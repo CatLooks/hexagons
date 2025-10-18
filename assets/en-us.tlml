@@ -1,4 +1,15 @@
-a: value
-b: 'value'
-c: 'value {a}'
-d: 'value $(@a)'
+key: global
+
+sub: {
+	key: local
+
+	sub: {
+		key: inner
+	}
+
+	global_test: '$(key)'       # "global"
+	local_test: '$(@key)'       # "local"
+
+	inner_test: '$(@sub.key)'   # "inner"
+	absolute_test: '$(sub.key)' # "local"
+}

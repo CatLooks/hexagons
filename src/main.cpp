@@ -20,6 +20,8 @@ int main() {
 	};
 	localization::State state(file);
 	localization::Section root = localization::load(state);
+	fclose(file);
+
 	for (const auto& err : state.list) {
 		printf("error at line %llu column %llu: ", err->line, err->column);
 		err->print(stdout);

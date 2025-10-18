@@ -60,6 +60,9 @@ namespace localization {
 	/// Empty path key.
 	/// @param path Import path.
 	Error* gEmptyImport(Path path);
+	/// Attempted to import a section.
+	/// @param path Section path.
+	Error* gSectionImport(Path path);
 	/// Invalid path provided in an import.
 	/// @param path Import path.
 	/// @param step Step index that generated an error.

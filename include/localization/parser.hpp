@@ -36,15 +36,14 @@ namespace localization {
 		char read();
 	};
 
-	/// Loads all raw string imports.
+	/// Inserts imported text.
 	/// 
 	/// @param state Parser state.
-	/// @param text Raw string.
+	/// @param req Import path.
+	/// @param text Target text.
 	/// @param root Root section.
 	/// @param local Local section.
-	/// 
-	/// @return Text object.
-	Text loadImports(State& state, const RawText& text, const Section& root, const Section& local);
+	void loadImport(State& state, const Path& req, Text& text, const Section& root, const Section& local);
 
 	/// Reads characters until a new line.
 	/// 
@@ -71,19 +70,20 @@ namespace localization {
 	/// Reads a path.
 	/// 
 	/// @param state Parser state.
-	/// @param buffer First character of the path.
 	/// @param quote String quote character.
 	/// 
 	/// @return Read path.
-	Path readPath(State& state, char buffer, char quote);
+	Path readPath(State& state, char quote);
 
 	/// Reads in a string from a file.
 	/// 
 	/// @param state Parser state.
 	/// @param first First read character.
+	/// @param root Root section.
+	/// @param local Local section.
 	/// 
 	/// @return Parsed string or `""` if an error occured.
-	RawText readString(State& state, char first);
+	Text readString(State& state, char first, const Section& root, const Section& local);
 
 	/// Loads localization file.
 	/// 

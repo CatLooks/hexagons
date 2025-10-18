@@ -60,28 +60,22 @@ namespace localization {
 	Error* gEmptyImport(Path path) {
 		return new Error([=](FILE* out) {
 			fprintf(out, "missing key in import path \"");
-
-			// replacement string
-			const char* repl = "?";
-
-			// print import steps
-			for (const auto& sub : path.sub) {
-				fprintf(out, "%s.", sub.empty() ? repl : sub.c_str());
-			};
-			fprintf(out, "%s\"", path.key.empty() ? repl : path.key.c_str());
+			fprintf(out, "%s", path.string().c_str());
+			fprintf(out, "\"");
+		});
+	};
+	Error* gSectionImport(Path path) {
+		return new Error([=](FILE* out) {
+			fprintf(out, "cannot import a section \"");
+			fprintf(out, "%s", path.string().c_str());
+			fprintf(out, "\"");
 		});
 	};
 	Error* gInvalidImport(Path path, size_t step) {
 		return new Error([=](FILE* out) {
 			fprintf(out, "failed to import from path \"");
-
-			// print import steps
-			size_t left = step;
-			for (const auto& sub : path.sub) {
-				fprintf(out, (left == 1 ? "%s" : "%s."), sub.c_str());
-				if (--left == 0) break;
-			};
-			if (left) fprintf(out, "%s\"", path.key.c_str());
+			fprintf(out, "%s", path.string(step).c_str());
+			fprintf(out, "\"");
 		});
 	};
 	Error* gEmptyValue(std::string key) {

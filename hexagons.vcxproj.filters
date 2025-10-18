@@ -63,6 +63,9 @@
     <None Include="TLML.sublime-syntax">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="assets\en-us.tlml">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\ui\buffer.hpp">

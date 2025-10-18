@@ -29,27 +29,51 @@ namespace localization {
 		return c;
 	};
 
-	/// Loads all raw string imports.
-	Text loadImports(State& state, const RawText& text, const Section& root, const Section& local) {
-		Text result;
-		
-		// process all instructions
-		for (const auto& inst : text.params) {
-			// pass through parameters
-			if (const auto* param = std::get_if<Param>(&inst)) {
-				result.params.push_back({ result.format.size(), param->key });
-				continue;
-			};
+	/// Inserts imported text.
+	void loadImport(State& state, const Path& req, Text& text, const Section& root, const Section& local) {
+		// try to load import path
+		const Section& used = req.local ? local : root;
+		auto data = used.get(req);
 
-			// load import
-			if (const auto* import = std::get_if<Import>(&inst)) {
-				// try to load import path
+		// error if path is invalid
+		if (const auto* err = std::get_if<size_t>(&data)) {
+			state.report(gInvalidImport(req, *err)->at(state));
 
-			};
+			// add replacement text
+			text.format.append("$(");
+			text.format.append(req.string(*err));
+			text.format.append("?)");
+			return;
 		};
+		if (const auto** ptr_to_value = std::get_if<const Value*>(&data)) {
+			const Value* value = *ptr_to_value;
 
-		// return loaded text string
-		return result;
+			// check if the value is text
+			if (const auto* text_value = std::get_if<std::unique_ptr<Text>>(value)) {
+				Text* oth = text_value->get();
+
+				// copy parameters
+				for (const Param& param : oth->params) {
+					text.params.push_back({
+						param.pos + text.format.size(),
+						param.key
+					});
+				};
+
+				// copy format string data
+				text.format.append(oth->format);
+				return;
+			};
+
+			// cannot import a section
+			state.report(gSectionImport(req)->at(state));
+			
+			// add replacement text
+			text.format.append("$(");
+			text.format.append(req.string());
+			text.format.append(".*)");
+			return;
+		};
 	};
 
 	/// Reads characters until a new line.
@@ -85,14 +109,28 @@ namespace localization {
 	};
 
 	/// Reads a path.
-	Path readPath(State& state, char buffer, char quote) {
+	Path readPath(State& state, char quote) {
 		Path path;
 
 		// load first character
-		if (buffer == '@')
-			path.local = true;
-		else
-			path.key.push_back(buffer);
+		char c = state.read();
+		switch (c) {
+			case '@':
+				// set local path
+				path.local = true;
+				break;
+			case ')':
+				// empty path
+				state.report(gEmptyImport(path)->at(state));
+				return path;
+			default:
+				// process first character
+				if (isalnum(c) || c == '_')
+					path.key.push_back(c);
+				else
+					state.report(gInvalidCharacter(c)->at(state));
+				break;
+		};
 
 		// parse characters
 		bool empty_error = false;
@@ -108,6 +146,7 @@ namespace localization {
 				if (path.key.empty()) empty_error = true;
 				path.sub.push_back(path.key);
 				path.key.clear();
+				continue;
 			};
 
 			// break if encountered a parenthesis
@@ -130,8 +169,8 @@ namespace localization {
 	};
 
 	/// Reads in a string from a file.
-	RawText readString(State& state, char first) {
-		RawText text;
+	Text readString(State& state, char first, const Section& root, const Section& local) {
+		Text text;
 
 		// parser loop
 		bool escape = false; // is '\'?
@@ -171,10 +210,10 @@ namespace localization {
 				text.format.pop_back();
 
 				// read import path
-				Path path = readPath(state, c, first);
+				Path path = readPath(state, first);
 
-				// add import path
-				text.params.push_back(Import{ text.format.size(), path });
+				// add import data
+				loadImport(state, path, text, root, local);
 				import = false;
 				continue;
 			};
@@ -217,16 +256,10 @@ namespace localization {
 
 	/// Loads localization file.
 	Section load(State& state) {
-		// stack frame data
-		struct data_t {
-			Section* sec;    /// Section reference.
-			std::string key; /// Section key.
-		};
-
 		// section stack
 		Section root;
-		std::stack<data_t> stack;
-		stack.push({ &root, "" });
+		std::stack<Section*> stack;
+		stack.push(&root);
 
 		// parser state
 		std::string key;           // Entry key string.
@@ -288,7 +321,9 @@ namespace localization {
 				};
 
 				// create new stack frame
-				stack.push({ new Section, key });
+				Section* section = new Section;
+				stack.top()->items.push_back({ key, section });
+				stack.push(section);
 				entry_end = true;
 				continue;
 			};
@@ -307,11 +342,7 @@ namespace localization {
 				};
 
 				// pop stack frame
-				data_t frame = stack.top();
 				stack.pop();
-
-				// add a section entry
-				stack.top().sec->items.push_back({ frame.key, frame.sec });
 				entry_end = true;
 				continue;
 			};
@@ -358,7 +389,7 @@ namespace localization {
 					newline = true;
 
 					// add new entry
-					stack.top().sec->items.push_back({ key, new Text(str, {}) });
+					stack.top()->items.push_back({ key, new Text(str, {}) });
 					entry_end = true;
 					continue;
 				};
@@ -379,12 +410,10 @@ namespace localization {
 				};
 
 				// read the string
-				RawText raw = readString(state, c);
-				// load string imports
-				Text text = loadImports(state, raw, root, *stack.top().sec);
+				Text text = readString(state, c, root, *stack.top());
 
 				// add new entry
-				stack.top().sec->items.push_back({ key, text });
+				stack.top()->items.push_back({ key, text });
 				entry_end = true;
 				continue;
 			};
@@ -397,9 +426,9 @@ namespace localization {
 		
 		// check for unclosed sections
 		while (stack.size() > 1) {
-			state.report(gUnclosedSection(stack.top().key)->at(state));
-			delete stack.top().sec;
+			delete stack.top();
 			stack.pop();
+			state.report(gUnclosedSection(stack.top()->items.back().key)->at(state));
 		};
 
 		// return root section

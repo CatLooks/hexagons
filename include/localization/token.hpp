@@ -2,11 +2,12 @@
 
 // include dependencies
 #include <vector>
-#include <list>
 #include <string>
 #include <variant>
 #include <optional>
 #include <memory>
+#include <map>
+#include <initializer_list>
 
 namespace localization {
 	// forward declarations
@@ -21,14 +22,19 @@ namespace localization {
 
 	/// Section access key path.
 	struct Path {
-		std::list<std::string> sub; /// Path recursive accesses.
-		std::string key;            /// Final path access.
-		bool local;                 /// Whether the path is local.
-	};
-	/// Text import instruction.
-	struct Import {
-		size_t pos; /// Position in format string.
-		Path req;   /// Import path.
+		std::vector<std::string> sub; /// Path recursive accesses.
+		std::string key;              /// Final path access.
+		bool local = false;           /// Whether the path is local.
+
+		/// Constructs an empty path.
+		Path();
+		/// Constructs a path from a C-string.
+		Path(const char* string);
+
+		/// Converts the path to a string.
+		/// 
+		/// @param last_idx Last index to display.
+		std::string string(size_t last_idx = ~0ull) const;
 	};
 	/// Text parameter instruction.
 	struct Param {
@@ -38,15 +44,30 @@ namespace localization {
 
 	/// Localized text value.
 	struct Text {
+		/// Argument specifier structure.
+		struct Arg {
+			std::string name;  /// Argument name.
+			std::string value; /// Argument value.
+		};
+
 		std::string format;        /// Format string.
 		std::vector<Param> params; /// Parameter list.
-	};
-	/// Raw localized string data.
-	struct RawText {
-		/// Format string.
-		std::string format;
-		/// Import & parameter list.
-		std::vector<std::variant<Import, Param>> params;
+
+		/// Creates a formatted text string.
+		/// 
+		/// If an argument value cannot be found, it will be replaced by `{name}` string.
+		/// 
+		/// Extra argument names are ignored.
+		/// 
+		/// @param args Format arguments.
+		/// 
+		/// @return Formatted string.
+		std::string get(std::initializer_list<Arg> args = {}) const;
+
+		template <typename... Args>
+		std::string get(Args&&... args) const {
+			return get({ Arg(args)... });
+		};
 	};
 
 	/// Section entry data.
@@ -93,6 +114,13 @@ namespace localization {
 		///
 		/// @return Value pointer or index of a bad access.
 		std::variant<const Value*, size_t> get(Path path) const;
+
+		/// Requests the text value at a path.
+		/// 
+		/// @param path Requested path.
+		/// 
+		/// @return Text value or a replacement string if path is invalid.
+		Text req(const Path& path) const;
 
 		/// Print section data.
 		///
