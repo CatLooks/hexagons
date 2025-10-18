@@ -43,7 +43,7 @@ namespace ui {
 		/// Format arguments.
 		std::unordered_map<std::string, std::string> _args;
 		/// Automatic argument setters.
-		std::unordered_map<std::string, std::function<std::string()>> _autoargs;
+		std::unordered_map<std::string, std::function<std::optional<std::string>()>> _autoargs;
 
 		/// Recalculates text state.
 		void onRecalculate() override;
@@ -54,6 +54,9 @@ namespace ui {
 		void drawSelf(RenderBuffer& target, sf::IntRect self) const override;
 
 	public:
+		/// Automatic argument generator return type.
+		using Hook = std::optional<std::string>;
+
 		/// Whether to automatically set label size to text size.
 		bool autosize = false;
 		/// Whether to shrink text bounding box optimally.
@@ -81,7 +84,7 @@ namespace ui {
 		/// 
 		/// @param name Argument name.
 		/// @param generator Argument generator.
-		void paramHook(std::string name, std::function<std::string()> generator);
+		void paramHook(std::string name, std::function<Hook()> generator);
 
 		/// Configures text scaling.
 		/// 

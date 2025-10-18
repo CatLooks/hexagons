@@ -23,4 +23,6 @@ demo {
 	4: Sine In
 	5: Sine Out
 	6: Sine In Out
+
+	fps: "FPS: {fps}"
 }

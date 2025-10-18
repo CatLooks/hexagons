@@ -109,6 +109,29 @@ int main() {
 		}
 	}
 
+	// fps text
+	{
+		ui::Text* text = new ui::Text(sets, "demo.fps");
+		layer->add(text);
+
+		text->position() = { 10px, 1ps - 36px };
+		text->setOutline(sf::Color::Black, 2);
+
+		text->paramHook("fps", []() -> ui::Text::Hook {
+			static sf::Clock fps;
+			static int counter = 0;
+
+			if (fps.getElapsedTime().asSeconds() < 0.25f) {
+				counter++;
+				return {};
+			};
+
+			float time = fps.restart().asSeconds() / counter;
+			counter = 1;
+			return std::format("{:.1f}", 1.f / time);
+		});
+	}
+
 	// test text
 	interface.setStatDrawCall([=](sf::RenderTarget& target, const ui::RenderStats& stats) {
 		sf::Text text(font, std::format("{}Q | {}T | {}F | {}B", stats.quads, stats.triangles, stats.text, stats.batches), 24);

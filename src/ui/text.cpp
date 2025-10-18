@@ -13,8 +13,10 @@ namespace ui {
 	/// Recalculates text state.
 	void Text::onRecalculate() {
 		// evaluate auto-loading arguments
-		for (const auto& gen : _autoargs)
-			_args[gen.first] = gen.second();
+		for (const auto& gen : _autoargs) {
+			if (auto value = gen.second())
+				_args[gen.first] = *value;
+		};
 
 		// evaluate text parameters
 		std::string value = _format.get(_args);
@@ -74,7 +76,7 @@ namespace ui {
 		_args[name] = value;
 	};
 	/// Adds a format argument generator hook.
-	void Text::paramHook(std::string name, std::function<std::string()> generator) {
+	void Text::paramHook(std::string name, std::function<Hook()> generator) {
 		_autoargs[name] = generator;
 	};
 
