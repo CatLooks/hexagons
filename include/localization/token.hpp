@@ -58,7 +58,7 @@ namespace localization {
 		/// @param args Format arguments.
 		/// 
 		/// @return Formatted string.
-		std::string get(std::unordered_map<std::string, std::string> args) const;
+		std::string get(const std::unordered_map<std::string, std::string>& args) const;
 	};
 
 	/// Section entry data.

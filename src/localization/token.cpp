@@ -132,7 +132,7 @@ namespace localization {
 	};
 
 	/// Creates a formatted text string.
-	std::string Text::get(std::unordered_map<std::string, std::string> args) const {
+	std::string Text::get(const std::unordered_map<std::string, std::string>& args) const {
 		// insert all parameters
 		std::string result;
 		size_t idx = 0;
