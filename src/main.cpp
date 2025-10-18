@@ -4,7 +4,6 @@
 #include "ui/panel.hpp"
 #include "ui/text.hpp"
 #include "ui/anim/linear.hpp"
-#include <iostream>
 #include "localization/parser.hpp"
 
 
@@ -25,6 +24,8 @@ int main() {
 	localization::State state(file);
 	localization::Section root = localization::load(state);
 	fclose(file);
+
+	ui::TextSettings sets(font, 24, root);
 
 	for (const auto& err : state.list) {
 		printf("error at line %llu column %llu: ", err->line, err->column);
@@ -49,7 +50,7 @@ int main() {
 		};
 		ui::Solid* els[7] { nullptr };
 
-		// generate solids
+		// generate solids & text
 		ui::Dim y = 50px;
 		for (size_t i = 0; i < 7; i++) {
 			els[i] = new ui::Solid;
@@ -57,6 +58,22 @@ int main() {
 
 			els[i]->bounds = { 50px, y, 50px, 50px };
 			els[i]->color = sf::Color::Red;
+
+			{
+				ui::Solid* inner = new ui::Solid;
+				els[i]->add(inner);
+
+				inner->bounds = { 10px, 10px, 1ps - 2es, 1ps - 2es };
+				inner->color = sf::Color(200, 0, 0);
+			}
+
+			ui::Text* label = new ui::Text(sets, std::format("demo.{}", i));
+			layer->add(label);
+
+			label->bounds = { 650px, y, 0px, 50px };
+			label->alignY = ui::Text::Center;
+			label->setOutline(sf::Color::Black, 2);
+
 			y += 80px;
 		};
 
@@ -81,12 +98,14 @@ int main() {
 			return false;
 		});
 		{
-			ui::TextSettings sets(font, 30, root);
-			ui::Text* label = new ui::Text(sets, "button_test");
+			ui::Text* label = new ui::Text(sets, "demo.button");
 			button->add(label);
 
 			label->setOutline(sf::Color::Black, 2.f);
 			label->bounds = { 0px, 0px, 1ps, 1ps };
+			label->alignX = ui::Text::Center;
+			label->alignY = ui::Text::Center;
+			label->shrink_to_fit = true;
 		}
 	}
 

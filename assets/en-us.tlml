@@ -14,4 +14,13 @@ sub: {
 	absolute_test: '$(sub.key)' # "local"
 }
 
-button_test: 'Animate'
+demo {
+	button: Animate
+	0: Linear
+	1: Quad In
+	2: Quad Out
+	3: Quad In Out
+	4: Sine In
+	5: Sine Out
+	6: Sine In Out
+}

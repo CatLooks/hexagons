@@ -54,6 +54,8 @@ namespace localization {
 			return;
 		};
 	};
+	/// Constructs a path from a string.
+	Path::Path(std::string string) : Path(string.c_str()) {};
 
 	/// Constructs a new entry.
 	Entry::Entry(std::string key, Text* value)
@@ -130,12 +132,7 @@ namespace localization {
 	};
 
 	/// Creates a formatted text string.
-	std::string Text::get(std::initializer_list<Arg> args) const {
-		// store arguments in a map
-		std::map<std::string, std::string> argmap;
-		for (const Arg& arg : args)
-			argmap.insert(std::make_pair(arg.name, arg.value));
-
+	std::string Text::get(std::unordered_map<std::string, std::string> args) const {
 		// insert all parameters
 		std::string result;
 		size_t idx = 0;
@@ -147,8 +144,8 @@ namespace localization {
 			};
 
 			// insert parameter value
-			auto value = argmap.find(param.key);
-			if (value == argmap.cend())
+			auto value = args.find(param.key);
+			if (value == args.cend())
 				result.append("{" + param.key + "}");
 			else
 				result.append(value->second);

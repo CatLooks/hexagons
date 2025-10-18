@@ -34,9 +34,16 @@ namespace ui {
 		static float alignMultiplier(Align align);
 
 	protected:
-		std::function<localization::Text()> _reload; /// Format reloader.
-		localization::Text _format;                  /// Format object.
-		std::unique_ptr<sf::Text> _text;             /// Rendering object.
+		/// Format reloader.
+		std::function<localization::Text()> _reload;
+		/// Text format object.
+		localization::Text _format;
+		/// Text rendering object.
+		std::unique_ptr<sf::Text> _text;
+		/// Format arguments.
+		std::unordered_map<std::string, std::string> _args;
+		/// Automatic argument setters.
+		std::unordered_map<std::string, std::function<std::string()>> _autoargs;
 
 		/// Recalculates text state.
 		void onRecalculate() override;
@@ -47,8 +54,13 @@ namespace ui {
 		void drawSelf(RenderBuffer& target, sf::IntRect self) const override;
 
 	public:
-		/// Whether to automatically update label size to text size.
+		/// Whether to automatically set label size to text size.
 		bool autosize = false;
+		/// Whether to shrink text bounding box optimally.
+		/// 
+		/// Setting this to `true` may result in text jumps when contents change.
+		/// Setting this to `false` may result in text not looking properly vertically aligned.
+		bool shrink_to_fit = false;
 
 		/// Constructs a text element.
 		/// 
@@ -56,16 +68,29 @@ namespace ui {
 		/// @param path Text localization path.
 		Text(const TextSettings& settings, const localization::Path& path);
 
+		/// Clears text arguments.
+		void paramClear();
+		/// Clears text argument hooks.
+		void paramHookClear();
+		/// Sets format argument value.
+		/// 
+		/// @param name Argument name.
+		/// @param value Argument value.
+		void param(std::string name, std::string value);
+		/// Adds a format argument generator hook.
+		/// 
+		/// @param name Argument name.
+		/// @param generator Argument generator.
+		void paramHook(std::string name, std::function<std::string()> generator);
+
 		/// Configures text scaling.
 		/// 
 		/// @param scale Text scale.
 		void setScale(float scale) const;
-
 		/// Configures text color.
 		/// 
 		/// @param color Text color.
 		void setColor(sf::Color color) const;
-
 		/// Configures text outline.
 		/// 
 		/// @param color Outline color.

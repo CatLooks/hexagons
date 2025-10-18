@@ -6,7 +6,7 @@
 #include <variant>
 #include <optional>
 #include <memory>
-#include <map>
+#include <unordered_map>
 #include <initializer_list>
 
 namespace localization {
@@ -30,6 +30,8 @@ namespace localization {
 		Path();
 		/// Constructs a path from a C-string.
 		Path(const char* string);
+		/// Constructs a path from a string.
+		Path(std::string string);
 
 		/// Converts the path to a string.
 		/// 
@@ -44,12 +46,6 @@ namespace localization {
 
 	/// Localized text value.
 	struct Text {
-		/// Argument specifier structure.
-		struct Arg {
-			std::string name;  /// Argument name.
-			std::string value; /// Argument value.
-		};
-
 		std::string format;        /// Format string.
 		std::vector<Param> params; /// Parameter list.
 
@@ -62,12 +58,7 @@ namespace localization {
 		/// @param args Format arguments.
 		/// 
 		/// @return Formatted string.
-		std::string get(std::initializer_list<Arg> args = {}) const;
-
-		template <typename... Args>
-		std::string get(Args&&... args) const {
-			return get({ Arg(args)... });
-		};
+		std::string get(std::unordered_map<std::string, std::string> args) const;
 	};
 
 	/// Section entry data.
