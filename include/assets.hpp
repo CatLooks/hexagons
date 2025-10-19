@@ -9,6 +9,6 @@ namespace assets {
 
 	/// Loads all assets.
 	void loadAssets() {
-		loadFont(font, "font.ttf");
+		loadFont("font.ttf", font);
 	};
 };

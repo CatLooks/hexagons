@@ -54,7 +54,7 @@ int main() {
 				ui::Solid* inner = new ui::Solid;
 				els[i]->add(inner);
 
-				inner->bounds = { 10px, 10px, 1ps - 2es, 1ps - 2es };
+				inner->bounds = { 10px, 10px, 1ps, 1ps };
 				inner->color = sf::Color(200, 0, 0);
 			}
 
@@ -93,7 +93,7 @@ int main() {
 			button->add(label);
 
 			label->setOutline(sf::Color::Black, 2.f);
-			label->bounds = { 0px, 0px, 1ps, 1ps };
+			label->bounds = ui::DimRect::Fill;
 			label->alignX = ui::Text::Center;
 			label->alignY = ui::Text::Center;
 			label->shrink_to_fit = true;

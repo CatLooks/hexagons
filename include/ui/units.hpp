@@ -166,6 +166,9 @@ namespace ui {
 		DimVector position;  /// Rectangle position (top-left corner).
 		DimVector size;      /// Rectangle size (`size.es` will be ignored).
 
+		/// Filling rectangle.
+		static DimRect Fill;
+
 		/// Returns dimension rectangle's true value.
 		/// 
 		/// @param parent Parent element bounding box.

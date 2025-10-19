@@ -1,6 +1,24 @@
 #include "ui/element.hpp"
 
 namespace ui {
+	/// Sets thickness in all directions.
+	void Borders::set(int value) {
+		left = value;
+		right = value;
+		top = value;
+		bottom = value;
+	};
+	/// Sets thickness in horizontal directions.
+	void Borders::setHorizontal(int value) {
+		left = value;
+		right = value;
+	};
+	/// Sets thickness in vertical directions.
+	void Borders::setVertical(int value) {
+		top = value;
+		bottom = value;
+	};
+
 	/// Reserves space for borders in a rectangle.
 	sf::IntRect Borders::apply(sf::IntRect rect) const {
 		return {

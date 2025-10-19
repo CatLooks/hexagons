@@ -19,6 +19,16 @@ namespace ui {
 		int top    = 0; /// Thickness of top border.
 		int bottom = 0; /// Thickness of bottom border.
 
+		/// Sets thickness in all directions.
+		/// @param value Thickness value.
+		void set(int value);
+		/// Sets thickness in horizontal directions.
+		/// @param value Thickness value.
+		void setHorizontal(int value);
+		/// Sets thickness in vertical directions.
+		/// @param value Thickness value.
+		void setVertical(int value);
+
 		/// Reserves space for borders in a rectangle.
 		/// @return New shrinked rectangle.
 		sf::IntRect apply(sf::IntRect rect) const;

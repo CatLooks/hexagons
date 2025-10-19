@@ -107,6 +107,9 @@ namespace ui {
 		return { position.get(parent.size, _size) + parent.position, _size };
 	};
 
+	/// Filling rectangle.
+	DimRect DimRect::Fill = { 0px, 0px, 1ps, 1ps };
+
 	/// Constructs an empty rectangle.
 	DimRect::DimRect() {};
 	/// Constructs a rectangle from vectors.
