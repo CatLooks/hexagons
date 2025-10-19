@@ -37,6 +37,9 @@
     <Filter Include="Resource Files\dev">
       <UniqueIdentifier>{edb587f9-6082-49fe-8e3d-a91817cf7c76}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\docs">
+      <UniqueIdentifier>{81e44df2-1dcb-42ef-afdd-0897aaf1bc17}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -98,6 +101,21 @@
     </None>
     <None Include="TLML.sublime-syntax">
       <Filter>Resource Files\dev</Filter>
+    </None>
+    <None Include="docs\assets.md">
+      <Filter>Resource Files\docs</Filter>
+    </None>
+    <None Include="docs\localization.md">
+      <Filter>Resource Files\docs</Filter>
+    </None>
+    <None Include="docs\ui-animations.md">
+      <Filter>Resource Files\docs</Filter>
+    </None>
+    <None Include="docs\ui-elements.md">
+      <Filter>Resource Files\docs</Filter>
+    </None>
+    <None Include="docs\ui-system.md">
+      <Filter>Resource Files\docs</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

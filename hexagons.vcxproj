@@ -47,6 +47,11 @@
   <ItemGroup>
     <None Include="assets\en-us.tlml" />
     <None Include="assets\langs.tlml" />
+    <None Include="docs\assets.md" />
+    <None Include="docs\localization.md" />
+    <None Include="docs\ui-animations.md" />
+    <None Include="docs\ui-elements.md" />
+    <None Include="docs\ui-system.md" />
     <None Include="README.md" />
     <None Include="TLML.sublime-syntax" />
   </ItemGroup>
