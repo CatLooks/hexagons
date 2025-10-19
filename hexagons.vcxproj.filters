@@ -13,120 +13,144 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\ui">
+      <UniqueIdentifier>{57bdc717-a353-46b9-bf85-26f9f4761d5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\anim">
+      <UniqueIdentifier>{3b9bc513-d488-48d1-8da3-09e7a19169e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\localization">
+      <UniqueIdentifier>{f97f5a19-1843-4f8b-9eef-6b1cd3f802ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\anim">
+      <UniqueIdentifier>{cb9c0a7f-b4ff-4a8b-aa05-206e39245bc2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\localization">
+      <UniqueIdentifier>{8b67e511-034d-4a98-a058-e574b724c7c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ui">
+      <UniqueIdentifier>{61e70168-0a35-46bb-bedc-0dcaa937c4d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\assets">
+      <UniqueIdentifier>{cc34aa74-3825-49e8-b34d-c4474dd6e368}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\dev">
+      <UniqueIdentifier>{edb587f9-6082-49fe-8e3d-a91817cf7c76}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ui\buffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ui\element.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ui\event.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ui\layer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ui\panel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ui\units.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ui\solid.cpp">
+    <ClCompile Include="src\assetload.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ui\anim\base.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\anim</Filter>
     </ClCompile>
     <ClCompile Include="src\ui\anim\easing.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\anim</Filter>
     </ClCompile>
-    <ClCompile Include="src\ui\anim\timer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\ui\buffer.cpp">
+      <Filter>Source Files\ui</Filter>
     </ClCompile>
-    <ClCompile Include="src\localization\token.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\ui\element.cpp">
+      <Filter>Source Files\ui</Filter>
     </ClCompile>
-    <ClCompile Include="src\localization\parser.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\ui\event.cpp">
+      <Filter>Source Files\ui</Filter>
     </ClCompile>
-    <ClCompile Include="src\localization\error.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\ui\layer.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\panel.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\solid.cpp">
+      <Filter>Source Files\ui</Filter>
     </ClCompile>
     <ClCompile Include="src\ui\text.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\ui</Filter>
     </ClCompile>
-    <ClCompile Include="src\assetload.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\ui\anim\timer.cpp">
+      <Filter>Source Files\anim</Filter>
+    </ClCompile>
+    <ClCompile Include="src\localization\error.cpp">
+      <Filter>Source Files\localization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\localization\parser.cpp">
+      <Filter>Source Files\localization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\localization\token.cpp">
+      <Filter>Source Files\localization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\units.cpp">
+      <Filter>Source Files\ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
-    <None Include="TLML.sublime-syntax">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="assets\en-us.tlml">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\assets</Filter>
     </None>
     <None Include="assets\langs.tlml">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\assets</Filter>
+    </None>
+    <None Include="TLML.sublime-syntax">
+      <Filter>Resource Files\dev</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\ui\buffer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ui\element.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ui\event.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ui\layer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ui\panel.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ui\units.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ui\solid.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ui\anim\base.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ui\anim\easing.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ui\anim\linear.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ui\anim\timer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\localization\parser.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\localization\token.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\localization\error.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ui\text.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\assetload.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\assets.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\anim\base.hpp">
+      <Filter>Header Files\anim</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\buffer.hpp">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\anim\easing.hpp">
+      <Filter>Header Files\anim</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\element.hpp">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\event.hpp">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\layer.hpp">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\anim\linear.hpp">
+      <Filter>Header Files\anim</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\panel.hpp">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\solid.hpp">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\text.hpp">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\anim\timer.hpp">
+      <Filter>Header Files\anim</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\units.hpp">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\localization\error.hpp">
+      <Filter>Header Files\localization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\localization\parser.hpp">
+      <Filter>Header Files\localization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\localization\token.hpp">
+      <Filter>Header Files\localization</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

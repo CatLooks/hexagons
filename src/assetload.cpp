@@ -15,7 +15,7 @@ namespace assets {
 	bool error = false;
 
 	/// Loads a font from an asset file.
-	void loadFont(sf::Font& font, std::string filename) {
+	void loadFont(std::string filename, sf::Font& font) {
 		filename = path(filename);
 		if (!font.openFromFile(filename)) {
 			fprintf(stderr, "failed to load font <%s>\n", filename.c_str());
@@ -23,12 +23,23 @@ namespace assets {
 		};
 	};
 	/// Loads a texture from an asset file.
-	void loadTexture(sf::Texture& texture, std::string filename) {
+	void loadTexture(std::string filename, sf::Texture& texture) {
 		filename = path(filename);
 		if (!texture.loadFromFile(filename)) {
 			fprintf(stderr, "failed to load texture <%s>\n", filename.c_str());
 			error = true;
 		};
+	};
+	/// Loads sound buffer from an asset file.
+	void loadSound(std::string filename, sf::SoundBuffer& buffer, sf::Sound* sound) {
+		filename = path(filename);
+		if (!buffer.loadFromFile(filename)) {
+			fprintf(stderr, "failed to load sound <%s>\n", filename.c_str());
+			error = true;
+		}
+		// attach buffer to sound
+		else if (sound)
+			sound->setBuffer(buffer);
 	};
 
 	/// Loads language list file.

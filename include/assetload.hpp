@@ -46,14 +46,20 @@ namespace assets {
 
 	/// Loads a font from an asset file.
 	/// 
+	/// @param filename Font file name.
 	/// @param font Font object.
-	/// @param filename Font filename.
-	void loadFont(sf::Font& font, std::string filename);
+	void loadFont(std::string filename, sf::Font& font);
 	/// Loads a texture from an asset file.
 	/// 
+	/// @param filename Texture file name.
 	/// @param texture Texture object.
-	/// @param filename Texture filename.
-	void loadTexture(sf::Texture& texture, std::string filename);
+	void loadTexture(std::string filename, sf::Texture& texture);
+	/// Loads sound buffer from an asset file.
+	/// 
+	/// @param filename Sound file name.
+	/// @param buffer Sound buffer object.
+	/// @param sound Sound object (can be set to `nullptr` to ignore).
+	void loadSound(std::string filename, sf::SoundBuffer& buffer, sf::Sound* sound = nullptr);
 
 	/// Loads language list file.
 	/// @return Whether the loading failed.
