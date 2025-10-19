@@ -40,7 +40,60 @@ namespace ui {
 		/// Static event handler function type.
 		using StaticHandler = std::function<void()>;
 
+		/// Element children iterator.
+		///
+		/// Iterates over system items, then public children.
+		class iter {
+			friend Element;
+
+		public:
+			/// Iterator value type.
+			using value_type = std::unique_ptr<Element>;
+			/// Iterator join operand type.
+			using iter_type = std::list<std::unique_ptr<Element>>::const_iterator;
+
+		private:
+			iter_type _it0;   /// First list iterator.
+			iter_type _it1;   /// Second list iterator.
+			iter_type _split; /// First iterator end.
+
+			/// Constructs an iterator object.
+			/// 
+			/// @param a First iterator.
+			/// @param split First iterator end.
+			/// @param b Second iterator.
+			iter(iter_type a, iter_type split, iter_type b);
+
+		public:
+			/// Returns current iterator item.
+			const value_type& operator*() const;
+			/// Returns current iterator item.
+			const value_type* operator->() const;
+
+			/// Advances to next value.
+			void operator++();
+			/// Advances to next value.
+			void operator++(int);
+
+			/// Checks if 2 iterators point to the same item.
+			/// 
+			/// @param oth Other iterator.
+			bool operator==(const iter& oth) const;
+
+			/// Checks if 2 iterators point to different items.
+			/// 
+			/// @param oth Other iterator.
+			bool operator!=(const iter& oth) const;
+		};
+
+		/// @return Starting iterator to all children.
+		iter begin() const;
+		/// @return Ending iterator to all children.
+		iter end() const;
+
 	private:
+		/// System children.
+		std::list<std::unique_ptr<Element>> _system;
 		/// Element's children.
 		std::list<std::unique_ptr<Element>> _elements;
 		/// Element's parent.
@@ -115,6 +168,26 @@ namespace ui {
 		/// Removes all child elements.
 		void clear();
 
+	protected:
+		/// Adds new element as a system item.
+		/// 
+		/// Pointer to element must be owning.
+		/// @param element New system element.
+		void adds(Element* element);
+		/// Removes a system element if present.
+		/// @param element Old child element.
+		void removes(Element* element);
+		/// Replaces old system element by a new one.
+		/// 
+		/// If the old element is not found, the new one will be added with `adds(Element*)`.
+		/// 
+		/// @param old Old element pointer.
+		/// @param repl New element pointer.
+		void replaces(Element* old, Element* repl);
+		/// Removes all system elements.
+		void clears();
+
+	public:
 		/// Pushes a new animation.
 		/// 
 		/// Pointer to the animator must be owning.
@@ -183,7 +256,8 @@ namespace ui {
 		/// @return Whether the element is active.
 		bool active() const;
 
-		/// @return Element's children.
+		/// Returns element's children.
+		/// This does not include system items (use `begin()` and `end()` for all children).
 		const std::list<std::unique_ptr<Element>>& children() const;
 		/// @return Element's parent.
 		Element* parent() const;

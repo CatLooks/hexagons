@@ -9,11 +9,54 @@ namespace ui {
 		};
 	};
 
+	/// Constructs an iterator object.
+	Element::iter::iter(iter_type a, iter_type split, iter_type b) : _it0(a), _split(split), _it1(b) {};
+
+	/// Returns current iterator item.
+	const Element::iter::value_type& Element::iter::operator*() const {
+		return *((_it0 == _split) ? _it1 : _it0);
+	};
+	/*Element::iter::value_type& Element::iter::operator*() {
+		return *((_it0 == _split) ? _it1 : _it0);
+	};*/
+	/// Returns current iterator item.
+	const Element::iter::value_type* Element::iter::operator->() const {
+		return &*((_it0 == _split) ? _it1 : _it0);
+	};
+
+	/// Advances to next value.
+	void Element::iter::operator++() {
+		(_it0 == _split ? _it1 : _it0)++;
+	};
+	/// Advances to next value.
+	void Element::iter::operator++(int) {
+		++*this;
+	};
+
+	/// Checks if 2 iterators point to the same item.
+	bool Element::iter::operator==(const iter& oth) const {
+		return _it0 == oth._it0 && _it1 == oth._it1;
+	};
+
+	/// Checks if 2 iterators point to different items.
+	bool Element::iter::operator!=(const iter& oth) const {
+		return !(*this == oth);
+	};
+
+	/// @return Starting iterator to all children.
+	Element::iter Element::begin() const {
+		return iter(_system.begin(), _system.end(), _elements.begin());
+	};
+	/// @return Ending iterator to all children.
+	Element::iter Element::end() const {
+		return iter(_system.end(), _system.end(), _elements.end());
+	};
+
 	/// Draws the element.
 	void Element::drawSelf(RenderBuffer& target, sf::IntRect self) const {};
 	/// Draws element children.
 	void Element::drawChildren(RenderBuffer& target) const {
-		for (const auto& element : _elements)
+		for (const auto& element : *this)
 			element->draw(target);
 	};
 
@@ -60,6 +103,39 @@ namespace ui {
 	/// Removes all child elements.
 	void Element::clear() {
 		_elements.clear();
+	};
+
+	/// Adds new system element as a child.
+	void Element::adds(Element* element) {
+		_system.push_back(std::unique_ptr<Element>(element));
+		element->_parent = this;
+	};
+	/// Removes a system element if present.
+	void Element::removes(Element* element) {
+		for (auto it = _system.begin(); it != _system.end(); it++) {
+			if (it->get() == element) {
+				_system.erase(it);
+				return;
+			};
+		};
+	};
+	/// Replaces old system element by a new one.
+	void Element::replaces(Element* old, Element* repl) {
+		// try replacing old element
+		for (auto it = _system.begin(); it != _system.end(); it++) {
+			if (it->get() == old) {
+				*it = std::unique_ptr<Element>(repl);
+				repl->_parent = this;
+				return;
+			};
+		};
+
+		// add if old was not found
+		adds(repl);
+	};
+	/// Removes all system elements.
+	void Element::clears() {
+		_system.clear();
 	};
 
 	/// Pushes a new animation.
@@ -125,7 +201,7 @@ namespace ui {
 			handler(delta);
 
 		// update children
-		for (const auto& element : _elements)
+		for (const auto& element : *this)
 			element->update(delta);
 	};
 
@@ -135,7 +211,7 @@ namespace ui {
 		if (!_active || ignore) return false;
 
 		// send event to children
-		for (const auto& element : _elements)
+		for (const auto& element : *this)
 			if (element->event(evt))
 				return true;
 
@@ -166,7 +242,7 @@ namespace ui {
 		if (!_active || ignore) return false;
 
 		// update children
-		for (const auto& element : _elements) {
+		for (const auto& element : *this) {
 			if (element->hover(pos)) {
 				if (_hover_old)
 					handle((Event)Event::MouseLeave{ pos });
@@ -191,18 +267,22 @@ namespace ui {
 	/// Updates UI language.
 	void Element::translate() {
 		onTranslate();
-		for (auto& element : _elements)
+		for (auto& element : *this)
 			element->translate();
 	};
 	/// Activates the element.
 	void Element::activate() {
 		_active = true;
 		onActivate();
+		for (auto& element : *this)
+			element->activate();
 	};
 	/// Deactivates the element.
 	void Element::deactivate() {
 		_active = false;
 		onDeactivate();
+		for (auto& element : *this)
+			element->deactivate();
 	};
 	/// @return Whether the element is active.
 	bool Element::active() const { return _active; };
