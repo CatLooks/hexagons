@@ -1,0 +1,19 @@
+# this file stores all available
+# language localization files
+#
+# this file is loaded *once*
+
+langs {
+	# each entry needs to contain:
+	# - name: language display name
+	# - file: localization file in 'assets/'
+
+	en {
+		name: English
+		file: "en-us.tlml"
+	}
+}
+
+# default language
+# assigned at save file generation
+default: en

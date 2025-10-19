@@ -5,34 +5,25 @@
 #include "ui/text.hpp"
 #include "ui/anim/linear.hpp"
 #include "localization/parser.hpp"
-
-
-sf::Font font(std::string(ASSET_PATH) + "font.ttf");
+#include "assets.hpp"
 
 /// Program entry.
 /// @return Exit code.
 int main() {
 
-	// localization test
-	FILE* file;
-	if (int e = fopen_s(&file, "assets/en-us.tlml", "r")) {
-		char msg[256];
-		strerror_s(msg, sizeof(msg), e);
-		printf("error: %s\n", msg);
+	// load languages
+	if (assets::loadLanguageList())
 		return 1;
-	};
-	localization::State state(file);
-	localization::Section root = localization::load(state);
-	fclose(file);
+	if (assets::loadLanguage("en-us.tlml"))
+		return 1;
 
-	ui::TextSettings sets(font, 24, root);
+	// load assets
+	assets::loadAssets();
+	if (assets::error) return 1;
 
-	for (const auto& err : state.list) {
-		printf("error at line %llu column %llu: ", err->line, err->column);
-		err->print(stdout);
-		printf("\n");
-	};
-	root.print(stdout);
+	// localization test
+	ui::TextSettings sets(assets::font, 24, assets::lang::locale);
+	assets::lang::locale.print(stdout);
 	printf("\n");
 
 	ui::Interface interface;
@@ -134,7 +125,7 @@ int main() {
 
 	// test text
 	interface.setStatDrawCall([=](sf::RenderTarget& target, const ui::RenderStats& stats) {
-		sf::Text text(font, std::format("{}Q | {}T | {}F | {}B", stats.quads, stats.triangles, stats.text, stats.batches), 24);
+		sf::Text text(assets::font, std::format("{}Q | {}T | {}F | {}B", stats.quads, stats.triangles, stats.text, stats.batches), 24);
 		text.setPosition({ 6, 0 });
 		text.setOutlineThickness(2);
 		target.draw(text);

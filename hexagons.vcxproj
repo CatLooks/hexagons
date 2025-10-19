@@ -27,6 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\assetload.cpp" />
     <ClCompile Include="src\localization\error.cpp" />
     <ClCompile Include="src\localization\parser.cpp" />
     <ClCompile Include="src\localization\token.cpp" />
@@ -45,10 +46,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\en-us.tlml" />
+    <None Include="assets\langs.tlml" />
     <None Include="README.md" />
     <None Include="TLML.sublime-syntax" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\assetload.hpp" />
+    <ClInclude Include="include\assets.hpp" />
     <ClInclude Include="include\localization\error.hpp" />
     <ClInclude Include="include\localization\parser.hpp" />
     <ClInclude Include="include\localization\token.hpp" />

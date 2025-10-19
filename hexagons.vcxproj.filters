@@ -60,6 +60,9 @@
     <ClCompile Include="src\ui\text.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\assetload.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -67,6 +70,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="assets\en-us.tlml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\langs.tlml">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
@@ -114,6 +120,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\ui\text.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assetload.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\assets.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
