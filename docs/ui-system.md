@@ -241,3 +241,130 @@ Element's bounds are used in:
 - Mouse event propagation.
 
 If you don't need these things to work properly, you can omit setting element's size.
+
+# `ui::Element` class
+
+* Public fields:
+
+  | Field | Description |
+  |-|-|
+  | `ignore: bool` | Whether the element ignores events. |
+  | `transparent: bool` | Whether the element propagates hover events. |
+  | `forwarding: bool` | Whether the element forwards the buffer before drawing. |
+  | `bounds: DimRect` | Element bounding box (specified in dimensions). |
+  | `margin: Borders` | Element margins. |
+  | `padding: Borders` | Element padding. |
+
+* Child management:
+
+  | Function | Description |
+  |-|-|
+  | `add(Element* e)` | Inserts a new child on the top. |
+  | `remove(Element* e)` | Removes the child from the element. |
+  | `replace(Element* old, Element* repl)` | Replaces the old element by a new one. |
+  | `clear()` | Removes all children from the element. |
+
+  - New instantiated elements must be owning pointers:
+  ```cpp
+  ui::Element* child = new ui::Element;
+  // ...
+  parent->add(child);
+  ```
+  - To manage system elements, use the same methods with an `s` suffix.
+
+* Animations:
+
+  | Function | Description |
+  |-|-|
+  | `push(Anim* anim)` | Pushes a new animation. Animation will be handled by this element. |
+  | `animated() -> bool` | Checks if there are any active animations managed by this element. |
+
+* Overridable methods:
+
+    | Function | Description |
+    |-|-|
+    | `drawSelf` | Draws only the element itself. |
+    | `drawChildren` | Draws all element's children. |
+    | `onTranslate` | Executed when UI system changes the language. |
+    | `onActivate` | Executed when the element is activated. |
+    | `onDeactivate` | Executed when the element is deactivated. |
+    | `onRecalculate` | Executed when the element is being recalculated. |
+
+* Function hooks:
+
+  | Function | Description |
+  |-|-|
+  | `onEvent(bool(const ui::Event& event) handler)` | Attaches a new event handler to the element (for more see [event handling](##event-handling)). |
+  | `onUpdate(void(const sf::Time& delta) handler)` | Attaches a new update handler to the element. |
+
+* General methods (used by interface management):
+
+  | Function | Description |
+  |-|-|
+  | `recalculate(const sf::Time& delta, sf::IntRect parent_bounds)` | Recalculates the element. |
+  | `event(Event evt) -> bool` | Sends the event to the element. |
+  | `handle(Event evt) -> bool` | Forces the event on the element. |
+  | `hover(sf::Vector2i mouse) -> bool` | Updates the hover state of the element. |
+  | `update(const sf::Time& delta)` | Updates the element. |
+  | `activate()` | Activates the element. |
+  | `deactivate()` | Deactivates the element. |
+  | `translate()` | Translates the element. |
+
+* State properties:
+
+  | Function | Description |
+  |-|-|
+  | `active() -> bool` | Checks whether the element is active. |
+  | `children() -> const std::list<std::unique_ptr<Element>>&` | Returns public element children. |
+  | `parent() -> Element*` | Returns a pointer to parent element. |
+  | `position() -> DimVector&` | Returns element position vector reference. |
+  | `size() -> DimVector&` | Returns element size vector reference. |
+  | `rect() -> sf::IntRect` | Returns element on-screen rectangle (available after recalculation). |
+
+# `ui::Layer` class
+
+* Configuration methods:
+
+  | Function | Description |
+  |-|-|
+  | `Layer(const sf::Texture* texture = nullptr)` | Constructs a layer with a rendering texture. |
+  | `setTexture(const sf::Texture* texture)` | Sets new layer rendering texture. |
+  | `setShader(const sf::Shader* shader)` | Sets new layer shader. |
+  | `setView(std::optional<sf::View> view)` | Sets a rendering view override. |
+
+* Rendering function:
+
+  `render(sf::RenderTarget& target, const sf::View& default_view)` - renders buffer data into a render target.
+
+# `ui::Interface` class
+
+* Layer generation:
+
+  `layer(const sf::Texture* texture) -> Layer` - creates a new rendering layer.
+
+* Forwarding methods:
+
+  | Function | Description |
+  |-|-|
+  | `recalculate(sf::Vector2u window_size)` | Recalculates the entire UI. |
+  | `event(const sf::Event& event)` | Sends an event to every layer. |
+  | `update(sf::Vector2i mouse)` | Updates the UI. |
+  | `draw(sf::RenderTarget& target)` | Draw the UI. |
+  | `translate()` | Translates the entire UI. |
+
+* Render statistics rendering:
+
+  `setStatDrawCall(void(sf::RenderTarget& target, const RenderStats& stats) call)` - attaches a stats drawing function.
+
+# `ui::RenderBuffer` class
+
+* Drawing methods:
+
+  | Function | Description |
+  |-|-|
+  | `clear()` | Clear the buffer. |
+  | `triangle(...)` | Queues a triangle for drawing. |
+  | `quad(...)` | Queues a quad / rectangle for drawing. |
+  | `text(const sf::Text& text)` | Queues text for drawing. |
+  | `forward()` | Forwards the buffer (for more see [rendering order](##rendering-order)). |
+  | `draw(sf::RenderTarget& target)` | Render the buffer. |

@@ -32,7 +32,7 @@ namespace ui {
 		/// Sets new rendering texture.
 		void setTexture(const sf::Texture* texture);
 		/// Sets new rendering shader.
-		void setTexture(const sf::Shader* shader);
+		void setShader(const sf::Shader* shader);
 		/// Sets rendering view override.
 		/// @param view Optional view override.
 		void setView(std::optional<sf::View> view);
@@ -77,7 +77,7 @@ namespace ui {
 		/// Recalculates interface.
 		/// @param windowSize Window size.
 		void recalculate(sf::Vector2u windowSize);
-		/// Send an event to interface.
+		/// Sends an event to interface.
 		void event(const sf::Event& evt);
 		/// Updates the interface.
 		/// @param mouse Mouse position.

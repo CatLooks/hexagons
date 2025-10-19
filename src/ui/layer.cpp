@@ -17,7 +17,7 @@ namespace ui {
 		_buffer.states().texture = texture;
 	};
 	/// Sets new rendering shader.
-	void Layer::setTexture(const sf::Shader* shader) {
+	void Layer::setShader(const sf::Shader* shader) {
 		_buffer.states().shader = shader;
 	};
 	/// Sets rendering view override.
