@@ -3,8 +3,8 @@
 #include "ui/layer.hpp"
 #include "ui/panel.hpp"
 #include "ui/text.hpp"
+#include "ui/image.hpp"
 #include "ui/anim/linear.hpp"
-#include "localization/parser.hpp"
 #include "assets.hpp"
 
 /// Program entry.
@@ -27,7 +27,7 @@ int main() {
 	printf("\n");
 
 	ui::Interface interface;
-	ui::Layer* layer = interface.layer(nullptr);
+	ui::Layer* layer = interface.layer(&assets::tex);
 
 	{
 		ui::Easing list[7] {
@@ -98,6 +98,13 @@ int main() {
 			label->alignY = ui::Text::Center;
 			label->shrink_to_fit = true;
 		}
+	}
+
+	{
+		ui::Image* img = new ui::Image({ {0, 0}, {12, 12} });
+		img->position() = { 1as - 1es, 1as - 1es };
+		img->size() *= 5;
+		layer->add(img);
 	}
 
 	// fps text

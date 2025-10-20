@@ -90,6 +90,9 @@
     <ClCompile Include="src\ui\units.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
+    <ClCompile Include="src\ui\image.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -169,6 +172,9 @@
     </ClInclude>
     <ClInclude Include="include\localization\token.hpp">
       <Filter>Header Files\localization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\image.hpp">
+      <Filter>Header Files\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
