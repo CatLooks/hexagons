@@ -63,7 +63,6 @@ namespace ui {
 			{ { ax1, ay1 }, color, { tx1, ty1 } },
 			{ { ax1, ay0 }, color, { tx1, ty0 } }
 		);
-		_inf.quads++;
 	};
 
 	/// Queues a text line for rendering.
