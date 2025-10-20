@@ -11,7 +11,6 @@ namespace localization {
 	struct Error {
 		/// Default print function for errors.
 		static void no_output(FILE*);
-		/// Prints 
 
 		/// Line number.
 		size_t line = 0;

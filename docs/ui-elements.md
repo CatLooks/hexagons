@@ -1,0 +1,85 @@
+## `ui::Solid` - single color panel
+
+Panel color is configured using field `color: sf::Color`.
+
+<hr>
+
+## `ui::Image` - texture section display
+
+Image is used to display a certain part of the layer texture.
+
+Image settings:
+- `coords: sf::IntRect` - coordinates of displayed texture part.
+- `tint: sf::Color` - tint color for the texture.
+
+<hr>
+
+## `ui::Panel` - textured panel
+
+Panel uses scaled textures to create a panel texture of any size.
+
+### `ui::Panel::Map` - panel texture map
+
+Panel configuration is done with `ui::Panel::Map` structure.
+
+- `corner_coords: sf::Vector2i[4]` - coordinates of corner panel parts (*order: top-left, top-right, bottom-left, bottom-right*).
+- `edge_coords: sf::Vector2i[4]` - coordinates of edge panel parts (*order: top, bottom, left, right*).
+- `corner_size: sf::Vector2i` - size of *all* corner panel parts.
+- `edge_size: int[2]` - height of horizontal edges (`[0]`) & width of vertical edges (`[1]`).
+- `middle: sf::IntRect` - coordinates and size of the middle panel part.
+- `scale: int` - by default, the size of textures is used to directly constructs parts in UI space of the same size. `scale` provides a way to increase their size.
+
+A map is needed to construct a panel (`Panel(const Map& map)`). Map data is *copied* during construction.
+
+<hr>
+
+## `ui::Text` - text display
+
+Text element uses localized text to display labels.
+
+### Construction
+
+A text element is constructed using `ui::TextSettings` and localized text path.
+
+`ui::TextSettings` contains:
+- `font` - text font.
+- `size` - text size.
+- `locale` - localization object reference.
+
+### Placement of text in the bounding box
+
+Text does not necessarily have the same size as the bounding box. For this reason, the placement of text inside it is controlled by alignment fields `alignX` & `alignY`.
+
+Alignment values are:
+* `Left` or `Up` - sticks the text to left / top bounding box side.
+* `Right` or `Down` - sticks the text to right / bottom bounding box side.
+* `Center` - aligns the text in the middle of the bounding box.
+
+### Flags
+
+`ui::Text` has the following flags:
+- `autosize` - after updating label text, sets text size.
+- `shrink_to_fit` - optimally shrinks text bounding box.
+  - Set to `true` when text doesn't change and is aligned in the center.
+  - Set to `false` when text changes and is aligned to a side.
+
+### Text parameters
+
+By default, text parameters are replaced with a string `{param_name}`.
+
+To set parameter values, use:
+- `param(std::string name, std::string value)` - sets the value of parameter `name` to a string `value`.
+- `paramHook(std::string name, Hook() f)` - creates a hook that evaluated the value of parameter `name` right before evaluating new text string.
+  `Hook` is an optional `std::string`, if a `nullopt` is returned, the value of the parameter will not change.
+
+To clear parameter values, use:
+- `paramClear()` - clear all stored parameters.
+- `paramHookClear()` - clear all parameter hooks.
+
+### Text drawing configuration
+
+| Function | Description |
+|-|-|
+| `setScale(float scale)` | Sets text scaling factor. |
+| `setColor(sf::Color color)` | Sets text fill color. |
+| `setOutline(sf::Color color, float thickness` | Sets text outline color and thickness. |

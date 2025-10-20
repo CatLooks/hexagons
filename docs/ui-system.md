@@ -366,5 +366,5 @@ If you don't need these things to work properly, you can omit setting element's 
   | `triangle(...)` | Queues a triangle for drawing. |
   | `quad(...)` | Queues a quad / rectangle for drawing. |
   | `text(const sf::Text& text)` | Queues text for drawing. |
-  | `forward()` | Forwards the buffer (for more see [rendering order](##rendering-order)). |
+  | `forward()` | Forwards the buffer (for more see [rendering order](#rendering-order)). |
   | `draw(sf::RenderTarget& target)` | Render the buffer. |
