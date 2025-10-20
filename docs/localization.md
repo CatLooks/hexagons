@@ -16,7 +16,7 @@ If a `#` character is encountered, everything to next newline is ignored.
 Text is a value that can be displayed with `ui::Text`.
 
 To define a text value, use:
-```yaml
+```
 name: text # name = "text"
 ```
 
@@ -30,7 +30,7 @@ Text values can be:
 Section is a dictionary (key-value pairs) of other sections or text values.
 
 To define a section, use:
-```yaml
+```
 section {
 	text: value
 	section {
@@ -47,7 +47,7 @@ To reference a value, paths are used.
 Paths are constructed from a series of section accesses, separated by a dot `.`.
 
 Example:
-```yaml
+```
 global: Global       # global = "Global"
 
 sub {
@@ -71,7 +71,7 @@ If an import failed, a replacement string will be used:
 * `$(path.*)` - path leads to a section instead of text.
 
 Example:
-```yaml
+```
 global: Global
 sub {
 	local: Local
@@ -119,7 +119,7 @@ If a path is invalid, a replacement string will be used (`!(...)`, same as [text
 
 Usage example:
 * TLML file:
-```yaml
+```
 path: "x = {x}, fps = {fps}"
 ```
 * Program:
