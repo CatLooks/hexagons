@@ -75,6 +75,11 @@
     <ClInclude Include="include\ui\solid.hpp" />
     <ClInclude Include="include\ui\text.hpp" />
     <ClInclude Include="include\ui\units.hpp" />
+    <ClInclude Include="src\game.hpp" />
+    <ClInclude Include="src\hex.hpp" />
+    <ClInclude Include="src\map.hpp" />
+    <ClInclude Include="src\pool.hpp" />
+    <ClInclude Include="src\troop.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

@@ -18,6 +18,9 @@ struct Hex {
 	// spread buffer
 	size_t buffer = 0ull;
 
+	// whether the hex is selected
+	bool selected = false;
+
 	// troop on the hex (pool index)
 	// -1 if no troop
 	size_t troop = ~0ull;

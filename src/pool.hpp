@@ -42,6 +42,19 @@ public:
 		return _storage.at(idx);
 	};
 
+	// checks whether an item is active
+	bool active(size_t idx) const {
+		for (size_t i : _empty)
+			if (i == idx)
+				return false;
+		return true;
+	};
+
+	// returns buffer width
+	size_t width() const {
+		return _storage.size();
+	};
+
 	/// Returns pool item count.
 	size_t count() const {
 		return _storage.size() - _empty.size();

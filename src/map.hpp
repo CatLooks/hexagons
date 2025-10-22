@@ -1,7 +1,7 @@
 #pragma once
 
 // tile size
-const int TILE = 96;
+const int TILE = 128;
 
 // include dependencies
 #include <stdint.h>
@@ -24,6 +24,12 @@ int imod(int a, int b) {
 	return r;
 };
 
+// economy object
+struct Economy {
+	int balance;
+	int income;
+};
+
 // map object
 struct Map {
 	// array of hexes
@@ -38,6 +44,9 @@ struct Map {
 	// camera position
 	sf::Vector2i camera = { 32, 32 };
 
+	// player economies
+	Economy econs[3];
+
 	// hex accessor
 	Hex& at(sf::Vector2i pos) const {
 		return data.get()[pos.y * size.x + pos.x];
@@ -46,7 +55,14 @@ struct Map {
 	// whether the position is within the world
 	bool within(sf::Vector2i pos) const {
 		return (pos.y >= 0 && pos.y < size.y)
-			&& (pos.x >= 0 && pos.x < (size.x - !(pos.y & 1)));
+			&& (pos.x >= 0 && pos.x < (size.x - (pos.y & 1 ? 1 : 0)));
+	};
+
+	// updates
+	void captureHex(Hex& hex, Hex::Team team) {
+		econs[hex.team].income--;
+		hex.team = team;
+		econs[hex.team].income++;
 	};
 
 	// no effect function
@@ -55,13 +71,13 @@ struct Map {
 	static bool allHexes(const Hex&, sf::Vector2i) { return true; };
 
 	// spreads an effect on hexes in radius conditionally
-	size_t spread(
+	std::vector<sf::Vector2i> spread(
 		sf::Vector2i pos,
 		std::function<void(Hex&, sf::Vector2i)> effect,
 		int radius,
 		std::function<bool(const Hex&, sf::Vector2i)> blockingCondition = allHexes,
 		std::function<bool(const Hex&, sf::Vector2i)> nonBlockingCondition = allHexes
-	) {
+	) const {
 		// get new spread index
 		static size_t next_idx = 1;
 		size_t spr_idx = next_idx++;
@@ -78,9 +94,10 @@ struct Map {
 		queued.push_back({ pos, radius });
 
 		// spread to queued hexes
+		std::vector<sf::Vector2i> results;
 		while (!queued.empty()) {
 			// process a single hex
-			auto data = queued.front();
+			qd_t data = queued.front();
 			queued.pop_front();
 			Hex& hex = at(data.pos);
 
@@ -88,10 +105,14 @@ struct Map {
 			hex.buffer = spr_idx;
 
 			// check if hex passes the condition
-			if (!blockingCondition(hex, data.pos)) continue;
+			if (!blockingCondition(hex, data.pos))
+				continue;
 
 			// apply effect on hex
-			if (nonBlockingCondition(hex, data.pos)) effect(hex, data.pos);
+			if (nonBlockingCondition(hex, data.pos)) {
+				effect(hex, data.pos);
+				results.push_back(data.pos);
+			};
 
 			// queue neighboring hexes
 			if (data.left > 0) {
@@ -107,8 +128,8 @@ struct Map {
 			};
 		};
 
-		// return spread index
-		return spr_idx;
+		// return affected hexes
+		return results;
 	};
 
 	// create a new map from a string
@@ -117,6 +138,12 @@ struct Map {
 		data = std::unique_ptr<Hex>(new Hex[size.x * size.y]);
 		size_t pos = 0;
 
+		// reset economies
+		for (size_t i = 0; i < 3; i++) {
+			econs[i] = { 10, 0 };
+		};
+
+		// create map
 		for (size_t i = 0; str[i]; i++) {
 			data.get()[pos].type = str[i] == ' ' ? Hex::Void : Hex::Land;
 			switch (str[i]) {
@@ -124,6 +151,7 @@ struct Map {
 				case 'b': data.get()[pos].team = Hex::Blue; break;
 				default: data.get()[pos].team = Hex::None; break;
 			};
+			econs[data.get()[pos].team].income++;
 			pos++;
 		};
 	};
@@ -132,6 +160,7 @@ struct Map {
 	void troop(sf::Vector2i pos, Troop::Type type) {
 		size_t idx = troops.push(Troop { type, pos });
 		at(pos).troop = idx;
+		econs[at(pos).team].income -= 4;
 	};
 
 	// moves a troop to a new position
@@ -140,13 +169,36 @@ struct Map {
 		Hex& now = at(pos);
 
 		// check if troop is getting replaced
-		if (now.troop != ~0ull)
+		if (now.troop != ~0ull) {
+			econs[now.team].income += 4;
 			troops.pop(now.troop);
+		};
 
 		// move troop
 		troops[idx].pos = pos;
 		old.troop = ~0ull;
 		now.troop = idx;
+	};
+
+	// deselects all hexes
+	void deselect() const {
+		for (size_t i = 0; i < size.x * size.y; i++)
+			data.get()[i].selected = false;
+	};
+
+	// resets turn cooldowns
+	void turn() {
+		// reset troop cooldown
+		for (size_t i = 0; i < troops.width(); i++) {
+			if (troops.active(i)) {
+				troops[i].moved = false;
+			};
+		};
+
+		// update economies
+		for (size_t i = 0; i < 3; i++) {
+			econs[i].balance += econs[i].income;
+		};
 	};
 
 	// converts mouse coords into world coords
@@ -183,7 +235,7 @@ struct Map {
 	};
 
 	// draws the map
-	void draw(ui::RenderBuffer& target, sf::Vector2i selection, size_t mask) const {
+	void draw(ui::RenderBuffer& target, sf::Vector2i selection) const {
 		for (int y = 0; y < size.y; y++) {
 			// row offset
 			bool shift = !(y & 1);
@@ -231,7 +283,7 @@ struct Map {
 				};
 
 				// draw mask
-				if (selection.x != -1 && hex.buffer != mask) {
+				if (selection.x != -1 && !hex.selected) {
 					target.quad(
 						{ coords, { TILE, TILE } },
 						{ { 192, 64 }, { 64, 64 } }
@@ -239,143 +291,5 @@ struct Map {
 				};
 			};
 		};
-	};
-};
-
-// game ui element
-class GameMap : public ui::Element {
-public:
-	Map map;                            // game map
-	size_t turn = 1;                    // turn number
-	sf::Vector2i selected = { -1, -1 }; // selected hex
-	size_t mask = ~0ull;                // selection mask
-
-	/// Constructor.
-	GameMap() {
-		bounds = ui::DimRect::Fill;
-
-		// create map
-		map.resize({16, 10},
-			"      -        x"
-			"   --     ------"
-			"rr---   -----  x"
-			"rrr---  ----    "
-			"rr---   ----bbbx"
-			"rrr---  -- -bbbb"
-			"rr --- --  bbbbx"
-			"    ------  bbb "
-			"    ----    b  x"
-			" -   ---   bb   "
-		);
-
-		// set map troops
-		map.troop({ 1, 3 }, Troop::Worried);
-		map.troop({ 14, 6 }, Troop::Worried);
-
-		// hex selector test
-		onEvent([=](const ui::Event& evt) {
-			if (auto data = evt.get<ui::Event::MousePress>()) {
-				// get hex coords
-				sf::Vector2i coords = map.mouseToHex(data->position);
-
-				// ignore outside coordinates
-				if (!map.within(coords)) {
-					selected.x = -1;
-					return true;
-				};
-				auto& hex = map.at(coords);
-
-				// if already selected
-				if (selected.x != -1) {
-					// check for cancelation
-					// check if move is illegal
-					if (selected == coords || hex.buffer != mask) {
-						selected.x = -1;
-						return true;
-					};
-
-					// move troop
-					auto& old = map.at(selected);
-					if (old.troop != ~0ull) {
-						map.moveTroop(old.troop, coords);
-						hex.team = old.team;
-					};
-
-					// deselect
-					selected.x = -1;
-					return true;
-				};
-				
-				// check if can select
-				if (hex.team == Hex::Red && hex.troop != ~0ull) {
-					selected = coords;
-
-					// select valid tiles
-					Hex::Team team = hex.team;
-					Troop::Type troop = map.troops[hex.troop].type;
-					mask = map.spread(coords, Map::noEffect, 2,
-						[&](const Hex& _, sf::Vector2i pos) -> bool {
-							// block if not a land hex
-							if (hex.type == Hex::Void) return false;
-
-							// check if any neighbors are the same team
-							if (_.team != team) {
-								for (size_t i = 0; i < 6; i++) {
-									sf::Vector2i npos = hexNeighbor(pos, i);
-									if (!map.within(npos)) continue;
-									if (map.at(npos).team == team) return true;
-								};
-								return false;
-							};
-							return true;
-						},
-						[&](const Hex& hex, sf::Vector2i pos) -> bool {
-							// ignore if no troop
-							if (hex.troop == ~0ull) return true;
-
-							// ignore if highest rank
-							if (troop == Troop::Ultra) return true;
-
-							// allow if equal or higher rank
-							return troop >= map.troops[hex.troop].type;
-						}
-					);
-				};
-				return true;
-			};
-			return false;
-		});
-
-		// text settings
-		ui::TextSettings sets = { assets::font, 24, assets::lang::locale };
-
-		// text labels
-		{
-			ui::Text* text = new ui::Text(sets, "general.turns");
-			text->position() = { 10px, 1ps - 36px };
-			text->paramHook("turn", [=]() -> ui::Text::Hook {
-				return std::format("{}", turn);
-			});
-			add(text);
-		}
-		{
-			ui::Text* text = new ui::Text(sets, "general.mouse");
-			text->position() = { 10px, 1ps - 66px };
-			text->paramHook("x", [=]() -> ui::Text::Hook {
-				sf::Vector2i coords = map.mouseToHex(sf::Mouse::getPosition(win));
-				return std::format("{}", coords.x);
-			});
-			text->paramHook("y", [=]() -> ui::Text::Hook {
-				sf::Vector2i coords = map.mouseToHex(sf::Mouse::getPosition(win));
-				return std::format("{}", coords.y);
-			});
-			add(text);
-		}
-	};
-
-protected:
-	// draws the game
-	void drawSelf(ui::RenderBuffer& buffer, sf::IntRect self) const override {
-		map.draw(buffer, selected, mask);
 	};
 };

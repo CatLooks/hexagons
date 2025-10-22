@@ -40,6 +40,9 @@
     <Filter Include="Resource Files\docs">
       <UniqueIdentifier>{81e44df2-1dcb-42ef-afdd-0897aaf1bc17}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\game">
+      <UniqueIdentifier>{7099d39e-23e6-4a0c-a7d4-c8d22ca5d2cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -175,6 +178,21 @@
     </ClInclude>
     <ClInclude Include="include\ui\image.hpp">
       <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hex.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\map.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pool.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\troop.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game.hpp">
+      <Filter>Header Files\game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

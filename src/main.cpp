@@ -6,7 +6,7 @@
 #include "ui/image.hpp"
 #include "ui/anim/linear.hpp"
 #include "assets.hpp"
-#include "map.hpp"
+#include "game.hpp"
 
 /// Program entry.
 /// @return Exit code.
@@ -26,7 +26,8 @@ int main() {
 	ui::Layer* map_layer = itf.layer(&assets::tiles);
 
 	// create game element
-	map_layer->add(new GameMap());
+	GameMap* game = new GameMap();
+	map_layer->add(game);
 
 	// setup window
 	sf::RenderWindow win(sf::VideoMode({ 1600, 900 }), "App");
@@ -36,6 +37,9 @@ int main() {
 	// window main loop
 	while (win.isOpen()) {
 		win.clear(sf::Color(34, 39, 41));
+
+		// update mouse
+		game->mouse = sf::Mouse::getPosition(win);
 
 		// update interface
 		itf.recalculate(win.getSize());
