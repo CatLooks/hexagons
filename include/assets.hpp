@@ -7,12 +7,12 @@ namespace assets {
 	/// Default game font.
 	sf::Font font;
 
-	/// Test texture
-	sf::Texture tex;
+	/// Tileset texture
+	sf::Texture tiles;
 
 	/// Loads all assets.
 	void loadAssets() {
 		loadFont("font.ttf", font);
-		loadTexture("panel.png", tex);
+		loadTexture("tileset.png", tiles);
 	};
 };

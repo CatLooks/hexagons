@@ -1,28 +1,4 @@
-key: global
-
-sub: {
-	key: local
-
-	sub: {
-		key: inner
-	}
-
-	global_test: '$(key)'       # "global"
-	local_test: '$(@key)'       # "local"
-
-	inner_test: '$(@sub.key)'   # "inner"
-	absolute_test: '$(sub.key)' # "local"
-}
-
-demo {
-	button: Animate
-	0: Linear
-	1: Quad In
-	2: Quad Out
-	3: Quad In Out
-	4: Sine In
-	5: Sine Out
-	6: Sine In Out
-
-	fps: "FPS: {fps}"
+general {
+	turns: 'Turn: {turn}'
+	mouse: 'at {x}, {y}'
 }
