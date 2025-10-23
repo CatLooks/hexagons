@@ -214,8 +214,8 @@ struct Map {
 		} else {
 			moveTroop(troop, now);
 			captureHex(hex, last.team);
+			troops[troop].moved = true;
 		};
-		troops[troop].moved = true;
 	};
 
 	// deselects all hexes

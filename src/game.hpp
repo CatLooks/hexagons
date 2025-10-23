@@ -49,6 +49,9 @@ public:
 				return true;
 			},
 			[&](const Hex& hex, sf::Vector2i pos) -> bool {
+				// ignore if origin
+				if (pos == coords) return false;
+
 				// town hall check
 				if (troop == Troop::Castle) {
 					// check if tile is empty
@@ -291,12 +294,9 @@ public:
 
 						// ignore if already moved
 						if (troop.moved) continue;
-
-						// get available moves
-						auto moves = select(troop.pos, Map::noEffect);
 						
 						// ignore turn by chance
-						if (chance(0.2)) continue;
+						if (chance(0.2f)) continue;
 
 						// town hall check
 						if (troop.type == Troop::Castle) {
@@ -309,8 +309,11 @@ public:
 								continue;
 
 							// ignore by chance (x2)
-							if (chance(0.4 + econ.balance / 400.f)) continue;
+							if (chance(0.4f + econ.balance / 400.f)) continue;
 						};
+
+						// get available moves
+						auto moves = select(troop.pos, Map::noEffect);
 
 						// split moves
 						std::vector<sf::Vector2i> moves_exp;
@@ -339,8 +342,8 @@ public:
 						// expansion check
 						if (chance(
 							econ.income == 0
-								? 1.0
-								: 0.2 + 4.0 / econ.income
+								? 1.0f
+								: 0.2f + 4.0f / econ.income
 						) && !moves_exp.empty())
 						{
 							size_t idx = rand() % moves_exp.size();
@@ -375,8 +378,8 @@ protected:
 
 	// tries to end the game
 	void finish() {
-		int a = 100 * map.econs[Hex::Red].tiles / map.tiles;
-		int b = 100 * map.econs[Hex::Blue].tiles / map.tiles;
+		size_t a = 100 * map.econs[Hex::Red].tiles / map.tiles;
+		size_t b = 100 * map.econs[Hex::Blue].tiles / map.tiles;
 
 		bool bankrupcy = map.econs[Hex::Red].balance < 0 || map.econs[Hex::Blue].balance < 0;
 
