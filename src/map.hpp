@@ -47,6 +47,9 @@ struct Map {
 	// player economies
 	Economy econs[3];
 
+	// tile count
+	size_t tiles = 0;
+
 	// hex accessor
 	Hex& at(sf::Vector2i pos) const {
 		return data.get()[pos.y * size.x + pos.x];
@@ -55,7 +58,7 @@ struct Map {
 	// whether the position is within the world
 	bool within(sf::Vector2i pos) const {
 		return (pos.y >= 0 && pos.y < size.y)
-			&& (pos.x >= 0 && pos.x < (size.x - (pos.y & 1 ? 1 : 0)));
+			&& (pos.x >= 0 && pos.x < (size.x - (pos.y & 1 ? 0 : 1)));
 	};
 
 	// updates
@@ -142,10 +145,13 @@ struct Map {
 		for (size_t i = 0; i < 3; i++) {
 			econs[i] = { 10, 0 };
 		};
+		tiles = 0;
 
 		// create map
 		for (size_t i = 0; str[i]; i++) {
 			data.get()[pos].type = str[i] == ' ' ? Hex::Void : Hex::Land;
+			if (data.get()[pos].type)
+				tiles++;
 			switch (str[i]) {
 				case 'r': data.get()[pos].team = Hex::Red; break;
 				case 'b': data.get()[pos].team = Hex::Blue; break;
@@ -178,6 +184,15 @@ struct Map {
 		troops[idx].pos = pos;
 		old.troop = ~0ull;
 		now.troop = idx;
+	};
+
+	// moves a troop from an old to a new position
+	void act(size_t troop, sf::Vector2i old, sf::Vector2i now) {
+		Hex& hex = at(now);
+		const Hex& last = at(troops[troop].pos);
+		moveTroop(troop, now);
+		captureHex(hex, last.team);
+		troops[troop].moved = true;
 	};
 
 	// deselects all hexes

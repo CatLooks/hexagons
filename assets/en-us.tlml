@@ -6,4 +6,10 @@ general {
 game {
 	money: 'Balance: {money}'
 	income: 'Income: {income}'
+	capture: '{team}: {per}%'
+
+	win: 'Victory'
+	lose: 'Defeat'
+
+	stats: '{a}% vs {b}%'
 }

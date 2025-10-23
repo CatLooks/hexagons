@@ -26,7 +26,7 @@ int main() {
 	ui::Layer* map_layer = itf.layer(&assets::tiles);
 
 	// create game element
-	GameMap* game = new GameMap();
+	GameMap* game = new GameMap(&itf);
 	map_layer->add(game);
 
 	// setup window
