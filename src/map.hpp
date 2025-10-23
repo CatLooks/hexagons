@@ -194,6 +194,15 @@ struct Map {
 	void act(size_t troop, sf::Vector2i old, sf::Vector2i now) {
 		Hex& hex = at(now);
 		Hex& last = at(troops[troop].pos);
+
+		// town hall spawn
+		if (troops[troop].type == Troop::Castle) {
+			this->troop(now, Troop::Worried);
+			econs[at(troops[troop].pos).team].balance -= 6;
+			return;
+		};
+
+		// troop move
 		if (last.team == hex.team && hex.troop != ~0ull) {
 			econs[hex.team].income += troops[troop].cost();
 

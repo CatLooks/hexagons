@@ -8,6 +8,8 @@
 struct Troop {
 	// troop type
 	enum Type {
+		Castle,  // not a troop but idc im not paid for ts
+				 // all that matters is that this works
 		Worried, // 😧 (but blue)
 		Evil,    // 😡
 		Ultra,   // 🗿
@@ -33,13 +35,14 @@ struct Troop {
 		// get troop texture
 		sf::Vector2i texture;
 		switch (type) {
+			case Castle: texture = { 64, 0 }; break;
 			case Worried: texture = { 0, 64 }; break;
 			case Evil: texture = { 64, 64 }; break;
 			default: break;
 		};
 
 		// draw unmoved aura
-		if (!moved) {
+		if (!moved && type) {
 			target.quad(
 				{ coords, { TILE, TILE } },
 				{ { 128, 64 }, { 64, 64 } }

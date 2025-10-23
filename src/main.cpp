@@ -38,8 +38,9 @@ int main() {
 	while (win.isOpen()) {
 		win.clear(sf::Color(34, 39, 41));
 
-		// update mouse
+		// update external state
 		game->mouse = sf::Mouse::getPosition(win);
+		game->focused = win.hasFocus();
 
 		// update interface
 		itf.recalculate(win.getSize());

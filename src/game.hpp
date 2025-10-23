@@ -3,6 +3,8 @@
 // include dependencies
 #include "map.hpp"
 
+const int WIN_PERCENT = 75;
+
 // random chance
 // returns `true` with a `per` chance
 bool chance(float per) {
@@ -17,6 +19,7 @@ public:
 	sf::Vector2i selected = { -1, -1 }; // selected hex
 	sf::Vector2i mouse;                 // mouse position
 	ui::Interface* itf;
+	bool focused;
 
 	// selects all possible movements
 	std::vector<sf::Vector2i> select(
@@ -46,13 +49,19 @@ public:
 				return true;
 			},
 			[&](const Hex& hex, sf::Vector2i pos) -> bool {
+				// town hall check
+				if (troop == Troop::Castle) {
+					// check if tile is empty
+					return hex.troop == ~0ull && hex.team == team;
+				};
+
 				// ignore if no troop
 				if (hex.troop == ~0ull) return true;
 
 				// merge if ally troop
 				if (hex.team == team) {
 					return troop == Troop::Worried
-						&& hex.troop == Troop::Worried;
+						&& map.troops[hex.troop].type == Troop::Worried;
 				};
 
 				// ignore if highest rank
@@ -82,14 +91,20 @@ public:
 			" -   ---   bb   "
 		);
 
+		// create townhalls
+		map.troop({ 1, 5 }, Troop::Castle);
+		map.troop({ 14, 5 }, Troop::Castle);
+
 		// set map troops
 		map.troop({ 1, 3 }, Troop::Worried);
 		map.troop({ 1, 4 }, Troop::Worried);
 		map.troop({ 14, 6 }, Troop::Worried);
-		map.troop({ 12, 5 }, Troop::Evil);
+		map.troop({ 12, 5 }, Troop::Worried);
 
 		// camera move
 		onUpdate([=](const sf::Time& delta) {
+			if (!focused) return;
+
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
 				map.camera.y += (int)(delta.asSeconds() * 5 * TILE);
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
@@ -144,7 +159,10 @@ public:
 				// check if can select
 				if (hex.team == Hex::Red && hex.troop != ~0ull && !map.troops[hex.troop].moved) {
 					selected = coords;
-					select(coords, [&](Hex& hex, sf::Vector2i pos) { hex.selected = true; });
+
+					// don't select if not enough money
+					if (!(map.troops[hex.troop].type == Troop::Castle && map.econs[hex.team].balance < 6))
+						select(coords, [&](Hex& hex, sf::Vector2i pos) { hex.selected = true; });
 				};
 				return true;
 			};
@@ -157,7 +175,7 @@ public:
 		// economy text
 		{
 			ui::Text* text = new ui::Text(sets, "game.money");
-			text->position() = {0.5as, 5px};
+			text->position() = { 0.5as, 5px };
 			text->autosize = true;
 			text->setOutline(sf::Color::Black, 2.f);
 			text->paramHook("money", [=]() -> ui::Text::Hook {
@@ -172,6 +190,30 @@ public:
 			text->setOutline(sf::Color::Black, 2.f);
 			text->paramHook("income", [=]() -> ui::Text::Hook {
 				return std::format("{}", map.econs[Hex::Red].income);
+				});
+			add(text);
+		}
+
+		// ai economy text
+		{
+			ui::Text* text = new ui::Text(sets, "game.money");
+			text->position() = { 1ps - 150px, 5px};
+			text->autosize = true;
+			text->setOutline(sf::Color::Black, 2.f);
+			text->setColor(sf::Color(128, 128, 128));
+			text->paramHook("money", [=]() -> ui::Text::Hook {
+				return std::format("{}", map.econs[Hex::Blue].balance);
+			});
+			add(text);
+		}
+		{
+			ui::Text* text = new ui::Text(sets, "game.income");
+			text->position() = { 1ps - 150px, 35px };
+			text->autosize = true;
+			text->setOutline(sf::Color::Black, 2.f);
+			text->setColor(sf::Color(128, 128, 128));
+			text->paramHook("income", [=]() -> ui::Text::Hook {
+				return std::format("{}", map.econs[Hex::Blue].income);
 				});
 			add(text);
 		}
@@ -242,9 +284,13 @@ public:
 						// ignore if inactive
 						if (!map.troops.active(i)) continue;
 						Troop& troop = map.troops[i];
+						auto& econ = map.econs[map.at(troop.pos).team];
 
 						// ignore if not blue
 						if (map.at(troop.pos).team != Hex::Blue) continue;
+
+						// ignore if already moved
+						if (troop.moved) continue;
 
 						// get available moves
 						auto moves = select(troop.pos, Map::noEffect);
@@ -252,23 +298,63 @@ public:
 						// ignore turn by chance
 						if (chance(0.2)) continue;
 
+						// town hall check
+						if (troop.type == Troop::Castle) {
+							// skip if no money
+							if (econ.balance < 15)
+								continue;
+
+							// skip move if not enough income
+							if (econ.income < 3 * Troop(Troop::Worried).cost())
+								continue;
+
+							// ignore by chance (x2)
+							if (chance(0.4 + econ.balance / 400.f)) continue;
+						};
+
 						// split moves
 						std::vector<sf::Vector2i> moves_exp;
 						std::vector<sf::Vector2i> moves_inn;
+						std::vector<sf::Vector2i> moves_mrg;
+
 						for (sf::Vector2i move : moves) {
 							if (map.at(move).team == Hex::None)
 								moves_exp.push_back(move);
+							else if (map.at(move).team == Hex::Blue && map.at(move).troop != ~0ull)
+								moves_mrg.push_back(move);
 							else
 								moves_inn.push_back(move);
 						};
 
-						// do a random move
-						if (chance(0.6) && !moves_exp.empty()) {
+						// merge check
+						if (chance(0.3 + econ.balance / 300.f) && !moves_mrg.empty()
+							&& econ.income >= Troop(Troop::Evil).cost() * 3 / 2)
+						{
+							size_t idx = rand() % moves_mrg.size();
+							map.act(i, troop.pos, moves_mrg[idx]);
+							troop.moved = true;
+							continue;
+						};
+
+						// expansion check
+						if (chance(
+							econ.income == 0
+								? 1.0
+								: 0.2 + 4.0 / econ.income
+						) && !moves_exp.empty())
+						{
 							size_t idx = rand() % moves_exp.size();
 							map.act(i, troop.pos, moves_exp[idx]);
-						} else if (!moves_inn.empty()) {
+							troop.moved = true;
+							continue;
+						} 
+
+						// do a random move
+						if (!moves_inn.empty()) {
 							size_t idx = rand() % moves_inn.size();
 							map.act(i, troop.pos, moves_inn[idx]);
+							troop.moved = true;
+							continue;
 						};
 					};
 
@@ -294,8 +380,8 @@ protected:
 
 		bool bankrupcy = map.econs[Hex::Red].balance < 0 || map.econs[Hex::Blue].balance < 0;
 
-		if (a >= 50 || b >= 50 || bankrupcy) {
-			bool check = a >= 50 || map.econs[Hex::Blue].balance < 0;
+		if (a >= WIN_PERCENT || b >= WIN_PERCENT || bankrupcy) {
+			bool check = a >= WIN_PERCENT || map.econs[Hex::Blue].balance < 0;
 
 			ui::Layer* layer = itf->layer(nullptr);
 
