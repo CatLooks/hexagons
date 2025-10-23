@@ -19,6 +19,15 @@ struct Troop {
 	// whether the troop has already moved
 	bool moved = false;
 
+	// troop sustain cost
+	int cost() const {
+		switch (type) {
+			case Worried: return 4;
+			case Evil: return 12;
+			default: return 0;
+		};
+	};
+
 	// draws the troop
 	void draw(sf::Vector2i coords, ui::RenderBuffer& target) const {
 		// get troop texture

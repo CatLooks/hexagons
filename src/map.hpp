@@ -28,6 +28,7 @@ int imod(int a, int b) {
 struct Economy {
 	int balance;
 	int income;
+	int tiles;
 };
 
 // map object
@@ -64,8 +65,10 @@ struct Map {
 	// updates
 	void captureHex(Hex& hex, Hex::Team team) {
 		econs[hex.team].income--;
+		econs[hex.team].tiles--;
 		hex.team = team;
 		econs[hex.team].income++;
+		econs[hex.team].tiles++;
 	};
 
 	// no effect function
@@ -143,7 +146,7 @@ struct Map {
 
 		// reset economies
 		for (size_t i = 0; i < 3; i++) {
-			econs[i] = { 10, 0 };
+			econs[i] = { 10, 0, 0 };
 		};
 		tiles = 0;
 
@@ -158,6 +161,7 @@ struct Map {
 				default: data.get()[pos].team = Hex::None; break;
 			};
 			econs[data.get()[pos].team].income++;
+			econs[data.get()[pos].team].tiles++;
 			pos++;
 		};
 	};
@@ -166,7 +170,7 @@ struct Map {
 	void troop(sf::Vector2i pos, Troop::Type type) {
 		size_t idx = troops.push(Troop { type, pos });
 		at(pos).troop = idx;
-		econs[at(pos).team].income -= 4;
+		econs[at(pos).team].income -= troops[idx].cost();
 	};
 
 	// moves a troop to a new position
@@ -176,7 +180,7 @@ struct Map {
 
 		// check if troop is getting replaced
 		if (now.troop != ~0ull) {
-			econs[now.team].income += 4;
+			econs[now.team].income += troops[now.troop].cost();
 			troops.pop(now.troop);
 		};
 
@@ -189,9 +193,19 @@ struct Map {
 	// moves a troop from an old to a new position
 	void act(size_t troop, sf::Vector2i old, sf::Vector2i now) {
 		Hex& hex = at(now);
-		const Hex& last = at(troops[troop].pos);
-		moveTroop(troop, now);
-		captureHex(hex, last.team);
+		Hex& last = at(troops[troop].pos);
+		if (last.team == hex.team && hex.troop != ~0ull) {
+			econs[hex.team].income += troops[troop].cost();
+
+			troops[hex.troop].type = Troop::Evil;
+			troops.pop(troop);
+			last.troop = ~0ull;
+
+			econs[hex.team].income -= troops[hex.troop].cost();
+		} else {
+			moveTroop(troop, now);
+			captureHex(hex, last.team);
+		};
 		troops[troop].moved = true;
 	};
 

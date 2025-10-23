@@ -12,4 +12,5 @@ game {
 	lose: 'Defeat'
 
 	stats: '{a}% vs {b}%'
+	bankrupcy: '{a}\$ vs {b}\$'
 }

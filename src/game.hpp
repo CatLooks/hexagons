@@ -51,7 +51,8 @@ public:
 
 				// merge if ally troop
 				if (hex.team == team) {
-					return troop == Troop::Worried && hex.troop == Troop::Worried;
+					return troop == Troop::Worried
+						&& hex.troop == Troop::Worried;
 				};
 
 				// ignore if highest rank
@@ -82,7 +83,8 @@ public:
 		);
 
 		// set map troops
-		map.troop({ 1, 3 }, Troop::Evil);
+		map.troop({ 1, 3 }, Troop::Worried);
+		map.troop({ 1, 4 }, Troop::Worried);
 		map.troop({ 14, 6 }, Troop::Worried);
 		map.troop({ 12, 5 }, Troop::Evil);
 
@@ -182,7 +184,7 @@ public:
 			text->setColor(sf::Color(255, 0, 0));
 			text->param("team", "Red");
 			text->paramHook("per", [=]() -> ui::Text::Hook {
-				return std::format("{}", 100 * map.econs[Hex::Red].income / map.tiles);
+				return std::format("{}", 100 * map.econs[Hex::Red].tiles / map.tiles);
 			});
 			add(text);
 		}
@@ -193,7 +195,7 @@ public:
 			text->setColor(sf::Color(0, 128, 255));
 			text->param("team", "Blue");
 			text->paramHook("per", [=]() -> ui::Text::Hook {
-				return std::format("{}", 100 * map.econs[Hex::Blue].income / map.tiles);
+				return std::format("{}", 100 * map.econs[Hex::Blue].tiles / map.tiles);
 			});
 			add(text);
 		}
@@ -287,10 +289,14 @@ protected:
 
 	// tries to end the game
 	void finish() {
-		int a = 100 * map.econs[Hex::Red].income / map.tiles;
-		int b = 100 * map.econs[Hex::Blue].income / map.tiles;
+		int a = 100 * map.econs[Hex::Red].tiles / map.tiles;
+		int b = 100 * map.econs[Hex::Blue].tiles / map.tiles;
 
-		if (a >= 50 || b >= 50) {
+		bool bankrupcy = map.econs[Hex::Red].balance < 0 || map.econs[Hex::Blue].balance < 0;
+
+		if (a >= 50 || b >= 50 || bankrupcy) {
+			bool check = a >= 50 || map.econs[Hex::Blue].balance < 0;
+
 			ui::Layer* layer = itf->layer(nullptr);
 
 			ui::Solid* panel = new ui::Solid;
@@ -302,14 +308,33 @@ protected:
 			// text settings
 			ui::TextSettings sets = { assets::font, 24, assets::lang::locale };
 
-			ui::Text* title = new ui::Text(sets, (a >= 50 ? "game.win" : "game.lose"));
-			title->setOutline(sf::Color::Black, 4);
-			title->setColor(a >= 50 ? sf::Color::Green : sf::Color::Red);
-			title->position() = { 0.5as, 0.5as };
-			title->shrink_to_fit = true;
-			title->alignX = ui::Text::Center;
-			title->alignY = ui::Text::Center;
-			panel->add(title);
+			{
+				ui::Text* title = new ui::Text(sets, (check ? "game.win" : "game.lose"));
+				title->setOutline(sf::Color::Black, 4);
+				title->setColor(check ? sf::Color::Green : sf::Color::Red);
+				title->position() = { 0.5as, 0.5ps - 20px };
+				title->shrink_to_fit = true;
+				title->alignX = ui::Text::Center;
+				title->alignY = ui::Text::Center;
+				panel->add(title);
+			}
+			{
+				ui::Text* data = new ui::Text(sets, bankrupcy ? "game.bankrupcy" : "game.stats");
+				data->setOutline(sf::Color::Black, 4);
+				data->position() = { 0.5as, 0.5ps + 20px };
+				data->shrink_to_fit = true;
+				data->alignX = ui::Text::Center;
+				data->alignY = ui::Text::Center;
+				panel->add(data);
+
+				if (bankrupcy) {
+					data->param("a", std::format("{}", map.econs[Hex::Red].balance));
+					data->param("b", std::format("{}", map.econs[Hex::Blue].balance));
+				} else {
+					data->param("a", std::format("{}", a));
+					data->param("b", std::format("{}", b));
+				};
+			}
 		};
 	};
 };
