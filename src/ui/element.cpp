@@ -195,6 +195,32 @@ namespace ui {
 			element->recalculate(delta, _innerRect);
 	};
 
+	/// Recalculates draw area after main recalculation.
+	void Element::recalculate() {
+		// zero delta
+		sf::Time delta = sf::seconds(0);
+
+		// ignore if not active
+		// or if element is not attached
+		if (!_active || !_parent) return;
+
+		// update before recalculation
+		for (const auto& handler : _recalc_list)
+			handler(delta);
+
+		// get parent size
+		const sf::IntRect& parent = _parent->_innerRect;
+
+		// recalculate element draw areas
+		_outerRect = bounds.get(parent);
+		_rect = margin.apply(_outerRect);
+		_innerRect = padding.apply(_rect);
+
+		// recalculate children
+		for (const auto& element : _elements)
+			element->recalculate(delta, _innerRect);
+	};
+
 	/// Draws the element and its children.
 	void Element::draw(RenderBuffer& target) const {
 		// ignore if not active

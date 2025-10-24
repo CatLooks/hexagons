@@ -210,7 +210,7 @@ namespace ui {
 		/// 
 		/// Order of updates:
 		/// 
-		/// 1. recalculation virtual function
+		/// 1. pre-recalculation updates
 		/// 2. animation update
 		/// 3. element recalculation
 		/// 4. children recalculation
@@ -218,6 +218,12 @@ namespace ui {
 		/// @param delta Time elapsed since last frame.
 		/// @param parent Parent bounding box.
 		void recalculate(const sf::Time& delta, sf::IntRect parent);
+		/// Recalculates draw area after main recalculation.
+		///
+		/// Does not tick animations.
+		///
+		/// This method will not work if the element does not have a parent.
+		void recalculate();
 		/// Draws the element and its children.
 		/// @param target Render buffer.
 		void draw(RenderBuffer& target) const;

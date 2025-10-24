@@ -302,6 +302,7 @@ If you don't need these things to work properly, you can omit setting element's 
   | Function | Description |
   |-|-|
   | `recalculate(const sf::Time& delta, sf::IntRect parent_bounds)` | Recalculates the element. |
+  | `recalculate()` | Recalculates the element after main recalculation phase *(method for users)*. |
   | `event(Event evt) -> bool` | Sends the event to the element. |
   | `handle(Event evt) -> bool` | Forces the event on the element. |
   | `hover(sf::Vector2i mouse) -> bool` | Updates the hover state of the element. |
