@@ -73,6 +73,90 @@ public:
 		);
 	};
 
+	// ai moves
+	void ai() {
+		static int turns_since_merge = -3;
+
+		for (size_t i = 0; i < map.troops.width(); i++) {
+			// ignore if inactive
+			if (!map.troops.active(i)) continue;
+			Troop& troop = map.troops[i];
+			auto& econ = map.econs[map.at(troop.pos).team];
+
+			// ignore if not blue
+			if (map.at(troop.pos).team != Hex::Blue) continue;
+
+			// ignore if already moved
+			if (troop.moved) continue;
+
+			// get available moves
+			auto moves = select(troop.pos, Map::noEffect);
+			
+			// ignore turn by chance
+			if (chance(0.2)) continue;
+
+			// town hall check
+			if (troop.type == Troop::Castle) {
+				// skip if no money
+				if (econ.balance < 15)
+					continue;
+
+				// skip move if not enough income
+				if (econ.income < 3 * Troop(Troop::Worried).cost())
+					continue;
+
+				// ignore by chance (x2)
+				if (!chance(0.4 + econ.balance / 400.f)) continue;
+			};
+
+			// split moves
+			std::vector<sf::Vector2i> moves_exp;
+			std::vector<sf::Vector2i> moves_inn;
+			std::vector<sf::Vector2i> moves_mrg;
+
+			for (sf::Vector2i move : moves) {
+				if (map.at(move).team == Hex::None)
+					moves_exp.push_back(move);
+				else if (map.at(move).team == Hex::Blue && map.at(move).troop != ~0ull)
+					moves_mrg.push_back(move);
+				else
+					moves_inn.push_back(move);
+			};
+
+			// merge check
+			if (chance(
+				0.3f + turns_since_merge * 0.15f
+			) && !moves_mrg.empty() && econ.income >= Troop(Troop::Evil).cost() * 3 / 2)
+			{
+				size_t idx = rand() % moves_mrg.size();
+				map.act(i, troop.pos, moves_mrg[idx]);
+				troop.moved = true;
+				continue;
+			};
+
+			// expansion check
+			if (chance(
+				econ.income == 0
+					? 1.0
+					: 0.2 + 4.0 / econ.income
+			) && !moves_exp.empty())
+			{
+				size_t idx = rand() % moves_exp.size();
+				map.act(i, troop.pos, moves_exp[idx]);
+				troop.moved = true;
+				continue;
+			} 
+
+			// do a random move
+			if (!moves_inn.empty()) {
+				size_t idx = rand() % moves_inn.size();
+				map.act(i, troop.pos, moves_inn[idx]);
+				troop.moved = true;
+				continue;
+			};
+		};
+	};
+
 	/// Constructor.
 	GameMap(ui::Interface* itf): itf(itf) {
 		bounds = ui::DimRect::Fill;
@@ -278,86 +362,7 @@ public:
 			img->onEvent([=](const ui::Event& evt) {
 				if (auto data = evt.get<ui::Event::MousePress>()) {
 					turn++;
-
-					// ai moves
-					for (size_t i = 0; i < map.troops.width(); i++) {
-						// ignore if inactive
-						if (!map.troops.active(i)) continue;
-						Troop& troop = map.troops[i];
-						auto& econ = map.econs[map.at(troop.pos).team];
-
-						// ignore if not blue
-						if (map.at(troop.pos).team != Hex::Blue) continue;
-
-						// ignore if already moved
-						if (troop.moved) continue;
-
-						// get available moves
-						auto moves = select(troop.pos, Map::noEffect);
-						
-						// ignore turn by chance
-						if (chance(0.2)) continue;
-
-						// town hall check
-						if (troop.type == Troop::Castle) {
-							// skip if no money
-							if (econ.balance < 15)
-								continue;
-
-							// skip move if not enough income
-							if (econ.income < 3 * Troop(Troop::Worried).cost())
-								continue;
-
-							// ignore by chance (x2)
-							if (chance(0.4 + econ.balance / 400.f)) continue;
-						};
-
-						// split moves
-						std::vector<sf::Vector2i> moves_exp;
-						std::vector<sf::Vector2i> moves_inn;
-						std::vector<sf::Vector2i> moves_mrg;
-
-						for (sf::Vector2i move : moves) {
-							if (map.at(move).team == Hex::None)
-								moves_exp.push_back(move);
-							else if (map.at(move).team == Hex::Blue && map.at(move).troop != ~0ull)
-								moves_mrg.push_back(move);
-							else
-								moves_inn.push_back(move);
-						};
-
-						// merge check
-						if (chance(0.3 + econ.balance / 300.f) && !moves_mrg.empty()
-							&& econ.income >= Troop(Troop::Evil).cost() * 3 / 2)
-						{
-							size_t idx = rand() % moves_mrg.size();
-							map.act(i, troop.pos, moves_mrg[idx]);
-							troop.moved = true;
-							continue;
-						};
-
-						// expansion check
-						if (chance(
-							econ.income == 0
-								? 1.0
-								: 0.2 + 4.0 / econ.income
-						) && !moves_exp.empty())
-						{
-							size_t idx = rand() % moves_exp.size();
-							map.act(i, troop.pos, moves_exp[idx]);
-							troop.moved = true;
-							continue;
-						} 
-
-						// do a random move
-						if (!moves_inn.empty()) {
-							size_t idx = rand() % moves_inn.size();
-							map.act(i, troop.pos, moves_inn[idx]);
-							troop.moved = true;
-							continue;
-						};
-					};
-
+					ai();
 					map.turn();
 					finish();
 					return true;
