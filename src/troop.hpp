@@ -25,7 +25,7 @@ struct Troop {
 	int cost() const {
 		switch (type) {
 			case Worried: return 4;
-			case Evil: return 12;
+			case Evil: return 9;
 			default: return 0;
 		};
 	};

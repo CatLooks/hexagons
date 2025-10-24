@@ -214,8 +214,8 @@ struct Map {
 		} else {
 			moveTroop(troop, now);
 			captureHex(hex, last.team);
+			troops[troop].moved = true;
 		};
-		troops[troop].moved = true;
 	};
 
 	// deselects all hexes
@@ -236,6 +236,7 @@ struct Map {
 		// update economies
 		for (size_t i = 0; i < 3; i++) {
 			econs[i].balance += econs[i].income;
+			econs[i].income += 2;
 		};
 	};
 

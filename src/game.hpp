@@ -49,6 +49,9 @@ public:
 				return true;
 			},
 			[&](const Hex& hex, sf::Vector2i pos) -> bool {
+				// ignore if origin
+				if (pos == coords) return false;
+
 				// town hall check
 				if (troop == Troop::Castle) {
 					// check if tile is empty
@@ -106,7 +109,8 @@ public:
 					continue;
 
 				// ignore by chance (x2)
-				if (!chance(0.4 + econ.balance / 400.f)) continue;
+				float c = 0.9 - econ.balance / 300.f;
+				if (chance(c < 0.2f ? 0.2f : c)) continue;
 			};
 
 			// split moves
@@ -125,9 +129,11 @@ public:
 
 			// merge check
 			if (chance(
-				0.3f + turns_since_merge * 0.15f
+				0.3f + (turns_since_merge++) * 0.15f
 			) && !moves_mrg.empty() && econ.income >= Troop(Troop::Evil).cost() * 3 / 2)
 			{
+				turns_since_merge = 0;
+
 				size_t idx = rand() % moves_mrg.size();
 				map.act(i, troop.pos, moves_mrg[idx]);
 				troop.moved = true;
@@ -380,8 +386,8 @@ protected:
 
 	// tries to end the game
 	void finish() {
-		int a = 100 * map.econs[Hex::Red].tiles / map.tiles;
-		int b = 100 * map.econs[Hex::Blue].tiles / map.tiles;
+		size_t a = 100 * map.econs[Hex::Red].tiles / map.tiles;
+		size_t b = 100 * map.econs[Hex::Blue].tiles / map.tiles;
 
 		bool bankrupcy = map.econs[Hex::Red].balance < 0 || map.econs[Hex::Blue].balance < 0;
 
