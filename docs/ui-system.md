@@ -64,7 +64,7 @@ UI system is a framework that creates an interactive and adaptive interface syst
 
 Every active element will be updated each frame in the following order:
 - Recalculation - updates element on-screen position.
-    - Pre-recalculation update `onRecalculate()` - executes logic before recalculation.
+    - Pre-recalculation updates - executes logic before recalculation *(attached using `onRecalculate()`)*.
     - Animation updates - ticks and finishes if needed all animations stored in the element.
     - Bounds recalculation - calculates element on-screen position.
     - Children recalculation - all child elements are recalculated.
@@ -288,14 +288,14 @@ If you don't need these things to work properly, you can omit setting element's 
     | `onTranslate` | Executed when UI system changes the language. |
     | `onActivate` | Executed when the element is activated. |
     | `onDeactivate` | Executed when the element is deactivated. |
-    | `onRecalculate` | Executed when the element is being recalculated. |
 
 * Function hooks:
 
   | Function | Description |
   |-|-|
   | `onEvent(bool(const ui::Event& event) handler)` | Attaches a new event handler to the element (for more see [event handling](##event-handling)). |
-  | `onUpdate(void(const sf::Time& delta) handler)` | Attaches a new update handler to the element. |
+  | `onRecalculate(void(const sf::Time& delta) handler)` | Attaches a new pre-recalculation update handler to the element. |
+  | `onUpdate(void(const sf::Time& delta) handler)` | Attaches a new pre-draw update handler to the element. |
 
 * General methods (used by interface management):
 
