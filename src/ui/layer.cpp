@@ -1,16 +1,15 @@
 #include "ui/layer.hpp"
 
 namespace ui {
-	/// Prepare for layer recalculation.
-	void Layer::onRecalculate() {
-		// reset layer bounds (just in case)
-		bounds = { 0px, 0px, 1ps, 1ps };
-		// clear render buffer
-		_buffer.clear();
-	};
-
 	/// Constructs a new layer.
-	Layer::Layer(const sf::Texture* texture) : _buffer({ texture }) {};
+	Layer::Layer(const sf::Texture* texture): _buffer({ texture }) {
+		onRecalculate([=](const sf::Time& _) {
+			// reset layer bounds (just in case)
+			bounds = { 0px, 0px, 1ps, 1ps };
+			// clear render buffer
+			_buffer.clear();
+		});
+	};
 
 	/// Sets new rendering texture.
 	void Layer::setTexture(const sf::Texture* texture) {

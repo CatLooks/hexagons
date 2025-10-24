@@ -46,7 +46,7 @@ namespace ui {
 		std::unordered_map<std::string, std::function<std::optional<std::string>()>> _autoargs;
 
 		/// Recalculates text state.
-		void onRecalculate() override;
+		void recalc();
 		/// Reloads text.
 		void onTranslate() override;
 

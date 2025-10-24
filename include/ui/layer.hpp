@@ -21,9 +21,6 @@ namespace ui {
 		/// View override.
 		std::optional<sf::View> _view;
 
-		/// Prepare for layer recalculation.
-		void onRecalculate() override;
-
 	public:
 		/// Constructs a new layer.
 		/// @param texture Layer rendering texture.

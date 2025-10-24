@@ -115,7 +115,9 @@ namespace ui {
 
 		/// Event handler list.
 		std::list<EventHandler> _handle_list;
-		/// Post-event update handler list.
+		/// Pre-recalculation update handler list.
+		std::list<UpdateHandler> _recalc_list;
+		/// Post-recalculation update handler list.
 		std::list<UpdateHandler> _update_list;
 		/// Active animator list.
 		std::list<std::unique_ptr<Anim>> _anims;
@@ -153,8 +155,6 @@ namespace ui {
 		virtual void onActivate();
 		/// Runs when the element gets deactivated.
 		virtual void onDeactivate();
-		/// Runs before recalculation.
-		virtual void onRecalculate();
 			
 	public:
 		/// Virtual destructor.
@@ -256,6 +256,11 @@ namespace ui {
 		/// Update handler receives the time delta.
 		/// @param handler Update handler.
 		void onUpdate(const UpdateHandler& handler);
+		/// Attaches a recalculation handler.
+		/// 
+		/// Recalculation handler receives the time delta.
+		/// @param handler Update handler.
+		void onRecalculate(const UpdateHandler& handler);
 
 		/// Updates UI language.
 		void translate();

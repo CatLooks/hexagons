@@ -84,8 +84,6 @@ namespace ui {
 	void Element::onActivate() {};
 	/// Runs when the element gets deactivated.
 	void Element::onDeactivate() {};
-	/// Runs before recalculation.
-	void Element::onRecalculate() {};
 
 	/// Virtual destructor.
 	Element::~Element() {};
@@ -171,7 +169,8 @@ namespace ui {
 		if (!_active) return;
 
 		// update before recalculation
-		onRecalculate();
+		for (const auto& handler : _recalc_list)
+			handler(delta);
 
 		// update animations
 		auto it = _anims.begin();
@@ -281,6 +280,8 @@ namespace ui {
 	void Element::onEvent(const EventHandler& handler) { _handle_list.push_back(handler); };
 	/// Attaches an update handler.
 	void Element::onUpdate(const UpdateHandler& handler) { _update_list.push_back(handler); };
+	/// Attaches an update handler.
+	void Element::onRecalculate(const UpdateHandler& handler) { _recalc_list.push_back(handler); };
 
 	/// Updates UI language.
 	void Element::translate() {

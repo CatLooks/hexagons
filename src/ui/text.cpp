@@ -11,7 +11,7 @@ namespace ui {
 	};
 
 	/// Recalculates text state.
-	void Text::onRecalculate() {
+	void Text::recalc() {
 		// evaluate auto-loading arguments
 		for (const auto& gen : _autoargs) {
 			if (auto value = gen.second())
@@ -61,7 +61,11 @@ namespace ui {
 	Text::Text(const TextSettings& settings, const localization::Path& path):
 		_text(new sf::Text(settings.font, "", settings.size)),
 		_format(settings.locale.req(path)),
-		_reload(createReloadFunc(&settings.locale, path)) {};
+		_reload(createReloadFunc(&settings.locale, path))
+	{
+		// adds recalculation update
+		onRecalculate([=](const sf::Time& _) { recalc(); });
+	};
 
 	/// Clears text arguments.
 	void Text::paramClear() {
