@@ -220,7 +220,7 @@ namespace ui {
 		void recalculate(const sf::Time& delta, sf::IntRect parent);
 		/// Recalculates draw area after main recalculation.
 		///
-		/// Does not tick animations.
+		/// Recalculation uses `0` as delta; animations will not be ticked.
 		///
 		/// This method will not work if the element does not have a parent.
 		void recalculate();

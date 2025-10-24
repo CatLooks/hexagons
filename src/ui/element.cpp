@@ -218,7 +218,7 @@ namespace ui {
 
 		// recalculate children
 		for (const auto& element : _elements)
-			element->recalculate(delta, _innerRect);
+			element->recalculate();
 	};
 
 	/// Draws the element and its children.
