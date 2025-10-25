@@ -7,6 +7,7 @@ namespace ui {
 		triangles += oth.triangles;
 		text += oth.text;
 		batches += oth.batches;
+		inters += oth.inters;
 	};
 
 	/// Constructs a new render buffer.

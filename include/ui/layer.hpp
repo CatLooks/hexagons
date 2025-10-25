@@ -4,6 +4,7 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
 #include "element.hpp"
 #include <deque>
 
@@ -16,10 +17,18 @@ namespace ui {
 		friend Interface;
 
 	protected:
+		/// Intermediate rendering data.
+		struct ir_t {
+			sf::RenderTexture tex; /// Render texture.
+			sf::IntRect area;      /// Texture blit area.
+			sf::Vector2f fact;     /// Local -> global scaling factors.
+			sf::Vector2f inv_fact; /// Global -> local scaling factors.
+		};
+
 		/// Layer render buffer.
 		RenderBuffer _buffer;
-		/// View override.
-		std::optional<sf::View> _view;
+		/// Layer intermediate render data.
+		std::optional<ir_t> _ir;
 
 	public:
 		/// Constructs a new layer.
@@ -30,17 +39,32 @@ namespace ui {
 		void setTexture(const sf::Texture* texture);
 		/// Sets new rendering shader.
 		void setShader(const sf::Shader* shader);
-		/// Sets rendering view override.
-		/// @param view Optional view override.
-		void setView(std::optional<sf::View> view);
+
+		/// Configures intermediate rendering.
+		///
+		/// @param size Intermediate interface size.
+		/// @param area Intermediate texture rendering area.
+		void setArea(sf::Vector2u size, sf::IntRect area);
+		/// Removes an intermediate texture step.
+		void removeArea();
+
+		/// Returns layer texture size.
+		///
+		/// @param window Current window size.
+		sf::IntRect view(sf::IntRect window) const;
+		/// Maps a screen-space position into a layer position.
+		///
+		/// @param pos Position in screen space.
+		///
+		/// @return Position in layer space.
+		sf::Vector2i map(sf::Vector2i pos) const;
 
 		/// Renders drawn layer onto render target.
 		/// 
 		/// @param target Render target.
-		/// @param default_view Default view.
 		/// 
-		/// @return Rendered triangle count.
-		RenderStats render(sf::RenderTarget& target, const sf::View& default_view) const;
+		/// @return Render statistics.
+		RenderStats render(sf::RenderTarget& target);
 	};
 
 	/// Interface container.
@@ -58,10 +82,6 @@ namespace ui {
 		sf::Clock upd_clock;
 		/// Animation clock.
 		sf::Clock anim_clock;
-
-		/// Sends the event to all interface layers.
-		/// @param evt Sent event.
-		void send_event(const Event& evt);
 
 	public:
 		/// Creates a new interface layer.
@@ -82,7 +102,6 @@ namespace ui {
 		/// Draws the interface.
 		/// 
 		/// @param target Render target.
-		/// @param def_view Default view.
 		void draw(sf::RenderTarget& target);
 		/// Updates interface language.
 		void translate() const;

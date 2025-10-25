@@ -28,6 +28,7 @@ int main() {
 
 	ui::Interface interface;
 	ui::Layer* layer = interface.layer(&assets::tex);
+	layer->setArea({ 1200, 675 }, { { 200, 112 }, { 1200, 675 } });
 
 	{
 		ui::Easing list[7] {
@@ -132,7 +133,8 @@ int main() {
 
 	// test text
 	interface.setStatDrawCall([=](sf::RenderTarget& target, const ui::RenderStats& stats) {
-		sf::Text text(assets::font, std::format("{}Q | {}T | {}F | {}B", stats.quads, stats.triangles, stats.text, stats.batches), 24);
+		sf::Text text(assets::font, std::format("{}Q | {}T | {}F | {}B | {}I",
+			stats.quads, stats.triangles, stats.text, stats.batches, stats.inters), 24);
 		text.setPosition({ 6, 0 });
 		text.setOutlineThickness(2);
 		target.draw(text);

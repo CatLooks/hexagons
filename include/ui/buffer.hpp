@@ -15,6 +15,7 @@ namespace ui {
 		size_t triangles = 0; /// Amount of triangles rendered.
 		size_t text      = 0; /// Amount of text lines rendered.
 		size_t batches   = 0; /// Amount of batches rendered.
+		size_t inters    = 0; /// Amount of intermediate textures rendered.
 
 		/// Compiles rendering stats from another structure.
 		/// @param oth Other structure.
