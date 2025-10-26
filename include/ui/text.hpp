@@ -16,6 +16,17 @@ namespace ui {
 	/// Text label element.
 	class Text : public Element {
 	public:
+		/// Text positioning mode.
+		enum Positioning {
+			None    = 0,      /// Rendered as-is.
+
+			ShrinkX = 1 << 0, /// Bounding box shrinked horizontally.
+			ShrinkY = 1 << 1, /// Bounding box shrinked vertically.
+			Static  = 1 << 2, /// Height set to a static value.
+
+			Shrink = ShrinkX | ShrinkY /// Shrinks bounding box in both axes.
+		};
+
 		/// Alignment type.
 		enum Align {
 			Center = 0, /// Align to center.
@@ -43,8 +54,19 @@ namespace ui {
 			SE = S | E, /// Align to south east (same as `BottomRight`).
 		};
 		
+		/// Text positioning mode.
+		Positioning pos = None;
 		/// Text alignment within the label bounding box.
 		Align align = NW;
+
+		/// Sets text positioning mode.
+		/// 
+		/// @param pos Positioning mode.
+		void setPositioning(int pos);
+		/// Sets text alignment.
+		/// 
+		/// @param align Alignment direction.
+		void setAlign(int align);
 
 		/// Returns alignment axis multipliers.
 		static sf::Vector2f alignMultipliers(Align align);
@@ -78,11 +100,6 @@ namespace ui {
 
 		/// Whether to automatically set label size to text size.
 		bool autosize = false;
-		/// Whether to shrink text bounding box optimally.
-		/// 
-		/// Setting this to `true` may result in text jumps when contents change.
-		/// Setting this to `false` may result in text not looking properly vertically aligned.
-		bool shrink_to_fit = false;
 
 		/// Constructs a text element.
 		/// 

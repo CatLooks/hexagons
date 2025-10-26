@@ -95,7 +95,7 @@ int main() {
 
 			label->setOutline(sf::Color::Black, 2.f);
 			label->bounds = ui::DimRect::Fill;
-			label->shrink_to_fit = true;
+			label->pos = ui::Text::Shrink;
 			label->align = ui::Text::C;
 		}
 	}
@@ -106,6 +106,38 @@ int main() {
 		img->size() *= 5;
 		layer->add(img);
 	}
+
+	// text alignment test
+	const ui::Text::Align alignments[9] {
+		ui::Text::NW, ui::Text::N, ui::Text::NE,
+		ui::Text::W, ui::Text::C, ui::Text::E,
+		ui::Text::SW, ui::Text::S, ui::Text::SE
+	};
+
+	for (size_t y = 0; y < 3; y++) {
+		for (size_t x = 0; x < 3; x++) {
+
+			// create a test box
+			ui::Solid* solid = new ui::Solid;
+			solid->color = sf::Color::Cyan;
+			{
+				ui::Text* text = new ui::Text(sets, "demo.align");
+				{
+					text->setOutline(sf::Color::Black, 2);
+					// set text alignment
+					text->align = alignments[y * 3 + x];
+					text->pos = ui::Text::Shrink;
+					text->bounds = ui::DimRect::Fill;
+				}
+				solid->add(text);
+			}
+			layer->add(solid);
+
+			// set box position
+			solid->position() = { 1000px + 100px * (float)x, 200px + 100px * (float)y };
+			solid->size() = { 80px, 80px };
+		};
+	};
 
 	// fps text
 	{

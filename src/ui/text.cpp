@@ -5,10 +5,19 @@ namespace ui {
 	/// Returns alignment multiplier.
 	sf::Vector2f Text::alignMultipliers(Align align) {
 		// axis multiplier look-up table
-		const float lut[4] { 0.5f, 0.5f, 0.0f, 1.0f };
+		const float lut[4]{ 0.5f, 0.5f, 0.0f, 1.0f };
 
 		// map alignment axes into their values
 		return { lut[align & 3], lut[align >> 2 & 3] };
+	};
+
+	/// Sets text positioning mode.
+	void Text::setPositioning(int pos) {
+		this->pos = static_cast<Positioning>(pos);
+	};
+	/// Sets text alignment.
+	void Text::setAlign(int align) {
+		this->align = static_cast<Align>(align);
 	};
 
 	/// Recalculates text state.
@@ -41,14 +50,22 @@ namespace ui {
 
 		// reconfigure text object
 		auto rect = text->getLocalBounds();
-		if (!shrink_to_fit) {
-			rect.size += rect.position;
-			rect.position = {};
+		if (pos & 1) {
+			// shrink horizontally
+			self.position.x -= (int)rect.position.x;
+		};
+		if (pos & 2) {
+			// shrink vertically
+			self.position.y -= (int)rect.position.y;
+		};
+		if (pos & 4) {
+			// set height to line spacing
+			rect.size.y = text->getFont().getLineSpacing(text->getCharacterSize());
 		};
 		sf::Vector2f mults = alignMultipliers(align);
 		text->setPosition({
-			self.position.x + (self.size.x - rect.size.x) * mults.x - rect.position.x,
-			self.position.y + (self.size.y - rect.size.y) * mults.y - rect.position.y,
+			self.position.x + (self.size.x - rect.size.x) * mults.x,
+			self.position.y + (self.size.y - rect.size.y) * mults.y,
 		});
 
 		// render text
@@ -58,11 +75,13 @@ namespace ui {
 	/// Constructs a text element.
 	Text::Text(const TextSettings& settings, const localization::Path& path):
 		_text(new sf::Text(settings.font, "", settings.size)),
-		_path(path),
-		_format(assets::lang::locale.req(path))
+		_path(path)
 	{
 		// adds recalculation update
 		onRecalculate([=](const sf::Time& _) { recalc(); });
+
+		// load text format
+		onTranslate();
 	};
 
 	/// Clears text arguments.

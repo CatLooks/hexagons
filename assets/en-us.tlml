@@ -25,4 +25,6 @@ demo {
 	6: Sine In Out
 
 	fps: "FPS: {fps}"
+
+	align: "Qp"
 }
