@@ -106,6 +106,11 @@ namespace ui {
 		sf::Vector2i _size = size.get(parent.size, {});
 		return { position.get(parent.size, _size) + parent.position, _size };
 	};
+	/// Returns dimension rectangle's true value.
+	sf::IntRect DimRect::get_es(sf::IntRect parent, sf::Vector2i es) const {
+		sf::Vector2i _size = size.get(parent.size, es);
+		return { position.get(parent.size, _size) + parent.position, _size };
+	};
 
 	/// Filling rectangle.
 	DimRect DimRect::Fill = { 0px, 0px, 1ps, 1ps };

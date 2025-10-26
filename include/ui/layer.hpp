@@ -20,9 +20,8 @@ namespace ui {
 		/// Intermediate rendering data.
 		struct ir_t {
 			sf::RenderTexture tex; /// Render texture.
-			sf::IntRect area;      /// Texture blit area.
-			sf::Vector2f fact;     /// Local -> global scaling factors.
-			sf::Vector2f inv_fact; /// Global -> local scaling factors.
+			DimVector size;        /// Texture size.
+			DimRect area;          /// Texture blit area.
 		};
 
 		/// Layer render buffer.
@@ -42,29 +41,33 @@ namespace ui {
 
 		/// Configures intermediate rendering.
 		///
-		/// @param size Intermediate interface size.
-		/// @param area Intermediate texture rendering area.
-		void setArea(sf::Vector2u size, sf::IntRect area);
+		/// `es` scalars in `blitArea` will use texture size as scaled value.
+		/// 
+		/// @param textureSize Intermediate texture size.
+		/// @param blitArea Intermediate texture rendering area.
+		void setArea(DimVector textureSize, DimRect blitArea);
 		/// Removes an intermediate texture step.
 		void removeArea();
 
-		/// Returns layer texture size.
+		/// Returns layer rendering area.
 		///
-		/// @param window Current window size.
+		/// @param window Window view rectangle.
 		sf::IntRect view(sf::IntRect window) const;
 		/// Maps a screen-space position into a layer position.
 		///
 		/// @param pos Position in screen space.
+		/// @param window Window view rectangle.
 		///
 		/// @return Position in layer space.
-		sf::Vector2i map(sf::Vector2i pos) const;
+		sf::Vector2i map(sf::Vector2i pos, sf::IntRect window) const;
 
 		/// Renders drawn layer onto render target.
 		/// 
 		/// @param target Render target.
+		/// @param window Window view rectangle.
 		/// 
 		/// @return Render statistics.
-		RenderStats render(sf::RenderTarget& target);
+		RenderStats render(sf::RenderTarget& target, sf::IntRect window);
 	};
 
 	/// Interface container.

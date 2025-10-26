@@ -28,7 +28,7 @@ int main() {
 
 	ui::Interface interface;
 	ui::Layer* layer = interface.layer(&assets::tex);
-	layer->setArea({ 1200, 675 }, { { 200, 112 }, { 1200, 675 } });
+	layer->setArea({ 1ps, 1ps }, { 0px, 0px, 1es, 1es });
 
 	{
 		ui::Easing list[7] {

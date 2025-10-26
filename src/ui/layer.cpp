@@ -22,43 +22,71 @@ namespace ui {
 	};
 
 	/// Configures intermediate rendering.
-	void Layer::setArea(sf::Vector2u size, sf::IntRect area) {
-		sf::Vector2f fact = sf::Vector2f(area.size).componentWiseDiv((sf::Vector2f)size);
-		_ir = ir_t(sf::RenderTexture(size), area, fact, { 1.f / fact.x, 1.f / fact.y });
+	void Layer::setArea(DimVector size, DimRect area) {
+		_ir = ir_t(sf::RenderTexture(), size, area);
 	};
 	/// Removes an intermediate texture step.
 	void Layer::removeArea() {
 		_ir = {};
 	};
 
-	/// Returns layer texture size.
+	/// Returns layer rendering area.
 	sf::IntRect Layer::view(sf::IntRect window) const {
-		return _ir ? sf::IntRect({}, (sf::Vector2i)_ir->tex.getSize()) : window;
+		// pass through if no intermediate step
+		if (!_ir) return window;
+
+		// recalculate rendering area
+		sf::Vector2i size = _ir->size.get(window.size, {});
+		return _ir->area.get_es(window, size);
 	};
 
 	/// Maps a screen-space position into a layer position.
-	sf::Vector2i Layer::map(sf::Vector2i pos) const {
+	sf::Vector2i Layer::map(sf::Vector2i pos, sf::IntRect window) const {
+		// pass through if no intermediate step
 		if (!_ir) return pos;
-		return (sf::Vector2i)(sf::Vector2f(pos - _ir->area.position).componentWiseMul(_ir->inv_fact));
+
+		// get texture configuration
+		sf::Vector2i size = _ir->size.get(window.size, {});
+		sf::IntRect area = _ir->area.get_es(window, size);
+
+		// return remapped position
+		sf::Vector2i npos = pos - area.position;
+		return {
+			(int)((float)npos.x * size.x / area.size.x),
+			(int)((float)npos.y * size.y / area.size.y)
+		};
 	};
 
 	/// Renders drawn layer onto render target.
-	RenderStats Layer::render(sf::RenderTarget& target) {
+	RenderStats Layer::render(sf::RenderTarget& target, sf::IntRect window) {
 		// draw buffer to render target
-		auto stats = _buffer.draw(_ir ? _ir->tex : target);
+		RenderStats stats;
 		if (_ir) {
-			// update intermediate sprite
-			sf::Sprite spr(_ir->tex.getTexture());
-			spr.setPosition((sf::Vector2f)_ir->area.position);
-			spr.setScale(_ir->fact);
+			// get rendering area
+			sf::Vector2i size = _ir->size.get(window.size, {});
+			sf::IntRect area = _ir->area.get_es(window, size);
 
-			// render intermediate to target
+			// reset intermediate texture
+			auto _ = _ir->tex.resize((sf::Vector2u)size);
+			_ir->tex.clear(sf::Color::Transparent);
+			stats = _buffer.draw(_ir->tex);
+
+			// configure intermediate sprite
+			sf::Sprite spr(_ir->tex.getTexture());
+			spr.setPosition((sf::Vector2f)area.position);
+			spr.setScale({
+				(float)area.size.x / size.x,
+				(float)area.size.y / size.y
+			});
+
+			// render intermediate texture to target
 			_ir->tex.display();
 			target.draw(spr);
 			stats.inters++;
-
-			// clear textuer
-			_ir->tex.clear(sf::Color::Transparent);
+		}
+		else {
+			// direct drawing
+			stats = _buffer.draw(target);
 		};
 		return stats;
 	};
@@ -80,10 +108,8 @@ namespace ui {
 		sf::Time delta = anim_clock.restart();
 
 		// recalculate each layer
-		for (auto& layer : layers) {
-			sf::IntRect view = layer->view(winRect);
-			layer->recalculate(delta, view);
-		};
+		for (auto& layer : layers)
+			layer->recalculate(delta, layer->view(winRect));
 	};
 
 	/// Send an event to interface.
@@ -91,29 +117,41 @@ namespace ui {
 		for (auto& layer : layers) {
 			// check for keyboard events
 			if (const auto* data = evt.getIf<sf::Event::KeyPressed>()) {
-				layer->event((Event)Event::KeyPress{ data->code, data->scancode, data->alt, data->shift, data->control, data->system });
+				layer->event((Event)Event::KeyPress {
+					data->code, data->scancode, data->alt, data->shift, data->control, data->system
+				});
 				return;
 			};
 			if (const auto* data = evt.getIf<sf::Event::KeyReleased>()) {
-				layer->event((Event)Event::KeyRelease{ data->code, data->scancode, data->alt, data->shift, data->control, data->system });
+				layer->event((Event)Event::KeyRelease {
+					data->code, data->scancode, data->alt, data->shift, data->control, data->system
+				});
 				return;
 			};
 
 			// check for mouse button events
 			if (const auto* data = evt.getIf<sf::Event::MouseButtonPressed>()) {
-				layer->event((Event)Event::MousePress{ layer->map(data->position), data->button });
+				layer->event((Event)Event::MousePress {
+					layer->map(data->position, winRect), data->button 
+				});
 				return;
 			};
 			if (const auto* data = evt.getIf<sf::Event::MouseButtonReleased>()) {
-				layer->event((Event)Event::MouseRelease{ layer->map(data->position), data->button });
+				layer->event((Event)Event::MouseRelease {
+					layer->map(data->position, winRect), data->button
+				});
 				return;
 			};
 			if (const auto* data = evt.getIf<sf::Event::MouseMoved>()) {
-				layer->event((Event)Event::MouseMove{ layer->map(data->position) });
+				layer->event((Event)Event::MouseMove {
+					layer->map(data->position, winRect)
+				});
 				return;
 			};
 			if (const auto* data = evt.getIf<sf::Event::MouseWheelScrolled>()) {
-				layer->event((Event)Event::MouseWheel{ layer->map(data->position), data->delta });
+				layer->event((Event)Event::MouseWheel {
+					layer->map(data->position, winRect), data->delta
+				});
 				return;
 			};
 		};
@@ -139,7 +177,7 @@ namespace ui {
 		target.setView(view);
 		for (auto& layer : layers) {
 			layer->draw(layer->_buffer);
-			stats |= layer->render(target);
+			stats |= layer->render(target, winRect);
 		};
 
 		// render stats
