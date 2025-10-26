@@ -22,7 +22,7 @@ int main() {
 	if (assets::error) return 1;
 
 	// localization test
-	ui::TextSettings sets(assets::font, 24, assets::lang::locale);
+	ui::TextSettings sets(assets::font, 24);
 	assets::lang::locale.print(stdout);
 	printf("\n");
 
@@ -63,7 +63,7 @@ int main() {
 			layer->add(label);
 
 			label->bounds = { 650px, y, 0px, 50px };
-			label->alignY = ui::Text::Center;
+			label->align = ui::Text::Center;
 			label->setOutline(sf::Color::Black, 2);
 
 			y += 80px;
@@ -95,9 +95,8 @@ int main() {
 
 			label->setOutline(sf::Color::Black, 2.f);
 			label->bounds = ui::DimRect::Fill;
-			label->alignX = ui::Text::Center;
-			label->alignY = ui::Text::Center;
 			label->shrink_to_fit = true;
+			label->align = ui::Text::C;
 		}
 	}
 

@@ -11,8 +11,6 @@ namespace ui {
 		const sf::Font& font;
 		/// Text size.
 		unsigned int size;
-		/// Text locale.
-		const localization::Section& locale;
 	};
 
 	/// Text label element.
@@ -20,22 +18,43 @@ namespace ui {
 	public:
 		/// Alignment type.
 		enum Align {
-			Center = 0, /// Center contents.
-			Left   = 1, /// Stick contents to left.
-			Right  = 2, /// Stick contents to right.
-			Up     = 1, /// Stick contents to top.
-			Down   = 2, /// Stick contents to bottom.
+			Center = 0, /// Align to center.
+
+			Left   = 0b0010, /// Align to left center.
+			Right  = 0b0011, /// Align to right center.
+			Top    = 0b1000, /// Align to top center.
+			Bottom = 0b1100, /// Align to bottom center.
+
+			TopLeft     = Top    | Left , /// Align to top left corner.
+			TopRight    = Top    | Right, /// Align to top right corner.
+			BottomLeft  = Bottom | Left , /// Align to bottom left corner.
+			BottomRight = Bottom | Right, /// Align to bottom right corner.
+
+			C = Center, /// Align to center.
+
+			W = Left,   /// Align to west (same as `Left`).
+			E = Right,  /// Align to east (same as `Right`).
+			N = Top,    /// Align to north (same as `Top`).
+			S = Bottom, /// Align to south (same as `Bottom`).
+
+			NW = N | W, /// Align to north west (same as `TopLeft`).
+			NE = N | E, /// Align to north east (same as `TopRight`).
+			SW = S | W, /// Align to south west (same as `BottomLeft`).
+			SE = S | E, /// Align to south east (same as `BottomRight`).
 		};
+		
+		/// Text alignment within the label bounding box.
+		Align align = NW;
 
-		Align alignX = Left; /// Alignment on X-axis.
-		Align alignY = Left; /// Alignment on Y-axis.
+		/// Returns alignment axis multipliers.
+		static sf::Vector2f alignMultipliers(Align align);
 
-		/// Returns alignment multiplier.
-		static float alignMultiplier(Align align);
+		/// Automatic argument generator return type.
+		using Hook = std::optional<std::string>;
 
 	protected:
-		/// Format reloader.
-		std::function<localization::Text()> _reload;
+		/// Text localization path.
+		localization::Path _path;
 		/// Text format object.
 		localization::Text _format;
 		/// Text rendering object.
@@ -43,7 +62,9 @@ namespace ui {
 		/// Format arguments.
 		std::unordered_map<std::string, std::string> _args;
 		/// Automatic argument setters.
-		std::unordered_map<std::string, std::function<std::optional<std::string>()>> _autoargs;
+		std::unordered_map<std::string, std::function<Hook()>> _autoargs;
+		/// Automatic multi-argument setters.
+		std::list<Element::StaticHandler> _autovargs;
 
 		/// Recalculates text state.
 		void recalc();
@@ -54,8 +75,6 @@ namespace ui {
 		void drawSelf(RenderBuffer& target, sf::IntRect self) const override;
 
 	public:
-		/// Automatic argument generator return type.
-		using Hook = std::optional<std::string>;
 
 		/// Whether to automatically set label size to text size.
 		bool autosize = false;
@@ -75,6 +94,9 @@ namespace ui {
 		void paramClear();
 		/// Clears text argument hooks.
 		void paramHookClear();
+		/// Clears argument evaluation hooks.
+		void hookClear();
+
 		/// Sets format argument value.
 		/// 
 		/// @param name Argument name.
@@ -85,6 +107,10 @@ namespace ui {
 		/// @param name Argument name.
 		/// @param generator Argument generator.
 		void paramHook(std::string name, std::function<Hook()> generator);
+		/// Adds an argument evaluation callback.
+		/// 
+		/// @param call Callback function.
+		void hook(Element::StaticHandler call);
 
 		/// Configures text scaling.
 		/// 

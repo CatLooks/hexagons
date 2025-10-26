@@ -1,13 +1,14 @@
 #include "ui/text.hpp"
+#include "assetload.hpp"
 
 namespace ui {
 	/// Returns alignment multiplier.
-	float Text::alignMultiplier(Align align) {
-		switch (align) {
-			case Left: return 0.f;
-			case Right: return 1.f;
-			default: return 0.5f;
-		};
+	sf::Vector2f Text::alignMultipliers(Align align) {
+		// axis multiplier look-up table
+		const float lut[4] { 0.5f, 0.5f, 0.0f, 1.0f };
+
+		// map alignment axes into their values
+		return { lut[align & 3], lut[align >> 2 & 3] };
 	};
 
 	/// Recalculates text state.
@@ -17,6 +18,7 @@ namespace ui {
 			if (auto value = gen.second())
 				_args[gen.first] = *value;
 		};
+		for (const auto& gen : _autovargs) gen();
 
 		// evaluate text parameters
 		std::string value = _format.get(_args);
@@ -30,7 +32,7 @@ namespace ui {
 
 	/// Reloads text.
 	void Text::onTranslate() {
-		_format = _reload();
+		_format = assets::lang::locale.req(_path);
 	};
 
 	/// Draws the label.
@@ -43,25 +45,21 @@ namespace ui {
 			rect.size += rect.position;
 			rect.position = {};
 		};
+		sf::Vector2f mults = alignMultipliers(align);
 		text->setPosition({
-			self.position.x + (self.size.x - rect.size.x) * alignMultiplier(alignX) - rect.position.x,
-			self.position.y + (self.size.y - rect.size.y) * alignMultiplier(alignY) - rect.position.y
+			self.position.x + (self.size.x - rect.size.x) * mults.x - rect.position.x,
+			self.position.y + (self.size.y - rect.size.y) * mults.y - rect.position.y,
 		});
 
 		// render text
 		target.text(*text);
 	};
 
-	/// Creates a format string reloader function.
-	static std::function<localization::Text()> createReloadFunc(const localization::Section* locale, localization::Path path) {
-		return [=]() { return locale->req(path); };
-	};
-
 	/// Constructs a text element.
 	Text::Text(const TextSettings& settings, const localization::Path& path):
 		_text(new sf::Text(settings.font, "", settings.size)),
-		_format(settings.locale.req(path)),
-		_reload(createReloadFunc(&settings.locale, path))
+		_path(path),
+		_format(assets::lang::locale.req(path))
 	{
 		// adds recalculation update
 		onRecalculate([=](const sf::Time& _) { recalc(); });
@@ -75,6 +73,11 @@ namespace ui {
 	void Text::paramHookClear() {
 		_autoargs.clear();
 	};
+	/// Clears argument evaluation hooks.
+	void Text::hookClear() {
+		_autovargs.clear();
+	};
+
 	/// Sets format argument value.
 	void Text::param(std::string name, std::string value) {
 		_args[name] = value;
@@ -82,6 +85,10 @@ namespace ui {
 	/// Adds a format argument generator hook.
 	void Text::paramHook(std::string name, std::function<Hook()> generator) {
 		_autoargs[name] = generator;
+	};
+	/// Adds an argument evaluation callback.
+	void Text::hook(Element::StaticHandler call) {
+		_autovargs.push_back(call);
 	};
 
 	/// Configures text scaling.
