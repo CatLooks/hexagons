@@ -1,10 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include "ui/solid.hpp"
-#include "ui/layer.hpp"
-#include "ui/panel.hpp"
-#include "ui/text.hpp"
-#include "ui/image.hpp"
-#include "ui/anim/linear.hpp"
+#include "ui.hpp"
 #include "assets.hpp"
 
 /// Program entry.
