@@ -44,24 +44,22 @@ A text element is constructed using `ui::TextSettings` and localized text path.
 `ui::TextSettings` contains:
 - `font` - text font.
 - `size` - text size.
-- `locale` - localization object reference.
+- `fill` - text fill color.
+- `outline` - text outline color.
+- `thickness` - text outline thickness.
 
 ### Placement of text in the bounding box
 
-Text does not necessarily have the same size as the bounding box. For this reason, the placement of text inside it is controlled by alignment fields `alignX` & `alignY`.
+Text does not necessarily have the same size as the bounding box. For this reason, the placement of text inside it is controlled by alignment `align` and positioning `pos` fields.
 
-Alignment values are:
-* `Left` or `Up` - sticks the text to left / top bounding box side.
-* `Right` or `Down` - sticks the text to right / bottom bounding box side.
-* `Center` - aligns the text in the middle of the bounding box.
+* Alignment `align` - controls the text *alignment direction*.
+  Alignment can be specified using `Up, Down, Left, Right` or `N, S, W, E` directions, or their combinations.
 
-### Flags
+* Positioning `pos` - controls how the text box behaves.
+  - Horizontal positioning: `None` (size depends on label text) or `ShrinkX` (removes kerning before first character).
+  - Vertical positioning: `None`, `ShrinkY`, or `Static` (sets height to static line spacing).
 
-`ui::Text` has the following flags:
-- `autosize` - after updating label text, sets text size.
-- `shrink_to_fit` - optimally shrinks text bounding box.
-  - Set to `true` when text doesn't change and is aligned in the center.
-  - Set to `false` when text changes and is aligned to a side.
+* Label size can be set to actual text bounds using a flag `autosize`.
 
 ### Text parameters
 
@@ -69,17 +67,20 @@ By default, text parameters are replaced with a string `{param_name}`.
 
 To set parameter values, use:
 - `param(std::string name, std::string value)` - sets the value of parameter `name` to a string `value`.
-- `paramHook(std::string name, Hook() f)` - creates a hook that evaluated the value of parameter `name` right before evaluating new text string.
+- `paramHook(std::string name, Hook() f)` - creates a hook that evaluates the value of parameter `name` right before evaluating new text string.
   `Hook` is an optional `std::string`, if a `nullopt` is returned, the value of the parameter will not change.
+- `hook(void() callback)` - creates a general hook that is evaluated before evaluating the text string.
 
 To clear parameter values, use:
 - `paramClear()` - clear all stored parameters.
 - `paramHookClear()` - clear all parameter hooks.
+- `hookClear()` - clear all general hooks.
 
 ### Text drawing configuration
 
 | Function | Description |
 |-|-|
+| `setSize(unsigned int size)` | Sets text character size. |
 | `setScale(float scale)` | Sets text scaling factor. |
 | `setColor(sf::Color color)` | Sets text fill color. |
 | `setOutline(sf::Color color, float thickness` | Sets text outline color and thickness. |

@@ -112,6 +112,10 @@ namespace ui {
 		_autovargs.push_back(call);
 	};
 
+	/// Configures text character size.
+	void Text::setSize(unsigned int size) const {
+		_text.get()->setCharacterSize(size);
+	};
 	/// Configures text scaling.
 	void Text::setScale(float scale) const {
 		_text.get()->setScale({ scale, scale });

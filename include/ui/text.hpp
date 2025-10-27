@@ -135,6 +135,10 @@ namespace ui {
 		/// @param call Callback function.
 		void hook(Element::StaticHandler call);
 
+		/// Configures text character size.
+		///
+		/// @param size Character size.
+		void setSize(unsigned int size) const;
 		/// Configures text scaling.
 		/// 
 		/// @param scale Text scale.
