@@ -11,6 +11,12 @@ namespace ui {
 		const sf::Font& font;
 		/// Text size.
 		unsigned int size;
+		/// Text fill color.
+		sf::Color fill = sf::Color::White;
+		/// Text outline color.
+		sf::Color outline = sf::Color::Black;
+		/// Text outline thickness.
+		float thickness = 0.f;
 	};
 
 	/// Text label element.

@@ -82,6 +82,8 @@ namespace ui {
 
 		// load text format
 		onTranslate();
+		setColor(settings.fill);
+		setOutline(settings.outline, settings.thickness);
 	};
 
 	/// Clears text arguments.
