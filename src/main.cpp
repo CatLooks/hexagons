@@ -19,182 +19,25 @@ int main() {
 
 	// load assets
 	assets::loadAssets();
-	if (assets::error) return 1;
-
-	// localization test
-	ui::TextSettings sets(assets::font, 24);
-	assets::lang::locale.print(stdout);
-	printf("\n");
-
-	ui::Interface interface;
-	ui::Layer* layer = interface.layer(&assets::tex);
-	layer->setArea({ 1ps, 1ps }, { 0px, 0px, 1es, 1es });
-
-	{
-		ui::Easing list[7] {
-			ui::Easings::linear,
-			ui::Easings::quadIn,
-			ui::Easings::quadOut,
-			ui::Easings::quad,
-			ui::Easings::sineIn,
-			ui::Easings::sineOut,
-			ui::Easings::sine
-		};
-		ui::Solid* els[7] { nullptr };
-
-		// generate solids & text
-		ui::Dim y = 50px;
-		for (size_t i = 0; i < 7; i++) {
-			els[i] = new ui::Solid;
-			layer->add(els[i]);
-
-			els[i]->bounds = { 50px, y, 50px, 50px };
-			els[i]->color = sf::Color::Red;
-
-			{
-				ui::Solid* inner = new ui::Solid;
-				els[i]->add(inner);
-
-				inner->bounds = { 10px, 10px, 1ps, 1ps };
-				inner->color = sf::Color(200, 0, 0);
-			}
-
-			ui::Text* label = new ui::Text(sets, std::format("demo.{}", i));
-			layer->add(label);
-
-			label->bounds = { 650px, y, 0px, 50px };
-			label->align = ui::Text::Center;
-			label->setOutline(sf::Color::Black, 2);
-
-			y += 80px;
-		};
-
-		// add animation callback
-		ui::Solid* button = new ui::Solid;
-		layer->add(button);
-
-		button->bounds = { 50px, y, 200px, 50px };
-		button->color = sf::Color(128, 0, 255);
-		button->onEvent([=](const ui::Event& evt) {
-			if (const auto data = evt.get<ui::Event::MousePress>()) {
-				if (data->button == sf::Mouse::Button::Left) {
-					for (size_t i = 0; i < 7; i++) {
-						ui::Anim* anim = new ui::AnimDim(&els[i]->position().x, 50px, 550px, sf::seconds(1));
-						anim->setEasing(list[i]);
-						button->push(anim);
-					};
-				};
-				return true;
-			};
-
-			return false;
-		});
-		{
-			ui::Text* label = new ui::Text(sets, "demo.button");
-			button->add(label);
-
-			label->setOutline(sf::Color::Black, 2.f);
-			label->bounds = ui::DimRect::Fill;
-			label->pos = ui::Text::Shrink;
-			label->align = ui::Text::C;
-		}
-	}
-
-	{
-		ui::Image* img = new ui::Image({ {0, 0}, {12, 12} });
-		img->position() = { 1as - 1es, 1as - 1es };
-		img->size() *= 5;
-		layer->add(img);
-	}
-
-	// text alignment test
-	const ui::Text::Align alignments[9] {
-		ui::Text::NW, ui::Text::N, ui::Text::NE,
-		ui::Text::W, ui::Text::C, ui::Text::E,
-		ui::Text::SW, ui::Text::S, ui::Text::SE
-	};
-
-	for (size_t y = 0; y < 3; y++) {
-		for (size_t x = 0; x < 3; x++) {
-
-			// create a test box
-			ui::Solid* solid = new ui::Solid;
-			solid->color = sf::Color::Cyan;
-			{
-				ui::Text* text = new ui::Text(sets, "demo.align");
-				{
-					text->setOutline(sf::Color::Black, 2);
-					// set text alignment
-					text->align = alignments[y * 3 + x];
-					text->pos = ui::Text::Shrink;
-					text->bounds = ui::DimRect::Fill;
-				}
-				solid->add(text);
-			}
-			layer->add(solid);
-
-			// set box position
-			solid->position() = { 1000px + 100px * (float)x, 200px + 100px * (float)y };
-			solid->size() = { 80px, 80px };
-		};
-	};
-
-	// fps text
-	{
-		ui::Text* text = new ui::Text(sets, "demo.fps");
-		layer->add(text);
-
-		text->position() = { 10px, 1ps - 36px };
-		text->setOutline(sf::Color::Black, 2);
-
-		text->paramHook("fps", []() -> ui::Text::Hook {
-			static sf::Clock fps;
-			static int counter = 0;
-
-			if (fps.getElapsedTime().asSeconds() < 0.25f) {
-				counter++;
-				return {};
-			};
-
-			float time = fps.restart().asSeconds() / counter;
-			counter = 1;
-			return std::format("{:.1f}", 1.f / time);
-		});
-	}
-
-	// test text
-	interface.setStatDrawCall([=](sf::RenderTarget& target, const ui::RenderStats& stats) {
-		sf::Text text(assets::font, std::format("{}Q | {}T | {}F | {}B | {}I",
-			stats.quads, stats.triangles, stats.text, stats.batches, stats.inters), 24);
-		text.setPosition({ 6, 0 });
-		text.setOutlineThickness(2);
-		target.draw(text);
-	});
-
-	// test window
+	if (assets::error)
+		return 1;
+	
+	// create a window
 	sf::RenderWindow win(sf::VideoMode({ 1600, 900 }), "App");
 	win.setVerticalSyncEnabled(true);
 	win.setKeyRepeatEnabled(false);
 
+	// window main loop
 	while (win.isOpen()) {
-		win.clear(sf::Color(29, 31, 37));
-
-		interface.recalculate(win.getSize());
+		// process events
 		while (const auto event = win.pollEvent()) {
 			if (event->is<sf::Event::Closed>()) {
 				win.close();
 			};
-			if (const auto* data = event->getIf<sf::Event::KeyPressed>()) {
-				if (data->code == sf::Keyboard::Key::R) {
-					interface.translate();
-				};
-			};
-			interface.event(*event);
 		};
 
-		interface.update(sf::Mouse::getPosition(win));
-		interface.draw(win);
-
+		// render new frame
+		win.clear(sf::Color(29, 31, 37));
 		win.display();
 	};
 	return 0;
