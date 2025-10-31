@@ -1,4 +1,5 @@
 #include "ui.hpp"
+#include "game.hpp"
 #include "assets.hpp"
 
 /// Program entry.

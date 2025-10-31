@@ -1,0 +1,49 @@
+# team names
+team {
+	v: Void
+	r: Red
+	o: Orange
+	y: Yellow
+	g: Green
+	a: Aqua
+	b: Blue
+	p: Purple
+	m: Magenta
+
+	bad: '???'
+}
+# troop names
+troop {
+	farmer: Farmer
+	lumber: Lumberjack
+	spear : Spearman
+	archer: Archer
+	baron : Baron
+	knight: Knight
+
+	bad: '???'
+}
+
+# building names
+build {
+	castle: Town Hall
+	farm  : Farm
+	mine  : Mine
+	tower : Watchtower
+	beacon: Beacontower
+	fort  : Fortress
+
+	bad: '???'
+}
+
+# plant names
+plant {
+	bush   : Bush
+	berry  : Berry Bush
+	sapling: Sapling
+	tree   : Tree
+	peach  : Peach Tree
+	pine   : Pine
+
+	bad: '???'
+}
