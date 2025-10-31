@@ -1,4 +1,3 @@
-#include <SFML/Graphics.hpp>
 #include "ui.hpp"
 #include "assets.hpp"
 
@@ -22,17 +21,32 @@ int main() {
 	win.setVerticalSyncEnabled(true);
 	win.setKeyRepeatEnabled(false);
 
+	// create an interface
+	ui::Interface itf;
+
 	// window main loop
+	std::queue<sf::Event> eventQueue;
 	while (win.isOpen()) {
-		// process events
+		// process window events
 		while (const auto event = win.pollEvent()) {
+			// check for window close
 			if (event->is<sf::Event::Closed>()) {
 				win.close();
+				continue;
 			};
+
+			// pass through to interface queue
+			eventQueue.push(*event);
 		};
 
-		// render new frame
+		// recalculate & update the interface
+		itf.recalculate(win.getSize());
+		itf.eventq(eventQueue);
+		itf.update(sf::Mouse::getPosition(win));
+
+		// redraw window contents
 		win.clear(sf::Color(29, 31, 37));
+		itf.draw(win);
 		win.display();
 	};
 	return 0;
