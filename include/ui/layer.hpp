@@ -6,7 +6,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include "element.hpp"
-#include <deque>
+#include <queue>
 
 namespace ui {
 	class Interface;
@@ -31,11 +31,8 @@ namespace ui {
 
 	public:
 		/// Constructs a new layer.
-		/// @param texture Layer rendering texture.
-		Layer(const sf::Texture* texture);
+		Layer();
 
-		/// Sets new rendering texture.
-		void setTexture(const sf::Texture* texture);
 		/// Sets new rendering shader.
 		void setShader(const sf::Shader* shader);
 
@@ -89,16 +86,18 @@ namespace ui {
 	public:
 		/// Creates a new interface layer.
 		/// 
-		/// @param texture Layer rendering texture, or `nullptr` for solid white texture.
-		/// 
 		/// @return Reference to new layer.
-		Layer* layer(const sf::Texture* texture);
+		Layer* layer();
 
 		/// Recalculates interface.
 		/// @param windowSize Window size.
 		void recalculate(sf::Vector2u windowSize);
 		/// Sends an event to interface.
 		void event(const sf::Event& evt);
+		/// Sends an event queue to interface.
+		///
+		/// Pops all events from the queue in the process.
+		void eventq(std::queue<sf::Event>& queue);
 		/// Updates the interface.
 		/// @param mouse Mouse position.
 		void update(sf::Vector2i mouse);

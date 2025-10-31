@@ -133,7 +133,6 @@ namespace ui {
 	public:
 		bool ignore      = false; /// Whether the element ignores events.
 		bool transparent = false; /// Whether mouse hover events can pass through the element.
-		bool forwarding  = false; /// If set to `true`, forwards the render buffer before drawing itself.
 		DimRect bounds;           /// Element bounding box.
 		Borders padding;          /// Element padding.
 		Borders margin;           /// Element margin.

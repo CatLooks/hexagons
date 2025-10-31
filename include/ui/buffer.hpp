@@ -27,16 +27,16 @@ namespace ui {
 	protected:
 		/// Forwarding index storage.
 		struct _FI {
-			size_t          vert_count; /// Index of first vertex after forwarding.
-			size_t          text_count; /// Index of first text line after forwarding.
+			size_t            vert_idx; /// First vertex index outside.
+			size_t            text_idx; /// First text index outside.
 			const sf::Texture* texture; /// Current rendering texture.
 		};
 
 		std::vector<sf::Vertex>  _arr; /// Vertex array.
 		mutable sf::RenderStates _opt; /// Render states.
-		const sf::Texture*       _drt; /// Default texture.
 		std::list<sf::Text>      _txt; /// Rendered text.
 		std::list<_FI>           _fis; /// Forwarding indices.
+		bool                     _ptl; /// Whether previous forward contained text.
 		RenderStats              _inf; /// Render stats.
 
 	public:
@@ -44,7 +44,7 @@ namespace ui {
 		/// 
 		/// @param texture Default render buffer texture.
 		/// @param shader Render buffer shader.
-		RenderBuffer(const sf::Texture* texture, const sf::Shader* shader = nullptr);
+		RenderBuffer(const sf::Shader* shader = nullptr);
 
 		/// Clears buffer contents.
 		void clear();
@@ -71,14 +71,11 @@ namespace ui {
 		/// @param text Text object.
 		void text(const sf::Text& text);
 
-		/// Forwards current buffer contents as a single batch.
+		/// Forwards current buffer contents for drawing.
 		///
-		/// Normally, all text lines are drawn after quads & triangles.
-		/// 
-		/// Inserting a forward call, will allow futher quad & triangle calls to be drawn above currently buffered text.
+		/// Drawing order is: vertices, text.
 		/// 
 		/// @param texture Render buffer texture override.
-		void forward();
 		void forward(const sf::Texture* texture);
 
 		/// Renders buffer contents.

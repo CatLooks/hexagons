@@ -11,8 +11,8 @@ namespace ui {
 	};
 
 	/// Constructs a new render buffer.
-	RenderBuffer::RenderBuffer(const sf::Texture* texture, const sf::Shader* shader)
-		: _drt(texture) { _opt.shader = shader; };
+	RenderBuffer::RenderBuffer(const sf::Shader* shader)
+		: _ptl(false) { _opt.shader = shader; };
 
 	/// Clears buffer contents.
 	void RenderBuffer::clear() {
@@ -20,6 +20,7 @@ namespace ui {
 		_arr.clear();
 		_txt.clear();
 		_fis.clear();
+		_ptl = false;
 		_inf = RenderStats();
 	};
 
@@ -71,64 +72,84 @@ namespace ui {
 		_inf.text++;
 	};
 
-	/// Forwards buffer.
+	/// Forwards the buffer.
 	void RenderBuffer::forward(const sf::Texture* texture) {
-		// first forward indices
-		if (_fis.empty()) {
-			_fis.push_back({
-				_arr.size(),
-				_txt.size(),
-				texture
-			});
-		}
+		// buffer extension checks
+		if (!_fis.empty()) {
+			_FI& last = _fis.back();
 
-		// add offset from last forward indices
-		else {
-			const _FI& last = _fis.back();
-			_fis.push_back({
-				_arr.size() - last.vert_count,
-				_txt.size() - last.text_count,
-				texture
-			});
+			// check what is drawn in forward
+			bool f_vert = _arr.size() != last.vert_idx;
+			bool f_text = _txt.size() != last.text_idx;
+
+			// vertex only forward
+			// check if no text in previous forward & the same texture used
+			if (!f_text && !_ptl && last.texture == texture) {
+				last.vert_idx = _arr.size();
+				return;
+			};
+
+			// text only forward
+			if (!f_vert) {
+				last.text_idx = _txt.size();
+				_ptl = true;
+				return;
+			};
 		};
-	};
-	void RenderBuffer::forward() {
-		forward(_drt);
+
+		// update text flag
+		_ptl = _txt.size() - (_fis.empty() ? 0 : _fis.back().text_idx);
+
+		// add new forward call
+		_fis.push_back({
+			_arr.size(),
+			_txt.size(),
+			texture
+		});
 	};
 
 	/// Renders buffer contents.
 	RenderStats RenderBuffer::draw(sf::RenderTarget& target) const {
 		// current batch start position
 		size_t vert_idx = 0;
+		size_t text_idx = 0;
 		auto text_it = _txt.begin();
 
 		// batched draw calls
 		size_t batch_count = 0;
 		for (auto it = _fis.begin(); it != _fis.end(); it++) {
+			// get object count
+			size_t vert_count = it->vert_idx - vert_idx;
+			size_t text_count = it->text_idx - text_idx;
+
 			// draw vertices
-			if (it->vert_count > 0) {
+			if (vert_count > 0) {
 				_opt.texture = it->texture;
-				target.draw(_arr.data() + vert_idx, it->vert_count, sf::PrimitiveType::Triangles, _opt);
-				vert_idx += it->vert_count;
+				target.draw(_arr.data() + vert_idx, vert_count, sf::PrimitiveType::Triangles, _opt);
+				vert_idx = it->vert_idx;
 				batch_count++;
 			};
 
 			// draw text
-			for (size_t i = 0; i < it->text_count; i++)
+			for (size_t i = 0; i < text_count; i++)
 				target.draw(*text_it++);
+			text_idx = it->text_idx;
 		};
 
-		// draw remaining vertices
-		size_t verts_left = _arr.size() - vert_idx;
-		if (verts_left > 0) {
-			_opt.texture = _drt;
-			target.draw(_arr.data() + vert_idx, verts_left, sf::PrimitiveType::Triangles, _opt);
-			batch_count++;
+#ifdef _DEBUG
+		// check for remaining data
+		if (_arr.size() - vert_idx > 0) {
+			fprintf(stderr, "buffer contains %llu undrawn vertices\n", _arr.size() - vert_idx);
 		};
-
-		// draw remaining text
-		while (text_it != _txt.end())
-			target.draw(*text_it++);
+		if (text_it != _txt.end()) {
+			size_t counter = 0;
+			while (text_it != _txt.end()) {
+				text_it++;
+				counter++;
+			};
+			fprintf(stderr, "buffer contains %llu undrawn text labels\n", counter);
+		};
+#endif
 
 		// return layer stats
 		RenderStats stats = _inf;

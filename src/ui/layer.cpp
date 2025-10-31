@@ -3,7 +3,7 @@
 
 namespace ui {
 	/// Constructs a new layer.
-	Layer::Layer(const sf::Texture* texture): _buffer({ texture }) {
+	Layer::Layer() {
 		onRecalculate([=](const sf::Time& _) {
 			// reset layer bounds (just in case)
 			bounds = { 0px, 0px, 1ps, 1ps };
@@ -12,10 +12,6 @@ namespace ui {
 		});
 	};
 
-	/// Sets new rendering texture.
-	void Layer::setTexture(const sf::Texture* texture) {
-		_buffer.states().texture = texture;
-	};
 	/// Sets new rendering shader.
 	void Layer::setShader(const sf::Shader* shader) {
 		_buffer.states().shader = shader;
@@ -92,8 +88,8 @@ namespace ui {
 	};
 
 	/// Creates a new interface layer.
-	Layer* Interface::layer(const sf::Texture* texture) {
-		layers.push_back(std::unique_ptr<Layer>(new Layer(texture)));
+	Layer* Interface::layer() {
+		layers.push_back(std::unique_ptr<Layer>(new Layer));
 		return layers.back().get();
 	};
 
@@ -154,6 +150,14 @@ namespace ui {
 				});
 				return;
 			};
+		};
+	};
+
+	/// Sends an event queue to interface.
+	void Interface::eventq(std::queue<sf::Event>& queue) {
+		while (!queue.empty()) {
+			event(queue.front());
+			queue.pop();
 		};
 	};
 

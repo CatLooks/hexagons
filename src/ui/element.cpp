@@ -226,9 +226,6 @@ namespace ui {
 		// ignore if not active
 		if (!_active) return;
 
-		// forward buffer
-		if (forwarding) target.forward();
-
 		// draw self & children
 		drawSelf(target, _rect);
 		drawChildren(target);
