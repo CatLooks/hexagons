@@ -11,13 +11,12 @@ namespace ui {
 	};
 
 	/// Constructs a new render buffer.
-	RenderBuffer::RenderBuffer(const sf::Texture* texture, const sf::Shader* shader) {
-		_opt.texture = texture;
-		_opt.shader = shader;
-	};
+	RenderBuffer::RenderBuffer(const sf::Texture* texture, const sf::Shader* shader)
+		: _drt(texture) { _opt.shader = shader; };
 
 	/// Clears buffer contents.
 	void RenderBuffer::clear() {
+		// reset buffers
 		_arr.clear();
 		_txt.clear();
 		_fis.clear();
@@ -72,18 +71,29 @@ namespace ui {
 		_inf.text++;
 	};
 
-	/// Forwards current buffer contents as a single batch.
-	void RenderBuffer::forward() {
+	/// Forwards buffer.
+	void RenderBuffer::forward(const sf::Texture* texture) {
 		// first forward indices
 		if (_fis.empty()) {
-			_fis.push_back({ _arr.size(), _txt.size() });
+			_fis.push_back({
+				_arr.size(),
+				_txt.size(),
+				texture
+			});
 		}
 
 		// add offset from last forward indices
 		else {
 			const _FI& last = _fis.back();
-			_fis.push_back({ _arr.size() - last.vert_count, _txt.size() - last.text_count });
+			_fis.push_back({
+				_arr.size() - last.vert_count,
+				_txt.size() - last.text_count,
+				texture
+			});
 		};
+	};
+	void RenderBuffer::forward() {
+		forward(_drt);
 	};
 
 	/// Renders buffer contents.
@@ -97,6 +107,7 @@ namespace ui {
 		for (auto it = _fis.begin(); it != _fis.end(); it++) {
 			// draw vertices
 			if (it->vert_count > 0) {
+				_opt.texture = it->texture;
 				target.draw(_arr.data() + vert_idx, it->vert_count, sf::PrimitiveType::Triangles, _opt);
 				vert_idx += it->vert_count;
 				batch_count++;
@@ -110,6 +121,7 @@ namespace ui {
 		// draw remaining vertices
 		size_t verts_left = _arr.size() - vert_idx;
 		if (verts_left > 0) {
+			_opt.texture = _drt;
 			target.draw(_arr.data() + vert_idx, verts_left, sf::PrimitiveType::Triangles, _opt);
 			batch_count++;
 		};

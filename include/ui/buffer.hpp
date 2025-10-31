@@ -2,7 +2,6 @@
 
 // include dependencies
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -28,20 +27,22 @@ namespace ui {
 	protected:
 		/// Forwarding index storage.
 		struct _FI {
-			size_t vert_count; /// Index of first vertex after forwarding.
-			size_t text_count; /// Index of first text line after forwarding.
+			size_t          vert_count; /// Index of first vertex after forwarding.
+			size_t          text_count; /// Index of first text line after forwarding.
+			const sf::Texture* texture; /// Current rendering texture.
 		};
 
-		std::vector<sf::Vertex> _arr; /// Vertex array.
-		sf::RenderStates        _opt; /// Render states.
-		std::list<sf::Text>     _txt; /// Rendered text.
-		std::list<_FI>          _fis; /// Forwarding indices.
-		RenderStats             _inf; /// Render stats.
+		std::vector<sf::Vertex>  _arr; /// Vertex array.
+		mutable sf::RenderStates _opt; /// Render states.
+		const sf::Texture*       _drt; /// Default texture.
+		std::list<sf::Text>      _txt; /// Rendered text.
+		std::list<_FI>           _fis; /// Forwarding indices.
+		RenderStats              _inf; /// Render stats.
 
 	public:
 		/// Constructs a new render buffer.
 		/// 
-		/// @param texture Render buffer texture.
+		/// @param texture Default render buffer texture.
 		/// @param shader Render buffer shader.
 		RenderBuffer(const sf::Texture* texture, const sf::Shader* shader = nullptr);
 
@@ -52,12 +53,10 @@ namespace ui {
 		/// 
 		/// @param a,b,c Triangle vertices.
 		void triangle(sf::Vertex a, sf::Vertex b, sf::Vertex c);
-
 		/// Queues a quad for rendering.
 		/// 
 		/// @param a,b,c,d Quad vertices (in clock order).
 		void quad(sf::Vertex a, sf::Vertex b, sf::Vertex c, sf::Vertex d);
-
 		/// Queues a rectangle for rendering.
 		/// 
 		/// @param area Rectangle drawing area.
@@ -77,7 +76,10 @@ namespace ui {
 		/// Normally, all text lines are drawn after quads & triangles.
 		/// 
 		/// Inserting a forward call, will allow futher quad & triangle calls to be drawn above currently buffered text.
+		/// 
+		/// @param texture Render buffer texture override.
 		void forward();
+		void forward(const sf::Texture* texture);
 
 		/// Renders buffer contents.
 		/// 
