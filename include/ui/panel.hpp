@@ -10,6 +10,9 @@ namespace ui {
 	public:
 		/// Panel texture map.
 		struct Map {
+			/// Texture reference.
+			const sf::Texture* texture;
+
 			/// Coordinates of corner pieces.
 			///
 			/// Order: `top-left`, `top-right`, `bottom-left`, `bottom-right`.

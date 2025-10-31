@@ -52,6 +52,7 @@ namespace ui {
 		
 		// draw middle
 		if (mid) target.quad({ { x0, y0 }, { x1 - x0, y1 - y0 } }, _map.middle, color);
+		target.forward(_map.texture);
 	};
 
 	/// Constructs a new panel.

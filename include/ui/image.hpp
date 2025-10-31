@@ -5,8 +5,12 @@
 
 namespace ui {
 	/// Static image display element.
+	///
+	/// Displays a section of a texture.
 	class Image : public Element {
 	public:
+		/// Rendered texture.
+		const sf::Texture* texture;
 		/// Texture coordinates.
 		sf::IntRect coords = {};
 		/// Texture tint color.
@@ -14,9 +18,10 @@ namespace ui {
 
 		/// Constructs a new image.
 		/// 
+		/// @param texture Drawn texture.
 		/// @param coords Texture coordinates.
 		/// @param tint Texture tint.
-		Image(sf::IntRect coords = {}, sf::Color tint = sf::Color::White);
+		Image(const sf::Texture* texture, sf::IntRect coords = {}, sf::Color tint = sf::Color::White);
 
 	protected:
 		/// Draws the image.

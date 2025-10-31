@@ -70,6 +70,7 @@ namespace ui {
 
 		// render text
 		target.text(*text);
+		target.forward(nullptr);
 	};
 
 	/// Constructs a text element.

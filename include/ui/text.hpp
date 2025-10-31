@@ -6,6 +6,12 @@
 
 namespace ui {
 	/// Collection of text label construction settings.
+	///
+	/// @param font Font reference.
+	/// @param size Text character size.
+	/// @param fill Text fill color.
+	/// @param outline Text outline color.
+	/// @param thickness Text outline thickness.
 	struct TextSettings {
 		/// Text font.
 		const sf::Font& font;
