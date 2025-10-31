@@ -9,6 +9,7 @@ Panel color is configured using field `color: sf::Color`.
 Image is used to display a certain part of the layer texture.
 
 Image settings:
+- `texture: sf::Texture*` - displayed texture.
 - `coords: sf::IntRect` - coordinates of displayed texture part.
 - `tint: sf::Color` - tint color for the texture.
 
@@ -22,6 +23,7 @@ Panel uses scaled textures to create a panel texture of any size.
 
 Panel configuration is done with `ui::Panel::Map` structure.
 
+- `texture: sf::Texture*` - texture containing panel texture data.
 - `corner_coords: sf::Vector2i[4]` - coordinates of corner panel parts (*order: top-left, top-right, bottom-left, bottom-right*).
 - `edge_coords: sf::Vector2i[4]` - coordinates of edge panel parts (*order: top, bottom, left, right*).
 - `corner_size: sf::Vector2i` - size of *all* corner panel parts.
@@ -44,9 +46,9 @@ A text element is constructed using `ui::TextSettings` and localized text path.
 `ui::TextSettings` contains:
 - `font` - text font.
 - `size` - text size.
-- `fill` - text fill color.
-- `outline` - text outline color.
-- `thickness` - text outline thickness.
+- `fill` - text fill color (by default white).
+- `outline` - text outline color (by default black).
+- `thickness` - text outline thickness (by default 0).
 
 ### Placement of text in the bounding box
 

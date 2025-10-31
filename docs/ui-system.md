@@ -57,7 +57,7 @@ UI system is a framework that creates an interactive and adaptive interface syst
 ## System hierarchy
 
 1. `ui::Interface` - contains the entire interface element hierarchy.
-2. `ui::Layer` - root elements that are responsible for rendering of UI.
+2. `ui::Layer` - root interface elements that are responsible for rendering the UI.
 3. `ui::Element` - elements stemming from `ui::Layer`s, render separate UI elements.
 
 ## Update order
@@ -94,39 +94,6 @@ Each layer sets up interface rendering:
     - Render state - provides rendering settings (for more see `sf::RenderState`).
     - View - ability to optionally override window view.
 
-## Rendering order
-
-Normally, each layer first draws the texture data, then the text data.
-```cpp
-buffer.text(...); // draw order: 3
-buffer.quad(...); // draw order: 1
-buffer.quad(...); // draw order: 2
-buffer.text(...); // draw order: 4
-
-// | Layer ================= |
-// #-------------------------#
-// | Graphics ... | Text ... |
-```
-This means that all text will appear *above* the rest of the UI.
-
-Parts of the layer can be drawn above the text using **buffer forwarding**, which draws all current texture & text data before starting to draw further elements.
-```cpp
-buffer.text(...); // draw order: 2
-buffer.quad(...); // draw order: 1
-buffer.forward();
-buffer.quad(...); // draw order: 3
-buffer.text(...); // draw order: 4
-
-// | Layer =========================================== |
-// # --------------------------------------------------#
-// | Graphics ... | Text ... | Graphics ... | Text ... |
-//                           ^
-//                   buffer forwarding
-```
-Buffer forwarding can be enabled for elements using `ui::Element::forwarding = true`.
-
-<hr>
-
 # Element
 
 A `ui::Element` is an abstract object, from which all other elements are derived.
@@ -154,14 +121,12 @@ A class derived from `ui::Element` can override:
     * `onTranslate` - executed when UI system changes the language.
     * `onActivate` - executed when the element is activated.
     * `onDeactivate` - executed when the element is deactivated.
-    * `onRecalculate` - executed when the element is being recalculated.
 
 ## Extra settings
 
 Additionally, every element has configurable flags:
 - `ignore` - if `true`, element will ignore all events and not propagate them to children
 - `transparent` - if `true`, element will allow elements below to be able to be hovered over.
-- `forwarding` - if `true`, the render buffer will be forwarded before the drawing calls.
 
 ## Padding & Margin
 
@@ -328,20 +293,18 @@ If you don't need these things to work properly, you can omit setting element's 
 
   | Function | Description |
   |-|-|
-  | `Layer(const sf::Texture* texture = nullptr)` | Constructs a layer with a rendering texture. |
-  | `setTexture(const sf::Texture* texture)` | Sets new layer rendering texture. |
   | `setShader(const sf::Shader* shader)` | Sets new layer shader. |
   | `setView(std::optional<sf::View> view)` | Sets a rendering view override. |
 
 * Rendering function:
 
-  `render(sf::RenderTarget& target, const sf::View& default_view)` - renders buffer data into a render target.
+  `render(sf::RenderTarget& target)` - renders buffer data into a render target.
 
 # `ui::Interface` class
 
 * Layer generation:
 
-  `layer(const sf::Texture* texture) -> Layer` - creates a new rendering layer.
+  `layer() -> Layer` - creates a new rendering layer.
 
 * Forwarding methods:
 
@@ -363,9 +326,9 @@ If you don't need these things to work properly, you can omit setting element's 
 
   | Function | Description |
   |-|-|
-  | `clear()` | Clear the buffer. |
+  | `clear()` | Clears the buffer. |
   | `triangle(...)` | Queues a triangle for drawing. |
   | `quad(...)` | Queues a quad / rectangle for drawing. |
   | `text(const sf::Text& text)` | Queues text for drawing. |
-  | `forward()` | Forwards the buffer (for more see [rendering order](#rendering-order)). |
-  | `draw(sf::RenderTarget& target)` | Render the buffer. |
+  | `forward(const sf::Texture* texture)` | Forwards the buffer for drawing with a texture. <br> Text within the forward will be drawn after all vertex data. |
+  | `draw(sf::RenderTarget& target)` | Render the buffer into a render target. |
