@@ -30,7 +30,7 @@ namespace ui {
 		for (const auto& gen : _autovargs) gen();
 
 		// evaluate text parameters
-		std::string value = _format.get(_args);
+		std::string value = _format.get(_args, &assets::lang::locale);
 
 		// set new value
 		_text.get()->setString(value);

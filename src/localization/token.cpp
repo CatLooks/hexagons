@@ -132,7 +132,7 @@ namespace localization {
 	};
 
 	/// Creates a formatted text string.
-	std::string Text::get(const std::unordered_map<std::string, std::string>& args) const {
+	std::string Text::get(const std::unordered_map<std::string, std::string>& args, const Section* dict) const {
 		// insert all parameters
 		std::string result;
 		size_t idx = 0;
@@ -147,8 +147,32 @@ namespace localization {
 			auto value = args.find(param.key);
 			if (value == args.cend())
 				result.append("{" + param.key + "}");
-			else
-				result.append(value->second);
+			else {
+				// check if value is '@...'
+				if (value->second.size() >= 3
+					&& value->second[0] == '@'
+					&& value->second[1] == '!')
+				{
+					// check for escape
+					if (value->second[2] == ':') {
+						result.append("@!");
+						result.append(value->second.substr(3));
+					}
+					else if (dict) {
+						// query requested path
+						std::string text = dict->req(value->second.substr(2)).get({});
+						result.append(text);
+					}
+					else {
+						// pass through raw request
+						result.append(value->second);
+					};
+				}
+				else {
+					// add parameter value
+					result.append(value->second);
+				};
+			};
 		};
 
 		// copy leftover data

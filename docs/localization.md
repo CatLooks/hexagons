@@ -138,3 +138,12 @@ text->paramHook("fps", [=]() -> ui::Text::Hook {
 	return std::format("{}", 1 / clock.restart().asSeconds());
 });
 ```
+
+### Parameter value imports
+
+Parameter values import values from the global scope.
+
+To import a path, set the parameter to `@!path`.
+*Note: if an imported text value contains parameters, they will not be set*.
+
+Importing can be escaped using `@!:` syntax, which will turn to `@!` and append text after it.

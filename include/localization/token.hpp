@@ -56,9 +56,13 @@ namespace localization {
 		/// Extra argument names are ignored.
 		/// 
 		/// @param args Format arguments.
+		/// @param dict Parameter import lookup section (`nullptr` for empty dictionary).
 		/// 
 		/// @return Formatted string.
-		std::string get(const std::unordered_map<std::string, std::string>& args) const;
+		std::string get(
+			const std::unordered_map<std::string, std::string>& args,
+			const Section* dict = nullptr
+		) const;
 	};
 
 	/// Section entry data.
