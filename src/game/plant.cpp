@@ -3,13 +3,14 @@
 namespace Name {
 	/// Returns a request value for plant name.
 	const char* plant(Plant::Type id) {
-		static const char* table[Plant::Count]{
+		static const char* table[Plant::Count] = {
 			"@!plant.bush",
 			"@!plant.berry",
 			"@!plant.sapling",
 			"@!plant.tree",
 			"@!plant.peach",
-			"@!plant.pine"
+			"@!plant.pine",
+			"@!plant.grave"
 		};
 		return (id >= 0 && id < Plant::Count)
 			? table[id] : "@!plant.bad";

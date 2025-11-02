@@ -3,7 +3,7 @@
 namespace Name {
 	/// Returns a request value for building name.
 	const char* build(Build::Type id) {
-		static const char* table[Build::Count] {
+		static const char* table[Build::Count] = {
 			"@!build.castle",
 			"@!build.farm",
 			"@!build.mine",

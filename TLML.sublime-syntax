@@ -22,7 +22,7 @@ contexts:
     # punctuation
     - match: ':'
       scope: keyword.operator.tlml
-    - match: '\[|\]'
+    - match: '\{|\}'
       scope: punctuation.separator.tlml
 
     # identifier
@@ -80,6 +80,8 @@ contexts:
     - clear_scopes: 1
     - match: '@'
       scope: constant.language.tlml
+    - match: '\.'
+      scope: constant.character.escape.tlml
     - match: '\)'
       scope: variable.function.tlml
       pop: true

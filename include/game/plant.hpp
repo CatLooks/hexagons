@@ -14,6 +14,7 @@ struct Plant : Entity {
 		Tree,    /// Peach tree.
 		Peach,   /// Peach tree with peaches.
 		Pine,    /// Pine tree.
+		Grave,   /// Grave.
 
 		Count    /// Plant count.
 	} type;
