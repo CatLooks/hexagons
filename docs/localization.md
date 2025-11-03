@@ -7,7 +7,7 @@ Localization is used to define a same dictionary of text values for multiple lan
 ## TLML file syntax
 
 If a `#` character is encountered, everything to next newline is ignored.
-```yaml
+```py
 # comment, this is ignored
 ```
 
@@ -16,7 +16,7 @@ If a `#` character is encountered, everything to next newline is ignored.
 Text is a value that can be displayed with `ui::Text`.
 
 To define a text value, use:
-```
+```py
 name: text # name = "text"
 ```
 
@@ -30,7 +30,7 @@ Text values can be:
 Section is a dictionary (key-value pairs) of other sections or text values.
 
 To define a section, use:
-```
+```py
 section {
 	text: value
 	section {
@@ -47,7 +47,7 @@ To reference a value, paths are used.
 Paths are constructed from a series of section accesses, separated by a dot `.`.
 
 Example:
-```
+```py
 global: Global       # global = "Global"
 
 sub {
@@ -71,7 +71,7 @@ If an import failed, a replacement string will be used:
 * `$(path.*)` - path leads to a section instead of text.
 
 Example:
-```
+```py
 global: Global
 sub {
 	local: Local
@@ -119,7 +119,7 @@ If a path is invalid, a replacement string will be used (`!(...)`, same as [text
 
 Usage example:
 * TLML file:
-```
+```py
 path: "x = {x}, fps = {fps}"
 ```
 * Program:
@@ -147,3 +147,29 @@ To import a path, set the parameter to `@!path`.
 *Note: if an imported text value contains parameters, they will not be set*.
 
 Importing can be escaped using `@!:` syntax, which will turn to `@!` and append text after it.
+
+If an import fails, import value will be inserted into the string.
+
+Usage example:
+* TLML file:
+```py
+entity: "World"
+message: "Hello, {target}!"
+```
+* Program:
+```cpp
+// by default string is "Hello, {target}!"
+ui::Text* text = new ui::Text(settings, "message");
+
+// parameter value import
+text->param("target", "@!entity");
+// string is "Hello, World!"
+
+// parameter value import escape
+text->param("target", "@!:entity"); // "@!:" -> "@!"
+// string is "Hello, @!entity!"
+
+// failed import
+text->param("target", "@!bad");
+// string is "Hello, @!bad!"
+```
