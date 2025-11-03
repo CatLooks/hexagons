@@ -116,15 +116,17 @@ If a path is invalid, a replacement string will be used (`!(...)`, same as [text
 | `paramClear()` | Clears all stored parameter values. *This does not remove parameter hooks.* |
 | `paramHook(name, hook)` | Sets up a generator hook that generates parameter `name` value before recalculation. |
 | `paramHookClear()` | Clears all parameter hooks. *This does not remove stored parameter values.* |
+| `hook(func)` | Sets up a procedure hook that gets called after parameter hooks. |
+| `hookClear()` | Clears all procedure hooks. *This does not remove stored parameter values.* |
 
 Usage example:
 * TLML file:
 ```py
-path: "x = {x}, fps = {fps}"
+path: "x = {x}, fps = {fps}, mouse = {mx}, {my}"
 ```
 * Program:
 ```cpp
-// by default string is "x = {x}, fps = {fps}"
+// by default string is "x = {x}, fps = {fps}, mouse = {mx}, {my}"
 ui::Text* text = new ui::Text(settings, "path");
 
 // sets static parameter value
@@ -137,7 +139,19 @@ text->paramHook("fps", [=]() -> ui::Text::Hook {
 	// sets "fps" every frame
 	return std::format("{}", 1 / clock.restart().asSeconds());
 });
+
+// procedure hook
+text->hook([=, &win]() {
+	// evaluate structure value
+	sf::Vector2i mouse = sf::Mouse::getPosition(win);
+
+	// set each parameter manually
+	text->param("mx", mouse.x);
+	text->param("my", mouse.y);
+});
 ```
+
+Text parameters can also be updated 
 
 ### Parameter value imports
 
