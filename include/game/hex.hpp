@@ -1,7 +1,11 @@
 #pragma once
 
+// include dependencies
+#include "troop.hpp"
+#include "build.hpp"
+#include "plant.hpp"
+
 /// Hex tile.
-/// 
 /// Contains tile status and reference to objects placed on it.
 struct Hex {
 	/// Tile type.
@@ -16,7 +20,7 @@ struct Hex {
 	enum Team {
 		/// (0) No owner.
 		/// Can also be used as "void" team to simplify code.
-		None = 0,
+		Unclaimed = 0,
 
 		Red,    /// (1) Red team.
 		Orange, /// (2) Orange team.
@@ -28,19 +32,18 @@ struct Hex {
 		Pink,   /// (8) Pink team.
 
 		Count   /// Team count.
-	} team = None;
+	} team = Unclaimed;
+
+	/// Empty index number.
+	static const size_t None = ~0ull;
+
+	/// Troop index, `None` if no troop.
+	size_t troop = None;
+	/// Building index, `None` if no troop.
+	size_t build = None;
+	/// Plant index, `None` if no troop.
+	size_t plant = None;
 
 	/// Checks if a tile can be stood on.
 	bool isSolid() const;
-};
-
-namespace Name {
-	/// Returns a request value for team name.
-	/// 
-	/// @param id Team ID.
-	const char* team(Hex::Team id);
-	/// Returns a request value for team name.
-	/// 
-	/// @param entity Tile entity.
-	const char* team(const Hex& entity);
 };
