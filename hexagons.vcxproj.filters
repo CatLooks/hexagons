@@ -46,6 +46,12 @@
     <Filter Include="Source Files\game">
       <UniqueIdentifier>{c1dfb15e-e0fd-40e4-bf47-f9d9ae0f398b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\game\values">
+      <UniqueIdentifier>{203a0a7b-3e59-4ef4-b792-2b91447fa251}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\values">
+      <UniqueIdentifier>{332523dd-17f3-4fa1-b6ca-22ca5b4f6f6a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -110,6 +116,15 @@
     </ClCompile>
     <ClCompile Include="src\game\troop.cpp">
       <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\map.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\values\names.cpp">
+      <Filter>Source Files\game\values</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\values\textures.cpp">
+      <Filter>Source Files\game\values</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -214,6 +229,18 @@
     </ClInclude>
     <ClInclude Include="include\game\entity.hpp">
       <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\map.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\tile.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\values\names.hpp">
+      <Filter>Header Files\game\values</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\values\textures.hpp">
+      <Filter>Header Files\game\values</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
