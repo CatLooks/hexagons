@@ -5,3 +5,4 @@
 #include "game/build.hpp"
 #include "game/plant.hpp"
 #include "game/hex.hpp"
+#include "game/map.hpp"
