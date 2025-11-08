@@ -1,4 +1,4 @@
-#include "game/map/names.hpp"
+#include "game/values/names.hpp"
 
 namespace Name {
 	/// Returns the name of a hex team.

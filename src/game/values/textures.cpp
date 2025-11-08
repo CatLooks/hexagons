@@ -1,4 +1,4 @@
-#include "game/map/textures.hpp"
+#include "game/values/textures.hpp"
 
 namespace Textures {
 	/// Returns a 64x64 texture map.

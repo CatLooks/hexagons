@@ -19,14 +19,3 @@ struct Plant : Entity {
 		Count    /// Plant count.
 	} type;
 };
-
-namespace Name {
-	/// Returns a request value for plant name.
-	/// 
-	/// @param id Plant ID.
-	const char* plant(Plant::Type id);
-	/// Returns a request value for plant name.
-	/// 
-	/// @param entity Plant entity.
-	const char* plant(const Plant& entity);
-};

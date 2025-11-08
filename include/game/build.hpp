@@ -18,14 +18,3 @@ struct Build : Entity {
 		Count   /// Building count.
 	} type;
 };
-
-namespace Name {
-	/// Returns a request value for building name.
-	/// 
-	/// @param id Building ID.
-	const char* build(Build::Type id);
-	/// Returns a request value for building name.
-	/// 
-	/// @param entity Building entity.
-	const char* build(const Build& entity);
-};

@@ -41,7 +41,7 @@ public:
 
 private:
 	std::unique_ptr<Hex> _tiles; /// Tilemap array.
-	sf::Vector2u _size;          /// Map size.
+	sf::Vector2i _size;          /// Map size.
 
 	Pool<Troop> _troops; /// Troop pool.
 	Pool<Build> _builds; /// Building pool.

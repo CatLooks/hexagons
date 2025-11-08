@@ -20,14 +20,3 @@ struct Troop : Entity {
 
 	int hp = 0; /// Troop health.
 };
-
-namespace Name {
-	/// Returns a request value for troop name.
-	/// 
-	/// @param id Troop ID.
-	const char* troop(Troop::Type id);
-	/// Returns a request value for troop name.
-	/// 
-	/// @param entity Troop entity.
-	const char* troop(const Troop& entity);
-};
