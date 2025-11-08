@@ -2,10 +2,22 @@
 #include "game.hpp"
 #include "assets.hpp"
 
+
+
+// map test
+class Game : public ui::Element {
+public:
+	Map map;
+
+protected:
+	void drawSelf(ui::RenderBuffer& target, sf::IntRect self) const override {
+		map.draw(target);
+	};
+};
+
 /// Program entry.
 /// @return Exit code.
 int main() {
-
 	// load languages
 	if (assets::loadLanguageList())
 		return 1;
@@ -24,6 +36,10 @@ int main() {
 
 	// create an interface
 	ui::Interface itf;
+
+	// game test
+	auto layer = itf.layer();
+	layer->add(new Game());
 
 	// window main loop
 	std::queue<sf::Event> eventQueue;

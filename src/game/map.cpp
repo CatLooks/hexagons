@@ -30,7 +30,7 @@ bool Map::contains(sf::Vector2i pos) const {
 /// Returns a reference to a tile at position.
 Hex& Map::operator[](sf::Vector2i pos) const {
 	return contains(pos)
-		? _tiles[pos.y * _size.x + pos.x]
+		? _tiles.get()[pos.y * _size.x + pos.x]
 		: _fuse;
 };
 
@@ -41,14 +41,46 @@ size_t Map::tilecount() const {
 
 /// Generates a copy of the map.
 Map Map::copy() const {
+	// copy tilemap
+	Hex* tilemap = new Hex[tilecount()];
+	for (size_t i = 0; i < tilecount(); i++)
+		tilemap[i] = _tiles.get()[i];
+
 	// create new map
-	Map map = {
-		std::unique_ptr<Hex>(new Hex[tilecount()]),
-		_size, _troops, _builds, _plants
+	Map map;
+	map._tiles = std::unique_ptr<Hex>(tilemap);
+	map._size = _size;
+	map._troops = _troops;
+	map._builds = _builds;
+	map._plants = _plants;
+	return map;
+};
+
+/// Resizes the map.
+void resize(sf::IntRect rect) {
+	// create new tilemap
+	size_t count = (size_t)rect.size.x * rect.size.y;
+	Hex* tilemap = new Hex[count];
+
+	// copy old tiles
+	sf::IntRect prev = { {}, _size };
+	auto is = prev.findIntersection(rect);
+	if (is) {
+		for (int dy = 0; dy < is->size.y; dy++) {
+			for (int dx = 0; dx < is->size.x; dx++) {
+				// old tile position
+				sf::Vector2i old_pos = sf::Vector2i(dx, dy) + is->position;
+				// new tile position
+				sf::Vector2i new_pos = old_pos - rect.position;
+
+				// copy the tile
+				tilemap[new_pos.y * rect.size.x + new_pos.x]
+					= _tiles.get()[old_pos.y * _size.x + old_pos.x];
+			};
+		};
 	};
 
-	// copy tiles
-	for (size_t i = 0; i < tilecount(); i++)
-		map._tiles[i] = _tiles[i];
-	return map;
+	// swap tilemap
+	_tiles = new std::unique_ptr<Hex>(tilemap);
+	_size = rect.size;
 };
