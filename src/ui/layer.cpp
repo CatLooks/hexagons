@@ -236,8 +236,9 @@ namespace ui {
 
 	/// Updates interface language.
 	void Interface::translate() const {
-		for (const auto& layer : *_ctx)
-			layer->translate();
+		for (const auto& ctx : _contexts)
+			for (const auto& layer : ctx)
+				layer->translate();
 	};
 
 	/// Sets rendering statistics rendering callback for the interface.
