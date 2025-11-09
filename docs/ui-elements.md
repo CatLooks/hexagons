@@ -35,6 +35,16 @@ A map is needed to construct a panel (`Panel(const Map& map)`). Map data is *cop
 
 <hr>
 
+## `ui::Pages` - paging element
+
+Pages only display 1 child element at a time.
+
+To select current shown element, use `show(Element* elem)`. If the element specified isn't found, nothing will be displayed.
+
+*Note: system elements aren't subject to this change.*
+
+<hr>
+
 ## `ui::Text` - text display
 
 Text element uses localized text to display labels.

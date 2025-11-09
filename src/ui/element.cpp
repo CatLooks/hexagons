@@ -318,6 +318,7 @@ namespace ui {
 	};
 	/// Activates the element.
 	void Element::activate() {
+		if (_active) return;
 		_active = true;
 		onActivate();
 		for (auto& element : *this)
@@ -325,6 +326,7 @@ namespace ui {
 	};
 	/// Deactivates the element.
 	void Element::deactivate() {
+		if (!_active) return;
 		_active = false;
 		onDeactivate();
 		for (auto& element : *this)
@@ -332,11 +334,6 @@ namespace ui {
 	};
 	/// @return Whether the element is active.
 	bool Element::active() const { return _active; };
-
-	/// @return Element's children.
-	const std::list<std::unique_ptr<Element>>& Element::children() const { return _elements; };
-	/// @return Element's parent.
-	Element* Element::parent() const { return _parent; };
 
 	/// @return Element position.
 	DimVector& Element::position() { return bounds.position; };
@@ -347,4 +344,11 @@ namespace ui {
 
 	/// @return Element bounding rectangle.
 	sf::IntRect Element::rect() const { return _rect; };
+
+	/// @return Element's children.
+	const std::list<std::unique_ptr<Element>>& Element::children() const { return _elements; };
+	/// @return Element's system children.
+	const std::list<std::unique_ptr<Element>>& Element::childrens() const { return _system; };
+	/// @return Element's parent.
+	Element* Element::parent() const { return _parent; };
 };

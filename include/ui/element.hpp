@@ -278,12 +278,6 @@ namespace ui {
 		/// @return Whether the element is active.
 		bool active() const;
 
-		/// Returns element's children.
-		/// This does not include system items (use `begin()` and `end()` for all children).
-		const std::list<std::unique_ptr<Element>>& children() const;
-		/// @return Element's parent.
-		Element* parent() const;
-
 		/// @return Element position.
 		DimVector& position();
 		const DimVector& position() const;
@@ -293,5 +287,16 @@ namespace ui {
 
 		/// @return Element bounding rectangle (available after recalculation).
 		sf::IntRect rect() const;
+
+		/// Returns element's children.
+		/// This does not include system items (use `begin()` and `end()` for all children).
+		const std::list<std::unique_ptr<Element>>& children() const;
+		/// @return Element's parent.
+		Element* parent() const;
+
+	protected:
+		/// Returns element's system children.
+		/// This does not include public items (use `begin()` and `end()` for all children).
+		const std::list<std::unique_ptr<Element>>& childrens() const;
 	};
 };

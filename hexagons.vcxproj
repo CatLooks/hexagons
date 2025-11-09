@@ -47,6 +47,7 @@
     <ClCompile Include="src\ui\event.cpp" />
     <ClCompile Include="src\ui\image.cpp" />
     <ClCompile Include="src\ui\layer.cpp" />
+    <ClCompile Include="src\ui\pages.cpp" />
     <ClCompile Include="src\ui\panel.cpp" />
     <ClCompile Include="src\ui\solid.cpp" />
     <ClCompile Include="src\ui\text.cpp" />
@@ -89,6 +90,7 @@
     <ClInclude Include="include\ui\event.hpp" />
     <ClInclude Include="include\ui\image.hpp" />
     <ClInclude Include="include\ui\layer.hpp" />
+    <ClInclude Include="include\ui\pages.hpp" />
     <ClInclude Include="include\ui\panel.hpp" />
     <ClInclude Include="include\ui\solid.hpp" />
     <ClInclude Include="include\ui\text.hpp" />
