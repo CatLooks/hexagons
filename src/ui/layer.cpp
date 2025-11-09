@@ -89,28 +89,28 @@ namespace ui {
 
 	/// Creates a new interface layer.
 	Layer* Interface::layer() {
-		layers.push_back(std::unique_ptr<Layer>(new Layer));
-		return layers.back().get();
+		_layers.push_back(std::unique_ptr<Layer>(new Layer));
+		return _layers.back().get();
 	};
 
 	/// Recalculates interface.
 	void Interface::recalculate(sf::Vector2u windowSize) {
 		// update window rectangle
-		winRect = { {}, (sf::Vector2i)windowSize };
+		_win_rect = { {}, (sf::Vector2i)windowSize };
 		// update view
-		view = sf::View(sf::FloatRect{ {}, (sf::Vector2f)windowSize });
+		_view = sf::View(sf::FloatRect{ {}, (sf::Vector2f)windowSize });
 
 		// calculate delta
-		sf::Time delta = anim_clock.restart();
+		sf::Time delta = _anim_clock.restart();
 
 		// recalculate each layer
-		for (auto& layer : layers)
-			layer->recalculate(delta, layer->view(winRect));
+		for (auto& layer : _layers)
+			layer->recalculate(delta, layer->view(_win_rect));
 	};
 
 	/// Send an event to interface.
 	void Interface::event(const sf::Event& evt) {
-		for (auto& layer : layers) {
+		for (auto& layer : _layers) {
 			// check for keyboard events
 			if (const auto* data = evt.getIf<sf::Event::KeyPressed>()) {
 				layer->event((Event)Event::KeyPress {
@@ -128,25 +128,25 @@ namespace ui {
 			// check for mouse button events
 			if (const auto* data = evt.getIf<sf::Event::MouseButtonPressed>()) {
 				layer->event((Event)Event::MousePress {
-					layer->map(data->position, winRect), data->button 
+					layer->map(data->position, _win_rect), data->button
 				});
 				return;
 			};
 			if (const auto* data = evt.getIf<sf::Event::MouseButtonReleased>()) {
 				layer->event((Event)Event::MouseRelease {
-					layer->map(data->position, winRect), data->button
+					layer->map(data->position, _win_rect), data->button
 				});
 				return;
 			};
 			if (const auto* data = evt.getIf<sf::Event::MouseMoved>()) {
 				layer->event((Event)Event::MouseMove {
-					layer->map(data->position, winRect)
+					layer->map(data->position, _win_rect)
 				});
 				return;
 			};
 			if (const auto* data = evt.getIf<sf::Event::MouseWheelScrolled>()) {
 				layer->event((Event)Event::MouseWheel {
-					layer->map(data->position, winRect), data->delta
+					layer->map(data->position, _win_rect), data->delta
 				});
 				return;
 			};
@@ -164,10 +164,10 @@ namespace ui {
 	/// Updates the interface.
 	void Interface::update(sf::Vector2i mouse) {
 		// calculate delta
-		sf::Time delta = upd_clock.restart();
+		sf::Time delta = _upd_clock.restart();
 
 		// update each layer
-		for (auto& layer : layers) {
+		for (auto& layer : _layers) {
 			layer->hover(mouse);
 			layer->update(delta);
 		};
@@ -178,24 +178,24 @@ namespace ui {
 		RenderStats stats;
 
 		// render layers
-		target.setView(view);
-		for (auto& layer : layers) {
+		target.setView(_view);
+		for (auto& layer : _layers) {
 			layer->draw(layer->_buffer);
-			stats |= layer->render(target, winRect);
+			stats |= layer->render(target, _win_rect);
 		};
 
 		// render stats
-		if (info) info(target, stats);
+		if (_info) _info(target, stats);
 	};
 
 	/// Updates interface language.
 	void Interface::translate() const {
-		for (const auto& layer : layers)
+		for (const auto& layer : _layers)
 			layer->translate();
 	};
 
 	/// Sets rendering statistics rendering callback for the interface.
-	void Interface::setStatDrawCall(std::function<void(sf::RenderTarget& target, const RenderStats& stats)> call) {
-		info = call;
+	void Interface::statDraw(std::function<void(sf::RenderTarget& target, const RenderStats& stats)> call) {
+		_info = call;
 	};
 };

@@ -71,17 +71,17 @@ namespace ui {
 	class Interface {
 	private:
 		/// Interface layers.
-		std::deque<std::unique_ptr<Layer>> layers;
+		std::deque<std::unique_ptr<Layer>> _layers;
 		/// Interface render statistics renderer.
-		std::function<void(sf::RenderTarget&, const RenderStats&)> info;
+		std::function<void(sf::RenderTarget&, const RenderStats&)> _info;
 		/// Window rectangle.
-		sf::IntRect winRect;
+		sf::IntRect _win_rect;
 		/// Default view.
-		sf::View view;
+		sf::View _view;
 		/// Update clock.
-		sf::Clock upd_clock;
+		sf::Clock _upd_clock;
 		/// Animation clock.
-		sf::Clock anim_clock;
+		sf::Clock _anim_clock;
 
 	public:
 		/// Creates a new interface layer.
@@ -112,6 +112,6 @@ namespace ui {
 		/// 
 		/// @param target Render target.
 		/// @param stats Rendering statistics.
-		void setStatDrawCall(std::function<void(sf::RenderTarget& target, const RenderStats& stats)> call);
+		void statDraw(std::function<void(sf::RenderTarget& target, const RenderStats& stats)> call);
 	};
 };
