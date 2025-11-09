@@ -89,8 +89,24 @@ namespace ui {
 
 	/// Creates a new interface layer.
 	Layer* Interface::layer() {
-		_layers.push_back(std::unique_ptr<Layer>(new Layer));
-		return _layers.back().get();
+		_ctx->push_back(std::unique_ptr<Layer>(new Layer));
+		return _ctx->back().get();
+	};
+
+	/// ==================================================================== ///
+
+	/// Selects an interface context.
+	void Interface::setContext(const Interface::Context& ctx) {
+		_ctx = ctx.ref;
+	};
+	/// Switches to a default interface context.
+	void Interface::defaultContext() {
+		_ctx = &_default;
+	};
+	/// Generates a new interface context.
+	Interface::Context Interface::newContext() {
+		_contexts.push_back({});
+		return _ctx = &_contexts.back();
 	};
 
 	/// Recalculates interface.
@@ -104,13 +120,13 @@ namespace ui {
 		sf::Time delta = _anim_clock.restart();
 
 		// recalculate each layer
-		for (auto& layer : _layers)
+		for (auto& layer : *_ctx)
 			layer->recalculate(delta, layer->view(_win_rect));
 	};
 
 	/// Send an event to interface.
 	void Interface::event(const sf::Event& evt) {
-		for (auto& layer : _layers) {
+		for (auto& layer : *_ctx) {
 			// check for keyboard events
 			if (const auto* data = evt.getIf<sf::Event::KeyPressed>()) {
 				layer->event((Event)Event::KeyPress {
@@ -167,7 +183,7 @@ namespace ui {
 		sf::Time delta = _upd_clock.restart();
 
 		// update each layer
-		for (auto& layer : _layers) {
+		for (auto& layer : *_ctx) {
 			layer->hover(mouse);
 			layer->update(delta);
 		};
@@ -179,7 +195,7 @@ namespace ui {
 
 		// render layers
 		target.setView(_view);
-		for (auto& layer : _layers) {
+		for (auto& layer : *_ctx) {
 			layer->draw(layer->_buffer);
 			stats |= layer->render(target, _win_rect);
 		};
@@ -190,7 +206,7 @@ namespace ui {
 
 	/// Updates interface language.
 	void Interface::translate() const {
-		for (const auto& layer : _layers)
+		for (const auto& layer : *_ctx)
 			layer->translate();
 	};
 

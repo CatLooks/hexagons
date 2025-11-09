@@ -70,8 +70,15 @@ namespace ui {
 	/// Interface container.
 	class Interface {
 	private:
-		/// Interface layers.
-		std::deque<std::unique_ptr<Layer>> _layers;
+		/// Layer array.
+		using _Context = std::deque<std::unique_ptr<Layer>>;
+
+		/// Interface contexts.
+		std::list<_Context> _contexts;
+		/// Default interface context.
+		_Context _default;
+		/// Current interface context.
+		_Context* _ctx = &_default;
 		/// Interface render statistics renderer.
 		std::function<void(sf::RenderTarget&, const RenderStats&)> _info;
 		/// Window rectangle.
@@ -84,6 +91,31 @@ namespace ui {
 		sf::Clock _anim_clock;
 
 	public:
+		/// Context handle type.
+		class Context {
+			friend Interface;
+
+			/// Context reference.
+			_Context* ref;
+			/// Default constructor.
+			Context(_Context* ref) : ref(ref) {};
+		};
+
+		/// Switches an interface context.
+		/// 
+		/// @param ctx Context handle.
+		void setContext(const Context& ctx);
+		/// Switches to a default interface context.
+		/// 
+		/// @return Context handle.
+		void defaultContext();
+		/// Generates a new interface context.
+		/// 
+		/// After generation, switches to the context.
+		/// 
+		/// @return Context handle.
+		Context newContext();
+
 		/// Creates a new interface layer.
 		/// 
 		/// @return Reference to new layer.
