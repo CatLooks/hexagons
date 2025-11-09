@@ -92,7 +92,7 @@ namespace ui {
 		/// Text format object.
 		localization::Text _format;
 		/// Text rendering object.
-		std::unique_ptr<sf::Text> _text;
+		mutable sf::Text _text;
 		/// Format arguments.
 		std::unordered_map<std::string, std::string> _args;
 		/// Automatic argument setters.

@@ -33,10 +33,10 @@ namespace ui {
 		std::string value = _format.get(_args, &assets::lang::locale);
 
 		// set new value
-		_text.get()->setString(value);
+		_text.setString(value);
 
 		// set label size
-		if (autosize) bounds.size = _text.get()->getLocalBounds().size;
+		if (autosize) bounds.size = _text.getLocalBounds().size;
 	};
 
 	/// Reloads text.
@@ -46,10 +46,8 @@ namespace ui {
 
 	/// Draws the label.
 	void Text::drawSelf(RenderBuffer& target, sf::IntRect self) const {
-		sf::Text* text = _text.get();
-
 		// reconfigure text object
-		auto rect = text->getLocalBounds();
+		auto rect = _text.getLocalBounds();
 		if (pos & 1) {
 			// shrink horizontally
 			self.position.x -= (int)rect.position.x;
@@ -60,22 +58,22 @@ namespace ui {
 		};
 		if (pos & 4) {
 			// set height to line spacing
-			rect.size.y = text->getFont().getLineSpacing(text->getCharacterSize());
+			rect.size.y = _text.getFont().getLineSpacing(_text.getCharacterSize());
 		};
 		sf::Vector2f mults = alignMultipliers(align);
-		text->setPosition({
+		_text.setPosition({
 			self.position.x + (self.size.x - rect.size.x) * mults.x,
 			self.position.y + (self.size.y - rect.size.y) * mults.y,
 		});
 
 		// render text
-		target.text(*text);
+		target.text(_text);
 		target.forward(nullptr);
 	};
 
 	/// Constructs a text element.
 	Text::Text(const TextSettings& settings, const localization::Path& path):
-		_text(new sf::Text(settings.font, "", settings.size)),
+		_text({ settings.font, "", settings.size }),
 		_path(path)
 	{
 		// adds recalculation update
@@ -115,21 +113,21 @@ namespace ui {
 
 	/// Configures text character size.
 	void Text::setSize(unsigned int size) const {
-		_text.get()->setCharacterSize(size);
+		_text.setCharacterSize(size);
 	};
 	/// Configures text scaling.
 	void Text::setScale(float scale) const {
-		_text.get()->setScale({ scale, scale });
+		_text.setScale({ scale, scale });
 	};
 
 	/// Configures text color.
 	void Text::setColor(sf::Color color) const {
-		_text.get()->setFillColor(color);
+		_text.setFillColor(color);
 	};
 
 	/// Configures text outline.
 	void Text::setOutline(sf::Color color, float thickness) const {
-		_text.get()->setOutlineColor(color);
-		_text.get()->setOutlineThickness(thickness);
+		_text.setOutlineColor(color);
+		_text.setOutlineThickness(thickness);
 	};
 };
