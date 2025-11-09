@@ -97,20 +97,50 @@ namespace ui {
 
 	/// Selects an interface context.
 	void Interface::setContext(const Interface::Context& ctx) {
+		if (_lock) {
+#ifdef _DEBUG
+			fprintf(stderr, "ignoring a setContext() call to a locked interface.\n");
+#endif
+			return;
+		};
 		_ctx = ctx.ref;
 	};
 	/// Switches to a default interface context.
 	void Interface::defaultContext() {
+		if (_lock) {
+#ifdef _DEBUG
+			fprintf(stderr, "ignoring a defaultContext() call to a locked interface.\n");
+#endif
+			return;
+		};
 		_ctx = &_default;
 	};
 	/// Generates a new interface context.
 	Interface::Context Interface::newContext() {
+		if (_lock) {
+#ifdef _DEBUG
+			fprintf(stderr, "ignoring a newContext() call to a locked interface.\n");
+#endif
+			return &_default;
+		};
 		_contexts.push_back({});
 		return _ctx = &_contexts.back();
 	};
 
+	/// Switches to an interface context during the next frame.
+	void Interface::switchContext(const Interface::Context& ctx) {
+		_next = ctx.ref;
+	};
+	/// Locks the interface from immediate context switching.
+	void Interface::lock() {
+		_lock = true;
+	};
+
 	/// Recalculates interface.
 	void Interface::recalculate(sf::Vector2u windowSize) {
+		// switch to next context
+		_ctx = _next;
+
 		// update window rectangle
 		_win_rect = { {}, (sf::Vector2i)windowSize };
 		// update view

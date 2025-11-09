@@ -79,6 +79,11 @@ namespace ui {
 		_Context _default;
 		/// Current interface context.
 		_Context* _ctx = &_default;
+		/// Next interface context.
+		_Context* _next = &_default;
+		/// Interface modification lock.
+		bool _lock = false;
+
 		/// Interface render statistics renderer.
 		std::function<void(sf::RenderTarget&, const RenderStats&)> _info;
 		/// Window rectangle.
@@ -103,18 +108,30 @@ namespace ui {
 
 		/// Switches an interface context.
 		/// 
+		/// This method will fail if the interface has been locked.
+		/// 
 		/// @param ctx Context handle.
 		void setContext(const Context& ctx);
 		/// Switches to a default interface context.
+		/// 
+		/// This method will fail if the interface has been locked.
 		/// 
 		/// @return Context handle.
 		void defaultContext();
 		/// Generates a new interface context.
 		/// 
+		/// This method will fail if the interface has been locked.
+		/// 
 		/// After generation, switches to the context.
 		/// 
 		/// @return Context handle.
 		Context newContext();
+		/// Switches to an interface context during the next frame.
+		/// 
+		/// @param ctx Context handle.
+		void switchContext(const Context& ctx);
+		/// Locks the interface from immediate context switching.
+		void lock();
 
 		/// Creates a new interface layer.
 		/// 
