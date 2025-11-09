@@ -34,9 +34,6 @@ namespace ui {
 	const Element::iter::value_type& Element::iter::operator*() const {
 		return *((_it0 == _split) ? _it1 : _it0);
 	};
-	/*Element::iter::value_type& Element::iter::operator*() {
-		return *((_it0 == _split) ? _it1 : _it0);
-	};*/
 	/// Returns current iterator item.
 	const Element::iter::value_type* Element::iter::operator->() const {
 		return &*((_it0 == _split) ? _it1 : _it0);
@@ -226,9 +223,15 @@ namespace ui {
 		// ignore if not active
 		if (!_active) return;
 
+		// set scissor rectangle
+		if (scissor) target.scissor(_rect);
+
 		// draw self & children
 		drawSelf(target, _rect);
 		drawChildren(target);
+
+		// revert scissor rectangle
+		if (scissor) target.unscissor();
 	};
 
 	/// Updates element and its children.
@@ -250,15 +253,16 @@ namespace ui {
 		// ignore if needed
 		if (!_active || ignore) return false;
 
+		// check if mouse is out of range for mouse events
+		if (auto pos = evt.mouse()) {
+			if (!_rect.contains(*pos))
+				return false;
+		};
+
 		// send event to children
 		for (const auto& element : *this)
 			if (element->event(evt))
 				return true;
-
-		// check if mouse is out of range for mouse events
-		if (auto pos = evt.mouse())
-			if (!_rect.contains(*pos))
-				return false;
 
 		// handle the event
 		return handle(evt);

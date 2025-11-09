@@ -133,6 +133,8 @@ namespace ui {
 	public:
 		bool ignore      = false; /// Whether the element ignores events.
 		bool transparent = false; /// Whether mouse hover events can pass through the element.
+		bool scissor     = false; /// Whether to cut off pixels drawn outside of element's bounds.
+
 		DimRect bounds;           /// Element bounding box.
 		Borders padding;          /// Element padding.
 		Borders margin;           /// Element margin.

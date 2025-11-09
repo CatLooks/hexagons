@@ -1,6 +1,9 @@
 #include "ui/buffer.hpp"
 
 namespace ui {
+	/// Default scissor rectangle.
+	const sf::FloatRect RenderBuffer::defaultScissor = { {}, {1.f, 1.f} };
+
 	/// Compiles rendering stats from another structure.
 	void RenderStats::operator|=(const RenderStats& oth) {
 		quads += oth.quads;
@@ -20,6 +23,7 @@ namespace ui {
 		_arr.clear();
 		_txt.clear();
 		_fis.clear();
+		_srs.clear();
 		_ptl = false;
 		_inf = RenderStats();
 	};
@@ -72,18 +76,38 @@ namespace ui {
 		_inf.text++;
 	};
 
+	/// Sets next forward scissor area.
+	void RenderBuffer::scissor(sf::IntRect area) {
+		// intersect scissor with old area
+		auto is = sf::FloatRect(
+			sf::Vector2f(area.position).componentWiseDiv((sf::Vector2f)_win.size),
+			sf::Vector2f(area.size).componentWiseDiv((sf::Vector2f)_win.size)
+		).findIntersection(scissor());
+
+		// add new scissor
+		_srs.push_back(is ? *is : sf::FloatRect());
+	};
+	/// Undoes previous scissor area.
+	void RenderBuffer::unscissor() {
+		if (!_srs.empty())
+			_srs.pop_back();
+	};
+
 	/// Forwards the buffer.
 	void RenderBuffer::forward(const sf::Texture* texture) {
 		// buffer extension checks
 		if (!_fis.empty()) {
 			_FI& last = _fis.back();
 
+			// ignore if scissor rectangle is different
+			if (last.scissor != scissor())
+				goto skip;
+
 			// check what is drawn in forward
 			bool f_vert = _arr.size() != last.vert_idx;
 			bool f_text = _txt.size() != last.text_idx;
 
 			// vertex only forward
-			// check if no text in previous forward & the same texture used
 			if (!f_text && !_ptl && last.texture == texture) {
 				last.vert_idx = _arr.size();
 				return;
@@ -96,15 +120,15 @@ namespace ui {
 				return;
 			};
 		};
-
+		skip:
+		
 		// update text flag
 		_ptl = _txt.size() - (_fis.empty() ? 0 : _fis.back().text_idx);
 
 		// add new forward call
 		_fis.push_back({
-			_arr.size(),
-			_txt.size(),
-			texture
+			_arr.size(), _txt.size(),
+			texture, scissor()
 		});
 	};
 
@@ -121,6 +145,11 @@ namespace ui {
 			// get object count
 			size_t vert_count = it->vert_idx - vert_idx;
 			size_t text_count = it->text_idx - text_idx;
+
+			// set scissor rectangle
+			sf::View view = target.getView();
+			view.setScissor(it->scissor);
+			target.setView(view);
 
 			// draw vertices
 			if (vert_count > 0) {
@@ -160,4 +189,12 @@ namespace ui {
 	/// @return Buffer rendering states.
 	const sf::RenderStates& RenderBuffer::states() const { return _opt; };
 	sf::RenderStates& RenderBuffer::states() { return _opt; };
+
+	/// @return Render buffer rendering space.
+	const sf::IntRect& RenderBuffer::screen() const { return _win; };
+
+	/// @return Current scissoring rectangle.
+	const sf::FloatRect& RenderBuffer::scissor() const {
+		return _srs.empty() ? defaultScissor : _srs.back();
+	};
 };

@@ -150,8 +150,10 @@ namespace ui {
 		sf::Time delta = _anim_clock.restart();
 
 		// recalculate each layer
-		for (auto& layer : *_ctx)
+		for (auto& layer : *_ctx) {
+			layer->_buffer._win = _win_rect;
 			layer->recalculate(delta, layer->view(_win_rect));
+		};
 	};
 
 	/// Send an event to interface.
@@ -223,8 +225,11 @@ namespace ui {
 	void Interface::draw(sf::RenderTarget& target) {
 		RenderStats stats;
 
-		// render layers
+		// clear target
 		target.setView(_view);
+		target.clear(_clear_color);
+
+		// render layers
 		for (auto& layer : *_ctx) {
 			layer->draw(layer->_buffer);
 			stats |= layer->render(target, _win_rect);
@@ -244,5 +249,10 @@ namespace ui {
 	/// Sets rendering statistics rendering callback for the interface.
 	void Interface::statDraw(std::function<void(sf::RenderTarget& target, const RenderStats& stats)> call) {
 		_info = call;
+	};
+
+	/// Sets clearing color.
+	void Interface::clearColor(sf::Color color) {
+		_clear_color = color;
 	};
 };

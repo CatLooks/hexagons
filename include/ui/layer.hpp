@@ -9,8 +9,6 @@
 #include <queue>
 
 namespace ui {
-	class Interface;
-
 	/// Interface layer element.
 	/// Spans the entire window.
 	class Layer : public Element {
@@ -94,6 +92,8 @@ namespace ui {
 		sf::Clock _upd_clock;
 		/// Animation clock.
 		sf::Clock _anim_clock;
+		/// Clear color.
+		sf::Color _clear_color;
 
 	public:
 		/// Context handle type.
@@ -162,5 +162,7 @@ namespace ui {
 		/// @param target Render target.
 		/// @param stats Rendering statistics.
 		void statDraw(std::function<void(sf::RenderTarget& target, const RenderStats& stats)> call);
+		/// Sets clearing color.
+		void clearColor(sf::Color color);
 	};
 };

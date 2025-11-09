@@ -116,6 +116,7 @@ A class derived from `ui::Element` can override:
 Additionally, every element has configurable flags:
 - `ignore` - if `true`, element will ignore all events and not propagate them to children
 - `transparent` - if `true`, element will allow elements below to be able to be hovered over.
+- `scissor` - if `true`, everything drawn by element outside of its bounds will be cut off.
 
 ## Padding & Margin
 
@@ -192,6 +193,7 @@ Element's bounding box is not required to be accurately set. For example, elemen
 
 Element's bounds are used in:
 - Child element recalculation,
+- Render scissoring,
 - Mouse event propagation.
 
 If you don't need these things to work properly, you can omit setting element's size.
@@ -227,7 +229,6 @@ while (win.isOpen()) {
     itf.update(sf::Mouse::getPosition(win));
 
     // draw interface
-    win.clear();
     itf.draw(win);
     win.display();
 };
@@ -405,10 +406,11 @@ Interface is an object that composed all interface contexts together and provide
   | `draw(sf::RenderTarget& target)` | Draw the UI. |
   | `translate()` | Translates the entire UI. |
 
-* Render statistics rendering:
+* Other methods:
 
   `statDraw(void(sf::RenderTarget& target, const RenderStats& stats) call)` - attaches a stats drawing function.
   This function will be called after the entire interface has been drawn.
+  `clearColor(sf::Color color)` - sets clearing color before rendering (black by default).
 
 # `ui::RenderBuffer` class
 

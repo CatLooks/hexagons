@@ -36,6 +36,7 @@ int main() {
 
 	// create an interface
 	ui::Interface itf;
+	itf.clearColor(sf::Color(29, 31, 37));
 
 	// game test
 	auto layer = itf.layer();
@@ -62,7 +63,6 @@ int main() {
 		itf.update(sf::Mouse::getPosition(win));
 
 		// redraw window contents
-		win.clear(sf::Color(29, 31, 37));
 		itf.draw(win);
 		win.display();
 	};

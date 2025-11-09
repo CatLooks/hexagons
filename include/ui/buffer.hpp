@@ -21,15 +21,24 @@ namespace ui {
 		void operator|=(const RenderStats& oth);
 	};
 
+	// forward declare interface
+	class Interface;
+
 	/// UI render buffer.
 	/// Allows to render a vertex buffer with a single texture.
 	class RenderBuffer {
+		friend Interface;
+
 	protected:
+		/// Default scissoring rectangle.
+		static const sf::FloatRect defaultScissor;
+
 		/// Forwarding index storage.
 		struct _FI {
 			size_t            vert_idx; /// First vertex index outside.
 			size_t            text_idx; /// First text index outside.
 			const sf::Texture* texture; /// Current rendering texture.
+			sf::FloatRect      scissor; /// Scissor rectangle.
 		};
 
 		std::vector<sf::Vertex>  _arr; /// Vertex array.
@@ -38,11 +47,12 @@ namespace ui {
 		std::list<_FI>           _fis; /// Forwarding indices.
 		bool                     _ptl; /// Whether previous forward contained text.
 		RenderStats              _inf; /// Render stats.
+		std::list<sf::FloatRect> _srs; /// Scissor rectangle stack.
+		sf::IntRect              _win; /// Window size.
 
 	public:
 		/// Constructs a new render buffer.
 		/// 
-		/// @param texture Default render buffer texture.
 		/// @param shader Render buffer shader.
 		RenderBuffer(const sf::Shader* shader = nullptr);
 
@@ -71,6 +81,17 @@ namespace ui {
 		/// @param text Text object.
 		void text(const sf::Text& text);
 
+		/// Sets new scissor area.
+		/// 
+		/// Parts outside old scissor area will be discarded.
+		/// 
+		/// @param area Scissoring area (pixels in this rectangle will be drawn).
+		void scissor(sf::IntRect area);
+		/// Undoes previous scissor area.
+		///
+		/// If no scissoring was done, no action will be taken.
+		void unscissor();
+
 		/// Forwards current buffer contents for drawing.
 		///
 		/// Drawing order is: vertices, text.
@@ -88,5 +109,10 @@ namespace ui {
 		/// @return Buffer rendering states.
 		const sf::RenderStates& states() const;
 		sf::RenderStates& states();
+
+		/// @return Render buffer rendering space.
+		const sf::IntRect& screen() const;
+		/// @return Current scissoring rectangle.
+		const sf::FloatRect& scissor() const;
 	};
 };
