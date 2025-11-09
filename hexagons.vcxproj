@@ -44,7 +44,6 @@
     <ClCompile Include="src\ui\anim\timer.cpp" />
     <ClCompile Include="src\ui\buffer.cpp" />
     <ClCompile Include="src\ui\element.cpp" />
-    <ClCompile Include="src\ui\event.cpp" />
     <ClCompile Include="src\ui\image.cpp" />
     <ClCompile Include="src\ui\layer.cpp" />
     <ClCompile Include="src\ui\pages.cpp" />

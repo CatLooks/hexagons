@@ -172,6 +172,12 @@ namespace ui {
 				});
 				return;
 			};
+			if (const auto* data = evt.getIf<sf::Event::TextEntered>()) {
+				layer->event((Event)Event::CharEnter {
+					data->unicode
+				});
+				return;
+			};
 
 			// check for mouse button events
 			if (const auto* data = evt.getIf<sf::Event::MouseButtonPressed>()) {

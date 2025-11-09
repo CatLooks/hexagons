@@ -49,6 +49,11 @@ namespace ui {
 		/// @brief Fires when a key gets released.
 		struct KeyRelease : KeyPress {};
 
+		/// @brief Fires when a character is entered.
+		struct CharEnter {
+			char32_t c; /// Entered character.
+		};
+
 		/// @brief Variant of all events.
 		using Variant = std::variant<
 			MouseMove,
@@ -58,7 +63,8 @@ namespace ui {
 			MousePress,
 			MouseRelease,
 			KeyPress,
-			KeyRelease
+			KeyRelease,
+			CharEnter
 		>;
 
 	private:
@@ -67,10 +73,12 @@ namespace ui {
 	public:
 		/// Constructs an event with specified data.
 		/// @param data Event data.
-		Event(Variant data);
+		Event(Variant data) : data(data) {};
 
 		/// @return Event type ID.
-		size_t id() const;
+		size_t id() const {
+			return data.index();
+		};
 
 		/// @return Event data if event type is `T`, `nullopt` otherwise.
 		/// @tparam T Event type.
