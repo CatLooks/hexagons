@@ -1,3 +1,8 @@
+## CONTAINS APP SECRET
+include/eos/Config.hpp
+## Epic Online Services SDK
+EOS_SDK
+
 build
 out
 .cache

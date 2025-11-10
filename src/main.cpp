@@ -7,6 +7,12 @@
 #include "ui/anim/linear.hpp"
 #include "assets.hpp"
 #include "game.hpp"
+#include "eos/Config.hpp"
+#include "eos/HWID.hpp"
+#include "eos/PlatformManager.hpp"
+#include "eos/LoggingManager.hpp"
+#include "eos/LobbyManager.hpp"
+#include "eos/P2PManager.hpp"
 
 /// Program entry.
 /// @return Exit code.
@@ -20,6 +26,21 @@ int main() {
 	// load assets
 	assets::loadAssets();
 	if (assets::error) return 1;
+
+	// initialize EOS
+	PlatformManager* platformManager = new PlatformManager();
+	EOSSdkConfig* sdkConfig = new EOSSdkConfig();
+	platformManager->InitializeEOSSdk(sdkConfig);
+	platformManager->CreatePlatformInstance(sdkConfig);
+	delete sdkConfig;
+
+	LoggingManager* loggingManager = new LoggingManager();
+	loggingManager->RegisterLoggingCallbackExample();
+	loggingManager->SetLogLevelVeryVerboseExample();
+
+	HWID* hwid = new HWID();
+	hwid->Login(platformManager->GetPlatformHandle());
+
 
 	// create window interface
 	ui::Interface itf;

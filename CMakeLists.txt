@@ -6,6 +6,23 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(EOS_SDK_PATH "${CMAKE_SOURCE_DIR}/EOS_SDK")
+
+if(WIN32)
+    # --- Windows Settings ---
+    message(STATUS "Configuring EOS SDK for Windows")
+    set(EOS_DLL "${EOS_SDK_PATH}/Bin/EOSSDK-Win64-Shipping.dll")
+    set(EOS_LIB "${EOS_SDK_PATH}/Lib/EOSSDK-Win64-Shipping.lib")
+elseif(UNIX AND NOT APPLE)
+    # --- Linux (and other UNIX-like OS) Settings ---
+    message(STATUS "Configuring EOS SDK for Linux")
+    set(EOS_DLL "${CMAKE_SOURCE_DIR}/EOS/Bin/libEOSSDK-LinuxArm64-Shipping.so")
+    set(EOS_LIB ${EOS_DLL})
+endif()
+
 if(UNIX AND NOT APPLE)
     find_package(PkgConfig REQUIRED)
 
@@ -50,9 +67,11 @@ else()
 endif()
 
 target_include_directories(main PRIVATE include)
+target_include_directories(main PRIVATE "${EOS_SDK_PATH}/Include")
 
 target_compile_features(main PRIVATE cxx_std_20)
 target_link_libraries(main PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio SFML::Network)
+target_link_libraries(main PRIVATE "${EOS_LIB}")
 
 option(PRODUCTION_BUILD "Set to ON for release builds" OFF)
 
