@@ -5,6 +5,7 @@ Assets are files that are statically loaded in during game initialization.
 ## Loading functions
 
 To load assets, use the following functions:
+
 | Function | Description |
 |-|-|
 | `loadFont(std::string filename, sf::Font& font)` | Loads a font. |
@@ -16,25 +17,29 @@ If a loading function fails, `assets::error` flag will be set to `true`.
 
 ## Load declarations
 
-All asset loading should be configured inside `src/assets.hpp`.
+All assset declarations need to be placed inside `include/assets.hpp`, for example:
+```cpp
+#pragma once
+#include "assetload.hpp"
 
-To declare an asset, place an asset object declaration in `assets` namespace:
+namespace assets {
+	extern sf::Font font; // example font
+	extern sf::Texture texture; // example texture
+	// ...
+};
+```
+
+Instantiating and [loading](##loading-functions) assets needs to be done inside `src/assets.cpp`, for example:
+
 ```cpp
 namespace assets {
 	sf::Font font; // test font
 	sf::Texture texture; // test texture
 
-	// etc.
-};
-```
-
-To load assets, invoke an [asset loading function](##loading-functions) inside `loadAssets()`:
-```cpp
-// inside `::assets`
-void loadAssets() {
-	loadFont("font.ttf", font);
-	loadTexture("image.png", texture);
-	// etc.
+	void loadAssets() {
+		loadFont("font.ttf", font);
+		loadTexture("image.png", texture);
+	};
 };
 ```
 
