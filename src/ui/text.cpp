@@ -66,7 +66,7 @@ namespace ui {
 		_text.setPosition({
 			self.position.x + (self.size.x - rect.size.x) * mults.x,
 			self.position.y + (self.size.y - rect.size.y) * mults.y,
-		});
+			});
 
 		// render text
 		target.text(_text);
@@ -74,8 +74,8 @@ namespace ui {
 	};
 
 	/// Constructs a text element.
-	Text::Text(const TextSettings& settings, const localization::Path& path):
-		_text({ settings.font, "", settings.size }), _path(path), _raw(false)
+	Text::Text(const TextSettings& settings, const localization::Path& path = {})
+		: _text({ settings.font, "", settings.size }), _path(path), _raw(false)
 	{
 		// adds recalculation update
 		onRecalculate([=](const sf::Time& _) { recalc(); });
@@ -104,6 +104,15 @@ namespace ui {
 		_raw = false;
 		onTranslate();
 		recalc();
+	};
+
+	/// @return Current text label.
+	const sf::String& Text::string() const {
+		return _text.getString();
+	};
+	/// Returns character position in current text label.
+	sf::Vector2i Text::charpos(size_t idx) const {
+		return (sf::Vector2i)_text.getInverseTransform().transformPoint(_text.findCharacterPos(idx));
 	};
 
 	/// Clears text arguments.

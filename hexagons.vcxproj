@@ -45,6 +45,7 @@
     <ClCompile Include="src\ui\buffer.cpp" />
     <ClCompile Include="src\ui\element.cpp" />
     <ClCompile Include="src\ui\image.cpp" />
+    <ClCompile Include="src\ui\input.cpp" />
     <ClCompile Include="src\ui\layer.cpp" />
     <ClCompile Include="src\ui\pages.cpp" />
     <ClCompile Include="src\ui\panel.cpp" />
@@ -60,6 +61,7 @@
     <None Include="docs\ui-animations.md" />
     <None Include="docs\ui-elements.md" />
     <None Include="docs\ui-system.md" />
+    <None Include="docs\ui-text.md" />
     <None Include="README.md" />
     <None Include="TLML.sublime-syntax" />
   </ItemGroup>
@@ -88,6 +90,7 @@
     <ClInclude Include="include\ui\element.hpp" />
     <ClInclude Include="include\ui\event.hpp" />
     <ClInclude Include="include\ui\image.hpp" />
+    <ClInclude Include="include\ui\input.hpp" />
     <ClInclude Include="include\ui\layer.hpp" />
     <ClInclude Include="include\ui\pages.hpp" />
     <ClInclude Include="include\ui\panel.hpp" />

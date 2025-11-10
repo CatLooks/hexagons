@@ -110,3 +110,10 @@ To clear parameter values, use:
 | `setScale(float scale)` | Sets text scaling factor. |
 | `setColor(sf::Color color)` | Sets text fill color. |
 | `setOutline(sf::Color color, float thickness` | Sets text outline color and thickness. |
+
+### Other methods
+
+| Function | Description |
+|-|-|
+| `string() -> const sf::String&` | Returns currently shown text label. |
+| `charpos(size_t idx) -> sf::Vector2i` | Returns local position of a character within the text label. |

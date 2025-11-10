@@ -137,6 +137,13 @@ namespace ui {
 		/// @param path Text localization path.
 		void setPath(const localization::Path& path);
 
+		/// @return Current text label.
+		const sf::String& string() const;
+		/// Returns character position in current text label.
+		/// 
+		/// @param idx Character index.
+		sf::Vector2i charpos(size_t idx) const;
+
 		/// Clears text arguments.
 		void paramClear();
 		/// Clears text argument hooks.
