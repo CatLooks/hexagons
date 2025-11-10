@@ -111,8 +111,8 @@ namespace ui {
 		return _text.getString();
 	};
 	/// Returns character position in current text label.
-	sf::Vector2i Text::charpos(size_t idx) const {
-		return (sf::Vector2i)_text.getInverseTransform().transformPoint(_text.findCharacterPos(idx));
+	sf::Vector2f Text::charpos(size_t idx) const {
+		return _text.getInverseTransform().transformPoint(_text.findCharacterPos(idx));
 	};
 
 	/// Clears text arguments.

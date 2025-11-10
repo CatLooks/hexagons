@@ -36,3 +36,46 @@ Available callbacks:
 | Text display | `void(const sf::String& string)` | `attachTextDisplay(...)` | Gets invoked when input text needs to be updated. |
 | Text confirm | `void(const sf::String& string)` | `attachTextConfirm(...)` | Gets invoked when `Enter` is pressed. |
 | Input validation | `bool(const sf::String& string, char32_t c)` | `attachValidation(...)` | Gets invokes when the input text gets changed. <br> If returns `false`, input text does not change. |
+
+## Usage example
+
+```cpp
+// input display element
+ui::Text* display = ui::Text::raw(settings, "");
+// cursor element
+ui::Text* cursor = ui::Text::raw(settings, "_");
+
+// input manager
+ui::TextInput input;
+
+/// input validation
+input.attachValidation([](const sf::String& string, char32_t c) {
+	// `c` allows to discard invalid characters immediately
+	// for more complicated checks, use `string`
+	return isdigit(c) || c == '-'
+		|| c == '\b'; // < this gets passed through when text is erased
+});
+
+/// text display update
+input.attachTextDisplay([=](const sf::String& string) {
+	// update input display text element
+	// displayed string can be modified here
+	sf::String res = string;
+	size_t pos = string.getSize() - string.getSize() % 3;
+	if (string.getSize() % 3 == 0) pos -= 3;
+	while (pos >= 3) {
+		res.insert(pos, '-');
+		pos -= 3;
+	};
+	display->setRaw(res);
+});
+
+/// cursor focus update
+input.attachCursorFocus([=](unsigned int pos) {
+	// update cursor position
+	cursor->position().x = text->position().x + text->charpos(pos).x;
+
+	// this gets called after text label has been set, so
+	// this can be used to shift text within the input field
+});
+```

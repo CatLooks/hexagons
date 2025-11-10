@@ -14,7 +14,7 @@ namespace ui {
 	void TextInput::attachCursorFocus(CursorFocus callback)
 		{ _f_seek = callback; };
 	/// Sets a new text update callback.
-	void TextInput::attachTextUpdate(TextDisplay callback)
+	void TextInput::attachTextDisplay(TextDisplay callback)
 		{ _f_draw = callback; };
 	/// Sets a new text confirmation callback.
 	void TextInput::attachTextConfirm(TextConfirm callback)

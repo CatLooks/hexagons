@@ -142,7 +142,7 @@ namespace ui {
 		/// Returns character position in current text label.
 		/// 
 		/// @param idx Character index.
-		sf::Vector2i charpos(size_t idx) const;
+		sf::Vector2f charpos(size_t idx) const;
 
 		/// Clears text arguments.
 		void paramClear();

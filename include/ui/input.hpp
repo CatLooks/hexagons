@@ -79,7 +79,7 @@ namespace ui {
 		/// This callback is used to update text on screen.
 		///
 		/// By default, no action is taken.
-		void attachTextUpdate(TextDisplay callback);
+		void attachTextDisplay(TextDisplay callback);
 		/// Sets a new text confirmation callback.
 		/// 
 		/// This callback is used to process input when `Enter` is pressed.
