@@ -22,18 +22,20 @@ namespace ui {
 
 	/// Recalculates text state.
 	void Text::recalc() {
-		// evaluate auto-loading arguments
-		for (const auto& gen : _autoargs) {
-			if (auto value = gen.second())
-				_args[gen.first] = *value;
+		if (!_raw) {
+			// evaluate auto-loading arguments
+			for (const auto& gen : _autoargs) {
+				if (auto value = gen.second())
+					_args[gen.first] = *value;
+			};
+			for (const auto& gen : _autovargs) gen();
+
+			// evaluate text parameters
+			std::string value = _format.get(_args, &assets::lang::locale);
+
+			// set new value
+			_text.setString(value);
 		};
-		for (const auto& gen : _autovargs) gen();
-
-		// evaluate text parameters
-		std::string value = _format.get(_args, &assets::lang::locale);
-
-		// set new value
-		_text.setString(value);
 
 		// set label size
 		if (autosize) bounds.size = _text.getLocalBounds().size;
@@ -41,7 +43,7 @@ namespace ui {
 
 	/// Reloads text.
 	void Text::onTranslate() {
-		_format = assets::lang::locale.req(_path);
+		_format = _path.empty ? localization::Text() : assets::lang::locale.req(_path);
 	};
 
 	/// Draws the label.
@@ -73,8 +75,7 @@ namespace ui {
 
 	/// Constructs a text element.
 	Text::Text(const TextSettings& settings, const localization::Path& path):
-		_text({ settings.font, "", settings.size }),
-		_path(path)
+		_text({ settings.font, "", settings.size }), _path(path), _raw(false)
 	{
 		// adds recalculation update
 		onRecalculate([=](const sf::Time& _) { recalc(); });
@@ -83,6 +84,26 @@ namespace ui {
 		onTranslate();
 		setColor(settings.fill);
 		setOutline(settings.outline, settings.thickness);
+	};
+
+	/// Constructs a text element from raw string.
+	Text* Text::raw(const TextSettings& settings, const sf::String& string) {
+		Text* text = new Text(settings, "");
+		text->setRaw(string);
+		return text;
+	};
+
+	/// Sets text label to a raw string.
+	void Text::setRaw(const sf::String& string) {
+		_text.setString(string);
+		_raw = true;
+	};
+	/// Sets text label to a localization path.
+	void Text::setPath(const localization::Path& path) {
+		_path = path;
+		_raw = false;
+		onTranslate();
+		recalc();
 	};
 
 	/// Clears text arguments.

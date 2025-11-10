@@ -91,6 +91,8 @@ namespace ui {
 		localization::Path _path;
 		/// Text format object.
 		localization::Text _format;
+		/// Whether the text label is raw.
+		bool _raw;
 		/// Text rendering object.
 		mutable sf::Text _text;
 		/// Format arguments.
@@ -109,7 +111,6 @@ namespace ui {
 		void drawSelf(RenderBuffer& target, sf::IntRect self) const override;
 
 	public:
-
 		/// Whether to automatically set label size to text size.
 		bool autosize = false;
 
@@ -118,6 +119,23 @@ namespace ui {
 		/// @param settings Text settings.
 		/// @param path Text localization path.
 		Text(const TextSettings& settings, const localization::Path& path);
+
+		/// Constructs a text element from raw string.
+		/// 
+		/// @param settings Text settings.
+		/// @param string Raw text string.
+		/// 
+		/// @return New text element.
+		static Text* raw(const TextSettings& settings, const sf::String& string);
+
+		/// Sets text label to a raw string.
+		/// 
+		/// @param string New text label.
+		void setRaw(const sf::String& string);
+		/// Sets text label to a localization path.
+		/// 
+		/// @param path Text localization path.
+		void setPath(const localization::Path& path);
 
 		/// Clears text arguments.
 		void paramClear();

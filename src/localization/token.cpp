@@ -19,6 +19,7 @@ namespace localization {
 		for (; char c = string[i]; i++) {
 			// check for a local path
 			if (c == '@') {
+				empty = false;
 				fprintf(stderr, "local modifier '@' not allowed");
 				path_error(string, i);
 				return;
@@ -26,12 +27,14 @@ namespace localization {
 
 			// check for key data
 			if (isalnum(c) || c == '_') {
+				empty = false;
 				key.push_back(c);
 				continue;
 			};
 
 			// check for subsection separator
 			if (c == '.') {
+				empty = false;
 				if (key.empty()) {
 					fprintf(stderr, "missing subsection name");
 					path_error(string, i);
@@ -48,7 +51,7 @@ namespace localization {
 		};
 
 		// check for empty key
-		if (key.empty()) {
+		if (!empty && key.empty()) {
 			fprintf(stderr, "missing field name");
 			path_error(string, i);
 			return;

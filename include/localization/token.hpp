@@ -25,6 +25,7 @@ namespace localization {
 		std::vector<std::string> sub; /// Path recursive accesses.
 		std::string key;              /// Final path access.
 		bool local = false;           /// Whether the path is local.
+		bool empty = true;            /// Whether the path is empty.
 
 		/// Constructs an empty path.
 		Path();

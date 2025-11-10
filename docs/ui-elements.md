@@ -60,6 +60,20 @@ A text element is constructed using `ui::TextSettings` and localized text path.
 - `outline` - text outline color (by default black).
 - `thickness` - text outline thickness (by default 0).
 
+### Raw vs Localized text
+
+Text elements can display text which is directly assigned to it, or by querying a currently loaded locale.
+
+Localization methods:
+* `Text(const TextSettings& settings, const localization::Path& path)` - constructs a text from a localization path.
+* `setPath(const localization::Path& path)` - sets a new localization path.
+
+Direct ("raw") methods:
+* `Text::raw(const TextSettings& settings, const sf::Strign& string) -> Text` - constructs a text from a raw string.
+* `setRaw(const sf::Strign& string)` - sets a new raw string.
+
+Text elements can switch between these modes at any time.
+
 ### Placement of text in the bounding box
 
 Text does not necessarily have the same size as the bounding box. For this reason, the placement of text inside it is controlled by alignment `align` and positioning `pos` fields.
