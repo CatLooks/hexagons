@@ -123,11 +123,11 @@
     <ClCompile Include="src\game\values\textures.cpp">
       <Filter>Source Files\game\values</Filter>
     </ClCompile>
-    <ClCompile Include="src\ui\input.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\ui\pages.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\input.cpp">
+      <Filter>Source Files\ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -248,11 +248,11 @@
     <ClInclude Include="include\game\values\textures.hpp">
       <Filter>Header Files\game\values</Filter>
     </ClInclude>
-    <ClInclude Include="include\ui\input.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\ui\pages.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\input.hpp">
+      <Filter>Header Files\ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
