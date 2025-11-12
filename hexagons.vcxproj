@@ -28,13 +28,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\assetload.cpp" />
+    <ClCompile Include="src\assets.cpp" />
     <ClCompile Include="src\game\build.cpp" />
+    <ClCompile Include="src\game\draw.cpp" />
     <ClCompile Include="src\game\hex.cpp" />
     <ClCompile Include="src\game\map.cpp" />
     <ClCompile Include="src\game\plant.cpp" />
     <ClCompile Include="src\game\troop.cpp" />
-    <ClCompile Include="src\game\values\names.cpp" />
-    <ClCompile Include="src\game\values\textures.cpp" />
+    <ClCompile Include="src\game\values\build_values.cpp" />
+    <ClCompile Include="src\game\values\hex_values.cpp" />
+    <ClCompile Include="src\game\values\plant_values.cpp" />
+    <ClCompile Include="src\game\values\shared.cpp" />
+    <ClCompile Include="src\game\values\troop_values.cpp" />
     <ClCompile Include="src\localization\error.cpp" />
     <ClCompile Include="src\localization\parser.cpp" />
     <ClCompile Include="src\localization\token.cpp" />
@@ -70,14 +75,17 @@
     <ClInclude Include="include\assets.hpp" />
     <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\game\build.hpp" />
+    <ClInclude Include="include\game\draw.hpp" />
     <ClInclude Include="include\game\entity.hpp" />
     <ClInclude Include="include\game\hex.hpp" />
     <ClInclude Include="include\game\map.hpp" />
     <ClInclude Include="include\game\plant.hpp" />
-    <ClInclude Include="include\game\tile.hpp" />
     <ClInclude Include="include\game\troop.hpp" />
-    <ClInclude Include="include\game\values\names.hpp" />
-    <ClInclude Include="include\game\values\textures.hpp" />
+    <ClInclude Include="include\game\values\build_values.hpp" />
+    <ClInclude Include="include\game\values\hex_values.hpp" />
+    <ClInclude Include="include\game\values\plant_values.hpp" />
+    <ClInclude Include="include\game\values\shared.hpp" />
+    <ClInclude Include="include\game\values\troop_values.hpp" />
     <ClInclude Include="include\localization\error.hpp" />
     <ClInclude Include="include\localization\parser.hpp" />
     <ClInclude Include="include\localization\token.hpp" />

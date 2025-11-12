@@ -1,42 +1,7 @@
 #pragma once
 
 // include dependencies
-#include "map.hpp"
-#include "values/textures.hpp"
-
-// forward declare tile drawer
-class TileDrawer;
-
-namespace Draw {
-	/// Tile drawing data.
-	class Tile {
-		friend TileDrawer;
-
-	private:
-		const Map& map;      /// Map reference.
-		const Hex* hex;      /// Hex reference.
-		sf::Vector2i coords; /// Hex coordinates.
-		sf::Vector2i origin; /// Draw origin position.
-
-	public:
-		/// Constructs tile drawing data.
-		/// 
-		/// @param map Map reference.
-		/// @param coords Hex coordinates.
-		/// @param origin Draw origin position.
-		Tile(const Map& map, sf::Vector2i coords, sf::Vector2i origin);
-
-		/// Draws tile base.
-		///
-		/// @param target Target render buffer.
-		void drawBase(ui::RenderBuffer& target) const;
-		/// Draws tile borders.
-		///
-		/// @param target Target render buffer.
-		/// @param color Border color.
-		void drawBorders(ui::RenderBuffer& target, sf::Color color) const;
-	};
-};
+#include "values/hex_values.hpp"
 
 /// Tile drawer object.
 /// Prepares tile drawing data for each tile in an area.

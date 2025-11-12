@@ -10,15 +10,15 @@ namespace Draw {
 		// draw ground tiles
 		if (hex->type == Hex::Ground) {
 			target.quad(
-				{ origin, {TILE, TILE}},
-				Textures::hex(hex->team)
+				{ origin, Values::tileTex },
+				Values::hex_textures[hex->team]
 			);
 			target.forward(&assets::tilemap);
 		};
 
 		// draw water tiles
 		if (hex->type == Hex::Water) {
-			target.quad({ origin + sf::Vector2i(0, TILE_WATER), {TILE, TILE}}, Textures::hexWater);
+			target.quad({ origin + Values::tileLevel, Values::tileTex }, Values::water);
 			target.forward(&assets::tilemap);
 		};
 	};
@@ -49,7 +49,7 @@ namespace Draw {
 		sf::IntRect texmap = { { (border & 7) * 64, (border >> 3) * 64 }, { 64, 64 } };
 
 		// draw borders
-		target.quad({ origin, { TILE, TILE } }, texmap, color);
+		target.quad({ origin, Values::tileTex }, texmap, color);
 		target.forward(&assets::borders);
 	};
 };
@@ -67,11 +67,7 @@ TileDrawer::TileDrawer(const Map& map, sf::IntRect area, sf::Vector2i origin):
 /// Resets the drawer to first tile.
 void TileDrawer::reset() {
 	_coords = _beg;
-	_draw = _org;
-
-	// add shifted row offset
-	if (!(_coords.y & 1))
-		_draw.x += TILE_ROW_OFF;
+	_draw = _org + Values::rowOffset(_coords.y);
 };
 
 /// Returns the next tile drawing data.
@@ -91,11 +87,11 @@ std::optional<Draw::Tile> TileDrawer::next() {
 			_coords.y++;
 
 			// advance draw origin to next row
-			_draw.x = _org.x + (_coords.y & 1 ? 0 : TILE_ROW_OFF);
-			_draw.y += TILE_Y_OFF;
+			_draw.x = _org.x + Values::rowOffset(_coords.y).x;
+			_draw.y += Values::tileOff.y;
 		}
 		else {
-			_draw.x += TILE_X_OFF;
+			_draw.x += Values::tileOff.x;
 		};
 
 		// return if current tile is valid

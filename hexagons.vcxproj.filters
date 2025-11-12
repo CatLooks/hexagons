@@ -117,17 +117,32 @@
     <ClCompile Include="src\game\map.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\values\names.cpp">
-      <Filter>Source Files\game\values</Filter>
-    </ClCompile>
-    <ClCompile Include="src\game\values\textures.cpp">
-      <Filter>Source Files\game\values</Filter>
-    </ClCompile>
     <ClCompile Include="src\ui\pages.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ui\input.cpp">
       <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\assets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\draw.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\values\troop_values.cpp">
+      <Filter>Source Files\game\values</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\values\build_values.cpp">
+      <Filter>Source Files\game\values</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\values\hex_values.cpp">
+      <Filter>Source Files\game\values</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\values\plant_values.cpp">
+      <Filter>Source Files\game\values</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\values\shared.cpp">
+      <Filter>Source Files\game\values</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -239,20 +254,29 @@
     <ClInclude Include="include\game\map.hpp">
       <Filter>Header Files\game</Filter>
     </ClInclude>
-    <ClInclude Include="include\game\tile.hpp">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="include\game\values\names.hpp">
-      <Filter>Header Files\game\values</Filter>
-    </ClInclude>
-    <ClInclude Include="include\game\values\textures.hpp">
-      <Filter>Header Files\game\values</Filter>
-    </ClInclude>
     <ClInclude Include="include\ui\pages.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\ui\input.hpp">
       <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\draw.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\values\hex_values.hpp">
+      <Filter>Header Files\game\values</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\values\plant_values.hpp">
+      <Filter>Header Files\game\values</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\values\troop_values.hpp">
+      <Filter>Header Files\game\values</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\values\build_values.hpp">
+      <Filter>Header Files\game\values</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\values\shared.hpp">
+      <Filter>Header Files\game\values</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

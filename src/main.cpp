@@ -98,7 +98,7 @@ int main() {
 			stats.inters
 		);
 		drawStats.setString(format);
-		drawStats.setPosition({ win.getSize().x - drawStats.getLocalBounds().size.x - 6, 0 });
+		drawStats.setPosition({ win.getSize().x - drawStats.getLocalBounds().size.x - 4, 0 });
 		target.draw(drawStats);
 	});
 

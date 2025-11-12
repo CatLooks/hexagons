@@ -94,15 +94,14 @@ void Map::resize(sf::IntRect rect) {
 /// Returns backplane rectangle.
 sf::IntRect Map::backplane() const {
 	// calculate height
-	int y = 0;
-	if (_size.x == 1) y = TILE;
-	else if (_size.x > 1) y = TILE_Y_OFF * _size.y - (TILE - TILE_Y_OFF);
+	int y = Values::tileUnit;
+	if (_size.y > 1)
+		y += Values::tileOff.y * (_size.y - 1);
 
-	// return rectangle
+	// return backplane rectangle
 	return {
-		sf::Vector2i(-MAP_BORDER, -MAP_BORDER),
-		sf::Vector2i(TILE_X_OFF * _size.x, y)
-			+ sf::Vector2i(MAP_BORDER * 2, MAP_BORDER * 2)
+		-Values::mapBorder,
+		sf::Vector2i(Values::tileOff.x * _size.x, y) + Values::mapBorder * 2
 	};
 };
 

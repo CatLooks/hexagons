@@ -1,0 +1,28 @@
+#include "game/values/hex_values.hpp"
+
+namespace Values {
+	/// Water hex.
+	const sf::IntRect water = coords(8, 1);
+	/// Hex sides.
+	const sf::IntRect sides = coords(8, 2);
+
+	// texture array
+	const sf::IntRect hex_textures[Hex::Count] = {
+		coords(0, 0), // void
+		coords(1, 0), // red
+		coords(2, 0), // orange
+		coords(3, 0), // yellow
+		coords(4, 0), // green
+		coords(5, 0), // aqua
+		coords(6, 0), // blue
+		coords(7, 0), // purple
+		coords(8, 0), // magenta
+	};
+
+	// name array
+	const char* hex_names[Hex::Count] = {
+		"@!team.v", "@!team.r", "@!team.o",
+		"@!team.y", "@!team.g", "@!team.a",
+		"@!team.b", "@!team.p", "@!team.m",
+	};
+};

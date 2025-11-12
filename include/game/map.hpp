@@ -5,10 +5,8 @@
 #include <memory>
 #include "ui/buffer.hpp"
 #include "assets.hpp"
-
 #include "div.hpp"
 #include "hex.hpp"
-#include "tile.hpp"
 #include "pool.hpp"
 
 /// Game map object.
