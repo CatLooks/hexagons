@@ -3,10 +3,13 @@
 // include dependencies
 #include <SFML/System/Vector2.hpp>
 #include <memory>
+#include "ui/buffer.hpp"
+#include "assets.hpp"
+
+#include "div.hpp"
 #include "hex.hpp"
 #include "tile.hpp"
 #include "pool.hpp"
-#include "ui/buffer.hpp"
 
 /// Game map object.
 /// Stores array of tiles and lists of all dynamic objects on it.
@@ -40,8 +43,8 @@ public:
 	static sf::Vector2i neighbor(sf::Vector2i pos, nbi_t nbi);
 
 private:
-	std::unique_ptr<Hex> _tiles; /// Tilemap array.
-	sf::Vector2i _size;          /// Map size.
+	std::unique_ptr<Hex[]> _tiles; /// Tilemap array.
+	sf::Vector2i _size;            /// Map size.
 
 	Pool<Troop> _troops; /// Troop pool.
 	Pool<Build> _builds; /// Building pool.
@@ -56,6 +59,14 @@ public:
 	/// @param pos Tile position.
 	bool contains(sf::Vector2i pos) const;
 
+	/// Returns a reference to a tile at position.
+	///
+	/// If the position is out-of-bounds, a fuse tile will be returned.
+	///
+	/// @param pos Tile position.
+	///
+	/// @return Tile reference.
+	Hex& at(sf::Vector2i pos) const;
 	/// Returns a reference to a tile at position.
 	///
 	/// If the position is out-of-bounds, a fuse tile will be returned.

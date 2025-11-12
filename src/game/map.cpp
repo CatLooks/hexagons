@@ -1,5 +1,5 @@
 #include "game/map.hpp"
-#include "div.hpp"
+#include "game/draw.hpp"
 
 /// Returns neighbor position of a tile.
 sf::Vector2i Map::neighbor(sf::Vector2i pos, nbi_t nbi) {
@@ -22,17 +22,21 @@ sf::Vector2i Map::neighbor(sf::Vector2i pos, nbi_t nbi) {
 bool Map::contains(sf::Vector2i pos) const {
 	return (
 		// vertical check
-		(pos.y < 0 || pos.y >= _size.y) ||
+		(pos.y >= 0 && pos.y < _size.y) &&
 		// horizontal check (ignore last if shifted)
-		(pos.x < 0 || pos.x >= _size.x - (pos.y & 1 ? 1 : 0))
+		(pos.x >= 0 && pos.x < _size.x - (pos.y & 1 ? 1 : 0))
 	);
 };
 
 /// Returns a reference to a tile at position.
-Hex& Map::operator[](sf::Vector2i pos) const {
+Hex& Map::at(sf::Vector2i pos) const {
 	return contains(pos)
 		? _tiles.get()[pos.y * _size.x + pos.x]
 		: _fuse;
+};
+/// Returns a reference to a tile at position.
+Hex& Map::operator[](sf::Vector2i pos) const {
+	return at(pos);
 };
 
 /// Returns amount of hexes stored.
@@ -50,7 +54,7 @@ Map Map::copy() const {
 
 	// create new map
 	Map map;
-	map._tiles = std::unique_ptr<Hex>(tilemap);
+	map._tiles = std::unique_ptr<Hex[]>(tilemap);
 	map._size = _size;
 	map._troops = _troops;
 	map._builds = _builds;
@@ -83,7 +87,7 @@ void Map::resize(sf::IntRect rect) {
 	};
 
 	// swap tilemap
-	_tiles = std::unique_ptr<Hex>(tilemap);
+	_tiles = std::unique_ptr<Hex[]>(tilemap);
 	_size = rect.size;
 };
 
@@ -104,32 +108,18 @@ sf::IntRect Map::backplane() const {
 
 /// Draws the map.
 void Map::draw(ui::RenderBuffer& target) const {
-	// get first top-left visible tile
-	sf::Vector2i origin = {};
-
 	// draw backplane
 	sf::IntRect bp = backplane();
-	target.quad(bp, {}, sf::Color(64, 66, 72));
+	target.quad(bp, {}, sf::Color(40, 42, 48));
 	target.forward(nullptr);
 
-	// draw every hex
-	for (int dy = 0; dy < _size.y; dy++) {
-		// row y
-		int y = dy;
+	// calculate drawn area
+	sf::IntRect area = { {}, _size };
+	sf::Vector2i origin = {};
+	TileDrawer drawer(*this, area, origin);
 
-		// get row position
-		sf::Vector2i row = {
-			(y & 1 ? 0 : TILE_ROW_OFF),
-			y * (TILE_Y_OFF)
-		};
-
-		// draw rows
-		for (int dx = 0; dx < _size.x; dx++) {
-			// row x
-			int x = dx;
-
-			// get tile position
-			sf::Vector2i pos = row + sf::Vector2i(x * TILE_X_OFF, 0);
-		};
+	// draw every tile
+	while (auto tile = drawer.next()) {
+		tile->drawBase(target);
 	};
 };

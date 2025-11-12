@@ -9,6 +9,9 @@ namespace Textures {
 	/// Missing texture replacement.
 	const sf::IntRect missing = coords(9, 3);
 
+	/// Water hex texture map.
+	const sf::IntRect hexWater = coords(8, 1);
+
 	/// Returns the texture of a hex team.
 	sf::IntRect hex(Hex::Team id) {
 		return (id >= 0 && id < Hex::Count)
