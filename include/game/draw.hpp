@@ -14,7 +14,7 @@ namespace Draw {
 
 	private:
 		const Map& map;      /// Map reference.
-		const Hex& hex;      /// Hex reference.
+		const Hex* hex;      /// Hex reference.
 		sf::Vector2i coords; /// Hex coordinates.
 		sf::Vector2i origin; /// Draw origin position.
 

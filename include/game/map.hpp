@@ -50,9 +50,6 @@ private:
 	Pool<Build> _builds; /// Building pool.
 	Pool<Plant> _plants; /// Plant pool.
 
-	/// Out-of-bounds replacement hex.
-	mutable Hex _fuse;
-
 public:
 	/// Checks if a position is within the map.
 	///
@@ -61,20 +58,20 @@ public:
 
 	/// Returns a reference to a tile at position.
 	///
-	/// If the position is out-of-bounds, a fuse tile will be returned.
+	/// If the position is out-of-bounds, a `nullptr` will be returned.
 	///
 	/// @param pos Tile position.
 	///
 	/// @return Tile reference.
-	Hex& at(sf::Vector2i pos) const;
+	Hex* at(sf::Vector2i pos) const;
 	/// Returns a reference to a tile at position.
 	///
-	/// If the position is out-of-bounds, a fuse tile will be returned.
+	/// If the position is out-of-bounds, a `nullptr` will be returned.
 	///
 	/// @param pos Tile position.
 	///
 	/// @return Tile reference.
-	Hex& operator[](sf::Vector2i pos) const;
+	Hex* operator[](sf::Vector2i pos) const;
 
 public:
 	/// Returns amount of hexes stored.

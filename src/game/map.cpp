@@ -29,13 +29,13 @@ bool Map::contains(sf::Vector2i pos) const {
 };
 
 /// Returns a reference to a tile at position.
-Hex& Map::at(sf::Vector2i pos) const {
+Hex* Map::at(sf::Vector2i pos) const {
 	return contains(pos)
-		? _tiles.get()[pos.y * _size.x + pos.x]
-		: _fuse;
+		? &_tiles.get()[pos.y * _size.x + pos.x]
+		: nullptr;
 };
 /// Returns a reference to a tile at position.
-Hex& Map::operator[](sf::Vector2i pos) const {
+Hex* Map::operator[](sf::Vector2i pos) const {
 	return at(pos);
 };
 
@@ -96,12 +96,12 @@ sf::IntRect Map::backplane() const {
 	// calculate height
 	int y = 0;
 	if (_size.x == 1) y = TILE;
-	else if (_size.x > 1) y = TILE_X_OFF * _size.x - (TILE - TILE_Y_OFF);
+	else if (_size.x > 1) y = TILE_Y_OFF * _size.y - (TILE - TILE_Y_OFF);
 
 	// return rectangle
 	return {
 		sf::Vector2i(-MAP_BORDER, -MAP_BORDER),
-		sf::Vector2i(TILE * _size.x, y)
+		sf::Vector2i(TILE_X_OFF * _size.x, y)
 			+ sf::Vector2i(MAP_BORDER * 2, MAP_BORDER * 2)
 	};
 };
@@ -116,10 +116,16 @@ void Map::draw(ui::RenderBuffer& target) const {
 	// calculate drawn area
 	sf::IntRect area = { {}, _size };
 	sf::Vector2i origin = {};
-	TileDrawer drawer(*this, area, origin);
 
-	// draw every tile
+	// draw tile geometry
+	TileDrawer drawer(*this, area, origin);
 	while (auto tile = drawer.next()) {
 		tile->drawBase(target);
+	};
+
+	// draw borders
+	drawer.reset();
+	while (auto tile = drawer.next()) {
+		tile->drawBorders(target, sf::Color::Black);
 	};
 };
