@@ -281,6 +281,7 @@ Normally, a layer has the same size as the window. However, each layer can be re
 
 * `setArea(DimVector textureSize, DimRect blitArea)` - adds an intermediate texture step; the layer size will be set to `textureSize`,
   after rendering to the texture, the texture will be rendered on the screen mapped to `blitArea`.
+  <br> *Note: `textureSize` can use `es` scalars to scale texture size using `blitArea` size.*
 * `removeArea()` - removes the intermediate texture step.
 
 # `ui::Element` class

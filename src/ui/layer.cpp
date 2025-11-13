@@ -32,8 +32,7 @@ namespace ui {
 		if (!_ir) return window;
 
 		// recalculate rendering area
-		sf::Vector2i size = _ir->size.get(window.size, {});
-		return _ir->area.get_es(window, size);
+		return _ir->area.get(window);
 	};
 
 	/// Maps a screen-space position into a layer position.
@@ -42,8 +41,8 @@ namespace ui {
 		if (!_ir) return pos;
 
 		// get texture configuration
-		sf::Vector2i size = _ir->size.get(window.size, {});
-		sf::IntRect area = _ir->area.get_es(window, size);
+		sf::IntRect area = _ir->area.get(window);
+		sf::Vector2i size = _ir->size.get(window.size, area.size);
 
 		// return remapped position
 		sf::Vector2i npos = pos - area.position;
@@ -59,8 +58,8 @@ namespace ui {
 		RenderStats stats;
 		if (_ir) {
 			// get rendering area
-			sf::Vector2i size = _ir->size.get(window.size, {});
-			sf::IntRect area = _ir->area.get_es(window, size);
+			sf::IntRect area = _ir->area.get(window);
+			sf::Vector2i size = _ir->size.get(window.size, area.size);
 
 			// reset intermediate texture
 			auto _ = _ir->tex.resize((sf::Vector2u)size);
