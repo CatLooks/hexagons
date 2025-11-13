@@ -139,8 +139,10 @@ namespace ui {
 
 		/// Creates a new interface layer.
 		/// 
+		/// @param value Layer object (can be overwritten with a derivative of `ui::Layer`).
+		///
 		/// @return Reference to new layer.
-		Layer* layer();
+		Layer* layer(Layer* value = new Layer());
 
 		/// Recalculates interface.
 		/// @param windowSize Window size.

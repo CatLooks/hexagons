@@ -26,6 +26,16 @@ namespace ui {
 		_ir = {};
 	};
 
+	/// Returns layer texture size.
+	sf::Vector2i Layer::size(sf::IntRect window) const {
+		// pass through if no intermediate step
+		if (!_ir) return window.size;
+
+		// recalculate texture size
+		sf::IntRect area = _ir->area.get(window);
+		return _ir->size.get(window.size, area.size);
+	};
+
 	/// Returns layer rendering area.
 	sf::IntRect Layer::view(sf::IntRect window) const {
 		// pass through if no intermediate step
@@ -87,8 +97,8 @@ namespace ui {
 	};
 
 	/// Creates a new interface layer.
-	Layer* Interface::layer() {
-		_ctx->push_back(std::unique_ptr<Layer>(new Layer));
+	Layer* Interface::layer(Layer* value) {
+		_ctx->push_back(std::unique_ptr<Layer>(value));
 		return _ctx->back().get();
 	};
 
