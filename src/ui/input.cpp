@@ -89,8 +89,16 @@ namespace ui {
 		// insert printable characters
 		if (evt.c >= ' ') {
 			insert(evt.c);
-			return true;
 		};
+
+		// insert text from clipboard
+		if (evt.c == '\x18') {
+			const sf::String& text = sf::Clipboard::getString();
+			for (char32_t c : text) {
+				if (c >= ' ') insert(c);
+			};
+		};
+		return true;
 	};
 
 	/// Processes a key press event.
