@@ -1,39 +1,35 @@
 #pragma once
+#include <iostream>
 #include <vector>
+#include "eos/P2PManager.hpp"
 #include <eos_common.h>
 #include <eos_lobby.h>
-#include <iostream>
-#include <memory>
+#include <eos_p2p.h>
 
 class LobbyManager {
 public:
 	bool isBusy = false;
-	LobbyManager(EOS_HLobby* handle, std::shared_ptr<EOS_ProductUserId> id) : LobbyHandle(handle), UserId(id) {}
+	LobbyManager(EOS_HLobby* handle, EOS_ProductUserId* id, EOS_HP2P* p2p) : LobbyHandle(handle), LocalUserId(id), P2PHandle(p2p) {}
 	
 	void CreateLobby();
 	void SetLobbyId(EOS_LobbyId* id) { LobbyId = id; };
-	bool isInLobby() const { return LobbyId != nullptr; }
-	std::shared_ptr<EOS_ProductUserId> GetSecondUserId() const { return SecondUserId; }
+	bool isInLobby() const { return LobbyId != nullptr; };
+	void setHost(bool host) { isHost = host; };
 
 	void FindLobby();
 	void JoinLobby();
 
 	void RegisterMemberStatusChange();
-
 	~LobbyManager() {
-		if (MemberStatusChangeNotificationId != 0) {
-			EOS_Lobby_RemoveNotifyLobbyMemberStatusReceived(*LobbyHandle, *MemberStatusChangeNotificationId);
-		}
 		delete LobbyId;
-		if (LobbySearchHandle) {
-			EOS_LobbySearch_Release(*LobbySearchHandle);
-		}
-		if (LobbyDetailsHandle) {
-			EOS_LobbyDetails_Release(*LobbyDetailsHandle);
-		}
 		delete LobbySearchHandle;
-		delete LobbyDetailsHandle;
-		delete LobbyHandle;
+		for (EOS_ProductUserId* user : ExternalUsers) {
+			delete user;
+		}
+		for (P2PManager* p2p : P2PConnections) {
+			delete p2p;
+		}
+		EOS_Lobby_RemoveNotifyLobbyMemberStatusReceived(*LobbyHandle, *MemberStatusChangeNotificationId);
 		delete MemberStatusChangeNotificationId;
 	}
 private:
@@ -43,10 +39,17 @@ private:
 	static void EOS_CALL OnMemberStatusChange(const EOS_Lobby_LobbyMemberStatusReceivedCallbackInfo* Data);
 
 	EOS_HLobby* LobbyHandle = nullptr;
-	std::shared_ptr<EOS_ProductUserId> UserId = nullptr;
-	std::shared_ptr<EOS_ProductUserId> SecondUserId = nullptr;
+	EOS_HP2P* P2PHandle = nullptr;
+	EOS_ProductUserId* LocalUserId = nullptr;
+	EOS_ProductUserId* HostId = nullptr;
+	
 	EOS_LobbyId* LobbyId = nullptr;
+	EOS_LobbyDetailsHandle* LobbyDetailsHandle = nullptr;
 	EOS_HLobbySearch* LobbySearchHandle = nullptr;
-	EOS_HLobbyDetails* LobbyDetailsHandle = nullptr;
 	EOS_NotificationId* MemberStatusChangeNotificationId = 0;
+
+	std::vector<EOS_ProductUserId*> ExternalUsers;
+	std::vector<P2PManager*> P2PConnections;
+
+	bool isHost = false;
 };

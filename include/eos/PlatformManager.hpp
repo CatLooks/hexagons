@@ -10,10 +10,10 @@ class PlatformManager
         PlatformManager() {}
 
         /** Deconstructor */
-        ~PlatformManager();
+        ~PlatformManager() {};
 
         /** Getter for PlatformHandle. You use this function to access the PlatformHandle outside of the PlatformManager class. */
-        EOS_HPlatform GetPlatformHandle() const { return PlatformHandle; } 
+        EOS_HPlatform* GetPlatformHandle() const { return PlatformHandle; } 
 
         /** 
          * Initialize the EOS SDK.
@@ -33,5 +33,5 @@ class PlatformManager
 
     private:
         /** Handle to Platform Interface. */
-        EOS_HPlatform PlatformHandle = nullptr;
+        EOS_HPlatform* PlatformHandle = nullptr;
 };

@@ -4,7 +4,7 @@ void LobbyManager::CreateLobby() {
 	isBusy = true;
 	EOS_Lobby_CreateLobbyOptions options{};
 	options.ApiVersion = EOS_LOBBY_CREATELOBBY_API_LATEST;
-	options.LocalUserId = *UserId;
+	options.LocalUserId = *LocalUserId;
 	options.MaxLobbyMembers = 4;
 	options.PermissionLevel = EOS_ELobbyPermissionLevel::EOS_LPL_PUBLICADVERTISED;
 	options.BucketId = "default";
@@ -57,7 +57,7 @@ void LobbyManager::FindLobby() {
 
 	EOS_LobbySearch_FindOptions FindOptions = {};
 	FindOptions.ApiVersion = EOS_LOBBYSEARCH_FIND_API_LATEST;
-	FindOptions.LocalUserId = *UserId;
+	FindOptions.LocalUserId = *LocalUserId;
 
 	EOS_LobbySearch_Find(*LobbySearchHandle, &FindOptions, this, OnFindLobbyComplete);
 }
@@ -79,7 +79,7 @@ void LobbyManager::OnFindLobbyComplete(const EOS_LobbySearch_FindCallbackInfo* D
 			EOS_LobbySearch_CopySearchResultByIndexOptions CopyOptions = {};
 			CopyOptions.ApiVersion = EOS_LOBBYSEARCH_COPYSEARCHRESULTBYINDEX_API_LATEST;
 			CopyOptions.LobbyIndex = 0;
-			EOS_EResult copyResult = EOS_LobbySearch_CopySearchResultByIndex(*Manager->LobbySearchHandle, &CopyOptions, Manager->LobbyDetailsHandle);
+			EOS_EResult copyResult = EOS_LobbySearch_CopySearchResultByIndex(*Manager->LobbySearchHandle, &CopyOptions, &Manager->LobbyDetailsHandle);
 			if (copyResult == EOS_EResult::EOS_Success) {
 				std::cout << "[LobbyManager] Successfully copied lobby details." << std::endl;
 				Manager->JoinLobby();
@@ -104,9 +104,9 @@ void LobbyManager::JoinLobby() {
 	JoinOptions.ApiVersion = EOS_LOBBY_JOINLOBBYBYID_API_LATEST;
 	JoinOptions.bCrossplayOptOut = EOS_FALSE;
 	JoinOptions.bPresenceEnabled = EOS_TRUE;
-	JoinOptions.LobbyDetailsHandle = *LobbyDetailsHandle;
+	JoinOptions.LobbyDetailsHandle = LobbyDetailsHandle;
 	JoinOptions.LocalRTCOptions = nullptr;
-	JoinOptions.LocalUserId = *UserId;
+	JoinOptions.LocalUserId = *LocalUserId;
 	JoinOptions.RTCRoomJoinActionType = EOS_ELobbyRTCRoomJoinActionType::EOS_LRRJAT_AutomaticJoin;
 	EOS_Lobby_JoinLobby(*LobbyHandle, &JoinOptions, this, OnJoinLobbyComplete);
 }
@@ -122,8 +122,8 @@ void LobbyManager::OnJoinLobbyComplete(const EOS_Lobby_JoinLobbyCallbackInfo* Da
 		Manager->SetLobbyId(const_cast<EOS_LobbyId*>(&Data->LobbyId));
 		EOS_LobbyDetails_GetLobbyOwnerOptions OwnerOptions = {};
 		OwnerOptions.ApiVersion = EOS_LOBBYDETAILS_GETLOBBYOWNER_API_LATEST;
-		Manager->SecondUserId = std::make_shared<EOS_ProductUserId>(EOS_LobbyDetails_GetLobbyOwner(*Manager->LobbyDetailsHandle, &OwnerOptions));
-		std::cout << "[LobbyManager] Lobby owner ID: " << Manager->SecondUserId << std::endl;
+		Manager->HostId = new EOS_ProductUserId(EOS_LobbyDetails_GetLobbyOwner(Manager->LobbyDetailsHandle, &OwnerOptions));
+		std::cout << "[LobbyManager] Lobby owner ID: " << *Manager->HostId << std::endl;
 	}
 	else {
 		std::cerr << "[LobbyManager] Failed to join lobby: " << EOS_EResult_ToString(Data->ResultCode) << std::endl;
@@ -147,5 +147,6 @@ void LobbyManager::OnMemberStatusChange(const EOS_Lobby_LobbyMemberStatusReceive
 	std::cout << "[LobbyManager] Member status changed in lobby " << Data->LobbyId
 		<< " for user " << Data->TargetUserId
 		<< " with status " << static_cast<int>(Data->CurrentStatus) << std::endl;
-	Manager->SecondUserId = std::make_shared<EOS_ProductUserId>(&Data->TargetUserId);
+	Manager->ExternalUsers.push_back(const_cast<EOS_ProductUserId*>(&Data->TargetUserId));
+	Manager->P2PConnections.push_back(new P2PManager(Manager->P2PHandle, Manager->LocalUserId, const_cast<EOS_ProductUserId*>(&Data->TargetUserId)));
 }

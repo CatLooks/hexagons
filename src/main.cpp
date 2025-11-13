@@ -7,12 +7,7 @@
 #include "ui/anim/linear.hpp"
 #include "assets.hpp"
 #include "game.hpp"
-#include "eos/Config.hpp"
-#include "eos/HWID.hpp"
-#include "eos/PlatformManager.hpp"
-#include "eos/LoggingManager.hpp"
-#include "eos/LobbyManager.hpp"
-#include "eos/P2PManager.hpp"
+#include "eos/EOSManager.hpp"
 
 /// Program entry.
 /// @return Exit code.
@@ -28,19 +23,7 @@ int main() {
 	if (assets::error) return 1;
 
 	// initialize EOS
-	PlatformManager* platformManager = new PlatformManager();
-	EOSSdkConfig* sdkConfig = new EOSSdkConfig();
-	platformManager->InitializeEOSSdk(sdkConfig);
-	platformManager->CreatePlatformInstance(sdkConfig);
-	delete sdkConfig;
-
-	LoggingManager* loggingManager = new LoggingManager();
-	loggingManager->RegisterLoggingCallbackExample();
-	loggingManager->SetLogLevelVeryVerboseExample();
-
-	HWID* hwid = new HWID();
-	hwid->Login(platformManager->GetPlatformHandle());
-
+	EOSManager* eos = new EOSManager();
 
 	// create window interface
 	ui::Interface itf;
@@ -58,6 +41,8 @@ int main() {
 	// window main loop
 	while (win.isOpen()) {
 		win.clear(sf::Color(34, 39, 41));
+
+		eos->Tick();
 
 		// update external state
 		game->mouse = sf::Mouse::getPosition(win);

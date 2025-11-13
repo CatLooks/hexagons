@@ -18,7 +18,7 @@ void P2PManager::OnIncomingConnectionRequest(const EOS_P2P_OnIncomingConnectionR
 	EOS_EResult acceptResult = EOS_P2P_AcceptConnection(*Manager->P2PHandle, &AcceptOptions);
 	if (acceptResult == EOS_EResult::EOS_Success) {
 		std::cout << "[P2PManager] Accepted incoming connection request from user." << std::endl;
-		Manager->SetPeerId(std::make_shared<EOS_ProductUserId>(Data->RemoteUserId));
+		Manager->SetPeerId(const_cast<EOS_ProductUserId*>(&Data->RemoteUserId));
 	}
 	else {
 		std::cerr << "[P2PManager] Failed to accept incoming connection request: " << EOS_EResult_ToString(acceptResult) << std::endl;
@@ -63,7 +63,7 @@ void P2PManager::ReceivePacket() {
 	uint32_t bytesWritten = static_cast<uint32_t>(sizeof(buffer));
 
 	// Poprawne wywo³anie z buforem i rozmiarem
-	EOS_EResult receiveResult = EOS_P2P_ReceivePacket(*P2PHandle, &ReceiveOptions, PeerId.get(), SocketId, &channel, static_cast<void*>(buffer), &bytesWritten);
+	EOS_EResult receiveResult = EOS_P2P_ReceivePacket(*P2PHandle, &ReceiveOptions, PeerId, SocketId, &channel, static_cast<void*>(buffer), &bytesWritten);
 
 	if (receiveResult == EOS_EResult::EOS_NotFound) {
 		// Brak pakietów

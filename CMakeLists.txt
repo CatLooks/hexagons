@@ -83,6 +83,12 @@ endif()
 
 set(ASSET_DIR ${CMAKE_SOURCE_DIR}/assets)
 
+add_custom_command(TARGET main POST_BUILD
+   COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "${EOS_DLL}"
+      $<TARGET_FILE_DIR:main>
+)
+
 if(PRODUCTION_BUILD)
     add_custom_command(TARGET main POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory

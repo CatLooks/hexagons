@@ -6,12 +6,6 @@
 #include <string.h>
 #include <iostream>
 
-PlatformManager::~PlatformManager()
-{
-    // Release the memory for the Platform Interface handle.
-    EOS_Platform_Release(PlatformHandle);
-}
-
 // PlatformManager.cpp
 
 void PlatformManager::InitializeEOSSdk(EOSSdkConfig* Config)
@@ -65,7 +59,7 @@ void PlatformManager::CreatePlatformInstance(EOSSdkConfig* Config)
     PlatformOptions.TaskNetworkTimeoutSeconds = &TimeoutSetting;
 
     // Create your platform instance with the required options.
-    PlatformHandle = EOS_Platform_Create(&PlatformOptions);
+    PlatformHandle = new EOS_HPlatform(EOS_Platform_Create(&PlatformOptions));
 
     // Print the result of your platform instance creation.
     if (PlatformHandle)

@@ -20,14 +20,14 @@ bool HWID::IsLoggedIn() const
     return m_bIsLoggedIn;
 }
 
-std::shared_ptr<EOS_ProductUserId> HWID::GetLocalUserId() const
+EOS_ProductUserId* HWID::GetLocalUserId() const
 {
     return m_LocalUserId;
 }
 
-void HWID::Login(EOS_HPlatform PlatformHandle)
+void HWID::Login(EOS_HPlatform* PlatformHandle)
 {
-    EOS_HConnect ConnectHandle = EOS_Platform_GetConnectInterface(PlatformHandle);
+    EOS_HConnect ConnectHandle = EOS_Platform_GetConnectInterface(*PlatformHandle);
 
     // Step 1: Ensure a Device ID exists for this machine
     EOS_Connect_CreateDeviceIdOptions createOpts = {};
@@ -101,7 +101,7 @@ void EOS_CALL HWID::OnLoginComplete(const EOS_Connect_LoginCallbackInfo* Data)
 
     if (Data->ResultCode == EOS_EResult::EOS_Success)
     {
-        Manager->m_LocalUserId = std::make_shared<EOS_ProductUserId>(&Data->LocalUserId);
+        Manager->m_LocalUserId = const_cast<EOS_ProductUserId*>(&Data->LocalUserId);
         Manager->m_bIsLoggedIn = true;
         std::cout << "[HWID] Callback: Connect login successful." << std::endl;
     }

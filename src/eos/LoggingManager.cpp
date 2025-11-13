@@ -51,7 +51,7 @@ void LoggingManager::SetLogLevelVeryVerboseExample()
 {
     // Call the EOS SDK to set the log level for all log categories to the highest level.
     EOS_EResult SetLogLevelResult = EOS_Logging_SetLogLevel(EOS_ELogCategory::EOS_LC_ALL_CATEGORIES,
-        EOS_ELogLevel::EOS_LOG_VeryVerbose);
+        EOS_ELogLevel::EOS_LOG_Info);
 
     // Check if the EOS SDK function call returned any errors.
     if (SetLogLevelResult != EOS_EResult::EOS_Success)
