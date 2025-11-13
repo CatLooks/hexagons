@@ -42,6 +42,12 @@ namespace Draw {
 		/// @param test Border draw test.
 		/// @param color Border color.
 		void drawBorders(ui::RenderBuffer& target, NeighborTest test, sf::Color color) const;
+
+		/// Draws tile sides.
+		///
+		/// @param target Target render buffer.
+		/// @param color Sides color.
+		void drawSides(ui::RenderBuffer& target, sf::Color color) const;
 	};
 
 	/// Checks whether a neighbor is from a different region.

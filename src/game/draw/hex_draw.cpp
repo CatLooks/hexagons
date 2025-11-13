@@ -49,6 +49,23 @@ namespace Draw {
 		target.forward(&assets::borders);
 	};
 
+	/// Draws tile sides.
+	void Tile::drawSides(ui::RenderBuffer& target, sf::Color color) const {
+		// ignore if not a solid tile
+		if (!hex->solid()) return;
+
+		// check if any side can be seen
+		const Hex* n2 = map[map.neighbor(coords, Map::LowerRight)];
+		const Hex* n3 = map[map.neighbor(coords, Map::LowerLeft)];
+		bool visible = (!n2 || !n2->solid()) || (!n3 || !n3->solid());
+
+		// draw border if visible
+		if (visible) {
+			target.quad({ origin + Values::tileLevel, Values::tileTex }, Values::sides, color);
+			target.forward(&assets::tilemap);
+		};
+	};
+
 	/// Checks whether a neighbor is from a different region.
 	bool regionBorderTest(const Hex* origin, const Hex* neighbor) {
 		return !neighbor
