@@ -18,13 +18,18 @@ sf::Vector2i Map::neighbor(sf::Vector2i pos, nbi_t nbi) {
 	return pos + sf::Vector2i(dx[pos.y & 1][nbi], dy[nbi]);
 };
 
+/// Shifts map camera.
+void Map::shiftCamera(sf::Vector2i offset) {
+	_camera += offset;
+};
+
 /// Checks if a position is within the map.
 bool Map::contains(sf::Vector2i pos) const {
 	return (
 		// vertical check
 		(pos.y >= 0 && pos.y < _size.y) &&
 		// horizontal check (ignore last if shifted)
-		(pos.x >= 0 && pos.x < _size.x - (pos.y & 1 ? 1 : 0))
+		(pos.x >= 0 && pos.x < _size.x - (pos.y & 1 ? 0 : 1))
 	);
 };
 
@@ -109,17 +114,21 @@ sf::IntRect Map::backplane() const {
 void Map::draw(ui::RenderBuffer& target) const {
 	// draw backplane
 	sf::IntRect bp = backplane();
-	target.quad(bp, {}, sf::Color(40, 42, 48));
+	target.quad(
+		{ bp.position - _camera, bp.size },
+		{}, sf::Color(40, 42, 48)
+	);
 	target.forward(nullptr);
 
 	// calculate drawn area
 	sf::IntRect area = { {}, _size };
-	sf::Vector2i origin = {};
+	sf::Vector2i origin = -_camera;
 
 	// draw tile geometry
 	TileDrawer drawer(*this, area, origin);
 	while (auto tile = drawer.next()) {
 		tile->drawBase(target);
+		tile->drawSides(target, sf::Color::Black);
 	};
 
 	// draw borders

@@ -3,27 +3,27 @@
 #include "assets.hpp"
 
 // map test
-class Game : public ui::Element {
+class Game : public ui::Layer {
 public:
-	Map map;
+	Map _map;
 
 	Game() {
-		const int w = 7;
+		const int w = 15;
 		const int h = 7;
 		const char arr[h][w + 1] = {
-			" yyyy !",
-			" --wwy ",
-			"bbrry-!",
-			"bwrrrwg",
-			"bwrrwg!",
-			" b-g-g ",
-			" b-gg !",
+			" yyyy !  yyyy !",
+			" --wwy   --wwy ",
+			"bbrry-! bbrry-!",
+			"bwrrrwg bwrrrwg",
+			"bwrrwg! bwrrwg!",
+			" b-g-g   b-g-g ",
+			" b-gg !  b-gg !"
 		};
 
-		map.resize({ {}, { w, h } });
+		_map.resize({ {}, { w, h } });
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
-				Hex* hex = map.at({ x, y });
+				Hex* hex = _map.at({ x, y });
 				if (hex == nullptr) continue;
 
 				switch (arr[y][x]) {
@@ -55,11 +55,28 @@ public:
 				};
 			};
 		};
+
+		onUpdate([=](const sf::Time& _) {
+			sf::Vector2i offset;
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) offset.y--;
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) offset.y++;
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) offset.x--;
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) offset.x++;
+			_map.shiftCamera(offset * 2);
+		});
+
+		onEvent([=](const ui::Event& evt) {
+			if (auto data = evt.get<ui::Event::MousePress>()) {
+				printf("%d %d\n", data->position.x, data->position.y);
+			};
+
+			return true;
+		});
 	};
 
 protected:
 	void drawSelf(ui::RenderBuffer& target, sf::IntRect self) const override {
-		map.draw(target);
+		_map.draw(target);
 	};
 };
 
@@ -103,9 +120,9 @@ int main() {
 	});
 
 	// game test
-	auto layer = itf.layer();
-	layer->add(new Game());
-	layer->setArea({ 800, 450 }, { {}, {1600, 900} });
+	Game* layer = new Game();
+	itf.layer(layer);
+	layer->setArea(ui::DimVector{ 1es, 1es } / 3, { 0px, 0px, 1ps, 1ps });
 
 	// window main loop
 	std::queue<sf::Event> eventQueue;
