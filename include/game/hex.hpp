@@ -34,16 +34,13 @@ struct Hex {
 		Count   /// Team count.
 	} team = Unclaimed;
 
-	/// Empty index number.
-	static const size_t None = ~0ull;
-
-	/// Troop index, `None` if no troop.
-	size_t troop = None;
-	/// Building index, `None` if no troop.
-	size_t build = None;
-	/// Plant index, `None` if no troop.
-	size_t plant = None;
+	/// Troop reference, `nullptr` if no troop.
+	Troop* troop = nullptr;
+	/// Building reference, `nullptr` if no building.
+	Build* build = nullptr;
+	/// Plant reference, `nullptr` if no plant.
+	Plant* plant = nullptr;
 
 	/// Checks if a tile can be stood on.
-	bool isSolid() const;
+	bool solid() const;
 };

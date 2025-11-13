@@ -3,11 +3,11 @@
 // include dependencies
 #include <SFML/System/Vector2.hpp>
 #include <memory>
+#include <list>
 #include "ui/buffer.hpp"
 #include "assets.hpp"
 #include "div.hpp"
 #include "hex.hpp"
-#include "pool.hpp"
 
 /// Game map object.
 /// Stores array of tiles and lists of all dynamic objects on it.
@@ -44,9 +44,9 @@ private:
 	std::unique_ptr<Hex[]> _tiles; /// Tilemap array.
 	sf::Vector2i _size;            /// Map size.
 
-	Pool<Troop> _troops; /// Troop pool.
-	Pool<Build> _builds; /// Building pool.
-	Pool<Plant> _plants; /// Plant pool.
+	std::list<Troop> _troops; /// Troop pool.
+	std::list<Build> _builds; /// Building pool.
+	std::list<Plant> _plants; /// Plant pool.
 
 public:
 	/// Checks if a position is within the map.
