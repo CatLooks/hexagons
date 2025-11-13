@@ -125,6 +125,6 @@ void Map::draw(ui::RenderBuffer& target) const {
 	// draw borders
 	drawer.reset();
 	while (auto tile = drawer.next()) {
-		tile->drawBorders(target, sf::Color::Black);
+		tile->drawBorders(target, Draw::regionBorderTest, sf::Color::Black);
 	};
 };
