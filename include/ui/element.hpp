@@ -135,9 +135,9 @@ namespace ui {
 		bool transparent = false; /// Whether mouse hover events can pass through the element.
 		bool scissor     = false; /// Whether to cut off pixels drawn outside of element's bounds.
 
-		DimRect bounds;           /// Element bounding box.
-		Borders padding;          /// Element padding.
-		Borders margin;           /// Element margin.
+		DimRect bounds = DimRect::Fill; /// Element bounding box.
+		Borders padding;                /// Element padding.
+		Borders margin;                 /// Element margin.
 
 	protected:
 		/// Draws the element.
