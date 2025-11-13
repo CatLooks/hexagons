@@ -44,6 +44,10 @@ namespace ui {
 		/// Removes an intermediate texture step.
 		void removeArea();
 
+		/// Returns layer texture size.
+		///
+		/// @param window Window view rectangle.
+		sf::Vector2i size(sf::IntRect window) const;
 		/// Returns layer rendering area.
 		///
 		/// @param window Window view rectangle.
