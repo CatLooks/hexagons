@@ -7,8 +7,14 @@ void EOSManager::Tick() {
 
 	case INIT:
 		if (hwid->GetLocalUserId() != nullptr) {
-			localUserId = hwid->GetLocalUserId();
+			localUserId = new EOS_ProductUserId(hwid->GetLocalUserId());
+			if (EOS_ProductUserId_IsValid(*localUserId) == EOS_FALSE) {
+				std::cout << "[EOSManager] Invalid Product User ID before deleting HWID!" << std::endl;
+			}
 			delete hwid;
+			if (EOS_ProductUserId_IsValid(*localUserId) == EOS_FALSE) {
+				std::cout << "[EOSManager] Invalid Product User ID after deleting HWID!" << std::endl;
+			}
 			lobby = new LobbyManager(lobbyHandle, localUserId, p2pHandle);
 			state = LOGGED_IN;
 		}

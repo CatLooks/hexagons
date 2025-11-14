@@ -20,7 +20,7 @@ bool HWID::IsLoggedIn() const
     return m_bIsLoggedIn;
 }
 
-EOS_ProductUserId* HWID::GetLocalUserId() const
+EOS_ProductUserId HWID::GetLocalUserId() const
 {
     return m_LocalUserId;
 }
@@ -101,7 +101,11 @@ void EOS_CALL HWID::OnLoginComplete(const EOS_Connect_LoginCallbackInfo* Data)
 
     if (Data->ResultCode == EOS_EResult::EOS_Success)
     {
-        Manager->m_LocalUserId = const_cast<EOS_ProductUserId*>(&Data->LocalUserId);
+        Manager->m_LocalUserId = Data->LocalUserId;
+        std::cout << "[HWID] Check for ID validity" << std::endl;
+        if (EOS_ProductUserId_IsValid(Manager->GetLocalUserId()) == EOS_FALSE) {
+			std::cout << "[HWID] Invalid Product User ID after login!" << std::endl;
+        }
         Manager->m_bIsLoggedIn = true;
         std::cout << "[HWID] Callback: Connect login successful." << std::endl;
     }

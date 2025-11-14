@@ -22,7 +22,7 @@ public:
     bool IsLoggedIn() const;
 
     /** Gets the user's ID. Returns nullptr if not logged in. */
-    EOS_ProductUserId* GetLocalUserId() const;
+    EOS_ProductUserId GetLocalUserId() const;
 
     static void EOS_CALL OnLoginComplete(const EOS_Connect_LoginCallbackInfo* Data);
 
@@ -33,7 +33,7 @@ public:
 private:
     // --- Member Variables ---
     // These store the state for a specific instance of the class.
-    EOS_ProductUserId* m_LocalUserId = nullptr;
+    EOS_ProductUserId m_LocalUserId = nullptr;
     EOS_HConnect* m_ConnectHandle = nullptr;
     bool m_bIsLoggedIn;
 };

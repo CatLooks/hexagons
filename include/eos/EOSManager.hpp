@@ -10,7 +10,7 @@
 class EOSManager {
 public:
 	LoggingManager* logging;
-	LobbyManager* lobby;
+	LobbyManager* lobby = nullptr;
 
 	EOSManager() {
 		state = INIT;
