@@ -31,6 +31,10 @@
     <ClCompile Include="src\assets.cpp" />
     <ClCompile Include="src\game\build.cpp" />
     <ClCompile Include="src\game\draw.cpp" />
+    <ClCompile Include="src\game\draw\build_draw.cpp" />
+    <ClCompile Include="src\game\draw\hex_draw.cpp" />
+    <ClCompile Include="src\game\draw\plant_draw.cpp" />
+    <ClCompile Include="src\game\draw\troop_draw.cpp" />
     <ClCompile Include="src\game\hex.cpp" />
     <ClCompile Include="src\game\map.cpp" />
     <ClCompile Include="src\game\plant.cpp" />
@@ -76,6 +80,10 @@
     <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\game\build.hpp" />
     <ClInclude Include="include\game\draw.hpp" />
+    <ClInclude Include="include\game\draw\build_draw.hpp" />
+    <ClInclude Include="include\game\draw\hex_draw.hpp" />
+    <ClInclude Include="include\game\draw\plant_draw.hpp" />
+    <ClInclude Include="include\game\draw\troop_draw.hpp" />
     <ClInclude Include="include\game\entity.hpp" />
     <ClInclude Include="include\game\hex.hpp" />
     <ClInclude Include="include\game\map.hpp" />

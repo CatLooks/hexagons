@@ -52,6 +52,12 @@
     <Filter Include="Source Files\game\values">
       <UniqueIdentifier>{332523dd-17f3-4fa1-b6ca-22ca5b4f6f6a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\game\draw">
+      <UniqueIdentifier>{c883f9bc-7acb-4536-941e-a65046d77859}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\draw">
+      <UniqueIdentifier>{60369e22-b071-45b8-8a0d-eeba03831485}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -143,6 +149,18 @@
     </ClCompile>
     <ClCompile Include="src\game\values\shared.cpp">
       <Filter>Source Files\game\values</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\draw\troop_draw.cpp">
+      <Filter>Source Files\game\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\draw\build_draw.cpp">
+      <Filter>Source Files\game\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\draw\hex_draw.cpp">
+      <Filter>Source Files\game\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\draw\plant_draw.cpp">
+      <Filter>Source Files\game\draw</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -277,6 +295,18 @@
     </ClInclude>
     <ClInclude Include="include\game\values\shared.hpp">
       <Filter>Header Files\game\values</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\draw\troop_draw.hpp">
+      <Filter>Header Files\game\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\draw\build_draw.hpp">
+      <Filter>Header Files\game\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\draw\hex_draw.hpp">
+      <Filter>Header Files\game\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\draw\plant_draw.hpp">
+      <Filter>Header Files\game\draw</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
