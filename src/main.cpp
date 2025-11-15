@@ -122,7 +122,7 @@ int main() {
 	// game test
 	Game* layer = new Game();
 	itf.layer(layer);
-	layer->setArea(ui::DimVector{ 1es, 1es } / 3, { 0px, 0px, 1ps, 1ps });
+	layer->setArea(ui::DimVector{ 1es, 1es } * 0.75, { 0px, 0px, 1ps, 1ps });
 
 	// window main loop
 	std::queue<sf::Event> eventQueue;

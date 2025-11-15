@@ -121,6 +121,7 @@ void Map::draw(ui::RenderBuffer& target) const {
 	target.forward(nullptr);
 
 	// calculate drawn area
+	// @todo
 	sf::IntRect area = { {}, _size };
 	sf::Vector2i origin = -_camera;
 

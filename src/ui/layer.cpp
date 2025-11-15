@@ -73,6 +73,7 @@ namespace ui {
 
 			// reset intermediate texture
 			auto _ = _ir->tex.resize((sf::Vector2u)size);
+			_ir->tex.setSmooth(true);
 			_ir->tex.clear(sf::Color::Transparent);
 			stats = _buffer.draw(_ir->tex);
 
