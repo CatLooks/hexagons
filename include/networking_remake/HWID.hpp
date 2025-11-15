@@ -8,15 +8,19 @@ constexpr const char* ID = "Unix_Device";
 #endif
 
 #include "eos_sdk.h"
+#include "networking_remake/Delegate.hpp"
 
 class HWID
 {
 public:
+	//anouncment for successful login list
+    Delegate<EOS_ProductUserId> OnLoginSuccess;
     /** Constructor: Initializes the state */
+    
     HWID();
 
     /** Starts the asynchronous login process */
-    void Login(EOS_HPlatform* PlatformHandle);
+    void Login(EOS_HPlatform PlatformHandle);
 
     /** Checks if the login process has successfully completed */
     bool IsLoggedIn() const;
@@ -26,14 +30,15 @@ public:
 
     static void EOS_CALL OnLoginComplete(const EOS_Connect_LoginCallbackInfo* Data);
 
-    ~HWID() {
-		delete m_ConnectHandle;
-    }
+    ~HWID() {}
 
 private:
     // --- Member Variables ---
     // These store the state for a specific instance of the class.
     EOS_ProductUserId m_LocalUserId = nullptr;
-    EOS_HConnect* m_ConnectHandle = nullptr;
+    EOS_HConnect m_ConnectHandle = nullptr;
     bool m_bIsLoggedIn;
+
+    //helper function:
+    void HandleLoginComplete(const EOS_Connect_LoginCallbackInfo* Data);
 };

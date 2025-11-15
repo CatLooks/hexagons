@@ -1,4 +1,4 @@
-#include "eos/PlatformManager.hpp"
+#include "networking_remake/PlatformManager.hpp"
 #include "eos/Config.hpp"
 #include <eos_init.h>
 #include <eos_common.h>
@@ -59,7 +59,7 @@ void PlatformManager::CreatePlatformInstance(EOSSdkConfig* Config)
     PlatformOptions.TaskNetworkTimeoutSeconds = &TimeoutSetting;
 
     // Create your platform instance with the required options.
-    PlatformHandle = new EOS_HPlatform(EOS_Platform_Create(&PlatformOptions));
+    PlatformHandle = EOS_HPlatform(EOS_Platform_Create(&PlatformOptions));
 
     // Print the result of your platform instance creation.
     if (PlatformHandle)

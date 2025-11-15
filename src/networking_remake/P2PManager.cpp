@@ -1,4 +1,4 @@
-#include "eos/P2PManager.hpp"
+#include "networking_remake/P2PManager.hpp"
 
 void P2PManager::OnIncomingConnectionRequest(const EOS_P2P_OnIncomingConnectionRequestInfo* Data) {
 	P2PManager* Manager = static_cast<P2PManager*>(Data->ClientData);
@@ -6,19 +6,19 @@ void P2PManager::OnIncomingConnectionRequest(const EOS_P2P_OnIncomingConnectionR
 		std::cerr << "[P2PManager] Critical error: ClientData was null in incoming connection request callback." << std::endl;
 		return;
 	}
-	if (Data->LocalUserId != *Manager->UserId) {
+	if (Data->LocalUserId != Manager->UserId) {
 		std::cerr << "[P2PManager] Incoming connection request for unknown user." << std::endl;
 		return;
 	}
 	EOS_P2P_AcceptConnectionOptions AcceptOptions = {};
 	AcceptOptions.ApiVersion = EOS_P2P_ACCEPTCONNECTION_API_LATEST;
-	AcceptOptions.LocalUserId = *Manager->UserId;
+	AcceptOptions.LocalUserId = Manager->UserId;
 	AcceptOptions.RemoteUserId = Data->RemoteUserId;
 	AcceptOptions.SocketId = Data->SocketId;
-	EOS_EResult acceptResult = EOS_P2P_AcceptConnection(*Manager->P2PHandle, &AcceptOptions);
+	EOS_EResult acceptResult = EOS_P2P_AcceptConnection(Manager->P2PHandle, &AcceptOptions);
 	if (acceptResult == EOS_EResult::EOS_Success) {
 		std::cout << "[P2PManager] Accepted incoming connection request from user." << std::endl;
-		Manager->SetPeerId(const_cast<EOS_ProductUserId*>(&Data->RemoteUserId));
+		Manager->SetPeerId(const_cast<EOS_ProductUserId>(Data->RemoteUserId));
 	}
 	else {
 		std::cerr << "[P2PManager] Failed to accept incoming connection request: " << EOS_EResult_ToString(acceptResult) << std::endl;
@@ -32,9 +32,9 @@ void P2PManager::SendString(const std::string& Message) {
 	}
 	EOS_P2P_SendPacketOptions SendOptions = {};
 	SendOptions.ApiVersion = EOS_P2P_SENDPACKET_API_LATEST;
-	SendOptions.LocalUserId = *UserId;
-	SendOptions.RemoteUserId = *PeerId;
-	SendOptions.SocketId = SocketId;
+	SendOptions.LocalUserId = UserId;
+	SendOptions.RemoteUserId = PeerId;
+	SendOptions.SocketId = SocketId.get();
 	SendOptions.Channel = 0;
 	SendOptions.DataLengthBytes = static_cast<uint32_t>(Message.size());
 	SendOptions.Data = Message.c_str();
@@ -42,7 +42,7 @@ void P2PManager::SendString(const std::string& Message) {
 	SendOptions.Reliability = EOS_EPacketReliability::EOS_PR_ReliableOrdered;
 	SendOptions.bDisableAutoAcceptConnection = EOS_FALSE;
 
-	EOS_EResult r = EOS_P2P_SendPacket(*P2PHandle, &SendOptions);
+	EOS_EResult r = EOS_P2P_SendPacket(P2PHandle, &SendOptions);
 	if (r != EOS_EResult::EOS_Success) {
 		std::cerr << "[P2PManager] SendPacket failed: " << EOS_EResult_ToString(r) << std::endl;
 	} else {
@@ -53,7 +53,7 @@ void P2PManager::SendString(const std::string& Message) {
 void P2PManager::ReceivePacket() {
 	EOS_P2P_ReceivePacketOptions ReceiveOptions = {};
 	ReceiveOptions.ApiVersion = EOS_P2P_RECEIVEPACKET_API_LATEST;
-	ReceiveOptions.LocalUserId = *UserId;
+	ReceiveOptions.LocalUserId = UserId;
 
 	// Prealokowany bufor danych (dopasowany do MaxDataSizeBytes)
 	char buffer[1024] = {};
@@ -63,7 +63,7 @@ void P2PManager::ReceivePacket() {
 	uint32_t bytesWritten = static_cast<uint32_t>(sizeof(buffer));
 
 	// Poprawne wywo³anie z buforem i rozmiarem
-	EOS_EResult receiveResult = EOS_P2P_ReceivePacket(*P2PHandle, &ReceiveOptions, PeerId, SocketId, &channel, static_cast<void*>(buffer), &bytesWritten);
+	EOS_EResult receiveResult = EOS_P2P_ReceivePacket(P2PHandle, &ReceiveOptions, &PeerId, SocketId.get(), &channel, static_cast<void*>(buffer), &bytesWritten);
 
 	if (receiveResult == EOS_EResult::EOS_NotFound) {
 		// Brak pakietów

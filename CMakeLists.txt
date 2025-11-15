@@ -18,9 +18,18 @@ if(WIN32)
     set(EOS_LIB "${EOS_SDK_PATH}/Lib/EOSSDK-Win64-Shipping.lib")
 elseif(UNIX AND NOT APPLE)
     # --- Linux (and other UNIX-like OS) Settings ---
-    message(STATUS "Configuring EOS SDK for Linux")
-    set(EOS_DLL "${CMAKE_SOURCE_DIR}/EOS/Bin/libEOSSDK-LinuxArm64-Shipping.so")
-    set(EOS_LIB ${EOS_DLL})
+   message(STATUS "Configuring EOS SDK for Linux")
+    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+        message(STATUS "Detected x86_64 architecture")
+        set(EOS_DLL "${CMAKE_SOURCE_DIR}/EOS/Bin/libEOSSDK-Linux-Shipping.so")
+        set(EOS_LIB ${EOS_DLL})
+    elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
+        message(STATUS "Detected ARM64 architecture")
+        set(EOS_DLL "${CMAKE_SOURCE_DIR}/EOS/Bin/libEOSSDK-LinuxArm64-Shipping.so")
+        set(EOS_LIB ${EOS_DLL})
+    else()
+        message(FATAL_ERROR "Unsupported Linux architecture: ${CMAKE_SYSTEM_PROCESSOR}")
+    endif()
 endif()
 
 if(UNIX AND NOT APPLE)
@@ -58,6 +67,7 @@ FetchContent_Declare(SFML
 FetchContent_MakeAvailable(SFML)
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
+
 add_executable(main ${SOURCES})
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")

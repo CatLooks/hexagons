@@ -1,4 +1,4 @@
-#include "eos/HWID.hpp"
+#include "networking_remake/HWID.hpp"
 #include <iostream>
 #include <eos_connect.h>
 #include <cstdlib>
@@ -25,9 +25,9 @@ EOS_ProductUserId HWID::GetLocalUserId() const
     return m_LocalUserId;
 }
 
-void HWID::Login(EOS_HPlatform* PlatformHandle)
+void HWID::Login(EOS_HPlatform PlatformHandle)
 {
-    EOS_HConnect ConnectHandle = EOS_Platform_GetConnectInterface(*PlatformHandle);
+    EOS_HConnect ConnectHandle = EOS_Platform_GetConnectInterface(PlatformHandle);
 
     // Step 1: Ensure a Device ID exists for this machine
     EOS_Connect_CreateDeviceIdOptions createOpts = {};
@@ -93,25 +93,27 @@ static void EOS_CALL OnCreateDeviceIdComplete(const EOS_Connect_CreateDeviceIdCa
 void EOS_CALL HWID::OnLoginComplete(const EOS_Connect_LoginCallbackInfo* Data)
 {
     HWID* Manager = static_cast<HWID*>(Data->ClientData);
-    if (Manager == nullptr)
-    {
-        std::cerr << "[HWID] Critical error: ClientData was null in login callback." << std::endl;
-        return;
+    if (Manager) {
+        Manager->HandleLoginComplete(Data);
     }
+}
 
+void HWID::HandleLoginComplete(const EOS_Connect_LoginCallbackInfo* Data)
+{
     if (Data->ResultCode == EOS_EResult::EOS_Success)
     {
-        Manager->m_LocalUserId = Data->LocalUserId;
-        std::cout << "[HWID] Check for ID validity" << std::endl;
-        if (EOS_ProductUserId_IsValid(Manager->GetLocalUserId()) == EOS_FALSE) {
-			std::cout << "[HWID] Invalid Product User ID after login!" << std::endl;
-        }
-        Manager->m_bIsLoggedIn = true;
+        m_LocalUserId = Data->LocalUserId;
+        m_bIsLoggedIn = true;
         std::cout << "[HWID] Callback: Connect login successful." << std::endl;
+
+        // Announce to the world that we have logged in successfully!
+        // Any code that is "listening" will now be executed.
+        OnLoginSuccess.Broadcast(m_LocalUserId);
     }
     else
     {
-        Manager->m_bIsLoggedIn = false;
+        m_bIsLoggedIn = false;
         std::cerr << "[HWID] Callback: Connect login failed: " << EOS_EResult_ToString(Data->ResultCode) << std::endl;
+        // OnLoginFailure delegate possible here
     }
 }

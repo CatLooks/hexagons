@@ -1,4 +1,4 @@
-#include "eos/LoggingManager.hpp"
+#include "networking_remake/LoggingManager.hpp"
 
 std::ofstream LoggingManager::LogFile;
 

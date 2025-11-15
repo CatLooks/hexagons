@@ -7,7 +7,9 @@
 #include "ui/anim/linear.hpp"
 #include "assets.hpp"
 #include "game.hpp"
-#include "eos/EOSManager.hpp"
+//#include "eos/EOSManager.hpp"
+#include "networking_remake/EOSManager.hpp"
+#include "networking_remake/GameConnectionManager.hpp"
 
 /// Program entry.
 /// @return Exit code.
@@ -23,7 +25,20 @@ int main() {
 	if (assets::error) return 1;
 
 	// initialize EOS
-	EOSManager* eos = new EOSManager();
+	EOSManager* eos = &EOSManager::GetInstance();
+	GameConnectionManager connectionLogic(*eos);
+
+	// connection logic temporary input
+	int temp;
+	std::cout << "Host: 1, Client: 2" << std::endl;
+	std::cin >> temp;
+
+	if (temp == 1) {
+		connectionLogic.HostGame();
+	}
+	else {
+		connectionLogic.FindAndJoinGame();
+	}
 
 	// create window interface
 	ui::Interface itf;
