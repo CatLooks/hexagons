@@ -218,10 +218,10 @@ namespace ui {
 	};
 
 	/// Sends an event queue to interface.
-	void Interface::eventq(std::queue<sf::Event>& queue) {
+	void Interface::eventq(std::deque<sf::Event>& queue) {
 		while (!queue.empty()) {
 			event(queue.front());
-			queue.pop();
+			queue.pop_front();
 		};
 	};
 

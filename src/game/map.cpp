@@ -1,5 +1,6 @@
 #include "game/map.hpp"
 #include "game/draw.hpp"
+#include "ui/window.hpp"
 
 /// Returns neighbor position of a tile.
 sf::Vector2i Map::neighbor(sf::Vector2i pos, nbi_t nbi) {
@@ -16,11 +17,6 @@ sf::Vector2i Map::neighbor(sf::Vector2i pos, nbi_t nbi) {
 
 	// return result using look-up tables
 	return pos + sf::Vector2i(dx[pos.y & 1][nbi], dy[nbi]);
-};
-
-/// Shifts map camera.
-void Map::shiftCamera(sf::Vector2i offset) {
-	_camera += offset;
 };
 
 /// Checks if a position is within the map.
@@ -115,7 +111,7 @@ void Map::draw(ui::RenderBuffer& target) const {
 	// draw backplane
 	sf::IntRect bp = backplane();
 	target.quad(
-		{ bp.position - _camera, bp.size },
+		{ bp.position - camera, bp.size },
 		{}, sf::Color(40, 42, 48)
 	);
 	target.forward(nullptr);
@@ -123,7 +119,7 @@ void Map::draw(ui::RenderBuffer& target) const {
 	// calculate drawn area
 	// @todo
 	sf::IntRect area = { {}, _size };
-	sf::Vector2i origin = -_camera;
+	sf::Vector2i origin = -camera;
 
 	// draw tile geometry
 	TileDrawer drawer(*this, area, origin);

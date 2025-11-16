@@ -51,3 +51,8 @@ plant {
 
 	bad: '$(bad)'
 }
+
+# debug info
+debug {
+	fps: "{fps} FPS"
+}

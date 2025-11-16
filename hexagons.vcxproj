@@ -52,6 +52,7 @@
     <ClCompile Include="src\ui\anim\easing.cpp" />
     <ClCompile Include="src\ui\anim\timer.cpp" />
     <ClCompile Include="src\ui\buffer.cpp" />
+    <ClCompile Include="src\ui\drag.cpp" />
     <ClCompile Include="src\ui\element.cpp" />
     <ClCompile Include="src\ui\image.cpp" />
     <ClCompile Include="src\ui\input.cpp" />
@@ -61,6 +62,7 @@
     <ClCompile Include="src\ui\solid.cpp" />
     <ClCompile Include="src\ui\text.cpp" />
     <ClCompile Include="src\ui\units.cpp" />
+    <ClCompile Include="src\ui\window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\en-us.tlml" />
@@ -103,6 +105,7 @@
     <ClInclude Include="include\ui\anim\linear.hpp" />
     <ClInclude Include="include\ui\anim\timer.hpp" />
     <ClInclude Include="include\ui\buffer.hpp" />
+    <ClInclude Include="include\ui\drag.hpp" />
     <ClInclude Include="include\ui\element.hpp" />
     <ClInclude Include="include\ui\event.hpp" />
     <ClInclude Include="include\ui\image.hpp" />
@@ -113,6 +116,7 @@
     <ClInclude Include="include\ui\solid.hpp" />
     <ClInclude Include="include\ui\text.hpp" />
     <ClInclude Include="include\ui\units.hpp" />
+    <ClInclude Include="include\ui\window.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\borders.png" />

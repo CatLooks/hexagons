@@ -6,8 +6,11 @@
 class Game : public ui::Layer {
 public:
 	Map _map;
+	ui::Drag _drag;
 
-	Game() {
+	Game(): _drag(&_map.camera) {
+		_drag.invert = true;
+
 		const int w = 15;
 		const int h = 7;
 		const char arr[h][w + 1] = {
@@ -56,21 +59,29 @@ public:
 			};
 		};
 
+		onEvent([=](const ui::Event& evt) {
+			if (auto data = evt.get<ui::Event::MouseWheel>()) {
+				_drag.scrollScale(17.f / 16, -data->delta, ui::window.mouse() - ui::window.size() / 2);
+				return true;
+			};
+
+			return false;
+		});
+
 		onUpdate([=](const sf::Time& _) {
+			setArea(ui::DimVector{ 1es, 1es } *_drag.getScale(), { 0px, 0px, 1ps, 1ps });
+
 			sf::Vector2i offset;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) offset.y--;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) offset.y++;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) offset.x--;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) offset.x++;
-			_map.shiftCamera(offset * 2);
-		});
+			_map.camera += offset * 2;
 
-		onEvent([=](const ui::Event& evt) {
-			if (auto data = evt.get<ui::Event::MousePress>()) {
-				printf("%d %d\n", data->position.x, data->position.y);
-			};
-
-			return true;
+			_drag.update(
+				ui::window.mouse(),
+				sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)
+			);
 		});
 	};
 
@@ -93,14 +104,12 @@ int main() {
 	assets::loadAssets();
 	if (assets::error)
 		return 1;
-	
-	// create a window
-	sf::RenderWindow win(sf::VideoMode({ 1600, 900 }), "App");
-	win.setVerticalSyncEnabled(true);
-	win.setKeyRepeatEnabled(false);
+
+	// create window
+	ui::window.create({ 1600, 900 });
 
 	// create an interface
-	ui::Interface itf;
+	ui::Interface& itf = ui::window.interface();
 	itf.clearColor(sf::Color(29, 31, 37));
 
 	// draw stats
@@ -115,38 +124,18 @@ int main() {
 			stats.inters
 		);
 		drawStats.setString(format);
-		drawStats.setPosition({ win.getSize().x - drawStats.getLocalBounds().size.x - 4, 0 });
+		drawStats.setPosition({ ui::window.size().x - drawStats.getLocalBounds().size.x - 4, 0 });
 		target.draw(drawStats);
 	});
 
 	// game test
 	Game* layer = new Game();
 	itf.layer(layer);
-	layer->setArea(ui::DimVector{ 1es, 1es } * 0.75, { 0px, 0px, 1ps, 1ps });
 
 	// window main loop
-	std::queue<sf::Event> eventQueue;
-	while (win.isOpen()) {
-		// process window events
-		while (const auto event = win.pollEvent()) {
-			// check for window close
-			if (event->is<sf::Event::Closed>()) {
-				win.close();
-				continue;
-			};
-
-			// pass through to interface queue
-			eventQueue.push(*event);
-		};
-
-		// recalculate & update the interface
-		itf.recalculate(win.getSize());
-		itf.eventq(eventQueue);
-		itf.update(sf::Mouse::getPosition(win));
-
-		// redraw window contents
-		itf.draw(win);
-		win.display();
+	while (ui::window.active()) {
+		ui::window.events();
+		ui::window.frame();
 	};
 	return 0;
 };

@@ -152,7 +152,7 @@ namespace ui {
 		/// Sends an event queue to interface.
 		///
 		/// Pops all events from the queue in the process.
-		void eventq(std::queue<sf::Event>& queue);
+		void eventq(std::deque<sf::Event>& queue);
 		/// Updates the interface.
 		/// @param mouse Mouse position.
 		void update(sf::Vector2i mouse);

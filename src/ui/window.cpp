@@ -1,4 +1,5 @@
 #include "ui/window.hpp"
+#include <SFML/Graphics.hpp>
 
 namespace ui {
 	/// Returns a reference to window interface object.
@@ -16,7 +17,8 @@ namespace ui {
 		_win.create(sf::VideoMode(size), "Hexagons", sf::State::Windowed, settings);
 
 		// configure window
-		_win.setVerticalSyncEnabled(true);
+		//_win.setVerticalSyncEnabled(true);
+		_win.setFramerateLimit(60);
 		_win.setKeyRepeatEnabled(false);
 	};
 

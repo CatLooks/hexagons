@@ -48,13 +48,8 @@ private:
 	std::list<Build> _builds; /// Building pool.
 	std::list<Plant> _plants; /// Plant pool.
 
-	sf::Vector2i _camera; /// Map camera.
-
 public:
-	/// Shifts map camera.
-	///
-	/// @param offset Camera offset.
-	void shiftCamera(sf::Vector2i offset);
+	sf::Vector2i camera; /// Map camera.
 
 public:
 	/// Checks if a position is within the map.
