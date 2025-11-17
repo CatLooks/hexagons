@@ -98,8 +98,8 @@ namespace ui {
 	};
 
 	/// Creates a new interface layer.
-	Layer* Interface::layer(Layer* value) {
-		_ctx->push_back(std::unique_ptr<Layer>(value));
+	Layer* Interface::layer() {
+		_ctx->push_back(std::unique_ptr<Layer>(new Layer));
 		return _ctx->back().get();
 	};
 
