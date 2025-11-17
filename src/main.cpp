@@ -10,6 +10,8 @@ public:
 
 	Game(): _drag(&_map.camera) {
 		_drag.invert = true;
+		_drag.min_zoom = 0.5f;
+		_drag.max_zoom = 2.0f;
 
 		const int w = 15;
 		const int h = 7;
@@ -24,6 +26,12 @@ public:
 		};
 
 		_map.resize({ {}, { w, h } });
+		Troop troop;
+		troop.pos = {3, 3};
+		troop.type = Troop::Farmer;
+		troop.hp = 1;
+		_map.setTroop(std::move(troop));
+
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				Hex* hex = _map.at({ x, y });

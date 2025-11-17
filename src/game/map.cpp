@@ -40,6 +40,12 @@ Hex* Map::operator[](sf::Vector2i pos) const {
 	return at(pos);
 };
 
+/// Adds a troop to the map.
+void Map::setTroop(Troop&& troop) {
+	_troops.push_back(troop);
+	at(troop.pos)->troop = &_troops.back();
+};
+
 /// Returns amount of hexes stored.
 size_t Map::tilecount() const {
 	return (size_t)_size.x * _size.y;

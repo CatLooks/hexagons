@@ -17,9 +17,13 @@ namespace ui {
 		bool _pressed = false; /// Whether the mouse is pressed.
 
 	public:
-		bool                     invert = false; /// Inverts the drag direction.
-		std::optional<sf::Vector2i> min = {};    /// Minimal drag values for both axes.
-		std::optional<sf::Vector2i> max = {};    /// First out-of-range drag values for both axes.
+		bool invert = false; /// Inverts the drag direction.
+
+		std::optional<sf::Vector2i> min = {}; /// Minimal drag values for both axes.
+		std::optional<sf::Vector2i> max = {}; /// First out-of-range drag values for both axes.
+
+		float min_zoom = 0.0f;     /// Minimal scale (by default `0`).
+		float max_zoom = INFINITY; /// Maximal scale (by default `infinity`).
 
 	protected:
 		/// Starts the drag event.
