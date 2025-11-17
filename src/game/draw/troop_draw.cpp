@@ -8,7 +8,7 @@ namespace Draw {
 		const Troop& troop = *tile.hex->troop;
 
 		// draw troop
-		buffer.quad({ tile.origin, Values::tileTex }, Values::troop_textures[troop.type]);
+		buffer.quad({ tile.origin, Values::tileSize }, Values::troop_textures[troop.type]);
 		buffer.forward(&assets::tilemap);
 	};
 

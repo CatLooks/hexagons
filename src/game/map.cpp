@@ -115,11 +115,7 @@ sf::IntRect Map::backplane() const {
 /// Draws the map.
 void Map::draw(ui::RenderBuffer& target) const {
 	// draw backplane
-	sf::IntRect bp = backplane();
-	target.quad(
-		{ bp.position - camera, bp.size },
-		{}, sf::Color(40, 42, 48)
-	);
+	target.quad(backplane() - camera, {}, sf::Color(40, 42, 48));
 	target.forward(nullptr);
 
 	// calculate drawn area

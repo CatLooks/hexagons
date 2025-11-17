@@ -9,6 +9,8 @@ namespace Values {
 	extern const int tileUnit;
 	/// Size of tile texture.
 	extern const sf::Vector2i tileTex;
+	/// Size of rendered tile.
+	extern const sf::Vector2i tileSize;
 	/// Offsets between tiles on map.
 	extern const sf::Vector2i tileOff;
 	/// Offset of a tile level.

@@ -2,9 +2,11 @@
 
 namespace Values {
 	/// Base unit for tile related sizes.
-	const int tileUnit = 64;
+	const int tileUnit = 64 * 2;
 	/// Size of tile texture.
-	const sf::Vector2i tileTex = { tileUnit, tileUnit };
+	const sf::Vector2i tileTex = { 64, 64 };
+	/// Size of rendered tile.
+	const sf::Vector2i tileSize = { tileUnit, tileUnit };
 	/// Offsets between tiles on map.
 	const sf::Vector2i tileOff = { tileUnit, tileUnit * 3 / 4 };
 	/// Offset of a tile level.

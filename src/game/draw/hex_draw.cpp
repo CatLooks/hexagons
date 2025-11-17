@@ -6,7 +6,7 @@ namespace Draw {
 		// draw ground tiles
 		if (hex->type == Hex::Ground) {
 			target.quad(
-				{ origin, Values::tileTex },
+				{ origin, Values::tileSize },
 				Values::hex_textures[hex->team]
 			);
 			target.forward(&assets::tilemap);
@@ -14,7 +14,7 @@ namespace Draw {
 
 		// draw water tiles
 		if (hex->type == Hex::Water) {
-			target.quad({ origin + Values::tileLevel, Values::tileTex }, Values::water);
+			target.quad({ origin + Values::tileLevel, Values::tileSize }, Values::water);
 			target.forward(&assets::tilemap);
 		};
 	};
@@ -45,7 +45,7 @@ namespace Draw {
 		sf::IntRect texmap = { { (border & 7) * 64, (border >> 3) * 64 }, { 64, 64 } };
 
 		// draw borders
-		target.quad({ origin, Values::tileTex }, texmap, color);
+		target.quad({ origin, Values::tileSize }, texmap, color);
 		target.forward(&assets::borders);
 	};
 
@@ -61,7 +61,7 @@ namespace Draw {
 
 		// draw border if visible
 		if (visible) {
-			target.quad({ origin + Values::tileLevel, Values::tileTex }, Values::sides, color);
+			target.quad({ origin + Values::tileLevel, Values::tileSize }, Values::sides, color);
 			target.forward(&assets::tilemap);
 		};
 	};

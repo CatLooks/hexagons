@@ -60,3 +60,11 @@ namespace ext {
 ///
 /// @return Shifted rectangle.
 sf::IntRect operator+(const sf::IntRect& rect, const sf::Vector2i& shift);
+
+/// Shifts a rectangle by an inverted vector.
+///
+/// @param rect Original rectangle.
+/// @param shift Shift vector.
+///
+/// @return Shifted rectangle.
+sf::IntRect operator-(const sf::IntRect& rect, const sf::Vector2i& shift);

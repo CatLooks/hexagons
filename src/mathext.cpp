@@ -50,3 +50,8 @@ namespace ext {
 sf::IntRect operator+(const sf::IntRect& rect, const sf::Vector2i& shift) {
 	return { rect.position + shift, rect.size };
 };
+
+/// Shifts a rectangle by an inverted vector.
+sf::IntRect operator-(const sf::IntRect& rect, const sf::Vector2i& shift) {
+	return { rect.position - shift, rect.size };
+};
