@@ -47,9 +47,9 @@ namespace assets {
 		std::string _path = path("langs.tlml");
 
 		// open file stream
-		FILE* file;
-		if (int err = fopen_s(&file, _path.c_str(), "r")) {
-			fprintf(stderr, "failed to open <%s>: %s\n", _path.c_str(), strerror(err));
+		FILE* file = fopen(_path.c_str(), "r");
+		if (!file) {
+			fprintf(stderr, "failed to open <%s>: %s\n", _path.c_str(), strerror(errno));
 			return true;
 		};
 
@@ -98,9 +98,9 @@ namespace assets {
 		std::string _path = path(filename);
 
 		// open file stream
-		FILE* file;
-		if (int err = fopen_s(&file, _path.c_str(), "r")) {
-			fprintf(stderr, "failed to open <%s>: %s\n", _path.c_str(), strerror(err));
+		FILE* file = fopen(_path.c_str(), "r");
+		if (!file) {
+			fprintf(stderr, "failed to open <%s>: %s\n", _path.c_str(), strerror(errno));
 			return true;
 		};
 
