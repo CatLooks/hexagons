@@ -6,7 +6,7 @@
 #include <list>
 #include "ui/buffer.hpp"
 #include "assets.hpp"
-#include "div.hpp"
+#include "mathext.hpp"
 #include "hex.hpp"
 
 /// Game map object.
@@ -73,6 +73,12 @@ public:
 	///
 	/// @return Tile reference.
 	Hex* operator[](sf::Vector2i pos) const;
+
+public:
+	/// Adds a troop to the map.
+	///
+	/// @param troop Troop object.
+	void setTroop(Troop&& troop);
 
 public:
 	/// Returns amount of hexes stored.

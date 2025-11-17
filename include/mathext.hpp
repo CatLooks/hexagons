@@ -2,6 +2,7 @@
 
 // include dependencies
 #include "math.h"
+#include <SFML/Graphics/Rect.hpp>
 
 /// Math extension function namespace.
 namespace ext {
@@ -51,3 +52,11 @@ namespace ext {
 	/// @param upper Upper bound.
 	float fclamp(float x, float lower, float upper);
 };
+
+/// Shifts a rectangle by a vector.
+///
+/// @param rect Original rectangle.
+/// @param shift Shift vector.
+///
+/// @return Shifted rectangle.
+sf::IntRect operator+(const sf::IntRect& rect, const sf::Vector2i& shift);

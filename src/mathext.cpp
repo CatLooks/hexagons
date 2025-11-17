@@ -45,3 +45,8 @@ namespace ext {
 		return fmin(fmax(x, lower), upper);
 	};
 };
+
+/// Shifts a rectangle by a vector.
+sf::IntRect operator+(const sf::IntRect& rect, const sf::Vector2i& shift) {
+	return { rect.position + shift, rect.size };
+};

@@ -1,5 +1,6 @@
 #include "ui/drag.hpp"
 #include "ui/window.hpp"
+#include "mathext.hpp"
 
 namespace ui {
 	/// Constructs an inactive drag event.
@@ -31,12 +32,12 @@ namespace ui {
 
 		// clamp value
 		if (max) {
-			if (value.x >= max->x) value.x = max->x - 1;
-			if (value.y >= max->y) value.y = max->y - 1;
+			value.x = ext::imin(value.x, max->x - 1);
+			value.y = ext::imin(value.y, max->y - 1);
 		};
 		if (min) {
-			if (value.x < min->x) value.x = min->x;
-			if (value.y < min->y) value.y = min->y;
+			value.x = ext::imax(value.x, min->x);
+			value.y = ext::imax(value.y, min->y);
 		};
 
 		// set reference to new value
@@ -68,16 +69,11 @@ namespace ui {
 
 	/// Updates drag scaling.
 	void Drag::setScale(float scale, sf::Vector2i mouse) {
-		// @todo: fix this fucking thing
-		//
-		// in theory this should be:
-		// 
-		//     camera = (camera + mouse) * new_scale / old_scale - mouse;
-		//
-		// reference vector is either not modified
-		// or constantly gets overwritten by inner state of ui::Drag
-		//
-		// also code above does not work
+		// clamp scale
+		scale = ext::fclamp(scale, min_zoom, max_zoom);
+
+		// shift camera
+		*_ref = sf::Vector2i(sf::Vector2f(*_ref + mouse) * scale / _scale) - mouse;
 
 		// set new scale
 		_scale = scale;

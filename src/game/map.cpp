@@ -133,4 +133,10 @@ void Map::draw(ui::RenderBuffer& target) const {
 	while (auto tile = drawer.next()) {
 		tile->drawBorders(target, Draw::regionBorderTest, sf::Color::Black);
 	};
+
+	// draw tile contents
+	drawer.reset();
+	while (auto tile = drawer.next()) {
+		Draw::troopEntity(*tile, target);
+	};
 };

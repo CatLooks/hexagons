@@ -1,8 +1,10 @@
 #pragma once
 
 // include dependencies
-#include "values/hex_values.hpp"
 #include "draw/hex_draw.hpp"
+#include "draw/troop_draw.hpp"
+#include "draw/build_draw.hpp"
+#include "draw/plant_draw.hpp"
 
 /// Tile drawer object.
 /// Prepares tile drawing data for each tile in an area.

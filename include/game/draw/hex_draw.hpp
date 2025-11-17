@@ -3,9 +3,6 @@
 // include dependencies
 #include "game/values/hex_values.hpp"
 #include "game/map.hpp"
-#include "troop_draw.hpp"
-#include "build_draw.hpp"
-#include "plant_draw.hpp"
 #include <functional>
 
 namespace Draw {
