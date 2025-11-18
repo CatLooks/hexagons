@@ -13,25 +13,31 @@ namespace Values {
 
 	/// Troop health bar texture type.
 	enum class TroopBar {
-		S0, // 0 / 6 = 0%
-		S1, // 1 / 6
-		S2, // 2 / 6 = 1 / 3
-		S3, // 3 / 6 = 1 / 2
-		S4, // 4 / 6 = 2 / 3
-		S5, // 5 / 6
-		S6, // 6 / 6 = 100%
-		Q1, // 1 / 4
-		Q3, // 3 / 4
-		UX, // invalid
+		S0 = 0, // 0 / 6
+		S1 = 1, // 1 / 6
+		S2 = 2, // 2 / 6
+		S3 = 3, // 3 / 6
+		S4 = 4, // 4 / 6
+		S5 = 5, // 5 / 6
+		S6 = 6, // 6 / 6
 
+		Q0 = S0, // 0 / 4
+		Q1 = 7 , // 1 / 4
+		Q2 = S3, // 2 / 4
+		Q3 = 8 , // 3 / 4
+		Q4 = S6, // 4 / 4
+
+		UX, // invalid
 		Count
 	};
 
-	/// Troop health bar textures.
-	///
-	/// @param id Bar fill amount.
-	extern const sf::IntRect troop_hp[static_cast<size_t>(TroopBar::Count)];
-
+	/// Troop health bar base texture.
+	extern const sf::IntRect hp_base;
 	/// Poison health bar textures offset from normal bars.
 	extern const sf::Vector2i poison_bar;
+
+	/// Returns a texture map for troop health bar.
+	/// 
+	/// @param troop Troop reference.
+	sf::IntRect troop_hp(const Troop& troop);
 };

@@ -30,7 +30,7 @@ public:
 		{
 			Troop troop;
 			troop.pos = { 3, 3 };
-			troop.type = Troop::Farmer;
+			troop.type = Troop::Archer;
 			troop.hp = 1;
 			map.setTroop(std::move(troop));
 		}

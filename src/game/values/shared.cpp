@@ -1,8 +1,10 @@
 #include "game/values/shared.hpp"
 
 namespace Values {
+	/// Texture to render space multiplier.
+	const int k = 2;
 	/// Base unit for tile related sizes.
-	const int tileUnit = 64 * 2;
+	const int tileUnit = 64 * k;
 	/// Size of tile texture.
 	const sf::Vector2i tileTex = { 64, 64 };
 	/// Size of rendered tile.

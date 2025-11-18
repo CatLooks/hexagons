@@ -13,7 +13,8 @@ namespace Draw {
 
 	/// Draws troop status bar.
 	///
-	/// @param tile Tile draw data.
+	/// @param pos Troop position.
+	/// @param troop Troop reference.
 	/// @param target Target render buffer.
-	void troopStatus(const Tile& tile, ui::RenderBuffer& buffer);
+	void troopStatus(sf::Vector2i pos, const Troop& troop, ui::RenderBuffer& buffer);
 };

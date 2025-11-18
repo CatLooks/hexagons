@@ -5,6 +5,8 @@
 #include <SFML/System/Vector2.hpp>
 
 namespace Values {
+	/// Texture to render space multiplier.
+	extern const int k;
 	/// Base unit for tile related sizes.
 	extern const int tileUnit;
 	/// Size of tile texture.
