@@ -6,13 +6,18 @@
 #include <optional>
 
 namespace ui {
+	class Camera;
+
 	/// Mouse drag event manager.
 	class Drag {
+		friend Camera;
+
 	protected:
 		sf::Vector2i _mouse; /// Initial mouse position.
 		sf::Vector2i _value; /// Initial value.
 		sf::Vector2i*  _ref; /// Drag value setter.
-		float  _scale = 1.f; /// Drag scale value.
+
+		float    _scale = 1.f; /// Default drag scaling.
 		bool  _active = false; /// Whether the event is active.
 		bool _pressed = false; /// Whether the mouse is pressed.
 
@@ -21,9 +26,6 @@ namespace ui {
 
 		std::optional<sf::Vector2i> min = {}; /// Minimal drag values for both axes.
 		std::optional<sf::Vector2i> max = {}; /// First out-of-range drag values for both axes.
-
-		float min_zoom = 0.0f;     /// Minimal scale (by default `0`).
-		float max_zoom = INFINITY; /// Maximal scale (by default `infinity`).
 
 	protected:
 		/// Starts the drag event.
@@ -45,29 +47,16 @@ namespace ui {
 		/// @param ref Dragged value reference.
 		Drag(sf::Vector2i* ref);
 
+		/// Sets drag multiplier.
+		/// 
+		/// @param scale Drag multiplier.
+		void scaling(float scale);
+
 		/// Updates the drag event.
 		/// 
 		/// @param mouse Mouse position.
+		/// @param window Window size.
 		/// @param pressed Whether the drag button is pressed.
-		void update(sf::Vector2i mouse, bool pressed);
-
-		/// Returns current drag scaling.
-		float getScale() const;
-		/// Updates drag scaling.
-		/// 
-		/// @param scale Scaling factor.
-		/// @param mouse Mouse position.
-		void setScale(float scale, sf::Vector2i mouse);
-
-		/// Updates drag scaling with a mouse wheel.
-		/// 
-		/// Positive `wheel` values increase scaling.
-		/// 
-		/// Negative `wheel` values decrease scaling.
-		/// 
-		/// @param multiplier Multiplier for each scroll.
-		/// @param wheel Amount of wheel scrolls.
-		/// @param mouse Mouse position.
-		void scrollScale(float multiplier, int wheel, sf::Vector2i mouse);
+		void update(sf::Vector2i mouse, sf::Vector2i window, bool pressed);
 	};
 };

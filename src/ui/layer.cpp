@@ -210,7 +210,7 @@ namespace ui {
 			};
 			if (const auto* data = evt.getIf<sf::Event::MouseWheelScrolled>()) {
 				layer->event((Event)Event::MouseWheel {
-					layer->map(data->position, _win_rect), data->delta
+					layer->map(data->position, _win_rect), (int)data->delta
 				});
 				return;
 			};

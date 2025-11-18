@@ -53,6 +53,7 @@
     <ClCompile Include="src\ui\anim\easing.cpp" />
     <ClCompile Include="src\ui\anim\timer.cpp" />
     <ClCompile Include="src\ui\buffer.cpp" />
+    <ClCompile Include="src\ui\camera.cpp" />
     <ClCompile Include="src\ui\drag.cpp" />
     <ClCompile Include="src\ui\element.cpp" />
     <ClCompile Include="src\ui\image.cpp" />
@@ -107,6 +108,7 @@
     <ClInclude Include="include\ui\anim\linear.hpp" />
     <ClInclude Include="include\ui\anim\timer.hpp" />
     <ClInclude Include="include\ui\buffer.hpp" />
+    <ClInclude Include="include\ui\camera.hpp" />
     <ClInclude Include="include\ui\drag.hpp" />
     <ClInclude Include="include\ui\element.hpp" />
     <ClInclude Include="include\ui\event.hpp" />

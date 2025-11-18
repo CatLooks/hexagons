@@ -44,8 +44,13 @@ namespace ui {
 		*_ref = value;
 	};
 
+	/// Sets drag multiplier.
+	void Drag::scaling(float scale) {
+		_scale = scale;
+	};
+
 	/// Updates the drag event.
-	void Drag::update(sf::Vector2i mouse, bool pressed) {
+	void Drag::update(sf::Vector2i mouse, sf::Vector2i window, bool pressed) {
 		// check for press
 		if (!_pressed && pressed)
 			if (sf::IntRect({}, ui::window.size()).contains(mouse))
@@ -60,39 +65,5 @@ namespace ui {
 
 		// update button status
 		_pressed = pressed;
-	};
-
-	/// Returns current drag scaling.
-	float Drag::getScale() const {
-		return _scale;
-	};
-
-	/// Updates drag scaling.
-	void Drag::setScale(float scale, sf::Vector2i mouse) {
-		// clamp scale
-		scale = ext::fclamp(scale, min_zoom, max_zoom);
-
-		// shift camera
-		*_ref = sf::Vector2i(sf::Vector2f(*_ref + mouse) * scale / _scale) - mouse;
-
-		// set new scale
-		_scale = scale;
-	};
-
-	/// Updates drag scaling with a mouse wheel.
-	void Drag::scrollScale(float multiplier, int wheel, sf::Vector2i mouse) {
-		// equivalent to
-		// scale *= multiplier ^ wheel
-
-		float scale = _scale;
-		while (wheel > 0) {
-			scale *= multiplier;
-			wheel--;
-		};
-		while (wheel < 0) {
-			scale /= multiplier;
-			wheel++;
-		};
-		setScale(scale, mouse);
 	};
 };

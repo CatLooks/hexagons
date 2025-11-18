@@ -51,6 +51,14 @@ namespace ext {
 	/// @param lower Lower bound.
 	/// @param upper Upper bound.
 	float fclamp(float x, float lower, float upper);
+
+	/// Raises a float to an integer power.
+	/// 
+	/// @param base Power base.
+	/// @param index Power index.
+	/// 
+	/// @return `base ^ index`.
+	float fpown(float base, int index);
 };
 
 /// Shifts a rectangle by a vector.

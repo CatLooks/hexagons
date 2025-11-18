@@ -44,6 +44,20 @@ namespace ext {
 	float fclamp(float x, float lower, float upper) {
 		return fmin(fmax(x, lower), upper);
 	};
+
+	/// Raises a float to an integer power.
+	float fpown(float base, int index) {
+		float scale = 1.f;
+		if (index > 0) {
+			do scale *= base;
+			while (index-- > 0);
+		}
+		else if (index < 0) {
+			do scale /= base;
+			while (index++ < 0);
+		};
+		return scale;
+	};
 };
 
 /// Shifts a rectangle by a vector.

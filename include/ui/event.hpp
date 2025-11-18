@@ -29,7 +29,7 @@ namespace ui {
 
 		/// @brief Fires when mouse wheel gets scrolled.
 		struct MouseWheel : MouseMove {
-			float delta; /// Mouse wheel scroll change.
+			int delta; /// Mouse wheel scroll change.
 		};
 
 		/// @brief Fires when mouse button gets pressed.

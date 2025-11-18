@@ -11,6 +11,7 @@
 #include "ui/pages.hpp"
 #include "ui/input.hpp"
 #include "ui/drag.hpp"
+#include "ui/camera.hpp"
 #include "ui/anim/easing.hpp"
 #include "ui/anim/timer.hpp"
 #include "ui/anim/linear.hpp"

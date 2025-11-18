@@ -131,6 +131,7 @@ namespace ui {
 		bool _active = true;
 
 	public:
+		bool infinite    = false; /// Whether element's bounding box is infinite.
 		bool ignore      = false; /// Whether the element ignores events.
 		bool transparent = false; /// Whether mouse hover events can pass through the element.
 		bool scissor     = false; /// Whether to cut off pixels drawn outside of element's bounds.

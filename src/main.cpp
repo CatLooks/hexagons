@@ -3,15 +3,16 @@
 #include "assets.hpp"
 
 // map test
-class Game : public ui::Layer {
+class Game : public ui::Element {
 public:
-	Map _map;
-	ui::Drag _drag;
+	Map map;
+	ui::Layer* layer;
+	ui::Camera cam;
 
-	Game(): _drag(&_map.camera) {
-		_drag.invert = true;
-		_drag.min_zoom = 0.5f;
-		_drag.max_zoom = 2.0f;
+	Game(ui::Layer* layer): layer(layer), cam(layer, &map.camera, 17.f / 16) {
+		cam.minZoom = 0.5f;
+		cam.maxZoom = 2.0f;
+		layer->infinite = true;
 
 		const int w = 15;
 		const int h = 7;
@@ -25,16 +26,16 @@ public:
 			" b-gg !  b-gg !"
 		};
 
-		_map.resize({ {}, { w, h } });
+		map.resize({ {}, { w, h } });
 		Troop troop;
 		troop.pos = {3, 3};
 		troop.type = Troop::Farmer;
 		troop.hp = 1;
-		_map.setTroop(std::move(troop));
+		map.setTroop(std::move(troop));
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
-				Hex* hex = _map.at({ x, y });
+				Hex* hex = map.at({ x, y });
 				if (hex == nullptr) continue;
 
 				switch (arr[y][x]) {
@@ -67,35 +68,40 @@ public:
 			};
 		};
 
-		onEvent([=](const ui::Event& evt) {
+		layer->onEvent([=](const ui::Event& evt) {
 			if (auto data = evt.get<ui::Event::MouseWheel>()) {
-				_drag.scrollScale(17.f / 16, -data->delta, ui::window.mouse() - ui::window.size() / 2);
+				/*cam.scroll(
+					-data->delta,
+					ui::window.mouse(),
+					ui::window.size()
+				);*/
+				// uncomment after fixing
 				return true;
 			};
 
 			return false;
 		});
 
-		onUpdate([=](const sf::Time& _) {
-			setArea(ui::DimVector{ 1es, 1es } *_drag.getScale(), { 0px, 0px, 1ps, 1ps });
+		layer->onUpdate([=](const sf::Time& _) {
+			layer->setArea(ui::DimVector{ 1es, 1es } * cam.zoom(), { 0px, 0px, 1ps, 1ps });
 
 			sf::Vector2i offset;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) offset.y--;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) offset.y++;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) offset.x--;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) offset.x++;
-			_map.camera += offset * 2;
+			map.camera += offset * 2;
 
-			_drag.update(
-				ui::window.mouse(),
-				sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)
+			cam.pan(
+				sf::Mouse::isButtonPressed(sf::Mouse::Button::Right),
+				ui::window.mouse(), ui::window.size()
 			);
 		});
 	};
 
 protected:
 	void drawSelf(ui::RenderBuffer& target, sf::IntRect self) const override {
-		_map.draw(target);
+		map.draw(target);
 	};
 };
 
@@ -137,8 +143,8 @@ int main() {
 	});
 
 	// game test
-	Game* layer = new Game();
-	itf.layer(layer);
+	auto layer = itf.layer();
+	layer->add(new Game(layer));
 
 	// window main loop
 	while (ui::window.active()) {
