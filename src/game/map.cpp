@@ -41,9 +41,19 @@ Hex* Map::operator[](sf::Vector2i pos) const {
 };
 
 /// Adds a troop to the map.
-void Map::setTroop(Troop&& troop) {
+void Map::setTroop(const Troop& troop) {
 	_troops.push_back(troop);
 	at(troop.pos)->troop = &_troops.back();
+};
+/// Adds a building to the map.
+void Map::setBuild(const Build& build) {
+	_builds.push_back(build);
+	at(build.pos)->build = &_builds.back();
+};
+/// Adds a plant to the map.
+void Map::setPlant(const Plant& plant) {
+	_plants.push_back(plant);
+	at(plant.pos)->plant = &_plants.back();
 };
 
 /// Returns amount of hexes stored.
@@ -140,5 +150,7 @@ void Map::draw(ui::RenderBuffer& target) const {
 	drawer.reset();
 	while (auto tile = drawer.next()) {
 		Draw::troopEntity(*tile, target);
+		Draw::buildEntity(*tile, target);
+		Draw::plantEntity(*tile, target);
 	};
 };

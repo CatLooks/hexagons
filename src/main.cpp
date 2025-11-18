@@ -27,11 +27,25 @@ public:
 		};
 
 		map.resize({ {}, { w, h } });
-		Troop troop;
-		troop.pos = {3, 3};
-		troop.type = Troop::Farmer;
-		troop.hp = 1;
-		map.setTroop(std::move(troop));
+		{
+			Troop troop;
+			troop.pos = { 3, 3 };
+			troop.type = Troop::Farmer;
+			troop.hp = 1;
+			map.setTroop(std::move(troop));
+		}
+		{
+			Build build;
+			build.pos = { 2, 3 };
+			build.type = Build::Tower;
+			map.setBuild(std::move(build));
+		}
+		{
+			Plant plant;
+			plant.pos = { 4, 3 };
+			plant.type = Plant::Peach;
+			map.setPlant(std::move(plant));
+		}
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {

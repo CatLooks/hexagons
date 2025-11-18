@@ -78,7 +78,15 @@ public:
 	/// Adds a troop to the map.
 	///
 	/// @param troop Troop object.
-	void setTroop(Troop&& troop);
+	void setTroop(const Troop& troop);
+	/// Adds a building to the map.
+	///
+	/// @param build Building object.
+	void setBuild(const Build& build);
+	/// Adds a plant to the map.
+	///
+	/// @param plant Plant object.
+	void setPlant(const Plant& plant);
 
 public:
 	/// Returns amount of hexes stored.
