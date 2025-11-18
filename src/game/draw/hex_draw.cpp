@@ -42,7 +42,10 @@ namespace Draw {
 		if (!border) return;
 
 		// convert border index into border texture coords
-		sf::IntRect texmap = { { (border & 7) * 64, (border >> 3) * 64 }, { 64, 64 } };
+		sf::IntRect texmap = {
+			{ (border & 7) * Values::tileTex.x, (border >> 3) * Values::tileTex.y },
+			Values::tileTex
+		};
 
 		// draw borders
 		target.quad({ origin, Values::tileSize }, texmap, color);
