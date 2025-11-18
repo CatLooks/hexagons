@@ -17,5 +17,5 @@ struct Plant : Entity {
 		Grave,   /// Grave.
 
 		Count    /// Plant count.
-	} type;
+	} type = Bush;
 };

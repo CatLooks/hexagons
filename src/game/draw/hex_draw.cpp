@@ -1,6 +1,11 @@
 #include "game/draw/hex_draw.hpp"
 
 namespace Draw {
+	/// Returns a white or a black color, depending on the input.
+	sf::Color white(bool enable) {
+		return enable ? sf::Color::White : sf::Color::Black;
+	};
+
 	/// Draws tile base.
 	void Tile::drawBase(ui::RenderBuffer& target) const {
 		// draw ground tiles
@@ -20,7 +25,7 @@ namespace Draw {
 	};
 
 	/// Draws tile borders.
-	void Tile::drawBorders(ui::RenderBuffer& target, NeighborTest test, sf::Color color) const {
+	void Tile::drawBorders(ui::RenderBuffer& target, sf::Vector2i select, sf::Color color) const {
 		// ignore if not a ground tile
 		if (hex->type != Hex::Ground) return;
 
@@ -28,13 +33,19 @@ namespace Draw {
 		// each bit corresponds to a border
 		uint8_t border = 0;
 
+		// set every border if selected
+		if (coords == select) {
+			border = 0x3F;
+		}
+
 		// check neighbors
-		for (int i = 0; i < 6; i++) {
+		else for (int i = 0; i < 6; i++) {
 			// fetch neighbor hex
-			const Hex* nb = map[map.neighbor(coords, static_cast<Map::nbi_t>(i))];
+			sf::Vector2i pos = map->neighbor(coords, static_cast<Map::nbi_t>(i));
+			const Hex* nb = map->at(pos);
 
 			// set border if passes check
-			if (test(hex, nb))
+			if (!nb || nb->type != Hex::Ground || nb->team != hex->team || pos == select)
 				border |= 1 << i;
 		};
 
@@ -53,26 +64,22 @@ namespace Draw {
 	};
 
 	/// Draws tile sides.
-	void Tile::drawSides(ui::RenderBuffer& target, sf::Color color) const {
+	void Tile::drawSides(ui::RenderBuffer& target, sf::Vector2i select, sf::Color up, sf::Color low) const {
 		// ignore if not a solid tile
 		if (!hex->solid()) return;
 
 		// check if any side can be seen
-		const Hex* n2 = map[map.neighbor(coords, Map::LowerRight)];
-		const Hex* n3 = map[map.neighbor(coords, Map::LowerLeft)];
-		bool visible = (!n2 || !n2->solid()) || (!n3 || !n3->solid());
+		const Hex* n2 = map->at(map->neighbor(coords, Map::LowerRight));
+		const Hex* n3 = map->at(map->neighbor(coords, Map::LowerLeft));
+		bool visible = coords == select || (!n2 || !n2->solid()) || (!n3 || !n3->solid());
 
 		// draw border if visible
 		if (visible) {
-			target.quad({ origin + Values::tileLevel, Values::tileSize }, Values::sides, color);
+			sf::IntRect area = { origin + Values::tileLevel, Values::tileSize };
+			target.quad(area, Values::sides, up);
+			if (up != low)
+				target.quad(area, Values::sideShade, low);
 			target.forward(&assets::tilemap);
 		};
-	};
-
-	/// Checks whether a neighbor is from a different region.
-	bool regionBorderTest(const Hex* origin, const Hex* neighbor) {
-		return !neighbor
-			|| neighbor->type != Hex::Ground
-			|| neighbor->team != origin->team;
 	};
 };

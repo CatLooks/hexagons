@@ -16,5 +16,5 @@ struct Build : Entity {
 		Fort,   /// Fortress (strong defense).
 
 		Count   /// Building count.
-	} type;
+	} type = Castle;
 };

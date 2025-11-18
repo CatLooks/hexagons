@@ -10,7 +10,7 @@
 /// Prepares tile drawing data for each tile in an area.
 class TileDrawer {
 private:
-	const Map&   _map; /// Map reference.
+	const Map*   _map; /// Map reference.
 
 	sf::Vector2i _coords; /// Next hex coordinates.
 	sf::Vector2i _draw;   /// Next hex draw position.
@@ -19,13 +19,30 @@ private:
 	sf::Vector2i _beg; /// Draw area top-left corner.
 	sf::Vector2i _end; /// Draw area end coords.
 
+	sf::Vector2i _select = {-1, -1}; /// Selected tile coordinates.
+	int _elev = 0;                   /// Selected tile elevation.
+
 public:
 	/// Constructs a tile drawer.
 	/// 
 	/// @param map Map reference.
 	/// @param area Draw area.
 	/// @param origin Draw origin.
-	TileDrawer(const Map& map, sf::IntRect area, sf::Vector2i origin);
+	TileDrawer(const Map* map, sf::IntRect area, sf::Vector2i origin);
+
+	/// Selects a tile for elevation.
+	/// 
+	/// @param coords Selected tile coordinates.
+	/// @param elevation Selected tile elevation.
+	void select(sf::Vector2i coords, int elevation);
+
+	/// @return Selected tile coordinates.
+	sf::Vector2i selected() const;
+
+	/// Checks whether the tile is selected.
+	/// 
+	/// @param tile Tile object.
+	bool selected(const Draw::Tile& tile) const;
 
 	/// Resets the drawer to first tile.
 	void reset();

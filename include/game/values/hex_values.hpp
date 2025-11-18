@@ -5,8 +5,10 @@
 namespace Values {
 	/// Water hex.
 	extern const sf::IntRect water;
-	/// Hex sides.
+	/// White hex sides.
 	extern const sf::IntRect sides;
+	/// Hex sides shading.
+	extern const sf::IntRect sideShade;
 
 	/// Texture maps for teams.
 	/// @param id Team ID.

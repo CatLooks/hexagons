@@ -6,6 +6,11 @@
 #include <functional>
 
 namespace Draw {
+	/// Returns a white or a black color, depending on the input.
+	/// 
+	/// @param enable `true` for white, `false` for black.
+	sf::Color white(bool enable);
+
 	/// Tile drawing data.
 	struct Tile {
 		/// Neighbor test function signature.
@@ -16,7 +21,7 @@ namespace Draw {
 		/// @return Whether the test passed.
 		using NeighborTest = std::function<bool(const Hex* origin, const Hex* neighbor)>;
 
-		const Map& map;      /// Map reference.
+		const Map* map;      /// Map reference.
 		const Hex* hex;      /// Hex reference.
 		sf::Vector2i coords; /// Hex coordinates.
 		sf::Vector2i origin; /// Draw origin position.
@@ -26,7 +31,7 @@ namespace Draw {
 		/// @param map Map reference.
 		/// @param coords Hex coordinates.
 		/// @param origin Draw origin position.
-		Tile(const Map& map, sf::Vector2i coords, sf::Vector2i origin);
+		Tile(const Map* map, sf::Vector2i coords, sf::Vector2i origin);
 
 		/// Draws tile base.
 		///
@@ -36,20 +41,16 @@ namespace Draw {
 		/// Draws tile borders.
 		///
 		/// @param target Target render buffer.
-		/// @param test Border draw test.
+		/// @param select Selected tile position.
 		/// @param color Border color.
-		void drawBorders(ui::RenderBuffer& target, NeighborTest test, sf::Color color) const;
+		void drawBorders(ui::RenderBuffer& target, sf::Vector2i select, sf::Color color) const;
 
 		/// Draws tile sides.
 		///
 		/// @param target Target render buffer.
-		/// @param color Sides color.
-		void drawSides(ui::RenderBuffer& target, sf::Color color) const;
+		/// @param select Selected tile position.
+		/// @param up Upper gradient color.
+		/// @param low Lower gradient color.
+		void drawSides(ui::RenderBuffer& target, sf::Vector2i select, sf::Color up, sf::Color low) const;
 	};
-
-	/// Checks whether a neighbor is from a different region.
-	///
-	/// @param origin Hex at origin.
-	/// @param neighbor Neighbor of `origin`.
-	bool regionBorderTest(const Hex* origin, const Hex* neighbor);
 };

@@ -133,17 +133,34 @@ void Map::draw(ui::RenderBuffer& target) const {
 	sf::IntRect area = { {}, _size };
 	sf::Vector2i origin = -camera;
 
+	// setup tile drawer
+	TileDrawer drawer(this, area, origin);
+	drawer.select({ 3, 3 }, Values::tileLevel.y);
+	std::optional<Draw::Tile> elevated;
+
 	// draw tile geometry
-	TileDrawer drawer(*this, area, origin);
 	while (auto tile = drawer.next()) {
-		tile->drawBase(target);
-		tile->drawSides(target, sf::Color::Black);
+		if (drawer.selected(*tile)) {
+			tile->drawSides(target, drawer.selected(), sf::Color::Black, sf::Color::White);
+			elevated = tile;
+		}
+		else {
+			tile->drawBase(target);
+			tile->drawSides(target, drawer.selected(), Draw::white(tile->hex->team == Hex::Red), sf::Color::Black);
+		};
 	};
 
 	// draw borders
 	drawer.reset();
 	while (auto tile = drawer.next()) {
-		tile->drawBorders(target, Draw::regionBorderTest, sf::Color::Black);
+		if (!drawer.selected(*tile))
+			tile->drawBorders(target, drawer.selected(), Draw::white(tile->hex->team == Hex::Red));
+	};
+
+	// draw elevated tile top
+	if (elevated) {
+		elevated->drawBase(target);
+		elevated->drawBorders(target, drawer.selected(), sf::Color::Black);
 	};
 
 	// draw tile contents

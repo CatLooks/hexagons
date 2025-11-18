@@ -4,7 +4,8 @@ namespace Values {
 	/// Water hex.
 	const sf::IntRect water = coords(8, 1);
 	/// Hex sides.
-	const sf::IntRect sides = coords(8, 2);
+	const sf::IntRect sides = coords(8, 3);
+	const sf::IntRect sideShade = coords(8, 2);
 
 	// texture array
 	const sf::IntRect hex_textures[Hex::Count] = {
