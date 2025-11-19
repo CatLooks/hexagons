@@ -51,10 +51,10 @@ private:
 	std::list<Build> _builds; /// Building pool.
 	std::list<Plant> _plants; /// Plant pool.
 
-	std::optional<sf::Vector2i> _select; /// Selected tile position.
-
 public:
 	sf::Vector2i camera; /// Map camera.
+	Hex::Team selected = Hex::Count;
+	std::optional<sf::Vector2i> _select; /// Selected tile position.
 
 public:
 	/// Checks if a position is within the map.

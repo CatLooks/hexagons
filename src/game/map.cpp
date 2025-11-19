@@ -137,18 +137,19 @@ void Map::draw(ui::RenderBuffer& target) const {
 
 	// setup tile drawer
 	TileDrawer drawer(this, area, origin, Values::tileSize);
-	//drawer.select({ 3, 3 }, Values::tileLevel.y);
+	if (_select)
+		drawer.select(*_select, Values::tileLevel(Values::tileSize).y);
 	std::optional<Draw::Tile> elevated;
 
 	// draw tile geometry
 	while (auto tile = drawer.next()) {
 		if (drawer.selected(*tile)) {
-			tile->drawSides(target, drawer.selected(), sf::Color::Black, sf::Color::White);
+			tile->drawSides(target, drawer.selected(), sf::Color::White, sf::Color::Black);
 			elevated = tile;
 		}
 		else {
 			tile->drawBase(target);
-			tile->drawSides(target, drawer.selected(), sf::Color::Black, sf::Color::Black);
+			tile->drawSides(target, drawer.selected(), Draw::white(!_select && tile->hex->team == selected), sf::Color::Black);
 		};
 	};
 
@@ -156,13 +157,13 @@ void Map::draw(ui::RenderBuffer& target) const {
 	drawer.reset();
 	while (auto tile = drawer.next()) {
 		if (!drawer.selected(*tile))
-			tile->drawBorders(target, drawer.selected(), sf::Color::Black);
+			tile->drawBorders(target, drawer.selected(), Draw::white(!_select && tile->hex->team == selected));
 	};
 
 	// draw elevated tile top
 	if (elevated) {
 		elevated->drawBase(target);
-		elevated->drawBorders(target, drawer.selected(), sf::Color::Black);
+		elevated->drawBorders(target, drawer.selected(), sf::Color::White);
 	};
 
 	// draw tile contents

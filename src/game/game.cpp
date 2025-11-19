@@ -22,9 +22,13 @@ Game::Game(ui::Layer* layer, gameui::Panel* panel)
 
 				// deselect
 				if (!hex) {
+					map.selected = Hex::Count;
+					map._select = {};
 					_panel->construct(gameui::Panel::None);
 				}
 				else if (hex->troop && hex->troop->type == Troop::Spearman) {
+					map.selected = Hex::Count;
+					map._select = pos;
 					_panel->construct(gameui::Panel::L21);
 					const auto& actions = _panel->actions();
 					{
@@ -50,6 +54,8 @@ Game::Game(ui::Layer* layer, gameui::Panel* panel)
 					}
 				}
 				else if (hex->build && hex->build->type == Build::Tower) {
+					map.selected = Hex::Count;
+					map._select = pos;
 					_panel->construct(gameui::Panel::L01);
 					const auto& actions = _panel->actions();
 					{
@@ -65,6 +71,8 @@ Game::Game(ui::Layer* layer, gameui::Panel* panel)
 					}
 				}
 				else if (hex->plant) {
+					map.selected = Hex::Count;
+					map._select = pos;
 					_panel->construct(gameui::Panel::L00);
 					{
 						_panel->preview()->addTexture(&assets::tilemap, Values::plant_textures[hex->plant->type]);
@@ -74,6 +82,8 @@ Game::Game(ui::Layer* layer, gameui::Panel* panel)
 					}
 				}
 				else {
+					map.selected = hex->team;
+					map._select = {};
 					_panel->construct(gameui::Panel::L22);
 					const auto& actions = _panel->actions();
 					{
