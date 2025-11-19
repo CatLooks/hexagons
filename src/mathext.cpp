@@ -14,9 +14,8 @@ namespace ext {
 	};
 
 	/// Calculates quotient and remainder rounded down.
-	void idivmod(int a, int d, int& q, int& r) {
-		q = idiv(a, d);
-		r = imod(a, d);
+	Pair<int, int> idivmod(int a, int d) {
+		return { idiv(a, d), imod(a, d) };
 	};
 
 	/// Returns smaller integer.
