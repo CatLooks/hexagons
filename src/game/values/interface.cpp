@@ -14,7 +14,7 @@ namespace Values {
 	};
 
 	/// Troop skills textures.
-	const sf::IntRect troop_skills[static_cast<int>(SkillType::Count)] = {
+	const sf::IntRect skills[static_cast<int>(SkillType::Count)] = {
 		coords(0, 1),
 		coords(1, 1),
 		coords(2, 1),
@@ -32,7 +32,7 @@ namespace Values {
 	};
 
 	/// Troop effect textures.
-	const sf::IntRect troop_effects[static_cast<int>(EffectType::Count)] = {
+	const sf::IntRect effects[static_cast<int>(EffectType::Count)] = {
 		coords(8, 3, 0, 0),
 		coords(8, 3, 1, 0),
 		coords(8, 3, 2, 0),
@@ -59,5 +59,11 @@ namespace Values {
 		coords(9, 3, 3, 1),
 		coords(9, 3, 0, 2),
 		coords(9, 3, 1, 2),
+	};
+
+	/// Game panel text settings.
+	const ui::TextSettings panel_text = {
+		assets::font, 24, sf::Color::White,
+		sf::Color::Black, 2
 	};
 };

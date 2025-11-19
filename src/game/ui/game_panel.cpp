@@ -3,21 +3,16 @@
 
 namespace gameui {
 	/// Game control panel map.
-	const ui::Panel::Map Panel::textures[3] = {
-		ui::Panel::Map::rect(&assets::interface, Values::coords(2, 0), { 4, 4 }, 2),
-		ui::Panel::Map::rect(&assets::interface, Values::coords(0, 0), { 6, 6 }, 2),
-		ui::Panel::Map::rect(&assets::interface, Values::coords(1, 0), { 6, 6 }, 2),
-	};
+	const ui::Panel::Map Panel::texture =
+		ui::Panel::Map::rect(&assets::interface, Values::coords(2, 0), { 4, 4 }, 2);
 
 	/// Panel height.
-	const ui::Dim Panel::height = ui::Dim(48 * Values::k);
-	/// Action box size.
-	const ui::Dim Panel::box = ui::Dim(64 * Values::k);
+	const ui::Dim Panel::height = float(48 * Values::k);
 	/// Action box spacing.
-	const ui::Dim Panel::spacing = Panel::box * 1.5;
+	const ui::Dim Panel::spacing = Action::size * 1.6f;
 
 	/// Box spacing table.
-	const std::vector<float> Panel::spacing_table[Panel::Count] = {
+	static const std::vector<float> spacing_table[Panel::Count] = {
 		/* L00 */ {},
 		/* L10 */ { -1.5f },
 		/* L01 */ {  1.5f },
@@ -27,19 +22,24 @@ namespace gameui {
 		/* L22 */ { -2.0f, -1.0f, 1.0f, 2.0f }
 	};
 
+	/// Amount of actions in layout.
+	static const int box_count[Panel::Count] = {
+		0, 1, 1, 2, 3, 3, 4
+	};
+
 	/// Constructs the game panel.
-	Panel::Panel(): ui::Panel(textures[Lower]) {
+	Panel::Panel(): ui::Panel(texture), _layout(L00) {
 		// set panel bounds
 		bounds = { 0px, 1as, 1ps, height };
 		event_scissor = false;
 		padding.set(0);
 
 		// create preview box
-		_preview = new ui::Panel(textures[Normal]);
+		_preview = new Action();
 		{
-			_preview->bounds = { 0.5as, height - box, box, box };
+			_preview->position() = { 0.5as, height - Action::size };
 		};
-		add(_preview); // @todo: changed to adds()
+		adds(_preview);
 	};
 
 	/// Reconstructs panel actions.
@@ -49,27 +49,30 @@ namespace gameui {
 		clear();
 
 		// construct new boxes
-		int count = (layout >> 4) + (layout & 15);
+		int count = box_count[layout];
 		for (int i = 0; i < count; i++) {
-			ui::Panel* action = new ui::Panel(textures[Normal]);
-			action->bounds = {
+			// create action button
+			Action* action = new Action(i + 1);
+			action->position() = {
 				0.5as + spacing * spacing_table[layout].at(i),
-				height - box, box, box
+				height - Action::size
 			};
+			action->addTexture(Values::skills[static_cast<int>(SkillType::RangeBoost)]);
+			auto text = action->addLabel();
+			text->setPath("param");
+			text->param("value", "@!troop.archer");
+
+			// register action button
 			_boxes.push_back(action);
 			add(action);
 		};
 
-		// create preview box
-		_preview = new ui::Panel(textures[Normal]);
-		{
-			_preview->bounds = { 0.5as, height - box, box, box };
-		};
-		add(_preview); // @todo: remove this
+		// recalculate panel
+		recalculate();
 	};
 
 	/// Returns a reference to action panels.
-	const std::vector<ui::Panel*>& Panel::actions() const {
+	const std::vector<Action*>& Panel::actions() const {
 		return _boxes;
 	};
 };

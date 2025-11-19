@@ -189,6 +189,12 @@
     <ClCompile Include="src\game\game.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\ui\action_button.cpp">
+      <Filter>Source Files\game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\values\interface.cpp">
+      <Filter>Source Files\game\values</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -355,6 +361,12 @@
     </ClInclude>
     <ClInclude Include="include\game\game.hpp">
       <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\ui\action_button.hpp">
+      <Filter>Header Files\game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\values\interface.hpp">
+      <Filter>Header Files\game\values</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

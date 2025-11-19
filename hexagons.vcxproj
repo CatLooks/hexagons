@@ -40,10 +40,12 @@
     <ClCompile Include="src\game\map.cpp" />
     <ClCompile Include="src\game\plant.cpp" />
     <ClCompile Include="src\game\troop.cpp" />
+    <ClCompile Include="src\game\ui\action_button.cpp" />
     <ClCompile Include="src\game\ui\game_panel.cpp" />
     <ClCompile Include="src\game\ui\resource_bar.cpp" />
     <ClCompile Include="src\game\values\build_values.cpp" />
     <ClCompile Include="src\game\values\hex_values.cpp" />
+    <ClCompile Include="src\game\values\interface.cpp" />
     <ClCompile Include="src\game\values\plant_values.cpp" />
     <ClCompile Include="src\game\values\shared.cpp" />
     <ClCompile Include="src\game\values\troop_values.cpp" />
@@ -97,10 +99,12 @@
     <ClInclude Include="include\game\map.hpp" />
     <ClInclude Include="include\game\plant.hpp" />
     <ClInclude Include="include\game\troop.hpp" />
+    <ClInclude Include="include\game\ui\action_button.hpp" />
     <ClInclude Include="include\game\ui\game_panel.hpp" />
     <ClInclude Include="include\game\ui\resource_bar.hpp" />
     <ClInclude Include="include\game\values\build_values.hpp" />
     <ClInclude Include="include\game\values\hex_values.hpp" />
+    <ClInclude Include="include\game\values\interface.hpp" />
     <ClInclude Include="include\game\values\plant_values.hpp" />
     <ClInclude Include="include\game\values\shared.hpp" />
     <ClInclude Include="include\game\values\troop_values.hpp" />

@@ -1,5 +1,7 @@
 #pragma once
 #include "shared.hpp"
+#include "ui/text.hpp"
+#include "assets.hpp"
 
 /// Skill enumeration.
 enum class SkillType {
@@ -60,4 +62,7 @@ namespace Values {
 	extern const sf::IntRect annotations[static_cast<int>(Annotation::Count)];
 	/// Interface digit textures.
 	extern const sf::IntRect digits[10];
+
+	/// Game panel text settings.
+	extern const ui::TextSettings panel_text;
 };

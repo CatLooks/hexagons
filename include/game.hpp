@@ -7,5 +7,6 @@
 #include "game/hex.hpp"
 #include "game/map.hpp"
 #include "game/game.hpp"
+#include "game/ui/action_button.hpp"
 #include "game/ui/game_panel.hpp"
 #include "game/ui/resource_bar.hpp"
