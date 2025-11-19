@@ -41,4 +41,7 @@ namespace Values {
 
 	/// Missing texture replacement.
 	extern const sf::IntRect missing;
+
+	/// Keyboard pan speed multiplier.
+	extern const float panSpeed;
 };

@@ -38,4 +38,7 @@ namespace Values {
 
 	/// Missing texture replacement.
 	const sf::IntRect missing = coords(9, 3);
+
+	/// Keyboard pan speed multiplier.
+	const float panSpeed = 240.f;
 };

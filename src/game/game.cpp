@@ -27,14 +27,14 @@ Game::Game(ui::Layer* layer)
 	// add camera zoom handler
 	layer->onEvent([=](const ui::Event& evt) {
 		if (auto data = evt.get<ui::Event::MouseWheel>()) {
-			// @todo fix camera
+			_camera.scroll(-data->delta, ui::window.mouse(), ui::window.size());
 			return true;
 		};
 		return false;
 	});
 
 	// add camera pan handler
-	layer->onUpdate([=](const sf::Time& _) {
+	layer->onUpdate([=](const sf::Time& delta) {
 		// set layer scale
 		layer->setArea(ui::DimVector(1es, 1es) * _camera.zoom(), { 0px, 0px, 1ps, 1ps });
 
@@ -44,7 +44,8 @@ Game::Game(ui::Layer* layer)
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) offset.y++;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) offset.x--;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) offset.x++;
-		map.camera += offset * Values::k * 4;
+		map.camera += sf::Vector2i(sf::Vector2f(offset * Values::k)
+			* Values::panSpeed * delta.asSeconds());
 
 		// mouse camera pan
 		_camera.pan(
