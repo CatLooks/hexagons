@@ -1,7 +1,9 @@
 #include "networking_remake/LobbyManager.hpp"
 
 LobbyManager::LobbyManager(EOS_HLobby handle, EOS_ProductUserId id, EOS_HP2P p2p)
-	: LobbyHandle(handle), LocalUserId(id), P2PHandle(p2p) {}
+	: LobbyHandle(handle), LocalUserId(id), P2PHandle(p2p) {
+	std::cout << "[DEBUG] LocalUserId: " << LocalUserId << std::endl;
+}
 
 LobbyManager::~LobbyManager() {
 	// Unregister the notification callback
@@ -115,7 +117,7 @@ void LobbyManager::HandleCreateLobbyComplete(const EOS_Lobby_CreateLobbyCallback
 		LobbyId = Data->LobbyId;
 		std::cout << "[LobbyManager] Lobby created with ID: " << LobbyId << std::endl;
 		RegisterMemberStatusNotifications();
-		OnLobbyCreated.Broadcast(LobbyId); // Broadcast the event
+		OnLobbyCreated.Broadcast(LobbyId);
 	}
 	else {
 		std::cerr << "Failed to create lobby. Error code: " << EOS_EResult_ToString(Data->ResultCode) << std::endl;
@@ -151,8 +153,8 @@ void LobbyManager::HandleFindLobbyComplete(const EOS_LobbySearch_FindCallbackInf
 		CopyOptions.LobbyIndex = 0;
 
 		if (EOS_LobbySearch_CopySearchResultByIndex(LobbySearchHandle, &CopyOptions, &LobbyDetailsHandle) == EOS_EResult::EOS_Success) {
+			this->LobbyDetailsHandle = LobbyDetailsHandle; // Store the handle for later use
 			JoinLobby(LobbyDetailsHandle);
-			EOS_LobbyDetails_Release(LobbyDetailsHandle); // Clean up the copied details handle
 		}
 		else {
 			std::cerr << "[LobbyManager] Failed to copy lobby details." << std::endl;
@@ -173,6 +175,14 @@ void LobbyManager::HandleJoinLobbyComplete(const EOS_Lobby_JoinLobbyCallbackInfo
 		LobbyId = Data->LobbyId;
 		std::cout << "[LobbyManager] Successfully joined lobby with ID: " << LobbyId << std::endl;
 		RegisterMemberStatusNotifications();
+
+		EOS_LobbyDetails_GetLobbyOwnerOptions OwnerOptions = {};
+		OwnerOptions.ApiVersion = EOS_LOBBYDETAILS_GETLOBBYOWNER_API_LATEST;
+		std::cout << "[DEBUG] LobbyDetailsHandle: " << LobbyDetailsHandle << std::endl;
+		HostId = EOS_LobbyDetails_GetLobbyOwner(LobbyDetailsHandle, &OwnerOptions);
+		std::cout << "[LobbyManager] Lobby owner ID: " << HostId << std::endl;
+		LocalConnection = std::make_shared<P2PManager>(P2PHandle, LocalUserId, HostId);
+
 		OnLobbyJoined.Broadcast(LobbyId); // Broadcast the event
 	}
 	else {
@@ -186,6 +196,7 @@ void LobbyManager::HandleMemberStatusChange(const EOS_Lobby_LobbyMemberStatusRec
 	switch (Data->CurrentStatus) {
 	case EOS_ELobbyMemberStatus::EOS_LMS_JOINED:
 		std::cout << "[LobbyManager] Member joined: " << Data->TargetUserId << std::endl;
+		ExternalUsers.push_back(Data->TargetUserId);
 		P2PConnections.push_back(std::make_unique<P2PManager>(P2PHandle, LocalUserId, Data->TargetUserId));
 		OnMemberJoined.Broadcast(Data->TargetUserId);
 		break;
@@ -199,4 +210,13 @@ void LobbyManager::HandleMemberStatusChange(const EOS_Lobby_LobbyMemberStatusRec
 	default:
 		break;
 	}
+}
+
+std::shared_ptr<P2PManager> LobbyManager::GetP2PConnection(EOS_ProductUserId peerId) {
+	for (const auto& connection : P2PConnections) {
+		if (connection->GetPeerId() == peerId) {
+			return connection;
+		}
+	}
+	return nullptr;
 }

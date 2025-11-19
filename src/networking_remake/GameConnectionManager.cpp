@@ -46,6 +46,9 @@ void GameConnectionManager::OnLoginCompleted(EOS_ProductUserId newLocalUserId) {
     if (m_IsHost) {
         std::cout << "[Connection] Issuing command: CreateLobby" << std::endl;
         lobby->CreateLobby();
+        lobby->OnMemberJoined.Add([this](EOS_ProductUserId memberId) {
+            this->OnMemberJoined(memberId);
+            });
     }
     else {
         std::cout << "[Connection] Issuing command: FindLobby" << std::endl;
@@ -57,10 +60,38 @@ void GameConnectionManager::OnLoginCompleted(EOS_ProductUserId newLocalUserId) {
 
 void GameConnectionManager::OnLobbyCreationCompleted(const std::string& lobbyId) {
     std::cout << "[Connection] EVENT: Successfully created and joined lobby " << lobbyId << std::endl;
-    // Transition to an "InLobby" state in the game
 }
 
 void GameConnectionManager::OnLobbyJoinCompleted(const std::string& lobbyId) {
     std::cout << "[Connection] EVENT: Successfully joined lobby " << lobbyId << std::endl;
-    // Transition to an "InLobby" state in the game
+
+    auto lobby = m_EosManager.GetLobbyManager();
+    auto local = lobby->GetLocalConnection();
+
+    local->OnMessageReceived.Add([this](char* message) {
+        this->OnPacketReceived(message);
+    });
+
+    // Teraz wyœlij inicjaln¹ wiadomoœæ
+    local->SendString("Message from client: Joined lobby!");
+}
+
+void GameConnectionManager::OnMemberJoined(EOS_ProductUserId memberId) {
+    std::cout << "[Connection] EVENT: Member joined: " << memberId << std::endl;
+	auto lobby = m_EosManager.GetLobbyManager();
+    lobby->GetP2PConnection(memberId)->OnMessageReceived.Add([this](char* message) {
+        this->OnPacketReceived(message);
+        });
+}
+
+void GameConnectionManager::OnPacketReceived(char* message){
+	std::cout << "[Connection] EVENT: Packet received: " << message << std::endl;
+    auto lobby = m_EosManager.GetLobbyManager();
+    if (!lobby->HasReceivedPacket()) {
+        lobby->SetReceivedPacket(true);
+        if (m_IsHost) {
+            auto peer = lobby->GetP2PConnection(lobby->GetPeerId());
+            peer->SendString("Message from host: Packet received!");
+        }
+    }
 }

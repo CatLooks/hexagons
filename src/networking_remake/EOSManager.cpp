@@ -2,6 +2,14 @@
 
 void EOSManager::Tick() {
 	EOS_Platform_Tick(platformHandle);
+    if (GetLobbyManager()) {
+        if (GetLobbyManager()->GetLocalConnection()) {
+            GetLobbyManager()->GetLocalConnection()->ReceivePacket();
+        }
+        else if (GetLobbyManager()->GetPeerId()) {
+			GetLobbyManager()->GetP2PConnection(GetLobbyManager()->GetPeerId())->ReceivePacket();
+        }
+    }
 }
 
 EOSManager::EOSManager() {

@@ -21,6 +21,12 @@ public:
 	void CreateLobby();
 	void FindLobby();
 
+	std::shared_ptr<P2PManager> GetP2PConnection(EOS_ProductUserId peerId);
+	std::shared_ptr<P2PManager> GetLocalConnection() { return LocalConnection; }
+	EOS_ProductUserId GetPeerId() const { return ExternalUsers.empty() ? nullptr : ExternalUsers[0]; }
+	bool HasReceivedPacket() const { return receivedPacket; }
+	void SetReceivedPacket(bool value) { receivedPacket = value; }
+
 	~LobbyManager();
 
 private:
@@ -37,18 +43,26 @@ private:
 	void JoinLobby(EOS_HLobbyDetails LobbyDetails);
 	void RegisterMemberStatusNotifications();
 
+	//Required handles and IDs
 	EOS_HLobby LobbyHandle = nullptr;
 	EOS_HP2P P2PHandle = nullptr;
 	EOS_ProductUserId LocalUserId = nullptr;
 	EOS_ProductUserId HostId = nullptr;
-	
+
+	//Lobby-related handles and IDs
 	EOS_LobbyId LobbyId = nullptr;
 	EOS_HLobbyDetails LobbyDetailsHandle = nullptr;
 	EOS_HLobbySearch LobbySearchHandle = nullptr;
 	EOS_NotificationId MemberStatusNotificationId = EOS_INVALID_NOTIFICATIONID;
 
+	//Client connection manager for communication with host
+	std::shared_ptr<P2PManager> LocalConnection = nullptr;
+
+	//Host connection manager for mass communication with peers
 	std::vector<EOS_ProductUserId> ExternalUsers;
 	std::vector<std::shared_ptr<P2PManager>> P2PConnections;
 
+	//duh.
 	bool isHost = false;
+	bool receivedPacket = false;
 };
