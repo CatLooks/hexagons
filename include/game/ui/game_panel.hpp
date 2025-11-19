@@ -48,5 +48,8 @@ namespace gameui {
 
 		/// Returns a reference to action panels.
 		const std::vector<Action*>& actions() const;
+
+		/// Returns a preview panel.
+		Action* preview() const;
 	};
 };

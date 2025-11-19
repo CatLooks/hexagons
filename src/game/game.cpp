@@ -3,8 +3,8 @@
 #include "mathext.hpp"
 
 /// Constructs a game object.
-Game::Game(ui::Layer* layer)
-	: _layer(layer), _camera(layer, &map.camera, 17.f / 16)
+Game::Game(ui::Layer* layer, gameui::Panel* panel)
+	: _layer(layer), _panel(panel), _camera(layer, &map.camera, 17.f / 16)
 {
 	// setup camera
 	_camera.minZoom = 0.5f;
@@ -18,6 +18,100 @@ Game::Game(ui::Layer* layer)
 				sf::Vector2i pos = mouseToHex(data->position);
 
 				// tile selection logic
+				Hex* hex = map.at(pos);
+
+				// deselect
+				if (!hex) {
+					_panel->construct(gameui::Panel::None);
+				}
+				else if (hex->troop && hex->troop->type == Troop::Spearman) {
+					_panel->construct(gameui::Panel::L21);
+					const auto& actions = _panel->actions();
+					{
+						_panel->preview()->addTexture(&assets::tilemap, Values::troop_textures[hex->troop->type]);
+						auto text = _panel->preview()->addLabel();
+						text->setPath("param");
+						text->param("value", Values::troop_names[hex->troop->type]);
+					}
+					{
+						actions[0]->addTexture(&assets::interface, Values::skills[static_cast<int>(SkillType::AttackSpear)]);
+						auto text = actions[0]->addLabel();
+						text->setRaw("Attack");
+					}
+					{
+						actions[1]->addTexture(&assets::interface, Values::skills[static_cast<int>(SkillType::Shield)]);
+						auto text = actions[1]->addLabel();
+						text->setRaw("Defend");
+					}
+					{
+						actions[2]->addTexture(&assets::interface, Values::skills[static_cast<int>(SkillType::Withdraw)]);
+						auto text = actions[2]->addLabel();
+						text->setRaw("Withdraw");
+					}
+				}
+				else if (hex->build && hex->build->type == Build::Tower) {
+					_panel->construct(gameui::Panel::L01);
+					const auto& actions = _panel->actions();
+					{
+						_panel->preview()->addTexture(&assets::tilemap, Values::build_textures[hex->build->type]);
+						auto text = _panel->preview()->addLabel();
+						text->setPath("param");
+						text->param("value", Values::build_names[hex->build->type]);
+					}
+					{
+						actions[0]->addTexture(&assets::interface, Values::skills[static_cast<int>(SkillType::Withdraw)]);
+						auto text = actions[0]->addLabel();
+						text->setRaw("Withdraw");
+					}
+				}
+				else if (hex->plant) {
+					_panel->construct(gameui::Panel::L00);
+					{
+						_panel->preview()->addTexture(&assets::tilemap, Values::plant_textures[hex->plant->type]);
+						auto text = _panel->preview()->addLabel();
+						text->setPath("param");
+						text->param("value", Values::plant_names[hex->plant->type]);
+					}
+				}
+				else {
+					_panel->construct(gameui::Panel::L22);
+					const auto& actions = _panel->actions();
+					{
+						_panel->preview()->addDraw(gameui::preview::draw);
+						
+						gameui::preview::hex.team = hex->team;
+
+						auto text = _panel->preview()->addLabel();
+						text->setPath("gp.team");
+						text->param("team", Values::hex_names[hex->team]);
+						text->setColor(Values::hex_colors[hex->team]);
+					}
+					{
+						actions[0]->addTexture(&assets::interface, Values::buy_build);
+						actions[0]->addLabel()->setPath("gp.buy_build");
+					}
+					{
+						actions[1]->addTexture(&assets::interface, Values::buy_troop);
+						actions[1]->addLabel()->setPath("gp.buy_troop");
+					}
+					{
+						actions[2]->addTexture(&assets::tilemap, Values::build_textures[Build::Farm]);
+						actions[2]->addLabel()->setPath("build.farm");
+						auto text = actions[2]->addSubtitle();
+						text->setPath("gp.cost");
+						text->param("cost", "4");
+						text->setColor(sf::Color::Green);
+					}
+					{
+						actions[3]->addTexture(&assets::tilemap, Values::troop_textures[Troop::Archer]);
+						actions[3]->addLabel()->setPath("troop.archer");
+						auto text = actions[3]->addSubtitle();
+						text->setPath("gp.cost");
+						text->param("cost", "12");
+						text->setColor(sf::Color::Red);
+					}
+				};
+				_panel->recalculate();
 				return true;
 			};
 		};

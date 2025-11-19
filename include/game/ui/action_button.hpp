@@ -48,7 +48,7 @@ namespace gameui {
 		/// Adds an image to the action button.
 		/// 
 		/// @param map Action texture.
-		void addTexture(sf::IntRect map);
+		void addTexture(const sf::Texture* texture, sf::IntRect map);
 
 		/// Adds an extra draw call to the action button.
 		/// 
@@ -69,6 +69,7 @@ namespace gameui {
 	/// Stuff used for hex preview.
 	namespace preview {
 		extern Map map;         /// Preview "map".
+		extern Hex& hex;        /// Preview hex reference.
 		extern Draw::Tile tile; /// Preview tile draw data.
 
 		/// Draws the preview tile.

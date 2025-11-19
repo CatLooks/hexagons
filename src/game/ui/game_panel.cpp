@@ -65,7 +65,8 @@ namespace gameui {
 			add(action);
 		};
 
-		// update preview visibility
+		// reset preview
+		_preview->clear();
 		if (layout)
 			_preview->activate();
 		else
@@ -79,5 +80,10 @@ namespace gameui {
 	/// Returns a reference to action panels.
 	const std::vector<Action*>& Panel::actions() const {
 		return _boxes;
+	};
+
+	/// Returns a preview panel.
+	Action* Panel::preview() const {
+		return _preview;
 	};
 };

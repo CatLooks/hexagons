@@ -34,8 +34,8 @@ namespace gameui {
 	};
 
 	/// Adds an image to the action button.
-	void Action::addTexture(sf::IntRect map) {
-		ui::Image* dimg = new ui::Image(&assets::interface, map);
+	void Action::addTexture(const sf::Texture* texture, sf::IntRect map) {
+		ui::Image* dimg = new ui::Image(texture, map);
 		dimg->bounds = ui::DimRect::Fill;
 		adds(dimg);
 	};
@@ -85,12 +85,12 @@ namespace gameui {
 			map.at({})->type = Hex::Ground;
 			return map;
 		}();
+		Hex& hex = *map.at({});
 		Draw::Tile tile = Draw::Tile(&map, {}, {}, Values::tileSize / 2);
 
 		/// Draws the preview tile.
 		void draw(ui::RenderBuffer& target, sf::IntRect self) {
 			// set tile position
-			tile.hex = map.at({});
 			tile.origin = self.position + (self.size - Values::tileSize / 2) / 2;
 
 			// draw base

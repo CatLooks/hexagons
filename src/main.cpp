@@ -41,7 +41,12 @@ int main() {
 
 	// game test
 	auto layer = itf.layer();
-	Game* game = new Game(layer);
+	auto gui = itf.layer();
+
+	auto gp = new gameui::Panel();
+	gui->add(gp);
+
+	Game* game = new Game(layer, gp);
 	{
 		Map& map = game->map;
 
@@ -129,10 +134,6 @@ int main() {
 		};
 	}
 	layer->add(game);
-
-	auto gui = itf.layer();
-	auto gp = new gameui::Panel();
-	gui->add(gp);
 
 	// window main loop
 	while (ui::window.active()) {
