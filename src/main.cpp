@@ -46,38 +46,51 @@ int main() {
 		Map& map = game->map;
 
 		const int w = 14;
-		const int h = 9;
+		const int h = 7;
 		const char arr[h][w + 1] = {
-			"  rrrr    b b ",
-			"rrrrrr  bbbbb ",
-			"rrrrr-----bbbb",
-			"rrrr----bbbbbb",
-			" rrrr    bbbb ",
-			"  ---   ---   ",
-			"   -yyyyyy-   ",
-			"   yyyyyyyyyy ",
-			"  y   yyyyyy  "
+			"------------- ",
+			"rrrrrrrrrrrrrr",
+			"rrrrrrrrrrrrr ",
+			"gggggggggggggg",
+			"ggggggggggggg ",
+			"bbbbbbbbbbbbbb",
+			"bbbbbbbbbbbbb ",
 		};
 
 		map.resize({ {}, { w, h } });
 		{
-			Troop troop;
-			troop.pos = { 3, 3 };
-			troop.type = Troop::Archer;
-			troop.hp = 1;
-			map.setTroop(std::move(troop));
+			int pos = 0;
+			for (int idx = 0; idx < Troop::Count; idx++) {
+				if (idx & 1) continue;
+
+				Troop troop;
+				troop.pos = { pos += 2, 1 };
+				troop.type = static_cast<Troop::Type>(idx);
+				troop.hp = 1;
+				map.setTroop(troop);
+			};
 		}
 		{
-			Build build;
-			build.pos = { 2, 3 };
-			build.type = Build::Tower;
-			map.setBuild(std::move(build));
+			int pos = 0;
+			for (int idx = 0; idx < Build::Count; idx++) {
+				if (idx == Build::Farm || idx == Build::Mine || idx == Build::Fort) continue;
+
+				Build build;
+				build.pos = { pos += 2, 3 };
+				build.type = static_cast<Build::Type>(idx);
+				map.setBuild(build);
+			};
 		}
 		{
-			Plant plant;
-			plant.pos = { 4, 3 };
-			plant.type = Plant::Peach;
-			map.setPlant(std::move(plant));
+			int pos = 0;
+			for (int idx = 0; idx < Plant::Count; idx++) {
+				if (idx == Plant::Berry || idx == Plant::Sapling || idx == Plant::Peach || idx == Plant::Grave) continue;
+
+				Plant plant;
+				plant.pos = { pos += 2, 5 };
+				plant.type = static_cast<Plant::Type>(idx);
+				map.setPlant(plant);
+			};
 		}
 
 		for (int y = 0; y < h; y++) {

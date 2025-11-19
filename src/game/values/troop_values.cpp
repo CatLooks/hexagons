@@ -32,7 +32,7 @@ namespace Values {
 	sf::IntRect troop_hp(const Troop& troop) {
 		// get bar fill values
 		int now = troop.hp;
-		int max = troop.hp; // @todo
+		int max = troop_max_hp[troop.type];
 
 		// rescale percentage
 		if (max == 1) { now *= 6; max = 6; };
@@ -63,5 +63,10 @@ namespace Values {
 
 		// return bar texture
 		return hp_base + sf::Vector2i(0, hp_base.size.y * static_cast<int>(bar));
+	};
+
+	/// Troop max health.
+	const int troop_max_hp[Troop::Count] = {
+		1, 2, 3, 2, 4, 6
 	};
 };

@@ -135,7 +135,7 @@ void Map::draw(ui::RenderBuffer& target) const {
 
 	// setup tile drawer
 	TileDrawer drawer(this, area, origin);
-	drawer.select({ 3, 3 }, Values::tileLevel.y);
+	//drawer.select({ 3, 3 }, Values::tileLevel.y);
 	std::optional<Draw::Tile> elevated;
 
 	// draw tile geometry
@@ -146,7 +146,7 @@ void Map::draw(ui::RenderBuffer& target) const {
 		}
 		else {
 			tile->drawBase(target);
-			tile->drawSides(target, drawer.selected(), Draw::white(tile->hex->team == Hex::Red), sf::Color::Black);
+			tile->drawSides(target, drawer.selected(), sf::Color::Black, sf::Color::Black);
 		};
 	};
 
@@ -154,7 +154,7 @@ void Map::draw(ui::RenderBuffer& target) const {
 	drawer.reset();
 	while (auto tile = drawer.next()) {
 		if (!drawer.selected(*tile))
-			tile->drawBorders(target, drawer.selected(), Draw::white(tile->hex->team == Hex::Red));
+			tile->drawBorders(target, drawer.selected(), sf::Color::Black);
 	};
 
 	// draw elevated tile top

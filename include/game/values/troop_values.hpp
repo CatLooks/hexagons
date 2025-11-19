@@ -40,4 +40,8 @@ namespace Values {
 	/// 
 	/// @param troop Troop reference.
 	sf::IntRect troop_hp(const Troop& troop);
+
+	/// Troop max health.
+	/// @param id Troop type.
+	extern const int troop_max_hp[Troop::Count];
 };
