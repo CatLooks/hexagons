@@ -2,28 +2,61 @@
 #include "game.hpp"
 #include "assets.hpp"
 
-// map test
-class Game : public ui::Element {
-public:
-	Map map;
-	ui::Layer* layer;
-	ui::Camera cam;
+/// Program entry.
+/// @return Exit code.
+int main() {
+	// load languages
+	if (assets::loadLanguageList())
+		return 1;
+	if (assets::loadLanguage("en-us.tlml"))
+		return 1;
 
-	Game(ui::Layer* layer): layer(layer), cam(layer, &map.camera, 17.f / 16) {
-		cam.minZoom = 0.5f;
-		cam.maxZoom = 2.0f;
-		layer->infinite = true;
+	// load assets
+	assets::loadAssets();
+	if (assets::error)
+		return 1;
 
-		const int w = 15;
-		const int h = 7;
+	// create window
+	ui::window.create({ 1600, 900 });
+
+	// create an interface
+	ui::Interface& itf = ui::window.interface();
+	itf.clearColor(sf::Color(29, 31, 37));
+
+	// draw stats
+	sf::Text drawStats = sf::Text(assets::font, "", 20);
+	drawStats.setOutlineThickness(2);
+	itf.statDraw([&](sf::RenderTarget& target, const ui::RenderStats& stats) {
+		std::string format = std::format(
+			"{}Q {}T {}B {}R",
+			stats.quads,
+			stats.text + 1,
+			stats.batches,
+			stats.inters
+		);
+		drawStats.setString(format);
+		drawStats.setPosition({ ui::window.size().x - drawStats.getLocalBounds().size.x - 4, 0 });
+		target.draw(drawStats);
+	});
+
+	// game test
+	auto layer = itf.layer();
+	Game* game = new Game(layer);
+	{
+		Map& map = game->map;
+
+		const int w = 14;
+		const int h = 9;
 		const char arr[h][w + 1] = {
-			" yyyy !  yyyy !",
-			" --wwy   --wwy ",
-			"bbrry-! bbrry-!",
-			"bwrrrwg bwrrrwg",
-			"bwrrwg! bwrrwg!",
-			" b-g-g   b-g-g ",
-			" b-gg !  b-gg !"
+			"  rrrr    b b ",
+			"rrrrrr  bbbbb ",
+			"rrrrr-----bbbb",
+			"rrrr----bbbbbb",
+			" rrrr    bbbb ",
+			"  ---   ---   ",
+			"   -yyyyyy-   ",
+			"   yyyyyyyyyy ",
+			"  y   yyyyyy  "
 		};
 
 		map.resize({ {}, { w, h } });
@@ -81,84 +114,16 @@ public:
 				};
 			};
 		};
+	}
+	layer->add(game);
 
-		layer->onEvent([=](const ui::Event& evt) {
-			if (auto data = evt.get<ui::Event::MouseWheel>()) {
-				/*cam.scroll(
-					-data->delta,
-					ui::window.mouse(),
-					ui::window.size()
-				);*/
-				// uncomment after fixing
-				return true;
-			};
-
-			return false;
-		});
-
-		layer->onUpdate([=](const sf::Time& _) {
-			layer->setArea(ui::DimVector{ 1es, 1es } * cam.zoom(), { 0px, 0px, 1ps, 1ps });
-
-			sf::Vector2i offset;
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) offset.y--;
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) offset.y++;
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) offset.x--;
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) offset.x++;
-			map.camera += offset * 2;
-
-			cam.pan(
-				sf::Mouse::isButtonPressed(sf::Mouse::Button::Right),
-				ui::window.mouse(), ui::window.size()
-			);
-		});
+	auto gui = itf.layer();
+	auto gp = new gameui::Panel();
+	{
+		gp->construct(gameui::Panel::L11);
 	};
+	gui->add(gp);
 
-protected:
-	void drawSelf(ui::RenderBuffer& target, sf::IntRect self) const override {
-		map.draw(target);
-	};
-};
-
-/// Program entry.
-/// @return Exit code.
-int main() {
-	// load languages
-	if (assets::loadLanguageList())
-		return 1;
-	if (assets::loadLanguage("en-us.tlml"))
-		return 1;
-
-	// load assets
-	assets::loadAssets();
-	if (assets::error)
-		return 1;
-
-	// create window
-	ui::window.create({ 1600, 900 });
-
-	// create an interface
-	ui::Interface& itf = ui::window.interface();
-	itf.clearColor(sf::Color(29, 31, 37));
-
-	// draw stats
-	sf::Text drawStats = sf::Text(assets::font, "", 20);
-	drawStats.setOutlineThickness(2);
-	itf.statDraw([&](sf::RenderTarget& target, const ui::RenderStats& stats) {
-		std::string format = std::format(
-			"{}Q {}T {}B {}R",
-			stats.quads,
-			stats.text + 1,
-			stats.batches,
-			stats.inters
-		);
-		drawStats.setString(format);
-		drawStats.setPosition({ ui::window.size().x - drawStats.getLocalBounds().size.x - 4, 0 });
-		target.draw(drawStats);
-	});
-
-	// game test
-	auto layer = itf.layer();
-	layer->add(new Game(layer));
 
 	// window main loop
 	while (ui::window.active()) {

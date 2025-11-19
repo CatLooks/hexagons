@@ -36,7 +36,7 @@ namespace ui {
 	};
 	/// Returns current iterator item.
 	const Element::iter::value_type* Element::iter::operator->() const {
-		return &*((_it0 == _split) ? _it1 : _it0);
+		return &*(*this);
 	};
 
 	/// Advances to next value.
