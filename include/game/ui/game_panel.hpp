@@ -11,13 +11,14 @@ namespace gameui {
 	public:
 		/// Action box layout.
 		enum Layout {
-			L00, /// 0 boxes on left, 0 boxes on right.
-			L10, /// 1 boxes on left, 0 boxes on right.
-			L01, /// 0 boxes on left, 1 boxes on right.
-			L11, /// 1 boxes on left, 1 boxes on right.
-			L21, /// 2 boxes on left, 1 boxes on right.
-			L12, /// 1 boxes on left, 2 boxes on right.
-			L22, /// 2 boxes on left, 2 boxes on right.
+			None, /// Preview is hidden.
+			L00,  /// 0 boxes on left, 0 boxes on right.
+			L10,  /// 1 boxes on left, 0 boxes on right.
+			L01,  /// 0 boxes on left, 1 boxes on right.
+			L11,  /// 1 boxes on left, 1 boxes on right.
+			L21,  /// 2 boxes on left, 1 boxes on right.
+			L12,  /// 1 boxes on left, 2 boxes on right.
+			L22,  /// 2 boxes on left, 2 boxes on right.
 			Count
 		};
 

@@ -13,6 +13,7 @@ namespace gameui {
 
 	/// Box spacing table.
 	static const std::vector<float> spacing_table[Panel::Count] = {
+		/* --- */ {},
 		/* L00 */ {},
 		/* L10 */ { -1.5f },
 		/* L01 */ {  1.5f },
@@ -24,7 +25,7 @@ namespace gameui {
 
 	/// Amount of actions in layout.
 	static const int box_count[Panel::Count] = {
-		0, 1, 1, 2, 3, 3, 4
+		0, 0, 1, 1, 2, 3, 3, 4
 	};
 
 	/// Constructs the game panel.
@@ -38,6 +39,7 @@ namespace gameui {
 		_preview = new Action();
 		{
 			_preview->position() = { 0.5as, height - Action::size };
+			_preview->deactivate();
 		};
 		adds(_preview);
 	};
@@ -57,17 +59,20 @@ namespace gameui {
 				0.5as + spacing * spacing_table[layout].at(i),
 				height - Action::size
 			};
-			action->addTexture(Values::skills[static_cast<int>(SkillType::RangeBoost)]);
-			auto text = action->addLabel();
-			text->setPath("param");
-			text->param("value", "@!troop.archer");
 
 			// register action button
 			_boxes.push_back(action);
 			add(action);
 		};
 
+		// update preview visibility
+		if (layout)
+			_preview->activate();
+		else
+			_preview->deactivate();
+
 		// recalculate panel
+		_layout = layout;
 		recalculate();
 	};
 

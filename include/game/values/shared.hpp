@@ -15,8 +15,11 @@ namespace Values {
 	extern const sf::Vector2i tileSize;
 	/// Offsets between tiles on map.
 	extern const sf::Vector2i tileOff;
-	/// Offset of a tile level.
-	extern const sf::Vector2i tileLevel;
+
+	/// Returns offset of a tile level.
+	///
+	/// @param size Tile size.
+	sf::Vector2i tileLevel(sf::Vector2i size);
 
 	/// Size of icon texture.
 	extern const sf::Vector2i iconTex;

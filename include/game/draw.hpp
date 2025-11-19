@@ -14,6 +14,7 @@ private:
 
 	sf::Vector2i _coords; /// Next hex coordinates.
 	sf::Vector2i _draw;   /// Next hex draw position.
+	sf::Vector2i _size;   /// Draw size.
 
 	sf::Vector2i _org; /// Draw origin.
 	sf::Vector2i _beg; /// Draw area top-left corner.
@@ -28,7 +29,8 @@ public:
 	/// @param map Map reference.
 	/// @param area Draw area.
 	/// @param origin Draw origin.
-	TileDrawer(const Map* map, sf::IntRect area, sf::Vector2i origin);
+	/// @param size Draw size.
+	TileDrawer(const Map* map, sf::IntRect area, sf::Vector2i origin, sf::Vector2i size);
 
 	/// Selects a tile for elevation.
 	/// 

@@ -2,13 +2,14 @@
 
 namespace Draw {
 	/// Constructs tile drawing data.
-	Tile::Tile(const Map* map, sf::Vector2i coords, sf::Vector2i origin)
-		: map(map), hex(map->at(coords)), coords(coords), origin(origin) {};
+	Tile::Tile(const Map* map, sf::Vector2i coords, sf::Vector2i origin, sf::Vector2i size)
+		: map(map), hex(map->at(coords)), coords(coords), origin(origin), size(size) {};
 };
 
 /// Constructs a tile drawer.
-TileDrawer::TileDrawer(const Map* map, sf::IntRect area, sf::Vector2i origin):
+TileDrawer::TileDrawer(const Map* map, sf::IntRect area, sf::Vector2i origin, sf::Vector2i size):
 	_map(map),
+	_size(size),
 	_org(origin),
 	_beg(area.position),
 	_end(area.position + area.size)
@@ -48,7 +49,8 @@ std::optional<Draw::Tile> TileDrawer::next() {
 		// store current tile
 		std::optional<Draw::Tile> tile = Draw::Tile(
 			_map, _coords,
-			_draw + sf::Vector2i(0, (_coords == _select) ? -_elev : 0)
+			_draw + sf::Vector2i(0, (_coords == _select) ? -_elev : 0),
+			_size
 		);
 
 		// calculate next tile coordinates

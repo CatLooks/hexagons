@@ -11,8 +11,11 @@ namespace Values {
 	const sf::Vector2i tileSize = { tileUnit, tileUnit };
 	/// Offsets between tiles on map.
 	const sf::Vector2i tileOff = { tileUnit, tileUnit * 3 / 4 };
-	/// Offset of a tile level.
-	const sf::Vector2i tileLevel = { 0, tileUnit / 8 };
+	
+	/// Returns offset of a tile level.
+	sf::Vector2i tileLevel(sf::Vector2i size) {
+		return { 0, size.y / 8 };
+	};
 
 	/// Size of icon texture.
 	const sf::Vector2i iconTex = { 16, 16 };

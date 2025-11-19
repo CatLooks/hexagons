@@ -40,6 +40,9 @@ public:
 	/// @return Neighbor tile position.
 	static sf::Vector2i neighbor(sf::Vector2i pos, nbi_t nbi);
 
+	/// Unselected tile coordinates.
+	static const sf::Vector2i unselected;
+
 private:
 	std::unique_ptr<Hex[]> _tiles; /// Tilemap array.
 	sf::Vector2i _size;            /// Map size.

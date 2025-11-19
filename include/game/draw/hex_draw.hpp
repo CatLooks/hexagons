@@ -25,13 +25,15 @@ namespace Draw {
 		const Hex* hex;      /// Hex reference.
 		sf::Vector2i coords; /// Hex coordinates.
 		sf::Vector2i origin; /// Draw origin position.
+		sf::Vector2i size;   /// Draw size.
 
 		/// Constructs tile drawing data.
 		/// 
 		/// @param map Map reference.
 		/// @param coords Hex coordinates.
 		/// @param origin Draw origin position.
-		Tile(const Map* map, sf::Vector2i coords, sf::Vector2i origin);
+		/// @param size Draw size.
+		Tile(const Map* map, sf::Vector2i coords, sf::Vector2i origin, sf::Vector2i size);
 
 		/// Draws tile base.
 		///

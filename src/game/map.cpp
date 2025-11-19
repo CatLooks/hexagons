@@ -1,6 +1,8 @@
 #include "game/map.hpp"
 #include "game/draw.hpp"
-#include "ui/window.hpp"
+
+/// Unselected tile coordinates.
+const sf::Vector2i Map::unselected = { -1, -1 };
 
 /// Returns neighbor position of a tile.
 sf::Vector2i Map::neighbor(sf::Vector2i pos, nbi_t nbi) {
@@ -134,7 +136,7 @@ void Map::draw(ui::RenderBuffer& target) const {
 	sf::Vector2i origin = -camera;
 
 	// setup tile drawer
-	TileDrawer drawer(this, area, origin);
+	TileDrawer drawer(this, area, origin, Values::tileSize);
 	//drawer.select({ 3, 3 }, Values::tileLevel.y);
 	std::optional<Draw::Tile> elevated;
 

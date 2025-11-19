@@ -132,22 +132,7 @@ int main() {
 
 	auto gui = itf.layer();
 	auto gp = new gameui::Panel();
-	{
-		gp->onUpdate([=](const sf::Time& delta) {
-			static sf::Time acc = sf::Time::Zero;
-			static int layout = 0;
-			acc += delta;
-
-			if (acc.asSeconds() < 0.5) return;
-			else acc = sf::Time::Zero;
-
-			gp->construct(static_cast<gameui::Panel::Layout>(layout));
-			if (layout++ >= gameui::Panel::Count)
-				layout = 0;
-		});
-	};
 	gui->add(gp);
-
 
 	// window main loop
 	while (ui::window.active()) {
