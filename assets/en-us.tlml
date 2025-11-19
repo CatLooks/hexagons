@@ -1,9 +1,9 @@
-# invalid enumeration ID
-bad: "???"
+# parameter text
+param: "{value}"
 
 # team names
 team {
-	v: Void
+	v: Unclaimed
 	r: Red
 	o: Orange
 	y: Yellow
@@ -12,8 +12,6 @@ team {
 	b: Blue
 	p: Purple
 	m: Magenta
-
-	bad: '$(bad)'
 }
 # troop names
 troop {
@@ -23,8 +21,6 @@ troop {
 	archer: Archer
 	baron : Baron
 	knight: Knight
-
-	bad: '$(bad)'
 }
 
 # building names
@@ -35,8 +31,6 @@ build {
 	tower : Watchtower
 	beacon: Beacontower
 	fort  : Fortress
-
-	bad: '$(bad)'
 }
 
 # plant names
@@ -48,8 +42,19 @@ plant {
 	peach  : Peach Tree
 	pine   : Pine
 	grave  : Grave
+}
 
-	bad: '$(bad)'
+# gameplay text
+gp {
+	# cost preview
+	cost: "{cost} $"
+	# team name preview
+	team: "Team {team}"
+
+	# buy a building
+	buy_build: "Buy Building"
+	# buy a troop
+	buy_troop: "Buy Troop"
 }
 
 # debug info
