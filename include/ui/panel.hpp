@@ -28,7 +28,7 @@ namespace ui {
 
 			/// Size of edge pieces.
 			///
-			/// Order: `horizontal`, `vertical`.
+			/// Order: width of horizontal edges, height of vertical edges.
 			int edge_size[2];
 			
 			/// Coordinates and size of the middle piece.
@@ -43,6 +43,14 @@ namespace ui {
 			/// @return Edge texture map.
 			/// @param idx Edge index (see `edge_coords`).
 			sf::IntRect edge(int idx) const;
+
+			/// Constructs a panel texture map from a continuous texture.
+			///
+			/// @param texture Texture reference.
+			/// @param bounds Texture bounds.
+			/// @param corner Corner size.
+			/// @param scale Texture map scaling (by default `1`).
+			static Map rect(const sf::Texture* texture, sf::IntRect bounds, sf::Vector2i corner, int scale = 1);
 		};
 
 	protected:

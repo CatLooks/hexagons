@@ -14,6 +14,35 @@ namespace ui {
 		};
 	};
 
+	/// Constructs a panel texture map from a continuous texture.
+	Panel::Map Panel::Map::rect(const sf::Texture* texture, sf::IntRect bounds, sf::Vector2i corner, int scale) {
+		return Panel::Map {
+			.texture = texture,
+			.corner_coords = {
+				bounds.position,
+				bounds.position + sf::Vector2i(bounds.size.x - corner.x, 0),
+				bounds.position + sf::Vector2i(0, bounds.size.y - corner.y),
+				bounds.position + bounds.size - corner
+			},
+			.edge_coords = {
+				bounds.position + sf::Vector2i(corner.x, 0),
+				bounds.position + sf::Vector2i(corner.x, bounds.size.y - corner.y),
+				bounds.position + sf::Vector2i(0, corner.y),
+				bounds.position + sf::Vector2i(bounds.size.x - corner.x, corner.y)
+			},
+			.corner_size = corner,
+			.edge_size = {
+				bounds.size.x - corner.x * 2,
+				bounds.size.y - corner.y * 2
+			},
+			.middle = {
+				bounds.position + corner,
+				bounds.size - corner * 2
+			},
+			.scale = scale
+		};
+	};
+
 	/// Draws the panel.
 	void Panel::drawSelf(RenderBuffer& target, sf::IntRect self) const {
 		// calculate intermediate coordinates
@@ -41,13 +70,13 @@ namespace ui {
 		bool mid = true;
 		if (x1 - x0 > 0) {
 			// horizontal edges
-			target.quad({ { x0, ys }, { x1 - x0, _map.edge_size[1] * _map.scale } }, _map.edge(0), color);
-			target.quad({ { x0, y1 }, { x1 - x0, _map.edge_size[1] * _map.scale } }, _map.edge(1), color);
+			target.quad({ { x0, ys }, { x1 - x0, _map.corner_size.y * _map.scale } }, _map.edge(0), color);
+			target.quad({ { x0, y1 }, { x1 - x0, _map.corner_size.y * _map.scale } }, _map.edge(1), color);
 		} else mid = false;
 		if (y1 - y0 > 0) {
 			// vertical edges
-			target.quad({ { xs, y0 }, { _map.edge_size[0] * _map.scale, y1 - y0 } }, _map.edge(2), color);
-			target.quad({ { x1, y0 }, { _map.edge_size[0] * _map.scale, y1 - y0 } }, _map.edge(3), color);
+			target.quad({ { xs, y0 }, { _map.corner_size.x * _map.scale, y1 - y0 } }, _map.edge(2), color);
+			target.quad({ { x1, y0 }, { _map.corner_size.x * _map.scale, y1 - y0 } }, _map.edge(3), color);
 		} else mid = false;
 		
 		// draw middle
