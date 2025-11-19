@@ -34,12 +34,13 @@ struct Hex {
 		Count   /// Team count.
 	} team = Unclaimed;
 
-	/// Troop reference, `nullptr` if no troop.
-	Troop* troop = nullptr;
-	/// Building reference, `nullptr` if no building.
-	Build* build = nullptr;
-	/// Plant reference, `nullptr` if no plant.
-	Plant* plant = nullptr;
+	bool selected = 0; /// Whether a tile is selected.
+	size_t spread = 0; /// Spread buffer index.
+	size_t region = 0; /// Tile region index.
+
+	Troop* troop = nullptr; /// Troop reference, `nullptr` if no troop.
+	Build* build = nullptr; /// Building reference, `nullptr` if no building.
+	Plant* plant = nullptr; /// Plant reference, `nullptr` if no plant.
 
 	/// Checks if a tile can be stood on.
 	bool solid() const;
