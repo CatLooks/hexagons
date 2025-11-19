@@ -88,10 +88,10 @@ namespace ui {
 	Panel::Panel(const Panel::Map& map) : _map(map) {
 		// set default padding
 		padding = {
-			.left   = map.edge_size[0] * map.scale,
-			.right  = map.edge_size[0] * map.scale,
-			.top    = map.edge_size[1] * map.scale,
-			.bottom = map.edge_size[1] * map.scale
+			.left   = map.corner_size.x * map.scale,
+			.right  = map.corner_size.x * map.scale,
+			.top    = map.corner_size.y * map.scale,
+			.bottom = map.corner_size.y * map.scale
 		};
 	};
 };
