@@ -13,6 +13,12 @@ namespace Values {
 	const sf::Vector2i tileOff = { tileUnit, tileUnit * 3 / 4 };
 	/// Offset of a tile level.
 	const sf::Vector2i tileLevel = { 0, tileUnit / 8 };
+
+	/// Size of icon texture.
+	const sf::Vector2i iconTex = { 16, 16 };
+	/// Size of rendered icon.
+	const sf::Vector2i iconSize = iconTex * k;
+
 	/// Thickness of map backplane border.
 	const sf::Vector2i mapBorder = { tileUnit / 2, tileUnit / 2 };
 
@@ -24,6 +30,10 @@ namespace Values {
 	/// Returns a 64x64 texture map.
 	sf::IntRect coords(int x, int y) {
 		return { { x * tileTex.x, y * tileTex.y }, tileTex };
+	};
+	/// Returns a tile in 16x16 texture map with a 64x64 offset.
+	sf::IntRect coords(int x, int y, int dx, int dy) {
+		return { { x * tileTex.x + dx * iconTex.x, y * tileTex.y + dy * iconTex.y }, iconTex };
 	};
 
 	/// Missing texture replacement.
