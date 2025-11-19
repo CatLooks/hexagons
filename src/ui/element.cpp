@@ -214,7 +214,7 @@ namespace ui {
 		_innerRect = padding.apply(_rect);
 
 		// recalculate children
-		for (const auto& element : _elements)
+		for (const auto& element : *this)
 			element->recalculate();
 	};
 
