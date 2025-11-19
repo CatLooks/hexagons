@@ -131,10 +131,11 @@ namespace ui {
 		bool _active = true;
 
 	public:
-		bool infinite    = false; /// Whether element's bounding box is infinite.
-		bool ignore      = false; /// Whether the element ignores events.
-		bool transparent = false; /// Whether mouse hover events can pass through the element.
-		bool scissor     = false; /// Whether to cut off pixels drawn outside of element's bounds.
+		bool infinite     = false; /// Whether element's bounding box is infinite.
+		bool ignore       = false; /// Whether the element ignores events.
+		bool transparent  = false; /// Whether mouse hover events can pass through the element.
+		bool scissor      = false; /// Whether to cut off pixels drawn outside of element's bounds.
+		bool event_scissor = true; /// Whether to discard events out-of-bounds from propagating to children.
 
 		DimRect bounds = DimRect::Fill; /// Element bounding box.
 		Borders padding;                /// Element padding.

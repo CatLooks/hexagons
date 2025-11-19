@@ -254,15 +254,23 @@ namespace ui {
 		if (!_active || ignore) return false;
 
 		// check if mouse is out of range for mouse events
-		if (!infinite)
+		if (event_scissor && !infinite) {
 			if (auto pos = evt.mouse())
 				if (!_rect.contains(*pos))
 					return false;
+		};
 
 		// send event to children
 		for (const auto& element : *this)
 			if (element->event(evt))
 				return true;
+
+		// check if mouse is out of range for mouse events
+		if (!event_scissor) {
+			if (auto pos = evt.mouse())
+				if (!_rect.contains(*pos))
+					return false;
+		};
 
 		// handle the event
 		return handle(evt);
