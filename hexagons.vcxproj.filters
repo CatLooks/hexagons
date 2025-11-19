@@ -58,6 +58,12 @@
     <Filter Include="Source Files\game\draw">
       <UniqueIdentifier>{60369e22-b071-45b8-8a0d-eeba03831485}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\game\ui">
+      <UniqueIdentifier>{f1c2e8fb-a633-414b-b377-0b56ae5fa3fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\game\ui">
+      <UniqueIdentifier>{9a12b026-44be-4e07-af7b-c071a0377a68}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -173,6 +179,15 @@
     </ClCompile>
     <ClCompile Include="src\ui\camera.cpp">
       <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\ui\game_panel.cpp">
+      <Filter>Source Files\game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\ui\resource_bar.cpp">
+      <Filter>Source Files\game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\game.cpp">
+      <Filter>Source Files\game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -331,6 +346,15 @@
     </ClInclude>
     <ClInclude Include="include\ui\camera.hpp">
       <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\ui\game_panel.hpp">
+      <Filter>Header Files\game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\ui\resource_bar.hpp">
+      <Filter>Header Files\game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\game.hpp">
+      <Filter>Header Files\game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
