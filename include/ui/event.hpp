@@ -12,7 +12,8 @@ namespace ui {
 	public:
 		/// @brief Fires when mouse is moved.
 		struct MouseMove {
-			sf::Vector2i position; /// Mouse position.
+			sf::Vector2i position; /// Translated mouse position.
+			sf::Vector2i original; /// Original mouse position.
 		};
 
 	protected:

@@ -192,25 +192,25 @@ namespace ui {
 			// check for mouse button events
 			if (const auto* data = evt.getIf<sf::Event::MouseButtonPressed>()) {
 				layer->event((Event)Event::MousePress {
-					layer->map(data->position, _win_rect), data->button
+					layer->map(data->position, _win_rect), data->position, data->button
 				});
 				return;
 			};
 			if (const auto* data = evt.getIf<sf::Event::MouseButtonReleased>()) {
 				layer->event((Event)Event::MouseRelease {
-					layer->map(data->position, _win_rect), data->button
+					layer->map(data->position, _win_rect), data->position, data->button
 				});
 				return;
 			};
 			if (const auto* data = evt.getIf<sf::Event::MouseMoved>()) {
 				layer->event((Event)Event::MouseMove {
-					layer->map(data->position, _win_rect)
+					layer->map(data->position, _win_rect), data->position
 				});
 				return;
 			};
 			if (const auto* data = evt.getIf<sf::Event::MouseWheelScrolled>()) {
 				layer->event((Event)Event::MouseWheel {
-					layer->map(data->position, _win_rect), (int)data->delta
+					layer->map(data->position, _win_rect), data->position, (int)data->delta
 				});
 				return;
 			};
