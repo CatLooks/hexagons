@@ -86,6 +86,7 @@
   <ItemGroup>
     <ClInclude Include="include\assetload.hpp" />
     <ClInclude Include="include\assets.hpp" />
+    <ClInclude Include="include\delegate.hpp" />
     <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\game\build.hpp" />
     <ClInclude Include="include\game\draw.hpp" />
