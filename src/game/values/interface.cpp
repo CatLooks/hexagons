@@ -22,6 +22,8 @@ namespace Values {
 
 	/// Troop skills textures.
 	const sf::IntRect skills[static_cast<int>(SkillType::Count)] = {
+		coords(9, 3, 3, 3), // empty
+
 		coords(0, 1), // withdraw
 		coords(6, 1), // move
 

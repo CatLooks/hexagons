@@ -27,6 +27,7 @@ namespace Values {
 	// poisoned health bar offset
 	const sf::Vector2i poison_offset = { 0, 96 };
 
+	// health bar offsets
 	static const int hp_offset_0 = 0 ; // 0% fill
 	static const int hp_offset_1 = 16; // x/1 fill
 	static const int hp_offset_2 = 14; // x/2 fill
@@ -60,7 +61,17 @@ namespace Values {
 			+ (poison ? poison_offset : sf::Vector2i());
 	};
 
-	/// Troop max health.
+	// skill array
+	const SkillArray troop_skills[Troop::Count] = {
+		/* farmer */ { SkillArray::L12, { SkillType::Move, SkillType::Harvest     , SkillType::Withdraw    , SkillType::Empty    } },
+		/* lumber */ { SkillArray::L22, { SkillType::Move, SkillType::AttackLumber, SkillType::TreeCut     , SkillType::Withdraw } },
+		/* spear  */ { SkillArray::L22, { SkillType::Move, SkillType::AttackSpear , SkillType::Shield      , SkillType::Withdraw } },
+		/* archer */ { SkillArray::L22, { SkillType::Move, SkillType::AttackArcher, SkillType::RangeBoost  , SkillType::Withdraw } },
+		/* baron  */ { SkillArray::L22, { SkillType::Move, SkillType::AttackBaron , SkillType::DefenseBoost, SkillType::Withdraw } },
+		/* knight */ { SkillArray::L22, { SkillType::Move, SkillType::AttackKnight, SkillType::OffenseBoost, SkillType::Withdraw } },
+	};
+
+	// max hp
 	const int troop_hp[Troop::Count] = {
 		1, 2, 3, 2, 4, 6
 	};

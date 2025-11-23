@@ -20,4 +20,14 @@ namespace Values {
 		"@!build.beacon",
 		"@!build.fort",
 	};
+
+	// skill array
+	const SkillArray build_skills[Build::Count] = {
+		/* castle */ { SkillArray::L11, { SkillType::Heal, SkillType::Harvest } },
+		/* farm   */ { SkillArray::L01, { SkillType::Withdraw } },
+		/* mine   */ { SkillArray::L01, { SkillType::Withdraw } },
+		/* tower  */ { SkillArray::L01, { SkillType::Withdraw } },
+		/* beacon */ { SkillArray::L11, { SkillType::Stun, SkillType::Withdraw } },
+		/* fort   */ { SkillArray::L11, { SkillType::Stun, SkillType::Withdraw } }
+	};
 };

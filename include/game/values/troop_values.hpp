@@ -1,5 +1,5 @@
 #pragma once
-#include "shared.hpp"
+#include "interface.hpp"
 #include "game/troop.hpp"
 
 namespace Values {
@@ -24,6 +24,9 @@ namespace Values {
 	/// 
 	/// @return Health bar texture.
 	sf::IntRect hp_bar(int hp, int max, bool poison);
+
+	/// Troop skills.
+	extern const SkillArray troop_skills[Troop::Count];
 
 	/// Troop max health.
 	/// @param id Troop type.

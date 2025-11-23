@@ -5,6 +5,8 @@
 
 /// Skill enumeration.
 enum class SkillType {
+	Empty = 0,    /// Empty skill.
+
 	Withdraw,     /// Withdraw.
 	Move,         /// Move.
 
@@ -19,7 +21,7 @@ enum class SkillType {
 	Shield,       /// (Spearman) Spearman shield.
 	RangeBoost,   /// (Archer) Range boost.
 	DefenseBoost, /// (Baron) Defense boost.
-	AttackBoost,  /// (Knight) Attack boost.
+	OffenseBoost, /// (Knight) Attack boost.
 
 	Heal,         /// (Castle) Heal troops.
 	Stun,         /// (Beacon) Stun troops.
@@ -31,12 +33,33 @@ enum class EffectType {
 	Shielded,     /// Shield for spearman.
 	RangeBoost,   /// Range boost for archer.
 	DefenseBoost, /// Defense boost for baron.
-	AttackBoost,  /// Attack boost for knight.
+	OffenseBoost, /// Attack boost for knight.
 	Poisoned,     /// Poisoned by archer.
 	Count
 };
 
 namespace Values {
+	/// Entity skill data.
+	struct SkillArray {
+		/// Skill UI layout.
+		enum Layout {
+			None, /// Preview is hidden.
+			L00,  /// 0 boxes on left, 0 boxes on right.
+			L10,  /// 1 boxes on left, 0 boxes on right.
+			L01,  /// 0 boxes on left, 1 boxes on right.
+			L11,  /// 1 boxes on left, 1 boxes on right.
+			L21,  /// 2 boxes on left, 1 boxes on right.
+			L12,  /// 1 boxes on left, 2 boxes on right.
+			L22,  /// 2 boxes on left, 2 boxes on right.
+			Count
+		};
+
+		/// Skill layout.
+		Layout layout = None;
+		/// Skill array.
+		SkillType skills[4] {};
+	};
+
 	/// Troop buying action texture.
 	extern const sf::IntRect buy_build;
 	/// Building buying action texture.

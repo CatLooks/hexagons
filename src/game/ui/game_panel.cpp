@@ -12,7 +12,7 @@ namespace gameui {
 	const ui::Dim Panel::spacing = Action::size * 1.6f;
 
 	/// Box spacing table.
-	static const std::vector<float> spacing_table[Panel::Count] = {
+	static const std::vector<float> spacing_table[Values::SkillArray::Count] = {
 		/* --- */ {},
 		/* L00 */ {},
 		/* L10 */ { -1.5f },
@@ -24,12 +24,12 @@ namespace gameui {
 	};
 
 	/// Amount of actions in layout.
-	static const int box_count[Panel::Count] = {
+	static const int box_count[Values::SkillArray::Count] = {
 		0, 0, 1, 1, 2, 3, 3, 4
 	};
 
 	/// Constructs the game panel.
-	Panel::Panel(): ui::Panel(texture), _layout(L00) {
+	Panel::Panel(): ui::Panel(texture), _layout(Values::SkillArray::L00) {
 		// set panel bounds
 		bounds = { 0px, 1as, 1ps, height };
 		event_scissor = false;
@@ -45,7 +45,7 @@ namespace gameui {
 	};
 
 	/// Reconstructs panel actions.
-	void Panel::construct(Layout layout) {
+	void Panel::construct(Values::SkillArray::Layout layout) {
 		// delete previous boxes
 		_boxes.clear();
 		clear();
