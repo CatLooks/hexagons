@@ -9,16 +9,20 @@ namespace Draw {
 
 		// draw troop
 		buffer.quad({ tile.origin, Values::tileSize }, Values::troop_textures[troop.type]);
-		troopStatus(tile.origin, troop, buffer);
+		HealthBar(troop.hp, Values::troop_hp[troop.type], true).draw(tile.origin, buffer);
 		buffer.forward(&assets::tilemap);
 	};
 
-	/// Draws troop status bar.
-	void troopStatus(sf::Vector2i pos, const Troop& troop, ui::RenderBuffer& buffer) {
-		// get troop health bar
-		sf::IntRect texture = Values::troop_hp(troop);
+	/// Constructs a health bar object.
+	HealthBar::HealthBar(int hp, int max, bool poison)
+		: hp(hp), max(max), poison(poison) {};
 
-		// draw troop health bar
+	/// Draws health bar above an entity.
+	void HealthBar::draw(sf::Vector2i pos, ui::RenderBuffer& buffer) const {
+		// get health bar texture
+		sf::IntRect texture = Values::hp_bar(hp, max, poison);
+
+		// draw health bar panel
 		buffer.quad(
 			{
 				{

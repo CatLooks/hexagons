@@ -23,50 +23,45 @@ namespace Values {
 	};
 
 	// health bar base
-	const sf::IntRect hp_base = sf::IntRect({ 399, 64 }, { 34, 5 });
+	const sf::IntRect hp_base = sf::IntRect({ 463, 64 }, { 34, 5 });
+	// poisoned health bar offset
+	const sf::Vector2i poison_offset = { 0, 96 };
 
-	/// Poison health bar textures offset from normal bars.
-	const sf::Vector2i poison_bar = { 64, 0 };
+	static const int hp_offset_0 = 0 ; // 0% fill
+	static const int hp_offset_1 = 16; // x/1 fill
+	static const int hp_offset_2 = 14; // x/2 fill
+	static const int hp_offset_3 = 11; // x/3 fill
+	static const int hp_offset_4 = 7 ; // x/4 fill
+	static const int hp_offset_6 = 1 ; // x/6 fill
+	static const int hp_offset_x = 17; // bad fill
 
-	/// Returns a texture map for troop health bar.
-	sf::IntRect troop_hp(const Troop& troop) {
-		// get bar fill values
-		int now = troop.hp;
-		int max = troop_max_hp[troop.type];
+	/// Returns health bar texture based on entity state.
+	sf::IntRect hp_bar(int hp, int max, bool poison) {
+		// get bar texture index
+		int idx = [=]() {
+			// discard invalid HP
+			if (hp < 0 || hp > max) return hp_offset_x;
+			// check for 0% fill
+			if (hp == 0) return hp_offset_0;
+			// map HP / max fraction
+			switch (max) {
+				case 1: return hp_offset_1 + hp - 1;
+				case 2: return hp_offset_2 + hp - 1;
+				case 3: return hp_offset_3 + hp - 1;
+				case 4: return hp_offset_4 + hp - 1;
+				case 6: return hp_offset_6 + hp - 1;
+				default: return hp_offset_x;
+			};
+		}();
 
-		// rescale percentage
-		if (max == 1) { now *= 6; max = 6; };
-		if (max == 2) { now *= 3; max = 6; };
-		if (max == 3) { now *= 2; max = 6; };
-		TroopBar bar = TroopBar::UX;
-
-		// x / 4
-		if (max == 4) switch (now) {
-			case 0: bar = TroopBar::Q0; break;
-			case 1: bar = TroopBar::Q1; break;
-			case 2: bar = TroopBar::Q2; break;
-			case 3: bar = TroopBar::Q3; break;
-			case 4: bar = TroopBar::Q4; break;
-			default: break;
-		}
-		// x / 6
-		else if (max == 6) switch (now) {
-			case 0: bar = TroopBar::S0; break;
-			case 1: bar = TroopBar::S1; break;
-			case 2: bar = TroopBar::S2; break;
-			case 3: bar = TroopBar::S3; break;
-			case 4: bar = TroopBar::S4; break;
-			case 5: bar = TroopBar::S5; break;
-			case 6: bar = TroopBar::S6; break;
-			default: break;
-		};
-
-		// return bar texture
-		return hp_base + sf::Vector2i(0, hp_base.size.y * static_cast<int>(bar));
+		// remap index into texture
+		return hp_base
+			+ sf::Vector2i(0, hp_base.size.y * idx)
+			+ (poison ? poison_offset : sf::Vector2i());
 	};
 
 	/// Troop max health.
-	const int troop_max_hp[Troop::Count] = {
+	const int troop_hp[Troop::Count] = {
 		1, 2, 3, 2, 4, 6
 	};
 };

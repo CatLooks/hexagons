@@ -11,37 +11,21 @@ namespace Values {
 	/// @param id Troop type.
 	extern const char* troop_names[Troop::Count];
 
-	/// Troop health bar texture type.
-	enum class TroopBar {
-		S0 = 0, // 0 / 6
-		S1 = 1, // 1 / 6
-		S2 = 2, // 2 / 6
-		S3 = 3, // 3 / 6
-		S4 = 4, // 4 / 6
-		S5 = 5, // 5 / 6
-		S6 = 6, // 6 / 6
-
-		Q0 = S0, // 0 / 4
-		Q1 = 7 , // 1 / 4
-		Q2 = S3, // 2 / 4
-		Q3 = 8 , // 3 / 4
-		Q4 = S6, // 4 / 4
-
-		UX, // invalid
-		Count
-	};
-
-	/// Troop health bar base texture.
+	/// Troop health bar texture.
 	extern const sf::IntRect hp_base;
-	/// Poison health bar textures offset from normal bars.
-	extern const sf::Vector2i poison_bar;
+	/// Poisoned health bar offset from normal bar.
+	extern const sf::Vector2i poison_offset;
 
-	/// Returns a texture map for troop health bar.
+	/// Returns health bar texture based on entity state.
 	/// 
-	/// @param troop Troop reference.
-	sf::IntRect troop_hp(const Troop& troop);
+	/// @param hp Current HP.
+	/// @param max Maximum HP.
+	/// @param poison Whether poison is applied.
+	/// 
+	/// @return Health bar texture.
+	sf::IntRect hp_bar(int hp, int max, bool poison);
 
 	/// Troop max health.
 	/// @param id Troop type.
-	extern const int troop_max_hp[Troop::Count];
+	extern const int troop_hp[Troop::Count];
 };

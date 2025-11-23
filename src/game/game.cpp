@@ -27,6 +27,7 @@ Game::Game(ui::Layer* layer)
 	// add camera zoom handler
 	layer->onEvent([=](const ui::Event& evt) {
 		if (auto data = evt.get<ui::Event::MouseWheel>()) {
+			printf("%d %d | %d %d\n", data->position.x, data->position.y, data->original.x, data->original.y);
 			_camera.scroll(-data->delta, ui::window.mouse(), ui::window.size());
 			return true;
 		};

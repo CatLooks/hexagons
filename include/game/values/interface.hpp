@@ -6,6 +6,7 @@
 /// Skill enumeration.
 enum class SkillType {
 	Withdraw,     /// Withdraw.
+	Move,         /// Move.
 
 	AttackLumber, /// Lumberjack attack.
 	AttackSpear,  /// Spearman attack.
@@ -31,6 +32,7 @@ enum class EffectType {
 	RangeBoost,   /// Range boost for archer.
 	DefenseBoost, /// Defense boost for baron.
 	AttackBoost,  /// Attack boost for knight.
+	Poisoned,     /// Poisoned by archer.
 	Count
 };
 
@@ -43,6 +45,13 @@ namespace Values {
 	/// Income arrow textures.
 	extern const sf::IntRect income_arrow[3];
 
+	/// Coin currency icon.
+	extern const sf::IntRect coin_icon;
+	/// Peach currency icon.
+	extern const sf::IntRect peach_icon;
+	/// Berry currency icon.
+	extern const sf::IntRect berry_icon;
+
 	/// Troop skills textures.
 	extern const sf::IntRect skills[static_cast<int>(SkillType::Count)];
 
@@ -51,10 +60,11 @@ namespace Values {
 
 	/// Action annotation icon.
 	enum class Annotation {
-		Peach, /// Action costs peaches.
-		Berry, /// Action costs berries.
-		Aim,   /// Action needs to be aimed.
-		Swap,  /// Action is an cyclic choice.
+		Peach,  /// Action costs peaches.
+		Berry,  /// Action costs berries.
+		Aim,    /// Action needs to be aimed.
+		Swap,   /// Action is an cyclic choice.
+		Manage, /// Action manages other entity.
 		Count
 	};
 

@@ -2,9 +2,9 @@
 
 namespace Values {
 	/// Troop buying action texture.
-	const sf::IntRect buy_build = coords(4, 3);
+	const sf::IntRect buy_build = coords(6, 3);
 	/// Building buying action texture.
-	const sf::IntRect buy_troop = coords(5, 3);
+	const sf::IntRect buy_troop = coords(6, 2);
 
 	/// Income arrow textures.
 	const sf::IntRect income_arrow[3] = {
@@ -13,38 +13,51 @@ namespace Values {
 		coords(9, 0), // down
 	};
 
+	/// Coin currency icon.
+	const sf::IntRect coin_icon = coords(7, 1);
+	/// Peach currency icon.
+	const sf::IntRect peach_icon = coords(8, 1);
+	/// Berry currency icon.
+	const sf::IntRect berry_icon = coords(9, 1);
+
 	/// Troop skills textures.
 	const sf::IntRect skills[static_cast<int>(SkillType::Count)] = {
-		coords(0, 1),
-		coords(1, 1),
-		coords(2, 1),
-		coords(3, 1),
-		coords(4, 1),
-		coords(5, 1),
-		coords(0, 2),
-		coords(1, 2),
-		coords(2, 2),
-		coords(3, 2),
-		coords(4, 2),
-		coords(5, 2),
-		coords(0, 3),
-		coords(1, 3)
+		coords(0, 1), // withdraw
+		coords(6, 1), // move
+
+		coords(1, 1), // lumberjack
+		coords(2, 1), // spearman
+		coords(3, 1), // archer
+		coords(4, 1), // baron
+		coords(5, 1), // knight
+
+		coords(0, 2), // harvest
+		coords(1, 2), // cut
+		coords(2, 2), // defend
+		coords(3, 2), // range
+		coords(4, 2), // defense
+		coords(5, 2), // offense
+
+		coords(0, 3), // heal
+		coords(1, 3), // stun
 	};
 
 	/// Troop effect textures.
 	const sf::IntRect effects[static_cast<int>(EffectType::Count)] = {
-		coords(8, 3, 0, 0),
-		coords(8, 3, 1, 0),
-		coords(8, 3, 2, 0),
-		coords(8, 3, 3, 0),
+		coords(8, 3, 0, 0), // shield
+		coords(8, 3, 1, 0), // range
+		coords(8, 3, 2, 0), // defense
+		coords(8, 3, 3, 0), // offense
+		coords(8, 3, 0, 1), // poison
 	};
 
 	/// Action annotation icon textures.
 	const sf::IntRect annotations[static_cast<int>(Annotation::Count)] = {
-		coords(8, 3, 0, 1),
-		coords(8, 3, 1, 1),
-		coords(8, 3, 2, 1),
-		coords(8, 3, 3, 1),
+		coords(8, 3, 0, 2), // peach
+		coords(8, 3, 1, 2), // berry
+		coords(8, 3, 2, 2), // aim
+		coords(8, 3, 3, 2), // swap
+		coords(8, 3, 0, 3), // manage
 	};
 
 	/// Interface digit textures.

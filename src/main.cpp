@@ -49,7 +49,7 @@ int main() {
 		const int h = 7;
 		const char arr[h][w + 1] = {
 			"------------- ",
-			"rrrrrrrrrrrrrr",
+			"yyyrrrrrrrrrrr",
 			"rrrrrrrrrrrrr ",
 			"gggggggggggggg",
 			"ggggggggggggg ",
@@ -59,37 +59,19 @@ int main() {
 
 		map.resize({ {}, { w, h } });
 		{
-			int pos = 0;
+			sf::Vector2i pos;
 			for (int idx = 0; idx < Troop::Count; idx++) {
-				if (idx & 1) continue;
+				for (int hp = 0; hp <= Values::troop_hp[idx]; hp++) {
+					Troop troop;
+					troop.pos = pos;
+					troop.type = static_cast<Troop::Type>(idx);
+					troop.hp = hp;
+					map.setTroop(troop);
 
-				Troop troop;
-				troop.pos = { pos += 2, 1 };
-				troop.type = static_cast<Troop::Type>(idx);
-				troop.hp = 1;
-				map.setTroop(troop);
-			};
-		}
-		{
-			int pos = 0;
-			for (int idx = 0; idx < Build::Count; idx++) {
-				if (idx == Build::Farm || idx == Build::Mine || idx == Build::Fort) continue;
-
-				Build build;
-				build.pos = { pos += 2, 3 };
-				build.type = static_cast<Build::Type>(idx);
-				map.setBuild(build);
-			};
-		}
-		{
-			int pos = 0;
-			for (int idx = 0; idx < Plant::Count; idx++) {
-				if (idx == Plant::Berry || idx == Plant::Sapling || idx == Plant::Peach || idx == Plant::Grave) continue;
-
-				Plant plant;
-				plant.pos = { pos += 2, 5 };
-				plant.type = static_cast<Plant::Type>(idx);
-				map.setPlant(plant);
+					pos.x++;
+				};
+				pos.x = 0;
+				pos.y++;
 			};
 		}
 

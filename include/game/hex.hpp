@@ -9,7 +9,7 @@
 /// Contains tile status and reference to objects placed on it.
 struct Hex {
 	/// Tile type.
-	enum Type {
+	enum Type : uint8_t {
 		Void,   /// Void tile.
 		Water,  /// Water tile, can be turned into a bridge.
 		Ground, /// Ground tile, can be captured.
@@ -17,7 +17,7 @@ struct Hex {
 	} type = Void;
 
 	/// Current tile owner team.
-	enum Team {
+	enum Team : uint8_t {
 		/// (0) No owner.
 		/// Can also be used as "void" team to simplify code.
 		Unclaimed = 0,
