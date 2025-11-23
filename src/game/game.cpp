@@ -40,13 +40,15 @@ Game::Game(ui::Layer* layer)
 		layer->setArea(ui::DimVector(1es, 1es) * _camera.zoom(), { 0px, 0px, 1ps, 1ps });
 
 		// keyboard camera pan
-		sf::Vector2i offset;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) offset.y--;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) offset.y++;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) offset.x--;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) offset.x++;
-		map.camera += sf::Vector2i(sf::Vector2f(offset * Values::k)
-			* Values::panSpeed * delta.asSeconds());
+		if (ui::window.focused()) {
+			sf::Vector2i offset;
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) offset.y--;
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) offset.y++;
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) offset.x--;
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) offset.x++;
+			map.camera += sf::Vector2i(sf::Vector2f(offset * Values::k)
+				* Values::panSpeed * delta.asSeconds());
+		};
 
 		// mouse camera pan
 		_camera.pan(

@@ -77,6 +77,11 @@ namespace ui {
 		return sf::Mouse::getPosition(_win);
 	};
 
+	/// Checks whether the window is focused.
+	bool Window::focused() const {
+		return _win.hasFocus();
+	};
+
 	/// Main window.
 	ui::Window window;
 };

@@ -50,6 +50,9 @@ namespace ui {
 
 		/// Returns current mouse position.
 		sf::Vector2i mouse() const;
+
+		/// Checks whether the window is focused.
+		bool focused() const;
 	};
 
 	/// Main window.
