@@ -8,7 +8,7 @@ namespace Values {
 	const sf::IntRect sideShade = coords(8, 2);
 
 	// texture array
-	const sf::IntRect hex_textures[Hex::Count] = {
+	const sf::IntRect hex_textures[Region::Count] = {
 		coords(0, 0), // void
 		coords(1, 0), // red
 		coords(2, 0), // orange
@@ -21,14 +21,14 @@ namespace Values {
 	};
 
 	// name array
-	const char* hex_names[Hex::Count] = {
+	const char* hex_names[Region::Count] = {
 		"@!team.v", "@!team.r", "@!team.o",
 		"@!team.y", "@!team.g", "@!team.a",
 		"@!team.b", "@!team.p", "@!team.m",
 	};
 
 	// color array
-	const sf::Color hex_colors[Hex::Count] = {
+	const sf::Color hex_colors[Region::Count] = {
 		sf::Color(0x80, 0x80, 0x80),
 		sf::Color(0xff, 0x20, 0x40),
 		sf::Color(0xff, 0x88, 0x40),

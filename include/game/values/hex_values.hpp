@@ -12,13 +12,13 @@ namespace Values {
 
 	/// Texture maps for teams.
 	/// @param id Team ID.
-	extern const sf::IntRect hex_textures[Hex::Count];
+	extern const sf::IntRect hex_textures[Region::Count];
 
 	/// Localization requests for teams.
 	/// @param id Team ID.
-	extern const char* hex_names[Hex::Count];
+	extern const char* hex_names[Region::Count];
 
 	/// Colors for teams.
 	/// @param id Team ID.
-	extern const sf::Color hex_colors[Hex::Count];
+	extern const sf::Color hex_colors[Region::Count];
 };
