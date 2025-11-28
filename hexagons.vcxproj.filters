@@ -201,6 +201,12 @@
     <ClCompile Include="src\game\region.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\array.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\spread.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -400,6 +406,12 @@
     </ClInclude>
     <ClInclude Include="include\templated\refpool.hpp">
       <Filter>Header Files\templated</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\array.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\spread.hpp">
+      <Filter>Header Files\game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -4,214 +4,33 @@
 /// Unselected tile coordinates.
 const sf::Vector2i Map::unselected = { -1, -1 };
 
-/// Returns neighbor position of a tile.
-sf::Vector2i Map::neighbor(sf::Vector2i pos, nbi_t nbi) {
-	// look-up tables
-	// horizontal shift
-	static const int dx[2][6] = {
-		{ 1, 1, 1,  0, -1,  0 }, // shifted row
-		{ 0, 1, 0, -1, -1, -1 }, // unshifted row
-	};
-	// vertical shift
-	static const int dy[6] = {
-		-1, 0, 1, 1, 0, -1
-	};
-
-	// return result using look-up tables
-	return pos + sf::Vector2i(dx[pos.y & 1][nbi], dy[nbi]);
-};
-
-/// Default spread check.
-bool Map::SpreadInfo::default_check(sf::Vector2i, const Hex&) { return true; };
-/// Default spread effect.
-void Map::SpreadInfo::default_effect(sf::Vector2i, Hex&) {};
-
-/// Spreader pass index generator.
-size_t Map::spread_idx() {
-	static size_t idx = 1;
-	return idx++;
-};
-
-/// Spreads an effect on map tiles.
-std::vector<sf::Vector2i> Map::spread(sf::Vector2i pos, const SpreadInfo& info, size_t radius) const {
-	// get new spread index
-	size_t idx = spread_idx();
-
-	// get origin tile
-	Hex* origin = at(pos);
-	if (!origin) return {};
-	origin->spread = idx;
-
-	// spreader queue
-	struct Tile {
-		Hex* hex;         /// Tile reference.
-		sf::Vector2i pos; /// Tile position.
-		size_t left;      /// Amount of hops left.
-
-		/// Processes a tile.
-		///
-		/// @return Whether to spread to neighbor tiles.
-		bool process(const SpreadInfo& info) {
-			// perform blocking check
-			if (!info.block(pos, *hex))
-				return false;
-
-			// perform non-blocking check
-			if (info.pass(pos, *hex)) {
-				// apply effect to tile
-				info.effect(pos, *hex);
-			};
-			return true;
-		};
-	};
-	std::list<Tile> queue = { Tile(origin, pos, radius) };
-
-	// affected tile list
-	std::vector<sf::Vector2i> effect;
-
-	// spreader loop
-	while (!queue.empty()) {
-		// pull next tile
-		Tile tile = queue.front();
-		queue.pop_front();
-
-		// process tile
-		if (tile.process(info)) {
-			// add to effect list
-			effect.push_back(tile.pos);
-
-			// ignore if no range left
-			if (tile.left == 1) continue;
-
-			// try to spread to neighbors
-			for (int i = 0; i < 6; i++) {
-				// create new tile object
-				Tile next;
-				next.pos = neighbor(tile.pos, static_cast<nbi_t>(i));
-				next.hex = at(next.pos);
-				next.left = tile.left - 1;
-
-				// discard if outside of map
-				if (!next.hex) continue;
-
-				// mark hex as effected
-				if (next.hex->spread != idx)
-					next.hex->spread = idx;
-				else continue;
-
-				// push to spread queue
-				queue.push_back(next);
-			};
-		};
-	};
-
-	// return spread index
-	return effect;
-};
-
-/// Unsafe tile lookup.
-Hex& Map::ats(sf::Vector2i pos) const {
-	return _tiles.get()[pos.y * _size.x + pos.x];
-};
-
-/// Checks if a position is within the map.
-bool Map::contains(sf::Vector2i pos) const {
-	return (
-		// vertical check
-		(pos.y >= 0 && pos.y < _size.y) &&
-		// horizontal check (ignore last if shifted)
-		(pos.x >= 0 && pos.x < _size.x - (pos.y & 1 ? 0 : 1))
-	);
-};
-
-/// Returns a reference to a tile at position.
-Hex* Map::at(sf::Vector2i pos) const {
-	return contains(pos) ? &ats(pos) : nullptr;
-};
-/// Returns a reference to a tile at position.
-Hex* Map::operator[](sf::Vector2i pos) const {
-	return at(pos);
-};
-
 /// Adds a troop to the map.
 void Map::setTroop(const Troop& troop) {
-	_troops.push_back(troop);
-	at(troop.pos)->troop = &_troops.back();
+	auto hex = at(troop.pos);
+	if (hex) hex->troop = _troops.add(troop);
 };
 /// Adds a building to the map.
 void Map::setBuild(const Build& build) {
-	_builds.push_back(build);
-	at(build.pos)->build = &_builds.back();
+	auto hex = at(build.pos);
+	if (hex) hex->build = _builds.add(build);
 };
 /// Adds a plant to the map.
 void Map::setPlant(const Plant& plant) {
-	_plants.push_back(plant);
-	at(plant.pos)->plant = &_plants.back();
-};
-
-/// Returns amount of hexes stored.
-size_t Map::tilecount() const {
-	return (size_t)_size.x * _size.y;
-};
-
-/// Generates a copy of the map.
-Map Map::copy() const {
-	// copy tilemap
-	size_t count = tilecount();
-	Hex* tilemap = new Hex[count];
-	for (size_t i = 0; i < count; i++)
-		tilemap[i] = _tiles.get()[i];
-
-	// create new map
-	Map map;
-	map._tiles = std::unique_ptr<Hex[]>(tilemap);
-	map._size = _size;
-	map._troops = _troops;
-	map._builds = _builds;
-	map._plants = _plants;
-	return map;
-};
-
-/// Resizes the map.
-void Map::resize(sf::IntRect rect) {
-	// create new tilemap
-	size_t count = (size_t)rect.size.x * rect.size.y;
-	Hex* tilemap = new Hex[count];
-
-	// copy old tiles
-	sf::IntRect prev = { {}, _size };
-	auto is = prev.findIntersection(rect);
-	if (is) {
-		for (int dy = 0; dy < is->size.y; dy++) {
-			for (int dx = 0; dx < is->size.x; dx++) {
-				// old tile position
-				sf::Vector2i old_pos = sf::Vector2i(dx, dy) + is->position;
-				// new tile position
-				sf::Vector2i new_pos = old_pos - rect.position;
-
-				// copy the tile
-				tilemap[new_pos.y * rect.size.x + new_pos.x]
-					= _tiles.get()[old_pos.y * _size.x + old_pos.x];
-			};
-		};
-	};
-
-	// swap tilemap
-	_tiles = std::unique_ptr<Hex[]>(tilemap);
-	_size = rect.size;
+	auto hex = at(plant.pos);
+	if (hex) hex->plant = _plants.add(plant);
 };
 
 /// Returns backplane rectangle.
 sf::IntRect Map::backplane() const {
 	// calculate height
 	int y = Values::tileUnit;
-	if (_size.y > 1)
-		y += Values::tileOff.y * (_size.y - 1);
+	if (size().y > 1)
+		y += Values::tileOff.y * (size().y - 1);
 
 	// return backplane rectangle
 	return {
 		-Values::mapBorder,
-		sf::Vector2i(Values::tileOff.x * _size.x, y) + Values::mapBorder * 2
+		sf::Vector2i(Values::tileOff.x * size().x, y) + Values::mapBorder * 2
 	};
 };
 
@@ -223,7 +42,7 @@ void Map::draw(ui::RenderBuffer& target) const {
 
 	// calculate drawn area
 	// @todo
-	sf::IntRect area = { {}, _size };
+	sf::IntRect area = { {}, size() };
 	sf::Vector2i origin = -camera;
 
 	// setup tile drawer

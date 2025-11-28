@@ -29,6 +29,7 @@
   <ItemGroup>
     <ClCompile Include="src\assetload.cpp" />
     <ClCompile Include="src\assets.cpp" />
+    <ClCompile Include="src\game\array.cpp" />
     <ClCompile Include="src\game\build.cpp" />
     <ClCompile Include="src\game\draw.cpp" />
     <ClCompile Include="src\game\draw\build_draw.cpp" />
@@ -40,6 +41,7 @@
     <ClCompile Include="src\game\map.cpp" />
     <ClCompile Include="src\game\plant.cpp" />
     <ClCompile Include="src\game\region.cpp" />
+    <ClCompile Include="src\game\spread.cpp" />
     <ClCompile Include="src\game\troop.cpp" />
     <ClCompile Include="src\game\ui\action_button.cpp" />
     <ClCompile Include="src\game\ui\game_panel.cpp" />
@@ -92,6 +94,7 @@
     <ClInclude Include="include\assets.hpp" />
     <ClInclude Include="include\delegate.hpp" />
     <ClInclude Include="include\game.hpp" />
+    <ClInclude Include="include\game\array.hpp" />
     <ClInclude Include="include\game\build.hpp" />
     <ClInclude Include="include\game\draw.hpp" />
     <ClInclude Include="include\game\draw\build_draw.hpp" />
@@ -104,6 +107,7 @@
     <ClInclude Include="include\game\map.hpp" />
     <ClInclude Include="include\game\plant.hpp" />
     <ClInclude Include="include\game\region.hpp" />
+    <ClInclude Include="include\game\spread.hpp" />
     <ClInclude Include="include\game\troop.hpp" />
     <ClInclude Include="include\game\ui\action_button.hpp" />
     <ClInclude Include="include\game\ui\game_panel.hpp" />
