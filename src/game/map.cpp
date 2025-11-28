@@ -21,6 +21,99 @@ sf::Vector2i Map::neighbor(sf::Vector2i pos, nbi_t nbi) {
 	return pos + sf::Vector2i(dx[pos.y & 1][nbi], dy[nbi]);
 };
 
+/// Default spread check.
+bool Map::SpreadInfo::default_check(sf::Vector2i, const Hex&) { return true; };
+/// Default spread effect.
+void Map::SpreadInfo::default_effect(sf::Vector2i, Hex&) {};
+
+/// Spreader pass index generator.
+size_t Map::spread_idx() {
+	static size_t idx = 1;
+	return idx++;
+};
+
+/// Spreads an effect on map tiles.
+std::vector<sf::Vector2i> Map::spread(sf::Vector2i pos, const SpreadInfo& info, size_t radius) const {
+	// get new spread index
+	size_t idx = spread_idx();
+
+	// get origin tile
+	Hex* origin = at(pos);
+	if (!origin) return {};
+	origin->spread = idx;
+
+	// spreader queue
+	struct Tile {
+		Hex* hex;         /// Tile reference.
+		sf::Vector2i pos; /// Tile position.
+		size_t left;      /// Amount of hops left.
+
+		/// Processes a tile.
+		///
+		/// @return Whether to spread to neighbor tiles.
+		bool process(const SpreadInfo& info) {
+			// perform blocking check
+			if (!info.block(pos, *hex))
+				return false;
+
+			// perform non-blocking check
+			if (info.pass(pos, *hex)) {
+				// apply effect to tile
+				info.effect(pos, *hex);
+			};
+			return true;
+		};
+	};
+	std::list<Tile> queue = { Tile(origin, pos, radius) };
+
+	// affected tile list
+	std::vector<sf::Vector2i> effect;
+
+	// spreader loop
+	while (!queue.empty()) {
+		// pull next tile
+		Tile tile = queue.front();
+		queue.pop_front();
+
+		// process tile
+		if (tile.process(info)) {
+			// add to effect list
+			effect.push_back(tile.pos);
+
+			// ignore if no range left
+			if (tile.left == 1) continue;
+
+			// try to spread to neighbors
+			for (int i = 0; i < 6; i++) {
+				// create new tile object
+				Tile next;
+				next.pos = neighbor(tile.pos, static_cast<nbi_t>(i));
+				next.hex = at(next.pos);
+				next.left = tile.left - 1;
+
+				// discard if outside of map
+				if (!next.hex) continue;
+
+				// mark hex as effected
+				if (next.hex->spread != idx)
+					next.hex->spread = idx;
+				else continue;
+
+				// push to spread queue
+				queue.push_back(next);
+			};
+		};
+	};
+
+	// return spread index
+	return effect;
+};
+
+/// Unsafe tile lookup.
+Hex& Map::ats(sf::Vector2i pos) const {
+	return _tiles.get()[pos.y * _size.x + pos.x];
+};
+
 /// Checks if a position is within the map.
 bool Map::contains(sf::Vector2i pos) const {
 	return (
@@ -33,9 +126,7 @@ bool Map::contains(sf::Vector2i pos) const {
 
 /// Returns a reference to a tile at position.
 Hex* Map::at(sf::Vector2i pos) const {
-	return contains(pos)
-		? &_tiles.get()[pos.y * _size.x + pos.x]
-		: nullptr;
+	return contains(pos) ? &ats(pos) : nullptr;
 };
 /// Returns a reference to a tile at position.
 Hex* Map::operator[](sf::Vector2i pos) const {
