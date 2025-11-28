@@ -1,10 +1,48 @@
 #include "ui.hpp"
 #include "game.hpp"
 #include "assets.hpp"
+#include "pool.hpp"
+
+struct Test {
+	int x;
+
+	Test(int i): x(i) {};
+	~Test() { printf("destroy %d\n", x); };
+};
 
 /// Program entry.
 /// @return Exit code.
 int main() {
+	Pool<Test> pool;
+	{
+		std::vector<Pool<Test>::Item> items;
+
+		{
+			auto it = pool.add(1);
+			printf("=== %d\n", it->x);
+		};
+		{
+			auto ita = pool.add(2);
+			auto itb = pool.add(3);
+			printf("=== %d @ %llu\n", ita->x, ita.index());
+			printf("=== %d @ %llu\n", itb->x, itb.index());
+		};
+		{
+			items.push_back(pool.add(4));
+			auto itc = pool.add(5);
+			items.push_back(pool.add(6));
+
+			printf("=== %d @ %llu\n", items[0]->x, items[0].index());
+			printf("=== %d @ %llu\n", itc->x, itc.index());
+			printf("=== %d @ %llu\n", items[1]->x, items[1].index());
+		};
+		{
+			printf("=== %d @ %llu\n", items[0]->x, items[0].index());
+			printf("=== %d @ %llu\n", items[1]->x, items[1].index());
+		};
+	};
+	return 0;
+
 	// load languages
 	if (assets::loadLanguageList())
 		return 1;
