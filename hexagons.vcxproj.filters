@@ -237,6 +237,9 @@
     <None Include="include\pool">
       <Filter>Header Files\templated</Filter>
     </None>
+    <None Include="include\refpool">
+      <Filter>Header Files\templated</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\assetload.hpp">
@@ -393,6 +396,9 @@
       <Filter>Header Files\templated</Filter>
     </ClInclude>
     <ClInclude Include="include\templated\pool.hpp">
+      <Filter>Header Files\templated</Filter>
+    </ClInclude>
+    <ClInclude Include="include\templated\refpool.hpp">
       <Filter>Header Files\templated</Filter>
     </ClInclude>
   </ItemGroup>

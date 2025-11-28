@@ -4,61 +4,88 @@
 #include <vector>
 #include <set>
 
-/// Pool container object.
-///
+/// Reference pool container object.
+/// 
 /// Stores items in a continuous memory block.
-/// Items can be accessed by static references.
-/// Items are stored in arbitrary order.
+/// Items are deleted once there are no references to it.
 /// 
 /// @tparam T Stored item type.
-template <typename T> class Pool {
+template <typename T> class RefPool {
 public:
-	// forward declarations
-	class Ref;  friend Ref;
+	// forward declare item
 	class Item; friend Item;
 
 private:
-	std::vector<T>   _storage; /// Pool storage.
-	std::set<size_t> _deleted; /// Deleted pool indices.
+	/// Item storage info.
+	struct V {
+		T      item; /// Item data.
+		size_t refs; /// Reference count.
+	};
+
+	std::vector<V>   _storage; /// Pool storage.
+	std::set<size_t> _deleted; /// Deleted indices.
 	bool _void = false;        /// Whether to void deletion calls.
 
 public:
-	/// Pool item reference object.
-	/// 
-	/// Provides access to item inside a pool.
-	/// Does not own the referenced item.
-	class Ref {
-		friend Pool;
-		friend Item;
+	/// Shared pool item reference.
+	///
+	/// Provides access to item inside the pool.
+	/// If all shared references are destroyed, the item will be deleted.
+	class Share {
+		friend RefPool;
 
 	private:
-		Pool* _pool; /// Pool reference.
-		size_t _idx; /// Item index.
+		RefPool* _pool; /// Pool reference.
+		size_t  _index; /// Item index.
 
 	public:
 		/// Move constructor.
-		Ref(Ref&& ref) noexcept : _pool(ref._pool), _idx(ref._idx) {
-			ref._pool = nullptr;
+		Share(Share&& item) noexcept : _pool(item._pool), _index(item._index) {
+			item._pool = nullptr;
 		};
 		/// Move assignment.
-		Ref& operator=(Ref&& ref) noexcept {
-			_pool = ref._pool;
-			_idx = ref._idx;
-			ref._pool = nullptr;
+		Share& operator=(Share&& item) noexcept {
+			_pool = item._pool;
+			_index = item._index;
+			item._pool = nullptr;
 			return *this;
 		};
 
+		/// Copy constructor.
+		Share(const Share& item) noexcept : _pool(item._pool), _index(item._index) {
+			if (_pool) _pool->push(_index);
+		};
+		/// Copy assignment.
+		Share& operator=(const Share& item) noexcept {
+			if (this != &item) {
+				if (_pool) _pool->pop(_index);
+				{
+					_pool = item._pool;
+					_index = item._index;
+				};
+				if (_pool) _pool->push(_index);
+			};
+			return *this;
+		};
+
+		/// Destroys an item reference.
+		///
+		/// If no references are left, the item will be deleted.
+		~Share() {
+			if (_pool) _pool->pop(_index);
+		};
+
 		/// Constructs an empty reference.
-		Ref(): _pool(nullptr), _idx(0) {};
+		Share() : _pool(nullptr), _index(0) {};
 
 	private:
-		/// Constructs a pool item reference.
+		/// Constructs an item reference.
 		///
 		/// Only accessible from a pool object.
 		///
 		/// @param pool Pool reference.
 		/// @param index Item index.
-		Ref(Pool* pool, size_t index): _pool(pool), _idx(index) {};
+		Share(RefPool* pool, size_t index) : _pool(pool), _index(index) {};
 
 	public:
 		/// Checks whether the object does not hold a reference.
@@ -69,64 +96,27 @@ public:
 		operator bool() const { return !null(); };
 
 		/// Returns item index.
-		size_t index() const { return _idx; };
+		size_t index() const { return _index; };
 
 		/// Returns the referenced item.
-		T& operator*() const { return _pool->_storage[_idx]; };
+		T& operator*() const { return _pool->_storage[_index].item; };
 		/// Returns a pointer to the referenced item.
-		T* operator->() const { return &_pool->_storage[_idx]; };
-	};
-
-	/// Owning pool item reference object.
-	/// 
-	/// Takes ownership of an item inside a pool.
-	/// Upon destruction deletes the item from the pool.
-	class Item : public Ref {
-		friend Pool;
-
-	public:
-		/// Constructs an empty item.
-		Item() : Ref() {};
-
-	private:
-		/// Constructs a pool item reference.
-		///
-		/// Only accessible from a pool object.
-		///
-		/// @param pool Pool reference.
-		/// @param index Item index.
-		Item(Pool* pool, size_t index): Ref(pool, index) {};
-
-	public:
-		/// Disables copying.
-		Item(const Item&) = delete;
-		/// Disables copying.
-		Item& operator=(const Item&) = delete;
-		/// Default move constructor.
-		Item(Item&&) noexcept = default;
-		/// Default move assignment.
-		Item& operator=(Item&&) noexcept = default;
-
-		/// Deletes referenced item from the pool.
-		~Item() { if (this->_pool) this->_pool->pop(this->_idx); };
-
-		/// Constructs a reference to the item.
-		[[nodiscard]] Ref ref() const { return (Ref)(*this); };
+		T* operator->() const { return &_pool->_storage[_index].item; };
 	};
 
 	/// Prevents any further deletion calls.
-	~Pool() { _void = true; };
+	~RefPool() { _void = true; };
 
 	/// Adds an item to the pool.
 	///
 	/// @param item Moved item.
 	///
 	/// @return Item reference object.
-	[[nodiscard]] Item add(T&& item) {
+	[[nodiscard]] Share add(T&& item) {
 		if (_deleted.empty()) {
 			// push item to storage end
 			size_t idx = _storage.size();
-			_storage.push_back(item);
+			_storage.push_back({ item, 1 });
 			return { this, idx };
 		};
 
@@ -135,7 +125,7 @@ public:
 		_deleted.erase(_deleted.begin());
 
 		// overwrite the deleted space
-		_storage[idx] = item;
+		_storage[idx] = { item, 1 };
 		return { this, idx };
 	};
 
@@ -144,7 +134,7 @@ public:
 	/// @param item Copied item.
 	///
 	/// @return Item reference object.
-	[[nodiscard]] Item add(const T& item) {
+	[[nodiscard]] Share add(const T& item) {
 		T copy = item;
 		return add(std::move(copy));
 	};
@@ -153,9 +143,9 @@ public:
 	/// 
 	/// This method should only be used after copying or moving the original pool.
 	/// 
-	/// @param ref Item reference object.
-	void rebase(Ref& ref) {
-		if (ref) ref._pool = this;
+	/// @param item Item reference object.
+	void rebase(Share& item) {
+		if (item) item._pool = this;
 	};
 
 	/// Returns current pool capacity.
@@ -164,12 +154,27 @@ public:
 	size_t count() const { return _storage.size() - _deleted.size(); };
 
 protected:
-	/// Deletes a referenced item from the pool.
+	/// Increments the amount of references to an item.
+	/// 
+	/// @param idx Item index.
+	void push(size_t idx) {
+		_storage[idx].refs++;
+	};
+
+	/// Decrements the amount of references to an item.
 	///
-	/// @param idx Deleted index.
+	/// If the amount of references goes to 0, the item will be deleted.
+	/// 
+	/// @param idx Item index.
 	void pop(size_t idx) {
 		// ignore if pool has been destroyed already
 		if (_void) return;
+
+		// decrement reference count
+		// return if references left
+		if (--_storage[idx].refs > 0) return;
+		
+		// delete item
 		if (idx + 1 == _storage.size()) {
 			// delete item at storage end
 			_storage.pop_back();

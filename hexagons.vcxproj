@@ -83,6 +83,7 @@
     <None Include="docs\ui-text.md" />
     <None Include="include\delegate" />
     <None Include="include\pool" />
+    <None Include="include\refpool" />
     <None Include="README.md" />
     <None Include="TLML.sublime-syntax" />
   </ItemGroup>
@@ -120,6 +121,7 @@
     <ClInclude Include="include\pool.hpp" />
     <ClInclude Include="include\templated\delegate.hpp" />
     <ClInclude Include="include\templated\pool.hpp" />
+    <ClInclude Include="include\templated\refpool.hpp" />
     <ClInclude Include="include\ui.hpp" />
     <ClInclude Include="include\ui\anim\base.hpp" />
     <ClInclude Include="include\ui\anim\easing.hpp" />
