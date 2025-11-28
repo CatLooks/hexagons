@@ -30,6 +30,16 @@ public:
 		Pool* _pool; /// Pool reference.
 		size_t _idx; /// Item index.
 
+		/// Move constructor.
+		Ref(Ref&& ref) noexcept : _pool(ref._pool), _idx(ref._idx) { ref._pool = nullptr; };
+		/// Move assignment.
+		Ref& operator=(Ref&& ref) {
+			_pool = ref._pool;
+			_idx = ref._idx;
+			ref._pool = nullptr;
+			return *this;
+		};
+
 		/// Constructs an empty reference.
 		Ref(): _pool(nullptr), _idx(0) {};
 
@@ -78,19 +88,17 @@ public:
 
 	public:
 		/// Disables copying.
-		Item (const Item&) = delete;
+		Item(const Item&) = delete;
 		/// Disables copying.
 		Item& operator=(const Item&) = delete;
-		/// Default moving.
-		Item (Item&&) = default;
-		/// Default moving.
-		Item& operator=(Item&&) = default;
+		Item(Item&&) = default;
+		Item& operator=(Item&&) noexcept = default;
 
 		/// Deletes referenced item from the pool.
 		~Item() { if (this->_pool) this->_pool->pop(this->_idx); };
 
 		/// Constructs a reference to the item.
-		Ref ref() const { return (Ref)(*this); };
+		[[nodiscard]] Ref ref() const { return (Ref)(*this); };
 	};
 
 	/// Adds an item to the pool.
@@ -98,7 +106,7 @@ public:
 	/// @param item Moved item.
 	///
 	/// @return Item reference object.
-	Item add(T&& item) {
+	[[nodiscard]] Item add(T&& item) {
 		if (_deleted.empty()) {
 			// push item to storage end
 			size_t idx = _storage.size();
@@ -120,7 +128,7 @@ public:
 	/// @param item Copied item.
 	///
 	/// @return Item reference object.
-	Item add(const T& item) {
+	[[nodiscard]] Item add(const T& item) {
 		T copy = item;
 		return push(std::move(copy));
 	};
@@ -135,9 +143,22 @@ protected:
 	///
 	/// @param idx Deleted index.
 	void pop(size_t idx) {
+		printf("pop %llu\n", idx);
 		if (idx + 1 == _storage.size()) {
 			// delete item at storage end
 			_storage.pop_back();
+
+			// check for trailing deleted indices
+			while (!_deleted.empty()) {
+				// get farthest deleted index
+				size_t idx = *_deleted.rbegin();
+				if (idx + 1 != _storage.size())
+					[[unlikely]] break;
+
+				// delete last item in storage
+				_deleted.erase(std::next(_deleted.rbegin()).base());
+				_storage.pop_back();
+			};
 			return;
 		};
 

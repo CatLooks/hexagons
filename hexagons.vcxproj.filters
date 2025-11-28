@@ -195,6 +195,9 @@
     <ClCompile Include="src\game\values\interface.cpp">
       <Filter>Source Files\game\values</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\region.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -367,6 +370,15 @@
     </ClInclude>
     <ClInclude Include="include\game\values\interface.hpp">
       <Filter>Header Files\game\values</Filter>
+    </ClInclude>
+    <ClInclude Include="include\delegate.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\pool.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\region.hpp">
+      <Filter>Header Files\game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

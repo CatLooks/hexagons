@@ -39,6 +39,7 @@
     <ClCompile Include="src\game\hex.cpp" />
     <ClCompile Include="src\game\map.cpp" />
     <ClCompile Include="src\game\plant.cpp" />
+    <ClCompile Include="src\game\region.cpp" />
     <ClCompile Include="src\game\troop.cpp" />
     <ClCompile Include="src\game\ui\action_button.cpp" />
     <ClCompile Include="src\game\ui\game_panel.cpp" />
@@ -99,6 +100,7 @@
     <ClInclude Include="include\game\hex.hpp" />
     <ClInclude Include="include\game\map.hpp" />
     <ClInclude Include="include\game\plant.hpp" />
+    <ClInclude Include="include\game\region.hpp" />
     <ClInclude Include="include\game\troop.hpp" />
     <ClInclude Include="include\game\ui\action_button.hpp" />
     <ClInclude Include="include\game\ui\game_panel.hpp" />
@@ -113,6 +115,7 @@
     <ClInclude Include="include\localization\parser.hpp" />
     <ClInclude Include="include\localization\token.hpp" />
     <ClInclude Include="include\mathext.hpp" />
+    <ClInclude Include="include\pool.hpp" />
     <ClInclude Include="include\ui.hpp" />
     <ClInclude Include="include\ui\anim\base.hpp" />
     <ClInclude Include="include\ui\anim\easing.hpp" />
