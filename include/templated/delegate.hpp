@@ -5,10 +5,11 @@
 #include <vector>
 #include <type_traits>
 
-/// General delegate template.
+/// Generic delegate template.
 /// 
 /// @tparam F Action function signature.
-template <typename F> class Delegate;
+/// @tparam A Accumulator object type.
+template <typename F, typename A = void> class Delegate;
 
 /// Delegate of procedural actions.
 /// 
@@ -45,11 +46,17 @@ public:
 	};
 };
 
+/// Invalid delegate.
+///
+/// Reduction is only allowed for non-void action return types.
+template <typename A, typename... Args> class Delegate<void(Args...), A>;
+
 /// Delegate that reduces results of actions.
 /// 
+/// @tparam A Accumulator object type.
 /// @tparam R Action return type.
 /// @tparam Args Action parameter type list.
-template <typename R, typename... Args> class Delegate<R(Args...)> {
+template <typename A, typename R, typename... Args> class Delegate<R(Args...), A> {
 public:
 	/// Delegate function signature.
 	using Action = std::function<R(Args...)>;
@@ -59,7 +66,7 @@ public:
 	/// @param value Reduced value from action invocation.
 	/// 
 	/// @return `true` to stop invocation chain, `false` to continue.
-	using Reduce = std::function<bool(R& acc, const R& value)>;
+	using Reduce = std::function<bool(A& acc, const R& value)>;
 
 private:
 	std::vector<Action> _list; /// Action list.
@@ -67,6 +74,8 @@ private:
 
 public:
 	/// Reducing delegate constructor.
+	/// 
+	/// Reducer function should return `true` to stop invocation chain, `false` to continue.
 	/// 
 	/// @param reduce Reducer function.
 	Delegate(Reduce reduce) : _reduce(reduce) {};
@@ -91,7 +100,7 @@ public:
 	/// @param args Action argument list.
 	/// 
 	/// @return Value reduced from invoked actions.
-	R reduce(R acc, Args... args) const {
+	A reduce(A acc, Args... args) const {
 		for (const auto& f : _list)
 			if (_reduce(acc, f(args...)))
 				break;
@@ -107,8 +116,8 @@ public:
 	/// @param args Action argument list.
 	/// 
 	/// @return Value reduced from invoked actions.
-	R reduce(Args... args) const {
-		static_assert(std::is_default_constructible_v<R>, "return type must have a default constructor");
-		return reduce(R(), args...);
+	A reduce(Args... args) const {
+		static_assert(std::is_default_constructible_v<A>, "accumulator must have a default constructor");
+		return reduce(A(), args...);
 	};
 };
