@@ -24,15 +24,14 @@ public:
 	/// Provides access to item inside a pool.
 	/// Does not own the referenced item.
 	class Ref {
-		friend Pool;
 		friend Item;
 
 	private:
-		T*     _ref; /// Item reference.
 		Pool* _pool; /// Pool reference.
+		size_t _idx; /// Item index.
 
 		/// Constructs an empty reference.
-		Ref(): _ref(nullptr), _pool(nullptr) {};
+		Ref(): _pool(nullptr), _idx(0) {};
 
 		/// Constructs a pool item reference.
 		///
@@ -40,7 +39,7 @@ public:
 		///
 		/// @param pool Pool reference.
 		/// @param index Item index.
-		Ref(Pool* pool, size_t index): _ref(&pool->_storage[index]), _pool(pool) {};
+		Ref(Pool* pool, size_t index): _pool(pool), _idx(index) {};
 
 	public:
 		/// Checks whether the object does not hold a reference.
@@ -51,12 +50,12 @@ public:
 		operator bool() const { return !null(); };
 
 		/// Returns item index.
-		size_t index() const { return _ref - _pool->_storage.data(); };
+		size_t index() const { return _idx; };
 
 		/// Returns the referenced item.
-		T& operator*() const { return *_ref; };
+		T& operator*() const { return _pool->_storage[_idx]; };
 		/// Returns a pointer to the referenced item.
-		T* operator->() const { return _ref; };
+		T* operator->() const { return &_pool->_storage[_idx]; };
 	};
 
 	/// Owning pool item reference object.
@@ -81,10 +80,14 @@ public:
 		/// Disables copying.
 		Item (const Item&) = delete;
 		/// Disables copying.
-		void operator=(const Item&) = delete;
+		Item& operator=(const Item&) = delete;
+		/// Default moving.
+		Item (Item&&) = default;
+		/// Default moving.
+		Item& operator=(Item&&) = default;
 
 		/// Deletes referenced item from the pool.
-		~Item() { this->_pool->pop(this->index()); };
+		~Item() { if (this->_pool) this->_pool->pop(this->_idx); };
 
 		/// Constructs a reference to the item.
 		Ref ref() const { return (Ref)(*this); };
