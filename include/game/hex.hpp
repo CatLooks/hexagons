@@ -5,6 +5,9 @@
 #include "build.hpp"
 #include "plant.hpp"
 
+// forward declare region
+class Region;
+
 /// Hex tile.
 /// Contains tile status and reference to objects placed on it.
 struct Hex {
@@ -36,7 +39,8 @@ struct Hex {
 
 	bool selected = 0; /// Whether a tile is selected.
 	size_t spread = 0; /// Spread buffer index.
-	size_t region = 0; /// Tile region index.
+
+	const Region* region = nullptr; /// Tile region reference.
 
 	Troop* troop = nullptr; /// Troop reference, `nullptr` if no troop.
 	Build* build = nullptr; /// Building reference, `nullptr` if no building.
