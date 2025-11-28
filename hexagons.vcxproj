@@ -81,6 +81,8 @@
     <None Include="docs\ui-elements.md" />
     <None Include="docs\ui-system.md" />
     <None Include="docs\ui-text.md" />
+    <None Include="include\delegate" />
+    <None Include="include\pool" />
     <None Include="README.md" />
     <None Include="TLML.sublime-syntax" />
   </ItemGroup>
@@ -116,6 +118,8 @@
     <ClInclude Include="include\localization\token.hpp" />
     <ClInclude Include="include\mathext.hpp" />
     <ClInclude Include="include\pool.hpp" />
+    <ClInclude Include="include\templated\delegate.hpp" />
+    <ClInclude Include="include\templated\pool.hpp" />
     <ClInclude Include="include\ui.hpp" />
     <ClInclude Include="include\ui\anim\base.hpp" />
     <ClInclude Include="include\ui\anim\easing.hpp" />

@@ -64,6 +64,9 @@
     <Filter Include="Header Files\game\ui">
       <UniqueIdentifier>{9a12b026-44be-4e07-af7b-c071a0377a68}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\templated">
+      <UniqueIdentifier>{102dbeb9-213f-439b-9480-b50631bb6d94}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -228,6 +231,12 @@
     <None Include="docs\ui-text.md">
       <Filter>Resource Files\docs</Filter>
     </None>
+    <None Include="include\delegate">
+      <Filter>Header Files\templated</Filter>
+    </None>
+    <None Include="include\pool">
+      <Filter>Header Files\templated</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\assetload.hpp">
@@ -379,6 +388,12 @@
     </ClInclude>
     <ClInclude Include="include\game\region.hpp">
       <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\templated\delegate.hpp">
+      <Filter>Header Files\templated</Filter>
+    </ClInclude>
+    <ClInclude Include="include\templated\pool.hpp">
+      <Filter>Header Files\templated</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

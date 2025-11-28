@@ -130,7 +130,7 @@ public:
 	/// @return Item reference object.
 	[[nodiscard]] Item add(const T& item) {
 		T copy = item;
-		return push(std::move(copy));
+		return add(std::move(copy));
 	};
 
 	/// Returns current pool capacity.
@@ -143,7 +143,6 @@ protected:
 	///
 	/// @param idx Deleted index.
 	void pop(size_t idx) {
-		printf("pop %llu\n", idx);
 		if (idx + 1 == _storage.size()) {
 			// delete item at storage end
 			_storage.pop_back();

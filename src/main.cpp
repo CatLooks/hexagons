@@ -1,13 +1,13 @@
 #include "ui.hpp"
 #include "game.hpp"
 #include "assets.hpp"
-#include "pool.hpp"
+#include <pool>
 
 struct Test {
 	int x;
 
 	Test(int i): x(i) {};
-	~Test() { printf("destroy %d\n", x); };
+	~Test() {  };
 };
 
 /// Program entry.

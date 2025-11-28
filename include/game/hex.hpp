@@ -6,7 +6,7 @@
 #include "plant.hpp"
 
 // forward declare region
-class Region;
+struct Region;
 
 /// Hex tile.
 /// Contains tile status and reference to objects placed on it.
