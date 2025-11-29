@@ -17,22 +17,6 @@ TileDrawer::TileDrawer(const Map* map, sf::IntRect area, sf::Vector2i origin, sf
 	reset();
 };
 
-/// Selects a tile for elevation.
-void TileDrawer::select(sf::Vector2i coords, int elevation) {
-	_select = coords;
-	_elev = elevation;
-};
-
-/// @return Selected tile coordinates.
-sf::Vector2i TileDrawer::selected() const {
-	return _select;
-};
-
-/// Checks whether the tile is selected.
-bool TileDrawer::selected(const Draw::Tile& tile) const {
-	return _select == tile.coords;
-};
-
 /// Resets the drawer to first tile.
 void TileDrawer::reset() {
 	_coords = _beg;
@@ -47,11 +31,8 @@ std::optional<Draw::Tile> TileDrawer::next() {
 			return {};
 
 		// store current tile
-		std::optional<Draw::Tile> tile = Draw::Tile(
-			_map, _coords,
-			_draw + sf::Vector2i(0, (_coords == _select) ? -_elev : 0),
-			_size
-		);
+		std::optional<Draw::Tile> tile = Draw::Tile(_map, _coords, _draw, _size);
+		tile->origin -= sf::Vector2i(sf::Vector2f(Values::tileLevel(_size)) * tile->hex->elevation);
 
 		// calculate next tile coordinates
 		if (++_coords.x >= _end.x - (_coords.y & 1 ? 0 : 1)) {

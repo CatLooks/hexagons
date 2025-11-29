@@ -12,7 +12,7 @@
 /// Contains tile status and reference to objects placed on it.
 struct Hex {
 	/// Tile type.
-	enum Type : uint8_t {
+	enum Type {
 		Void,   /// Void tile.
 		Water,  /// Water tile, can be turned into a bridge.
 		Ground, /// Ground tile, can be captured.
@@ -22,8 +22,9 @@ struct Hex {
 	/// Tile team.
 	Region::Team team = Region::Unclaimed;
 
-	bool selected = 0; /// Whether a tile is selected.
-	size_t spread = 0; /// Spread buffer index.
+	float elevation = 0; /// Tile elevation.
+	bool selected   = 0; /// Whether the tile is selected.
+	size_t spread   = 0; /// Spread buffer index.
 
 	RefPool<Region>::Share region; /// Tile region reference.
 
@@ -38,6 +39,8 @@ struct Hex {
 	/// Move assignment.
 	Hex& operator=(Hex&& hex) noexcept;
 
+	/// Checks if a tile is elevated.
+	bool elevated() const;
 	/// Checks if a tile can be stood on.
 	bool solid() const;
 };

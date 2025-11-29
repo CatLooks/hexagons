@@ -93,12 +93,9 @@ namespace gameui {
 			tile.hex = map.at({});
 			tile.origin = self.position + (self.size - Values::tileSize / 2) / 2;
 
-			// draw base
-			tile.drawBase(target);
-			// draw sides
-			tile.drawSides(target, Map::unselected, sf::Color::Black, sf::Color::Black);
-			// draw borders
-			tile.drawBorders(target, Map::unselected, sf::Color::Black);
+			/* draw base    */ tile.drawBase(target);
+			/* draw sides   */ tile.drawSides(target, sf::Color::Black, sf::Color::Black);
+			/* draw borders */ tile.drawBorders(target, sf::Color::Black);
 		};
 	};
 };

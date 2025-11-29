@@ -29,7 +29,8 @@ private:
 	std::optional<sf::Vector2i> _select; /// Selected tile position.
 
 public:
-	Regions mgr; /// Region manager.
+	Regions mgr;         /// Region manager.
+	Regions::Ref region; /// Selected region.
 
 	sf::Vector2i camera; /// Map camera.
 

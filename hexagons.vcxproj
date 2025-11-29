@@ -126,7 +126,6 @@
     <ClInclude Include="include\localization\parser.hpp" />
     <ClInclude Include="include\localization\token.hpp" />
     <ClInclude Include="include\mathext.hpp" />
-    <ClInclude Include="include\pool.hpp" />
     <ClInclude Include="include\templated\delegate.hpp" />
     <ClInclude Include="include\templated\pool.hpp" />
     <ClInclude Include="include\templated\refpool.hpp" />

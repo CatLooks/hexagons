@@ -26,7 +26,7 @@ namespace Draw {
 	};
 
 	/// Draws tile borders.
-	void Tile::drawBorders(ui::RenderBuffer& target, sf::Vector2i select, sf::Color color) const {
+	void Tile::drawBorders(ui::RenderBuffer& target, sf::Color color) const {
 		// ignore if not a ground tile
 		if (hex->type != Hex::Ground) return;
 
@@ -35,7 +35,7 @@ namespace Draw {
 		uint8_t border = 0;
 
 		// set every border if selected
-		if (coords == select) {
+		if (hex->elevated()) {
 			border = 0x3F;
 		}
 
@@ -46,7 +46,7 @@ namespace Draw {
 			const Hex* nb = map->at(pos);
 
 			// set border if passes check
-			if (!nb || nb->type != Hex::Ground || nb->team != hex->team || pos == select)
+			if (!nb || nb->type != Hex::Ground || nb->team != hex->team || nb->elevated())
 				border |= 1 << i;
 		};
 
@@ -65,21 +65,37 @@ namespace Draw {
 	};
 
 	/// Draws tile sides.
-	void Tile::drawSides(ui::RenderBuffer& target, sf::Vector2i select, sf::Color up, sf::Color low) const {
-		// ignore if not a solid tile
-		if (!hex->solid()) return;
-
+	void Tile::drawSides(ui::RenderBuffer& target, sf::Color up, sf::Color low) const {
 		// check if any side can be seen
 		const Hex* n2 = map->at(map->neighbor(coords, Map::LowerRight));
 		const Hex* n3 = map->at(map->neighbor(coords, Map::LowerLeft));
-		bool visible = coords == select || (!n2 || !n2->solid()) || (!n3 || !n3->solid());
+		bool visible = hex->elevated() || (!n2 || !n2->solid()) || (!n3 || !n3->solid());
 
 		// draw border if visible
 		if (visible) {
-			sf::IntRect area = { origin + Values::tileLevel(size), size };
-			target.quad(area, Values::sides, up);
-			if (up != low)
-				target.quad(area, Values::sideShade, low);
+			if (hex->solid()) {
+				// draw top ground sides
+				sf::IntRect area = { origin + Values::tileLevel(size), size };
+				target.quad(area, Values::sides, up);
+				if (up != low)
+					target.quad(area, Values::sideShade, low);
+
+				// draw bottom ground sides
+				/*if (!hex->elevated()) {
+					const Hex* n1 = map->at(map->neighbor(coords, Map::Right));
+					const Hex* n4 = map->at(map->neighbor(coords, Map::Left));
+
+					if ((n1 && n1->type == Hex::Water) || (n4 && n4->type == Hex::Water)) {
+						area.position += Values::tileLevel(size);
+						target.quad(area, Values::sides, low);
+					};
+				};*/
+			}
+			/*else if (hex->type == Hex::Water) {
+				// draw water sides
+				sf::IntRect area = {origin + Values::tileLevel(size) * 2, size};
+				target.quad(area, Values::sides, sf::Color(0, 157, 251));
+			};*/
 			target.forward(&assets::tilemap);
 		};
 	};

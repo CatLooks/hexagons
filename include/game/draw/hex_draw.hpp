@@ -13,14 +13,6 @@ namespace Draw {
 
 	/// Tile drawing data.
 	struct Tile {
-		/// Neighbor test function signature.
-		///
-		/// @param origin Hex at origin.
-		/// @param neighbor Neighbor of `origin`.
-		///
-		/// @return Whether the test passed.
-		using NeighborTest = std::function<bool(const Hex* origin, const Hex* neighbor)>;
-
 		const Map* map;      /// Map reference.
 		const Hex* hex;      /// Hex reference.
 		sf::Vector2i coords; /// Hex coordinates.
@@ -43,17 +35,16 @@ namespace Draw {
 		/// Draws tile borders.
 		///
 		/// @param target Target render buffer.
-		/// @param select Selected tile position.
 		/// @param color Border color.
-		void drawBorders(ui::RenderBuffer& target, sf::Vector2i select, sf::Color color) const;
+		void drawBorders(ui::RenderBuffer& target, sf::Color color) const;
 
 		/// Draws tile sides.
 		///
 		/// @param target Target render buffer.
-		/// @param select Selected tile position.
 		/// @param up Upper gradient color.
 		/// @param low Lower gradient color.
-		void drawSides(ui::RenderBuffer& target, sf::Vector2i select, sf::Color up, sf::Color low) const;
+		/// @param mode Side drawing mode.
+		void drawSides(ui::RenderBuffer& target, sf::Color up, sf::Color low) const;
 
 		/// Draws debug stuff.
 		/// 

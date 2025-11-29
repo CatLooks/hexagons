@@ -67,6 +67,12 @@
     <Filter Include="Header Files\templated">
       <UniqueIdentifier>{102dbeb9-213f-439b-9480-b50631bb6d94}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\game\map">
+      <UniqueIdentifier>{fd4bacd9-d61d-4680-8460-db28f22ed42e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\game\map">
+      <UniqueIdentifier>{c51073a2-ee8f-40ef-b569-594562f5e4df}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -127,9 +133,6 @@
       <Filter>Source Files\game</Filter>
     </ClCompile>
     <ClCompile Include="src\game\troop.cpp">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="src\game\map.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
     <ClCompile Include="src\ui\pages.cpp">
@@ -198,20 +201,23 @@
     <ClCompile Include="src\game\values\interface.cpp">
       <Filter>Source Files\game\values</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\region.cpp">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="src\game\array.cpp">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="src\game\spread.cpp">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="src\game\funcs.cpp">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
     <ClCompile Include="src\flags.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\array.cpp">
+      <Filter>Source Files\game\map</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\funcs.cpp">
+      <Filter>Source Files\game\map</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\region.cpp">
+      <Filter>Source Files\game\map</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\spread.cpp">
+      <Filter>Source Files\game\map</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\map.cpp">
+      <Filter>Source Files\game\map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -329,9 +335,6 @@
     <ClInclude Include="include\game\entity.hpp">
       <Filter>Header Files\game</Filter>
     </ClInclude>
-    <ClInclude Include="include\game\map.hpp">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
     <ClInclude Include="include\ui\pages.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -398,12 +401,6 @@
     <ClInclude Include="include\delegate.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\pool.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\game\region.hpp">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
     <ClInclude Include="include\templated\delegate.hpp">
       <Filter>Header Files\templated</Filter>
     </ClInclude>
@@ -413,17 +410,23 @@
     <ClInclude Include="include\templated\refpool.hpp">
       <Filter>Header Files\templated</Filter>
     </ClInclude>
-    <ClInclude Include="include\game\array.hpp">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="include\game\spread.hpp">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="include\game\funcs.hpp">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
     <ClInclude Include="include\flags.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\array.hpp">
+      <Filter>Header Files\game\map</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\funcs.hpp">
+      <Filter>Header Files\game\map</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\map.hpp">
+      <Filter>Header Files\game\map</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\region.hpp">
+      <Filter>Header Files\game\map</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\spread.hpp">
+      <Filter>Header Files\game\map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
