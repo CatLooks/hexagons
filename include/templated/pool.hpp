@@ -61,6 +61,16 @@ public:
 		Ref(Pool* pool, size_t index): _pool(pool), _idx(index) {};
 
 	public:
+		/// Checks if 2 references are equal.
+		bool operator==(const Ref& oth) const {
+			return _pool == oth._pool && _idx == oth._idx;
+		};
+		/// Checks if 2 references are not equal.
+		bool operator!=(const Ref& oth) const {
+			return !(*this == oth);
+		};
+
+	public:
 		/// Checks whether the object does not hold a reference.
 		bool null() const { return _pool == nullptr; };
 		/// Checks whether the object does not hold a reference.

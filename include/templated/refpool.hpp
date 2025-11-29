@@ -88,6 +88,16 @@ public:
 		Share(RefPool* pool, size_t index) : _pool(pool), _index(index) {};
 
 	public:
+		/// Checks if 2 references are equal.
+		bool operator==(const Share& oth) const {
+			return _pool == oth._pool && _index == oth._index;
+		};
+		/// Checks if 2 references are not equal.
+		bool operator!=(const Share& oth) const {
+			return !(*this == oth);
+		};
+
+	public:
 		/// Checks whether the object does not hold a reference.
 		bool null() const { return _pool == nullptr; };
 		/// Checks whether the object does not hold a reference.
