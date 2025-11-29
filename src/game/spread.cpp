@@ -51,7 +51,7 @@ static inline void _spread(
 };
 
 /// Applies the spread.
-void Spread::spread(const HexArray& array, sf::Vector2i pos, size_t radius) const {
+void Spread::apply(const HexArray& array, sf::Vector2i pos, size_t radius) const {
 	// get new spread index
 	size_t idx = index();
 
@@ -59,6 +59,11 @@ void Spread::spread(const HexArray& array, sf::Vector2i pos, size_t radius) cons
 	Hex* origin = array.at(pos);
 	if (!origin) return;
 	origin->spread = idx;
+	if (imm) {
+		// affect the origin tile
+		Tile tile = { pos, origin, radius };
+		if (pass(tile)) effect(tile);
+	};
 	if (!radius) return;
 
 	// tile queue
@@ -82,7 +87,7 @@ void Spread::spread(const HexArray& array, sf::Vector2i pos, size_t radius) cons
 };
 
 /// Applies the spread.
-Spread::List Spread::spreadlist(const HexArray& array, sf::Vector2i pos, size_t radius) const {
+Spread::List Spread::applylist(const HexArray& array, sf::Vector2i pos, size_t radius) const {
 	// affected tile coords list
 	List affected;
 
@@ -93,6 +98,14 @@ Spread::List Spread::spreadlist(const HexArray& array, sf::Vector2i pos, size_t 
 	Hex* origin = array.at(pos);
 	if (!origin) return affected;
 	origin->spread = idx;
+	if (imm) {
+		// affect the origin tile
+		Tile tile = { pos, origin, radius };
+		if (pass(tile)) {
+			effect(tile);
+			affected.push_back(tile.pos);
+		};
+	};
 	if (!radius) return affected;
 
 	// tile queue

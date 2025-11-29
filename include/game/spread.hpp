@@ -52,6 +52,8 @@ struct Spread {
 	/// 
 	/// By default, does nothing.
 	Effect effect = default_effect;
+	/// Whether the spread affects the origin tile.
+	bool imm      = false;
 
 	/// Generates a unique spread pass index.
 	/// 
@@ -68,7 +70,7 @@ struct Spread {
 	/// @param array Target tile array.
 	/// @param pos Spread origin.
 	/// @param radius Maximum spread radius (infinite by default).
-	void spread(const HexArray& array, sf::Vector2i pos, size_t radius = ~0ull) const;
+	void apply(const HexArray& array, sf::Vector2i pos, size_t radius = ~0ull) const;
 
 	/// Visited tile coordinate list.
 	///
@@ -84,5 +86,5 @@ struct Spread {
 	/// @param radius Maximum spread radius (infinite by default).
 	/// 
 	/// @return List of coordinates of all visited tiles.
-	List spreadlist(const HexArray& array, sf::Vector2i pos, size_t radius = ~0ull) const;
+	List applylist(const HexArray& array, sf::Vector2i pos, size_t radius = ~0ull) const;
 };
