@@ -6,6 +6,7 @@
 #include "assets.hpp"
 #include "mathext.hpp"
 #include "array.hpp"
+#include "spread.hpp"
 
 /// Game map object.
 /// Stores array of tiles and lists of all dynamic objects on it.
@@ -28,6 +29,8 @@ private:
 	std::optional<sf::Vector2i> _select; /// Selected tile position.
 
 public:
+	Regions mgr; /// Region manager.
+
 	sf::Vector2i camera; /// Map camera.
 
 public:

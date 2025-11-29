@@ -29,6 +29,7 @@
   <ItemGroup>
     <ClCompile Include="src\assetload.cpp" />
     <ClCompile Include="src\assets.cpp" />
+    <ClCompile Include="src\flags.cpp" />
     <ClCompile Include="src\game\array.cpp" />
     <ClCompile Include="src\game\build.cpp" />
     <ClCompile Include="src\game\draw.cpp" />
@@ -36,6 +37,7 @@
     <ClCompile Include="src\game\draw\hex_draw.cpp" />
     <ClCompile Include="src\game\draw\plant_draw.cpp" />
     <ClCompile Include="src\game\draw\troop_draw.cpp" />
+    <ClCompile Include="src\game\funcs.cpp" />
     <ClCompile Include="src\game\game.cpp" />
     <ClCompile Include="src\game\hex.cpp" />
     <ClCompile Include="src\game\map.cpp" />
@@ -93,6 +95,7 @@
     <ClInclude Include="include\assetload.hpp" />
     <ClInclude Include="include\assets.hpp" />
     <ClInclude Include="include\delegate.hpp" />
+    <ClInclude Include="include\flags.hpp" />
     <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\game\array.hpp" />
     <ClInclude Include="include\game\build.hpp" />
@@ -102,6 +105,7 @@
     <ClInclude Include="include\game\draw\plant_draw.hpp" />
     <ClInclude Include="include\game\draw\troop_draw.hpp" />
     <ClInclude Include="include\game\entity.hpp" />
+    <ClInclude Include="include\game\funcs.hpp" />
     <ClInclude Include="include\game\game.hpp" />
     <ClInclude Include="include\game\hex.hpp" />
     <ClInclude Include="include\game\map.hpp" />

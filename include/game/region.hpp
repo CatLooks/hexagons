@@ -1,7 +1,8 @@
 #pragma once
 
 // include dependencies
-#include <list>
+//#include "spread.hpp"
+#include <refpool>
 
 /// Region statistics object.
 struct Region {
@@ -36,11 +37,19 @@ class Map;
 
 /// Region manager object.
 class Regions {
-private:
-	std::list<Region> _list; /// Region list.
+public:
+	/// Shared region reference type.
+	using Ref = RefPool<Region>::Share;
 
+private:
+	RefPool<Region> _pool; /// Region pool.
+
+	/// Creates a new region.
+	///
+	/// @param region Initial region state.
 	/// 
-	Region* create();
+	/// @return Region shared reference.
+	Ref create(Region&& region);
 
 public:
 	/// Enumerates all regions in a map.

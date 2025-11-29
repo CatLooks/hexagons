@@ -1,5 +1,6 @@
 #include "game/map.hpp"
 #include "game/draw.hpp"
+#include "flags.hpp"
 
 /// Unselected tile coordinates.
 const sf::Vector2i Map::unselected = { -1, -1 };
@@ -81,5 +82,8 @@ void Map::draw(ui::RenderBuffer& target) const {
 		Draw::troopEntity(*tile, target);
 		Draw::buildEntity(*tile, target);
 		Draw::plantEntity(*tile, target);
+
+		// debug stuff
+		if (flags::debug) tile->drawDebug(target);
 	};
 };

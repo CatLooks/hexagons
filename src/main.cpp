@@ -1,48 +1,10 @@
 #include "ui.hpp"
 #include "game.hpp"
 #include "assets.hpp"
-#include <pool>
-
-struct Test {
-	int x;
-
-	Test(int i): x(i) {};
-	~Test() {  };
-};
 
 /// Program entry.
 /// @return Exit code.
 int main() {
-	Pool<Test> pool;
-	{
-		std::vector<Pool<Test>::Item> items;
-
-		{
-			auto it = pool.add(1);
-			printf("=== %d\n", it->x);
-		};
-		{
-			auto ita = pool.add(2);
-			auto itb = pool.add(3);
-			printf("=== %d @ %llu\n", ita->x, ita.index());
-			printf("=== %d @ %llu\n", itb->x, itb.index());
-		};
-		{
-			items.push_back(pool.add(4));
-			auto itc = pool.add(5);
-			items.push_back(pool.add(6));
-
-			printf("=== %d @ %llu\n", items[0]->x, items[0].index());
-			printf("=== %d @ %llu\n", itc->x, itc.index());
-			printf("=== %d @ %llu\n", items[1]->x, items[1].index());
-		};
-		{
-			printf("=== %d @ %llu\n", items[0]->x, items[0].index());
-			printf("=== %d @ %llu\n", items[1]->x, items[1].index());
-		};
-	};
-	return 0;
-
 	// load languages
 	if (assets::loadLanguageList())
 		return 1;
@@ -95,7 +57,7 @@ int main() {
 			"bbbbbbbbbbbbb ",
 		};
 
-		map.resize({ {}, { w, h } });
+		map.empty({ w, h });
 		{
 			sf::Vector2i pos;
 			for (int idx = 0; idx < Troop::Count; idx++) {
@@ -124,19 +86,19 @@ int main() {
 					break;
 				case 'r':
 					hex->type = Hex::Ground;
-					hex->team = Hex::Red;
+					hex->team = Region::Red;
 					break;
 				case 'g':
 					hex->type = Hex::Ground;
-					hex->team = Hex::Green;
+					hex->team = Region::Green;
 					break;
 				case 'b':
 					hex->type = Hex::Ground;
-					hex->team = Hex::Blue;
+					hex->team = Region::Blue;
 					break;
 				case 'y':
 					hex->type = Hex::Ground;
-					hex->team = Hex::Yellow;
+					hex->team = Region::Yellow;
 					break;
 				case 'w':
 					hex->type = Hex::Water;
@@ -147,6 +109,7 @@ int main() {
 				};
 			};
 		};
+		map.mgr.enumerate(&map);
 	}
 	layer->add(game);
 

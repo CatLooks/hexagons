@@ -1,4 +1,5 @@
 #include "game/draw/hex_draw.hpp"
+#include "flags.hpp"
 
 namespace Draw {
 	/// Returns a white or a black color, depending on the input.
@@ -19,7 +20,7 @@ namespace Draw {
 
 		// draw water tiles
 		if (hex->type == Hex::Water) {
-			target.quad({ origin + Values::tileLevel(size), size}, Values::water);
+			target.quad({ origin + Values::tileLevel(size), size }, Values::water);
 			target.forward(&assets::tilemap);
 		};
 	};
@@ -81,5 +82,18 @@ namespace Draw {
 				target.quad(area, Values::sideShade, low);
 			target.forward(&assets::tilemap);
 		};
+	};
+
+	/// Draws debug stuff.
+	void Tile::drawDebug(ui::RenderBuffer& target) const {
+		// region index text
+		std::string label = hex->region ? std::format("{}", hex->region.index()) : "x";
+		sf::Text text(assets::font, label, 20);
+		text.setPosition((sf::Vector2f)origin + sf::Vector2f(size.x * 3.f / 4, size.y / 2.f));
+		text.setOutlineThickness(2);
+
+		// draw index
+		target.text(text);
+		target.forward(nullptr);
 	};
 };

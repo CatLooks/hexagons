@@ -54,5 +54,10 @@ namespace Draw {
 		/// @param up Upper gradient color.
 		/// @param low Lower gradient color.
 		void drawSides(ui::RenderBuffer& target, sf::Vector2i select, sf::Color up, sf::Color low) const;
+
+		/// Draws debug stuff.
+		/// 
+		/// @param target Target render buffer.
+		void drawDebug(ui::RenderBuffer& target) const;
 	};
 };
