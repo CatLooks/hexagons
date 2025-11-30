@@ -7,6 +7,7 @@
 /// Stuff used for hex preview.
 namespace gameui::preview {
 	extern Map map;         /// Preview "map".
+	extern Hex& hex;        /// Preview hex.
 	extern Draw::Tile tile; /// Preview tile draw data.
 
 	/// Draws the preview tile.

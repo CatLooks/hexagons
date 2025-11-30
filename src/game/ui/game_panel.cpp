@@ -29,23 +29,44 @@ namespace gameui {
 	};
 
 	/// Constructs the game panel.
-	Panel::Panel(): ui::Panel(texture), _layout(Values::SkillArray::L00) {
+	Panel::Panel(): ui::Panel(texture), _layout(Values::SkillArray::None) {
 		// set panel bounds
-		bounds = { 0px, 1as, 1ps, height };
+		bounds = { 0px, 1ps + Action::size, 1ps, height };
 		event_scissor = false;
 		padding.set(0);
 
 		// create preview box
 		_preview = new Action();
 		{
-			_preview->position() = { 0.5as, height - Action::size };
+			_preview->position() = { 0.5as, 1as };
 			_preview->deactivate();
 		};
 		adds(_preview);
+
+		// absorb all events
+		onEvent([=](const ui::Event& evt) {
+			return true;
+		});
 	};
 
 	/// Reconstructs panel actions.
 	void Panel::construct(Values::SkillArray::Layout layout) {
+		// show / hide animations
+		if ((_layout == Values::SkillArray::None) != (layout == Values::SkillArray::None)) {
+			if (layout != Values::SkillArray::None) {
+				// show panel
+				ui::Anim* anim = ui::AnimDim::to(&position().y, 1as, sf::seconds(0.2f));
+				anim->setEasing(ui::Easings::quadOut);
+				push(anim);
+			}
+			else {
+				// hide panel
+				ui::Anim* anim = ui::AnimDim::to(&position().y, 1ps + Action::size, sf::seconds(0.2f));
+				anim->setEasing(ui::Easings::quadIn);
+				push(anim);
+			};
+		};
+
 		// delete previous boxes
 		_boxes.clear();
 		clear();
@@ -55,10 +76,7 @@ namespace gameui {
 		for (int i = 0; i < count; i++) {
 			// create action button
 			Action* action = new Action(i + 1);
-			action->position() = {
-				0.5as + spacing * spacing_table[layout].at(i),
-				height - Action::size
-			};
+			action->position() = { 0.5as + spacing * spacing_table[layout].at(i), 1as };
 
 			// register action button
 			_boxes.push_back(action);
@@ -66,7 +84,8 @@ namespace gameui {
 		};
 
 		// update preview visibility
-		if (layout)
+		_preview->clear();
+		if (layout != Values::SkillArray::None)
 			_preview->activate();
 		else
 			_preview->deactivate();
@@ -74,6 +93,11 @@ namespace gameui {
 		// recalculate panel
 		_layout = layout;
 		recalculate();
+	};
+
+	/// Returns preview box.
+	Action* Panel::preview() const {
+		return _preview;
 	};
 
 	/// Returns a reference to action panels.

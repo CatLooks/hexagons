@@ -32,6 +32,9 @@ namespace gameui {
 		/// @param layout Layout type.
 		void construct(Values::SkillArray::Layout layout);
 
+		/// Returns preview box.
+		Action* preview() const;
+
 		/// Returns a reference to action panels.
 		const std::vector<Action*>& actions() const;
 	};
