@@ -30,14 +30,23 @@ namespace gameui {
 	void Action::clear() {
 		ui::Panel::clear();
 		ui::Panel::clears();
+		_tex = nullptr;
+		_text = nullptr;
+		_sub = nullptr;
 		_draw = nullptr;
 	};
 
 	/// Adds an image to the action button.
-	void Action::addTexture(sf::IntRect map) {
-		ui::Image* dimg = new ui::Image(&assets::interface, map);
-		dimg->bounds = ui::DimRect::Fill;
-		adds(dimg);
+	void Action::setTexture(const sf::Texture* texture, sf::IntRect map) {
+		if (!_tex) {
+			_tex = new ui::Image(texture, map);
+			_tex->bounds = ui::DimRect::Fill;
+			adds(_tex);
+		}
+		else {
+			_tex->texture = texture;
+			_tex->coords = map;
+		};
 	};
 
 	/// Adds an extra draw call to the action button.

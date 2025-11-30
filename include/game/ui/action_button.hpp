@@ -19,6 +19,7 @@ namespace gameui {
 
 	private:
 		int _hint       = -1;      /// Action hint.
+		ui::Image* _tex = nullptr; /// Action texture.
 		ui::Text* _text = nullptr; /// Action label.
 		ui::Text* _sub  = nullptr; /// Action subtitle label.
 		DrawCall _draw;            /// Extra draw call.
@@ -47,8 +48,9 @@ namespace gameui {
 
 		/// Adds an image to the action button.
 		/// 
+		/// @param texture Texture reference.
 		/// @param map Action texture.
-		void addTexture(sf::IntRect map);
+		void setTexture(const sf::Texture* texture, sf::IntRect map);
 
 		/// Adds an extra draw call to the action button.
 		/// 
