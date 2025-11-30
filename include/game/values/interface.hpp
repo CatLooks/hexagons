@@ -75,8 +75,11 @@ namespace Values {
 	/// Berry currency icon.
 	extern const sf::IntRect berry_icon;
 
-	/// Troop skills textures.
-	extern const sf::IntRect skills[static_cast<int>(SkillType::Count)];
+	/// Skills textures.
+	extern const sf::IntRect skill_textures[static_cast<int>(SkillType::Count)];
+
+	/// Skills names.
+	extern const char* skill_names[static_cast<int>(SkillType::Count)];
 
 	/// Troop effect textures.
 	extern const sf::IntRect effects[static_cast<int>(EffectType::Count)];

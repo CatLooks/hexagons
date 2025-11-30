@@ -44,6 +44,32 @@ plant {
 	grave  : Grave
 }
 
+# skill names
+skill {
+	invalid : "???"
+	withdraw: Withdraw
+	move    : Move
+
+	# troop attack names
+	attack {
+		lumber: Attack
+		spear : Attack
+		archer: Shoot
+		baron : Bash
+		knight: Strike
+	}
+
+	harvest: Harvest
+	cut    : Cut Down
+	defend : Defend
+	range  : Range Boost
+	defense: Reinforce
+	offense: Sharpen
+
+	heal   : Heal
+	stun   : Stun
+}
+
 # gameplay text
 gp {
 	# cost preview

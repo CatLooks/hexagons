@@ -20,8 +20,8 @@ namespace Values {
 	/// Berry currency icon.
 	const sf::IntRect berry_icon = coords(9, 1);
 
-	/// Troop skills textures.
-	const sf::IntRect skills[static_cast<int>(SkillType::Count)] = {
+	/// Skills textures.
+	const sf::IntRect skill_textures[static_cast<int>(SkillType::Count)] = {
 		coords(9, 3, 3, 3), // empty
 
 		coords(0, 1), // withdraw
@@ -42,6 +42,29 @@ namespace Values {
 
 		coords(0, 3), // heal
 		coords(1, 3), // stun
+	};
+
+	/// Skills names.
+	const char* skill_names[static_cast<int>(SkillType::Count)] = {
+		"@!skill.invalid",
+		"@!skill.withdraw",
+		"@!skill.move",
+
+		"@!skill.attack.lumber",
+		"@!skill.attack.spear",
+		"@!skill.attack.archer",
+		"@!skill.attack.baron",
+		"@!skill.attack.knight",
+
+		"@!skill.harvest",
+		"@!skill.cut",
+		"@!skill.defend",
+		"@!skill.range",
+		"@!skill.defense",
+		"@!skill.offense",
+
+		"@!skill.heal",
+		"@!skill.stun",
 	};
 
 	/// Troop effect textures.
