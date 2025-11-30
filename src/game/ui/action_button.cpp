@@ -50,33 +50,37 @@ namespace gameui {
 	};
 
 	/// Adds an extra draw call to the action button.
-	void Action::addDraw(DrawCall call) {
+	void Action::setDraw(DrawCall call) {
 		_draw = call;
 	};
 
 	/// Adds text to the action button.
-	ui::Text* Action::addLabel() {
-		// create empty label
-		_text = new ui::Text(Values::panel_text, {});
-		_text->bounds = { 0px, -24px, 1ps, 0px };
-		_text->align = ui::Text::N;
-		_text->pos = ui::Text::Static;
+	ui::Text* Action::setLabel() {
+		if (!_text) {
+			// create empty label
+			_text = new ui::Text(Values::panel_text, {});
+			_text->bounds = { 0px, -24px, 1ps, 0px };
+			_text->align = ui::Text::N;
+			_text->pos = ui::Text::Static;
 
-		// register text element
-		add(_text);
+			// register text element
+			add(_text);
+		};
 		return _text;
 	};
 
 	/// Adds text to the action button.
-	ui::Text* Action::addSubtitle() {
-		// create empty label
-		_sub = new ui::Text(Values::panel_text, {});
-		_sub->bounds = { 0px, -44px, 1ps, 0px };
-		_sub->align = ui::Text::N;
-		_sub->pos = ui::Text::Static;
+	ui::Text* Action::setSubtitle() {
+		if (!_sub) {
+			// create empty label
+			_sub = new ui::Text(Values::panel_text, {});
+			_sub->bounds = { 0px, -44px, 1ps, 0px };
+			_sub->align = ui::Text::N;
+			_sub->pos = ui::Text::Static;
 
-		// register text element
-		add(_sub);
+			// register text element
+			add(_sub);
+		};
 		return _sub;
 	};
 

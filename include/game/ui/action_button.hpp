@@ -55,16 +55,16 @@ namespace gameui {
 		/// Adds an extra draw call to the action button.
 		/// 
 		/// @param call Draw call.
-		void addDraw(DrawCall call);
+		void setDraw(DrawCall call);
 
 		/// Adds a text label to the action button.
 		/// 
 		/// @return Pointer to text label.
-		ui::Text* addLabel();
+		ui::Text* setLabel();
 
 		/// Adds a subtitle label to the action button.
 		/// 
 		/// @return Pointer to text label.
-		ui::Text* addSubtitle();
+		ui::Text* setSubtitle();
 	};
 };
