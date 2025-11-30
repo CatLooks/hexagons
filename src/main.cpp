@@ -49,12 +49,12 @@ int main() {
 		const int h = 7;
 		const char arr[h][w + 1] = {
 			"------------- ",
-			"yyyrrrrrrrrrrr",
-			"rrrrrrrrrrrrr ",
-			"gggggggggggggg",
-			"ggggggggggggg ",
-			"bbbbbbbbbbbbbb",
-			"bbbbbbbbbbbbb ",
+			"rrrrrrrryywrrr",
+			"rrrrrrryywrrr ",
+			"gggggggyywgggg",
+			"ggggggyywgggg ",
+			"bbbbbbyywbbbbb",
+			"bbbbbyywbbbbb ",
 		};
 
 		map.empty({ w, h });
@@ -110,7 +110,9 @@ int main() {
 			};
 		};
 		map.mgr.enumerate(&map);
-	}
+		map.region = map.at({ 0, 1 })->region;
+		map.at({ 6, 1 })->elevation = 1;
+	};
 	layer->add(game);
 
 	auto gui = itf.layer();

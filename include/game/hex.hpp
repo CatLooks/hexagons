@@ -25,8 +25,7 @@ struct Hex {
 	float elevation = 0; /// Tile elevation.
 	bool selected   = 0; /// Whether the tile is selected.
 	size_t spread   = 0; /// Spread buffer index.
-
-	RefPool<Region>::Share region; /// Tile region reference.
+	Regions::Ref region; /// Tile region reference.
 
 	Pool<Troop>::Item troop; /// Troop reference, `null` if no troop.
 	Pool<Build>::Item build; /// Building reference, `null` if no building.

@@ -65,16 +65,4 @@ namespace gameui {
 		/// @return Pointer to text label.
 		ui::Text* addSubtitle();
 	};
-
-	/// Stuff used for hex preview.
-	namespace preview {
-		extern Map map;         /// Preview "map".
-		extern Draw::Tile tile; /// Preview tile draw data.
-
-		/// Draws the preview tile.
-		///
-		/// @param target Render target.
-		/// @param self Draw area.
-		void draw(ui::RenderBuffer& target, sf::IntRect self);
-	};
 };

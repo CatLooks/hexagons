@@ -47,6 +47,7 @@
     <ClCompile Include="src\game\troop.cpp" />
     <ClCompile Include="src\game\ui\action_button.cpp" />
     <ClCompile Include="src\game\ui\game_panel.cpp" />
+    <ClCompile Include="src\game\ui\hex_preview.cpp" />
     <ClCompile Include="src\game\ui\resource_bar.cpp" />
     <ClCompile Include="src\game\values\build_values.cpp" />
     <ClCompile Include="src\game\values\hex_values.cpp" />
@@ -115,6 +116,7 @@
     <ClInclude Include="include\game\troop.hpp" />
     <ClInclude Include="include\game\ui\action_button.hpp" />
     <ClInclude Include="include\game\ui\game_panel.hpp" />
+    <ClInclude Include="include\game\ui\hex_preview.hpp" />
     <ClInclude Include="include\game\ui\resource_bar.hpp" />
     <ClInclude Include="include\game\values\build_values.hpp" />
     <ClInclude Include="include\game\values\hex_values.hpp" />
