@@ -9,7 +9,7 @@ namespace Draw {
 
 		// draw troop
 		buffer.quad({ tile.origin, Values::tileSize }, Values::troop_textures[troop.type]);
-		HealthBar(troop.hp, Values::troop_hp[troop.type], true).draw(tile.origin, buffer);
+		HealthBar(troop.hp, Values::troop_hp[troop.type], troop.poison).draw(tile.origin, buffer);
 		buffer.forward(&assets::tilemap);
 	};
 
