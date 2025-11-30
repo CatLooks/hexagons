@@ -168,51 +168,51 @@ namespace ui {
 
 	/// Send an event to interface.
 	void Interface::event(const sf::Event& evt) {
-		for (auto& layer : *_ctx) {
+		for (auto it = _ctx->rbegin(); it != _ctx->rend(); it++) {
 			// check for keyboard events
 			if (const auto* data = evt.getIf<sf::Event::KeyPressed>()) {
-				layer->event((Event)Event::KeyPress {
+				if ((*it)->event((Event)Event::KeyPress {
 					data->code, data->scancode, data->alt, data->shift, data->control, data->system
-				});
-				return;
+				})) return;
+				continue;
 			};
 			if (const auto* data = evt.getIf<sf::Event::KeyReleased>()) {
-				layer->event((Event)Event::KeyRelease {
+				if ((*it)->event((Event)Event::KeyRelease {
 					data->code, data->scancode, data->alt, data->shift, data->control, data->system
-				});
-				return;
+				})) return;
+				continue;
 			};
 			if (const auto* data = evt.getIf<sf::Event::TextEntered>()) {
-				layer->event((Event)Event::CharEnter {
+				if ((*it)->event((Event)Event::CharEnter {
 					data->unicode
-				});
-				return;
+				})) return;
+				continue;
 			};
 
 			// check for mouse button events
 			if (const auto* data = evt.getIf<sf::Event::MouseButtonPressed>()) {
-				layer->event((Event)Event::MousePress {
-					layer->map(data->position, _win_rect), data->position, data->button
-				});
-				return;
+				if ((*it)->event((Event)Event::MousePress {
+					(*it)->map(data->position, _win_rect), data->position, data->button
+				})) return;
+				continue;
 			};
 			if (const auto* data = evt.getIf<sf::Event::MouseButtonReleased>()) {
-				layer->event((Event)Event::MouseRelease {
-					layer->map(data->position, _win_rect), data->position, data->button
-				});
-				return;
+				if ((*it)->event((Event)Event::MouseRelease {
+					(*it)->map(data->position, _win_rect), data->position, data->button
+				})) return;
+				continue;
 			};
 			if (const auto* data = evt.getIf<sf::Event::MouseMoved>()) {
-				layer->event((Event)Event::MouseMove {
-					layer->map(data->position, _win_rect), data->position
-				});
-				return;
+				if ((*it)->event((Event)Event::MouseMove {
+					(*it)->map(data->position, _win_rect), data->position
+				})) return;
+				continue;
 			};
 			if (const auto* data = evt.getIf<sf::Event::MouseWheelScrolled>()) {
-				layer->event((Event)Event::MouseWheel {
-					layer->map(data->position, _win_rect), data->position, (int)data->delta
-				});
-				return;
+				if ((*it)->event((Event)Event::MouseWheel {
+					(*it)->map(data->position, _win_rect), data->position, (int)data->delta
+				})) return;
+				continue;
 			};
 		};
 	};
