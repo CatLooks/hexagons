@@ -99,7 +99,7 @@ void AuthManager::DevAuthToolLogin() {
     // Set the options for logging in.
     EOS_Auth_LoginOptions LoginOptions = {};
     LoginOptions.ApiVersion = EOS_AUTH_LOGIN_API_LATEST;
-    LoginOptions.ScopeFlags = EOS_EAuthScopeFlags::EOS_AS_BasicProfile;
+    LoginOptions.ScopeFlags = EOS_EAuthScopeFlags::EOS_AS_BasicProfile | EOS_EAuthScopeFlags::EOS_AS_Presence;
     LoginOptions.Credentials = &Credentials;
 
     // Log into the player's Epic Games account using the Auth Interface.
@@ -149,7 +149,7 @@ void AuthManager::AccountPortalPersistentAuthLogin() {
     // Set the options for logging in.
     EOS_Auth_LoginOptions LoginOptions = {};
     LoginOptions.ApiVersion = EOS_AUTH_LOGIN_API_LATEST;
-    LoginOptions.ScopeFlags = EOS_EAuthScopeFlags::EOS_AS_BasicProfile;
+    LoginOptions.ScopeFlags = EOS_EAuthScopeFlags::EOS_AS_BasicProfile | EOS_EAuthScopeFlags::EOS_AS_Presence;
     LoginOptions.Credentials = &Credentials;
 
     // Log into an Epic Games account using the Auth Interface.
@@ -205,7 +205,7 @@ void AuthManager::LogInWithAccountPortal() {
     // Set the options for logging in.
     EOS_Auth_LoginOptions LoginOptions = {};
     LoginOptions.ApiVersion = EOS_AUTH_LOGIN_API_LATEST;
-    LoginOptions.ScopeFlags = EOS_EAuthScopeFlags::EOS_AS_BasicProfile;
+    LoginOptions.ScopeFlags = EOS_EAuthScopeFlags::EOS_AS_BasicProfile | EOS_EAuthScopeFlags::EOS_AS_Presence;
     LoginOptions.Credentials = &Credentials;
 
     // Log into an Epic Games account using the Auth Interface.
@@ -379,5 +379,52 @@ void AuthManager::HandleCreateUserComplete(const EOS_Connect_CreateUserCallbackI
             << static_cast<int>(Data->ResultCode) << " - " << EOS_EResult_ToString(Data->ResultCode) << std::endl;
     }
 }
+
+void AuthManager::Logout() {
+    EOS_Auth_LogoutOptions LogoutOptions = {};
+    LogoutOptions.ApiVersion = EOS_AUTH_LOGOUT_API_LATEST;
+    LogoutOptions.LocalUserId = m_EpicId;
+    EOS_Auth_Logout(m_AuthHandle, &LogoutOptions, this, OnLogoutComplete);
+}
+
+void EOS_CALL AuthManager::OnLogoutComplete(const EOS_Auth_LogoutCallbackInfo* Data) {
+    if (auto Manager = static_cast<AuthManager*>(Data->ClientData)) {
+        Manager->HandleLogoutComplete(Data);
+    }
+}
+
+void AuthManager::HandleLogoutComplete(const EOS_Auth_LogoutCallbackInfo* Data) {
+    if (Data->ResultCode == EOS_EResult::EOS_Success)
+    {
+        std::cout << "[AuthManager] Logged out successfully!" << std::endl;
+        EOS_Auth_DeletePersistentAuthOptions options = {};
+        options.ApiVersion = EOS_AUTH_DELETEPERSISTENTAUTH_API_LATEST;
+        options.RefreshToken = NULL;
+
+        EOS_Auth_DeletePersistentAuth(m_AuthHandle, &options, this, OnDeletePersistentAuthComplete);
+    }
+    else
+    {
+        std::cerr << "[AuthManager] Logout failed: " << EOS_EResult_ToString(Data->ResultCode) << std::endl;
+    }
+}
+
+void EOS_CALL AuthManager::OnDeletePersistentAuthComplete(const EOS_Auth_DeletePersistentAuthCallbackInfo* Data) {
+    if (auto Manager = static_cast<AuthManager*>(Data->ClientData)) {
+        Manager->HandleDeletePersistentAuthComplete(Data);
+    }
+}
+
+void AuthManager::HandleDeletePersistentAuthComplete(const EOS_Auth_DeletePersistentAuthCallbackInfo* Data) {
+    if (Data->ResultCode == EOS_EResult::EOS_Success)
+    {
+        std::cout << "[AuthManager] Deleted persistent auth successfully!" << std::endl;
+    }
+    else
+    {
+        std::cerr << "[AuthManager] Delete persistent auth failed: " << EOS_EResult_ToString(Data->ResultCode) << std::endl;
+    }
+}
+
 
 AuthManager::~AuthManager() {};

@@ -25,8 +25,7 @@ void GameConnectionManager::HostGame() {
     m_IsHost = true;
     std::cout << "[Connection] Command received: HostGame. Starting login..." << std::endl;
     //m_EosManager.GetHwidManager()->Login(m_EosManager.GetPlatformHandle());
-    m_EosManager.GetAuthManager()->AccountPortalPersistentAuthLogin(); //DevAuthToolLogin(); //CreateDeviceId();\
-
+    m_EosManager.GetAuthManager()->AccountPortalPersistentAuthLogin(); //DevAuthToolLogin(); //CreateDeviceId();
 }
 
 void GameConnectionManager::FindAndJoinGame() {

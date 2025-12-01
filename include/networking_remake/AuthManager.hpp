@@ -31,6 +31,7 @@ public:
 	EOS_Auth_IdToken* GetIdToken() const;
     void EpicAccountLogin();
 
+    void Logout();
 
     /** Checks if the login process has successfully completed */
     bool IsLoggedIn() const;
@@ -60,6 +61,8 @@ private:
     static void EOS_CALL OnAuthLogInWithAccountPortalComplete(const EOS_Auth_LoginCallbackInfo* Data);
     static void EOS_CALL OnEpicLoginComplete(const EOS_Connect_LoginCallbackInfo* Data);
     static void EOS_CALL OnCreateUserComplete(const EOS_Connect_CreateUserCallbackInfo* Data);
+	static void EOS_CALL OnLogoutComplete(const EOS_Auth_LogoutCallbackInfo* Data);
+	static void EOS_CALL OnDeletePersistentAuthComplete(const EOS_Auth_DeletePersistentAuthCallbackInfo* Data);
 
     void HandleCreateDeviceId(const EOS_Connect_CreateDeviceIdCallbackInfo* Data);
     void HandleHardwareIDLogin(const EOS_Connect_LoginCallbackInfo* Data);
@@ -68,6 +71,8 @@ private:
     void HandleAccountPortalLogin(const EOS_Auth_LoginCallbackInfo* Data);
 	void HandleEpicLoginComplete(const EOS_Connect_LoginCallbackInfo* Data);
 	void HandleCreateUserComplete(const EOS_Connect_CreateUserCallbackInfo* Data);
+	void HandleLogoutComplete(const EOS_Auth_LogoutCallbackInfo* Data);
+	void HandleDeletePersistentAuthComplete(const EOS_Auth_DeletePersistentAuthCallbackInfo* Data);
     //void HandleHWIDLoginComplete(const EOS_Connect_LoginCallbackInfo* Data);
 
     void LogInWithAccountPortal();
