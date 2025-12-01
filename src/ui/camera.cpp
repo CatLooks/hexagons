@@ -24,7 +24,7 @@ namespace ui {
 
 		// recalculate camera
 		sf::Vector2i& camera = *_drag._ref;
-		camera = mouse - sf::Vector2i(sf::Vector2f(mouse - camera) * zoom / _zoom);
+		//camera = window / 2 - sf::Vector2i(sf::Vector2f(window / 2 - camera) * zoom / _zoom);
 
 		// set new zoom
 		_zoom = zoom;
