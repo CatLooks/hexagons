@@ -18,5 +18,6 @@ struct Troop : Entity {
 		Count       /// Troop count.
 	} type = Farmer;
 
-	int hp = 0; /// Troop health.
+	int hp     = 0; /// Troop health.
+	int poison = 0; /// Poison ticks left.
 };

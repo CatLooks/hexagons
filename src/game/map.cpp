@@ -2,8 +2,18 @@
 #include "game/draw.hpp"
 #include "flags.hpp"
 
-/// Unselected tile coordinates.
-const sf::Vector2i Map::unselected = { -1, -1 };
+/// Selects a region.
+void Map::selectRegion(const Regions::Ref& region) {
+	if (region) _region = region;
+};
+/// Deselects a region.
+void Map::deselectRegion() {
+	_region = {};
+};
+/// Returns currently selected region.
+const Regions::Ref& Map::selectedRegion() const {
+	return _region;
+};
 
 /// Adds a troop to the map.
 void Map::setTroop(const Troop& troop) {
@@ -48,17 +58,17 @@ void Map::draw(ui::RenderBuffer& target) const {
 
 	// setup tile drawer
 	TileDrawer drawer(this, area, origin, Values::tileSize);
-	std::optional<Draw::Tile> elevated;
+	std::deque<Draw::Tile> elevated;
 
 	// draw tile geometry
 	while (auto tile = drawer.next()) {
 		if (tile->hex->elevated()) {
 			tile->drawSides(target, sf::Color::White, sf::Color::Black);
-			elevated = tile;
+			elevated.push_back(*tile);
 		}
 		else {
 			tile->drawBase(target);
-			tile->drawSides(target, Draw::white(tile->hex->region == region), sf::Color::Black);
+			tile->drawSides(target, Draw::white(tile->hex->region == _region), sf::Color::Black);
 		};
 	};
 
@@ -66,13 +76,13 @@ void Map::draw(ui::RenderBuffer& target) const {
 	drawer.reset();
 	while (auto tile = drawer.next()) {
 		if (!tile->hex->elevated())
-			tile->drawBorders(target, Draw::white(tile->hex->region == region));
+			tile->drawBorders(target, Draw::white(tile->hex->region == _region));
 	};
 
 	// draw elevated tile top
-	if (elevated) {
-		elevated->drawBase(target);
-		elevated->drawBorders(target, sf::Color::White);
+	for (auto& tile : elevated) {
+		tile.drawBase(target);
+		tile.drawBorders(target, sf::Color::White);
 	};
 
 	// draw tile contents

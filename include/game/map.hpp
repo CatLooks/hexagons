@@ -18,21 +18,26 @@ class Map : public HexArray {
 	friend Regions;
 
 public:
-	/// Unselected tile coordinates.
-	static const sf::Vector2i unselected;
+	sf::Vector2i camera; /// Map camera.
 
 private:
 	Pool<Troop> _troops; /// Troop pool.
 	Pool<Build> _builds; /// Building pool.
 	Pool<Plant> _plants; /// Plant pool.
 
-	std::optional<sf::Vector2i> _select; /// Selected tile position.
+	Regions::Ref _region; /// Selected region reference.
 
 public:
-	Regions mgr;         /// Region manager.
-	Regions::Ref region; /// Selected region.
+	Regions regions; /// Region manager.
 
-	sf::Vector2i camera; /// Map camera.
+	/// Selects a region.
+	/// 
+	/// @param region Region reference.
+	void selectRegion(const Regions::Ref& region);
+	/// Deselects a region.
+	void deselectRegion();
+	/// Returns currently selected region.
+	const Regions::Ref& selectedRegion() const;
 
 public:
 	/// Adds a troop to the map.

@@ -40,8 +40,13 @@ int main() {
 	});
 
 	// game test
-	auto layer = itf.layer();
-	Game* game = new Game(layer);
+	auto layer_map = itf.layer();
+	auto layer_gui = itf.layer();
+
+	auto gp = new gameui::Panel();
+	layer_gui->add(gp);
+
+	Game* game = new Game(layer_map, gp);
 	{
 		Map& map = game->map;
 
@@ -59,21 +64,22 @@ int main() {
 
 		map.empty({ w, h });
 		{
-			sf::Vector2i pos;
-			for (int idx = 0; idx < Troop::Count; idx++) {
-				for (int hp = 0; hp <= Values::troop_hp[idx]; hp++) {
-					Troop troop;
-					troop.pos = pos;
-					troop.type = static_cast<Troop::Type>(idx);
-					troop.hp = hp;
-					map.setTroop(troop);
+			Troop troop;
+			troop.pos = { 1, 1 };
+			troop.type = Troop::Knight;
+			troop.hp = 5;
+			map.setTroop(troop);
 
-					pos.x++;
-				};
-				pos.x = 0;
-				pos.y++;
-			};
-		}
+			Build build;
+			build.pos = { 3, 1 };
+			build.type = Build::Tower;
+			map.setBuild(build);
+
+			Plant plant;
+			plant.pos = { 5, 1 };
+			plant.type = Plant::Peach;
+			map.setPlant(plant);
+		};
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -109,15 +115,9 @@ int main() {
 				};
 			};
 		};
-		map.mgr.enumerate(&map);
-		map.region = map.at({ 0, 1 })->region;
-		map.at({ 6, 1 })->elevation = 1;
+		map.regions.enumerate(&map);
 	};
-	layer->add(game);
-
-	auto gui = itf.layer();
-	auto gp = new gameui::Panel();
-	gui->add(gp);
+	layer_map->add(game);
 
 	// window main loop
 	while (ui::window.active()) {
