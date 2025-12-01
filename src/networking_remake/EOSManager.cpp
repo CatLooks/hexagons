@@ -23,8 +23,8 @@ EOSManager::EOSManager() {
     logging->RegisterLoggingCallbackExample();
     logging->SetLogLevelVeryVerboseExample();
 
-
-    hwid = std::make_shared<HWID>();
+	auth = std::make_shared<AuthManager>(platformHandle);
+    //hwid = std::make_shared<HWID>();
 
     lobbyHandle = EOS_Platform_GetLobbyInterface(platformHandle);
     p2pHandle = EOS_Platform_GetP2PInterface(platformHandle);

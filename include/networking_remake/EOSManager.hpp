@@ -7,6 +7,7 @@
 #include "HWID.hpp"
 #include "LobbyManager.hpp"
 #include "P2PManager.hpp"
+#include "AuthManager.hpp"
 
 
 class EOSManager {
@@ -21,6 +22,7 @@ public:
 	
 	void CreateLobbyManager(EOS_ProductUserId localUserId);
 
+	std::shared_ptr<AuthManager> GetAuthManager() const { return auth; }
 	std::shared_ptr<HWID> GetHwidManager() const { return hwid; }
 	std::shared_ptr<LobbyManager> GetLobbyManager() const { return lobby; }
 	EOS_HPlatform GetPlatformHandle() const { return platformHandle; }
@@ -35,6 +37,7 @@ private:
 	EOS_HLobby lobbyHandle = nullptr;
 	EOS_HP2P p2pHandle = nullptr;
 
+	std::shared_ptr<AuthManager> auth = nullptr;
 	std::shared_ptr<HWID> hwid = nullptr;
 	std::shared_ptr<LoggingManager> logging = nullptr;
 	std::shared_ptr<LobbyManager> lobby = nullptr;

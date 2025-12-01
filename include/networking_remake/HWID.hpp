@@ -1,11 +1,13 @@
 #pragma once
 
 //Used to identify the device type - required to create a Device ID
+/*
 #ifdef _WIN32
 constexpr const char* ID = "Windows_Device";
 #else
 constexpr const char* ID = "Unix_Device";
 #endif
+*/
 
 #include "eos_sdk.h"
 #include "networking_remake/Delegate.hpp"

@@ -5,9 +5,17 @@
 GameConnectionManager::GameConnectionManager(EOSManager& eosManager)
     : m_EosManager(eosManager)
 {
+    /*
     auto hwid = m_EosManager.GetHwidManager();
     if (hwid) {
         hwid->OnLoginSuccess.Add([this](EOS_ProductUserId id) {
+            this->OnLoginCompleted(id);
+            });
+    }*/
+
+    auto auth = m_EosManager.GetAuthManager();
+    if (auth) {
+        auth->OnLoginSuccess.Add([this](EOS_ProductUserId id) {
             this->OnLoginCompleted(id);
             });
     }
@@ -16,13 +24,16 @@ GameConnectionManager::GameConnectionManager(EOSManager& eosManager)
 void GameConnectionManager::HostGame() {
     m_IsHost = true;
     std::cout << "[Connection] Command received: HostGame. Starting login..." << std::endl;
-    m_EosManager.GetHwidManager()->Login(m_EosManager.GetPlatformHandle());
+    //m_EosManager.GetHwidManager()->Login(m_EosManager.GetPlatformHandle());
+    m_EosManager.GetAuthManager()->AccountPortalPersistentAuthLogin(); //DevAuthToolLogin(); //CreateDeviceId();\
+
 }
 
 void GameConnectionManager::FindAndJoinGame() {
     m_IsHost = false;
     std::cout << "[Connection] Command received: FindAndJoinGame. Starting login..." << std::endl;
-    m_EosManager.GetHwidManager()->Login(m_EosManager.GetPlatformHandle());
+    //m_EosManager.GetHwidManager()->Login(m_EosManager.GetPlatformHandle());
+    m_EosManager.GetAuthManager()->AccountPortalPersistentAuthLogin(); //DevAuthToolLogin(); //CreateDeviceId();
 }
 
 void GameConnectionManager::OnLoginCompleted(EOS_ProductUserId newLocalUserId) {

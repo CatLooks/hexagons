@@ -3,6 +3,7 @@
 #include <eos_connect.h>
 #include <cstdlib>
 #include <cstdio>
+#include <networking_remake/AuthManager.hpp>
 
 HWID::HWID()
     : m_LocalUserId(nullptr), m_bIsLoggedIn(false){}
