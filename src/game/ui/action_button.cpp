@@ -38,7 +38,9 @@ namespace gameui {
 					return true;
 				};
 			};
-			return true;
+
+			// absorb all mouse events
+			return (bool)evt.mouse();
 		});
 	};
 

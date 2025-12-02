@@ -137,12 +137,12 @@ void Game::click(sf::Vector2i pos) {
 
 /// Cycles the building buying interface.
 void Game::cycleBuild() {
-	_build = (_build + 1) % Values::build_shop.size();
+	_build = (_build + 1) % (int)Values::build_shop.size();
 	updateBuild();
 };
 /// Cycles the troop buying interface.
 void Game::cycleTroop() {
-	_troop = (_troop + 1) % Values::troop_shop.size();
+	_troop = (_troop + 1) % (int)Values::troop_shop.size();
 	updateTroop();
 };
 
@@ -170,7 +170,7 @@ void Game::updateTroop() const {
 	gameui::Action* button = _panel->actions()[1];
 
 	// get building type
-	Troop::Type type = Values::troop_shop[_build];
+	Troop::Type type = Values::troop_shop[_troop];
 
 	// update texture
 	button->setTexture(&assets::tilemap, Values::troop_textures[type]);
@@ -243,7 +243,7 @@ void Game::regionMenu(const Region& region, bool targeted) {
 		auto* text = button->setLabel();
 		text->setPath("gp.buy_build");
 
-		button->setCall([]() { printf("buy build\n"); });
+		button->setCall([=]() { printf("buy build %d\n", _build); });
 	};
 	{
 		auto* button = _panel->actions()[3];
@@ -254,12 +254,16 @@ void Game::regionMenu(const Region& region, bool targeted) {
 		auto* text = button->setLabel();
 		text->setPath("gp.buy_troop");
 
-		button->setCall([]() { printf("buy troop\n"); });
+		button->setCall([=]() { printf("buy troop %d\n", _troop); });
 	};
 
 	// annotate selection buttons
 	_panel->actions()[0]->annotate(Values::Annotation::Swap);
 	_panel->actions()[1]->annotate(Values::Annotation::Swap);
+
+	// add callbacks to selection buttons
+	_panel->actions()[0]->setCall([=]() { cycleBuild(); });
+	_panel->actions()[1]->setCall([=]() { cycleTroop(); });
 
 	// update entity previews
 	updateBuild();
