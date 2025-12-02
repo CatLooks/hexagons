@@ -16,6 +16,8 @@ namespace ui {
 		std::deque<sf::Event> _evtq;
 		/// User interface.
 		Interface _itf;
+		/// Whether the window is fullscreen.
+		bool _full = false;
 
 	public:
 		/// Returns a reference to window interface object.
@@ -24,7 +26,8 @@ namespace ui {
 		/// Creates new window.
 		///
 		/// @param size Window size.
-		void create(sf::Vector2u size);
+		/// @param fullscreen Whether the fullscreen the window.
+		void create(sf::Vector2u size, bool fullscreen);
 
 		/// Sets new window title.
 		/// 
@@ -53,6 +56,8 @@ namespace ui {
 
 		/// Checks whether the window is focused.
 		bool focused() const;
+		/// Checks whether the window is fullscreen.
+		bool fullscreen() const;
 	};
 
 	/// Main window.

@@ -17,7 +17,7 @@ int main() {
 		return 1;
 
 	// create window
-	ui::window.create({ 1600, 900 });
+	ui::window.create({ 1600, 900 }, false);
 
 	// create an interface
 	ui::Interface& itf = ui::window.interface();
@@ -54,12 +54,12 @@ int main() {
 		const int h = 7;
 		const char arr[h][w + 1] = {
 			"------------- ",
-			"rrrrrrrryywrrr",
-			"rrrrrrryywrrr ",
-			"gggggggyywgggg",
-			"ggggggyywgggg ",
-			"bbbbbbyywbbbbb",
-			"bbbbbyywbbbbb ",
+			"rrrrrrrwyywrrr",
+			"rrrrrrwyywrrr ",
+			"ggggggwyywgggg",
+			"gggggwyywgggg ",
+			"bbbbbwyywbbbbb",
+			"bbbbwyywbbbbb ",
 		};
 
 		map.empty({ w, h });

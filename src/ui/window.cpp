@@ -8,17 +8,28 @@ namespace ui {
 	};
 
 	/// Creates new window.
-	void Window::create(sf::Vector2u size) {
+	void Window::create(sf::Vector2u size, bool fullscreen) {
 		// window settings
 		sf::ContextSettings settings;
 		settings.antiAliasingLevel = 2;
 
 		// create window
-		_win.create(sf::VideoMode(size), "Hexagons", sf::State::Windowed, settings);
+		if (fullscreen) {
+			const auto& modes = sf::VideoMode::getFullscreenModes();
+			if (modes.empty()) {
+				fprintf(stderr, "no fullscreen modes available\n");
+				return;
+			};
+			_win.create(modes[0], "Hexagons", sf::State::Fullscreen, settings);
+		}
+		else {
+			_win.create(sf::VideoMode(size), "Hexagons", sf::State::Windowed, settings);
+		};
+		_full = fullscreen;
 
 		// configure window
-		//_win.setVerticalSyncEnabled(true);
-		_win.setFramerateLimit(60);
+		_win.setVerticalSyncEnabled(true);
+		//_win.setFramerateLimit(60);
 		_win.setKeyRepeatEnabled(false);
 	};
 
@@ -45,6 +56,14 @@ namespace ui {
 			if (event->is<sf::Event::Closed>()) {
 				close();
 				continue;
+			};
+
+			// check for fullscreen toggle
+			if (auto* data = event->getIf<sf::Event::KeyPressed>()) {
+				if (data->code == sf::Keyboard::Key::F11) {
+					create({ 1600, 900 }, !_full);
+					continue;
+				};
 			};
 
 			// pass event to queue
@@ -80,6 +99,11 @@ namespace ui {
 	/// Checks whether the window is focused.
 	bool Window::focused() const {
 		return _win.hasFocus();
+	};
+
+	/// Checks whether the window is fullscreen.
+	bool Window::fullscreen() const {
+		return _full;
 	};
 
 	/// Main window.
