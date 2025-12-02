@@ -26,7 +26,7 @@ static inline void _spread(
 	const Spread::Tile& tile
 ) {
 	// ignore if no range left
-	if (tile.left <= 1) return;
+	if (tile.left == 0) return;
 
 	// spread to each neighbor
 	for (int i = 0; i < 6; i++) {
