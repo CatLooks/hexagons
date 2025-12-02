@@ -5,9 +5,9 @@
 #include "ui/camera.hpp"
 #include "ui/window.hpp"
 #include "ui/anim/linear.hpp"
-#include "map.hpp"
 #include "ui/game_panel.hpp"
 #include "ui/hex_preview.hpp"
+#include "map.hpp"
 
 /// Game controller object.
 class Game : public ui::Element {
@@ -19,6 +19,9 @@ private:
 	ui::Layer*                   _layer; /// Render layer.
 	ui::Camera                  _camera; /// Map camera.
 	gameui::Panel*               _panel; /// Game panel.
+
+	int _build = 0; /// Bought building.
+	int _troop = 0; /// Bought troop.
 
 public:
 	/// Constructs a game object.
@@ -37,6 +40,16 @@ public:
 	/// 
 	/// @param pos Tile position.
 	void click(sf::Vector2i pos);
+
+	/// Cycles the building buying interface.
+	void cycleBuild();
+	/// Cycles the troop buying interface.
+	void cycleTroop();
+
+	/// Updates the building buying interface.
+	void updateBuild() const;
+	/// Updates the troop buying interface.
+	void updateTroop() const;
 
 	/// Constructs a region UI panel.
 	/// 

@@ -22,6 +22,12 @@ namespace Values {
 		"@!troop.knight",
 	};
 
+	/// Troops available in the region shoop.
+	const std::vector<Troop::Type> troop_shop = {
+		Troop::Farmer, Troop::Lumberjack, Troop::Spearman,
+		Troop::Archer, Troop::Baron, Troop::Knight
+	};
+
 	// health bar base
 	const sf::IntRect hp_base = sf::IntRect({ 463, 64 }, { 34, 5 });
 	// poisoned health bar offset

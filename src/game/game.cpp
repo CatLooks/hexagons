@@ -135,6 +135,52 @@ void Game::click(sf::Vector2i pos) {
 	map.selectRegion(hex->region);
 };
 
+/// Cycles the building buying interface.
+void Game::cycleBuild() {
+	_build = (_build + 1) % Values::build_shop.size();
+	updateBuild();
+};
+/// Cycles the troop buying interface.
+void Game::cycleTroop() {
+	_troop = (_troop + 1) % Values::troop_shop.size();
+	updateTroop();
+};
+
+/// Updates the building buying interface.
+void Game::updateBuild() const {
+	// get target button
+	if (_panel->actions().size() < 2) return;
+	gameui::Action* button = _panel->actions()[0];
+
+	// get building type
+	Build::Type type = Values::build_shop[_build];
+
+	// update texture
+	button->setTexture(&assets::tilemap, Values::build_textures[type]);
+
+	// update label
+	auto* text = button->setLabel();
+	text->setPath("param");
+	text->param("value", Values::build_names[type]);
+};
+/// Updates the troop buying interface.
+void Game::updateTroop() const {
+	// get target button
+	if (_panel->actions().size() < 2) return;
+	gameui::Action* button = _panel->actions()[1];
+
+	// get building type
+	Troop::Type type = Values::troop_shop[_build];
+
+	// update texture
+	button->setTexture(&assets::tilemap, Values::troop_textures[type]);
+
+	// update label
+	auto* text = button->setLabel();
+	text->setPath("param");
+	text->param("value", Values::troop_names[type]);
+};
+
 /// Constructs an entity menu.
 /// 
 /// @param panel Panel element.
@@ -192,18 +238,32 @@ void Game::regionMenu(const Region& region, bool targeted) {
 		auto* button = _panel->actions()[2];
 
 		// buy building button
+		button->annotate(targeted ? Values::Annotation::None : Values::Annotation::Aim);
 		button->setTexture(&assets::interface, Values::buy_build);
 		auto* text = button->setLabel();
 		text->setPath("gp.buy_build");
+
+		button->setCall([]() { printf("buy build\n"); });
 	};
 	{
 		auto* button = _panel->actions()[3];
 
 		// buy troop button
+		button->annotate(targeted ? Values::Annotation::None : Values::Annotation::Aim);
 		button->setTexture(&assets::interface, Values::buy_troop);
 		auto* text = button->setLabel();
 		text->setPath("gp.buy_troop");
+
+		button->setCall([]() { printf("buy troop\n"); });
 	};
+
+	// annotate selection buttons
+	_panel->actions()[0]->annotate(Values::Annotation::Swap);
+	_panel->actions()[1]->annotate(Values::Annotation::Swap);
+
+	// update entity previews
+	updateBuild();
+	updateTroop();
 
 	// recalculate panel
 	_panel->recalculate();

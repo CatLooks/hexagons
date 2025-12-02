@@ -11,6 +11,9 @@ namespace Values {
 	/// @param id Troop type.
 	extern const char* troop_names[Troop::Count];
 
+	/// Troops available in the region shoop.
+	extern const std::vector<Troop::Type> troop_shop;
+
 	/// Troop health bar texture.
 	extern const sf::IntRect hp_base;
 	/// Poisoned health bar offset from normal bar.

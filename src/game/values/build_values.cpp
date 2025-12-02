@@ -30,4 +30,9 @@ namespace Values {
 		/* beacon */ { SkillArray::L11, { SkillType::Stun, SkillType::Withdraw } },
 		/* fort   */ { SkillArray::L11, { SkillType::Stun, SkillType::Withdraw } }
 	};
+
+	/// Buildings available in the region shop.
+	const std::vector<Build::Type> build_shop = {
+		Build::Farm, Build::Tower, Build::Beacon
+	};
 };

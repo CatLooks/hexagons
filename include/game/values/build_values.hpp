@@ -13,4 +13,7 @@ namespace Values {
 
 	/// Building skills.
 	extern const SkillArray build_skills[Build::Count];
+
+	/// Buildings available in the region shop.
+	extern const std::vector<Build::Type> build_shop;
 };

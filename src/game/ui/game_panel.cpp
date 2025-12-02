@@ -45,6 +45,21 @@ namespace gameui {
 
 		// absorb all events
 		onEvent([=](const ui::Event& evt) {
+			if (auto data = evt.get<ui::Event::KeyPress>()) {
+				// button key map
+				static const sf::Keyboard::Key mapping[4] = {
+					sf::Keyboard::Key::Num1, sf::Keyboard::Key::Num2,
+					sf::Keyboard::Key::Num3, sf::Keyboard::Key::Num4
+				};
+
+				// check all buttons
+				for (size_t i = 0; i < _boxes.size(); i++) {
+					if (data->key == mapping[i])
+						_boxes[i]->click();
+				};
+			};
+
+			// absorb all events
 			return true;
 		});
 	};

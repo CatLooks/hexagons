@@ -47,17 +47,14 @@ sf::IntRect Map::backplane() const {
 
 /// Draws the map.
 void Map::draw(ui::RenderBuffer& target) const {
-	// center camera
-	sf::Vector2i cam = camera - target.screen().size / 2;
-
 	// draw backplane
-	target.quad(backplane() - cam, {}, sf::Color(40, 42, 48));
+	target.quad(backplane() - camera, {}, sf::Color(40, 42, 48));
 	target.forward(nullptr);
 
 	// calculate drawn area
 	// @todo
 	sf::IntRect area = { {}, size() };
-	sf::Vector2i origin = -cam;
+	sf::Vector2i origin = -camera;
 
 	// setup tile drawer
 	TileDrawer drawer(this, area, origin, Values::tileSize);
