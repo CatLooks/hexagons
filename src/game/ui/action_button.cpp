@@ -1,8 +1,10 @@
 #include "game/ui/action_button.hpp"
 
 namespace gameui {
-	/// Action button size.
-	const ui::Dim Action::size = (float)(64 * Values::k);
+	/// Action button side length.
+	const ui::Dim Action::side = (float)(64 * Values::k);
+	/// Action button base size.
+	const ui::DimVector Action::base = { side, side };
 
 	/// Action button texture maps.
 	const ui::Panel::Map Action::textures[2] = {
@@ -13,7 +15,7 @@ namespace gameui {
 	/// Constructs an empty action button.
 	Action::Action(int hint) : ui::Panel(textures[0]), _hint(hint) {
 		// set action button size
-		bounds.size = { size, size };
+		bounds.size = base;
 
 		// reset padding
 		padding.set(0);
@@ -59,10 +61,10 @@ namespace gameui {
 	};
 
 	/// Adds an annotation icon to the action button.
-	void Action::annotate(Values::Annotation ann) {
+	void Action::annotate(SkillDesc::Annotation ann) {
 		if (!_ann) {
 			// ignore if no annotation
-			if (ann == Values::Annotation::None) return;
+			if (ann == SkillDesc::None) return;
 
 			// create annotation icon
 			_ann = new ui::Image(&assets::interface, Values::annotations[static_cast<int>(ann)]);
@@ -81,7 +83,8 @@ namespace gameui {
 	void Action::setTexture(const sf::Texture* texture, sf::IntRect map) {
 		if (!_tex) {
 			_tex = new ui::Image(texture, map);
-			_tex->bounds = ui::DimRect::Fill;
+			_tex->position() = { 0.5as, 0.5as };
+			_tex->size() *= (float)Values::k;
 			adds(_tex);
 		}
 		else {
@@ -96,13 +99,59 @@ namespace gameui {
 	};
 
 	/// Adds a callback to pressed action button.
-	void Action::setCall(Callback call) {
-		_call = call;
+	void Action::setCall(Callback press, Callback release, Mode mode) {
+		_press = press;
+		_release = release;
+		_mode = mode;
+	};
+
+	/// Expands the button.
+	ui::Anim* Action::emitExpand() {
+		return new ui::AnimVector(&size(), base, base * 1.125f, sf::seconds(0.06f));
+	};
+	/// Shrinks the button.
+	ui::Anim* Action::emitShrink() {
+		return ui::AnimVector::to(&size(), base, sf::seconds(0.1f));
 	};
 
 	/// Forcefully invokes the action callback.
-	void Action::click() const {
-		if (_call) _call();
+	void Action::click() {
+		switch (_mode) {
+		case Click:
+			// invoke callbacks
+			if (_press) _press();
+			if (_release) _release();
+
+			// button pulse animation
+			push(chain(emitExpand(), emitShrink()));
+			break;
+		default:
+			if (!_state) {
+				// press button
+				if (_press) _press();
+				_state = true;
+
+				// button animation
+				_map = textures[1];
+				push(emitExpand());
+			}
+			else {
+				// release button
+				if (_release) _release();
+				_state = false;
+
+				// button animation
+				deselect();
+			};
+			break;
+		};
+	};
+	/// Deselects the button.
+	void Action::deselect() {
+		if (_state) {
+			_map = textures[0];
+			push(emitShrink());
+		};
 	};
 
 	/// Adds text to the action button.
