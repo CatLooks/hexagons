@@ -2,6 +2,25 @@
 #include "game/draw.hpp"
 #include "flags.hpp"
 
+/// Generates a new selection index.
+size_t Map::newSelectionIndex() {
+	_selection = true;
+	return ++_select_idx;
+};
+/// Returns current selection index.
+size_t Map::getSelectionIndex() const {
+	return _select_idx;
+};
+
+/// Stops map selection.
+void Map::stopSelection() {
+	_selection = false;
+};
+/// Checks if a selection is happening.
+bool Map::isSelection() const {
+	return _selection;
+};
+
 /// Selects a region.
 void Map::selectRegion(const Regions::Ref& region) {
 	if (region) _region = region;
@@ -87,11 +106,11 @@ void Map::draw(ui::RenderBuffer& target) const {
 	};
 
 	// draw tile shading
-	if (selection) {
+	if (_selection) {
 		drawer.reset();
 		while (auto tile = drawer.next()) {
 			if (tile->hex->elevated()) continue;
-			if (!tile->hex->selected)
+			if (tile->hex->selected != _select_idx)
 				tile->drawShade(target);
 		};
 	};

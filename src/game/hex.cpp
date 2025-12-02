@@ -15,3 +15,8 @@ bool Hex::elevated() const {
 bool Hex::solid() const {
 	return type == Ground || type == Bridge;
 };
+
+/// Checks if a tile does not contain any entities.
+bool Hex::free() const {
+	return !troop && !build && !plant;
+};

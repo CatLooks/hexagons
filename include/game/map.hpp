@@ -19,14 +19,29 @@ class Map : public HexArray {
 
 public:
 	sf::Vector2i camera; /// Map camera.
-	bool selection = 0;  /// Whether a selection is happening.
+
+	/// Generates a new selection index.
+	/// 
+	/// All tiles with a matching selection index will be highlighted.
+	/// 
+	/// @return Non-zero selection index.
+	size_t newSelectionIndex();
+	/// Returns current selection index.
+	size_t getSelectionIndex() const;
+
+	/// Stops map selection.
+	void stopSelection();
+	/// Checks if a selection is happening.
+	bool isSelection() const;
 
 private:
 	Pool<Troop> _troops; /// Troop pool.
 	Pool<Build> _builds; /// Building pool.
 	Pool<Plant> _plants; /// Plant pool.
 
-	Regions::Ref _region; /// Selected region reference.
+	Regions::Ref _region;    /// Selected region reference.
+	size_t _select_idx = 0;  /// Selection index.
+	bool _selection = false; /// Whether a selection is happening.
 
 public:
 	Regions regions; /// Region manager.

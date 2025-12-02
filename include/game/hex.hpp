@@ -23,7 +23,7 @@ struct Hex {
 	Region::Team team = Region::Unclaimed;
 
 	float elevation = 0; /// Tile elevation.
-	bool selected   = 0; /// Whether the tile is selected.
+	size_t selected = 0; /// Selection index.
 	size_t spread   = 0; /// Spread buffer index.
 	Regions::Ref region; /// Tile region reference.
 
@@ -42,4 +42,6 @@ struct Hex {
 	bool elevated() const;
 	/// Checks if a tile can be stood on.
 	bool solid() const;
+	/// Checks if a tile does not contain any entities.
+	bool free() const;
 };
