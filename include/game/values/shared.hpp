@@ -3,6 +3,7 @@
 // include dependencies
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Color.hpp>
 
 namespace Values {
 	/// Texture to render space multiplier.
@@ -44,6 +45,9 @@ namespace Values {
 	/// @param x,y 64x64 coordinates.
 	/// @param dx,dy 16x16 offset.
 	sf::IntRect coords(int x, int y, int dx, int dy);
+
+	/// Dark shade mask color.
+	extern const sf::Color dimTint;
 
 	/// Missing texture replacement.
 	extern const sf::IntRect missing;

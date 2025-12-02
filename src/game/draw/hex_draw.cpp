@@ -106,11 +106,7 @@ namespace Draw {
 	void Tile::drawShade(ui::RenderBuffer& target) const {
 		// shade only ground tiles
 		if (hex->type == Hex::Ground) {
-			target.quad(
-				{ origin, size },
-				Values::mask,
-				sf::Color(0, 0, 0, 128)
-			);
+			target.quad({ origin, size }, Values::mask, Values::dimTint);
 			target.forward(&assets::tilemap);
 		};
 	};

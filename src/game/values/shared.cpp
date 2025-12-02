@@ -42,6 +42,9 @@ namespace Values {
 		return { { x * tileTex.x + dx * iconTex.x, y * tileTex.y + dy * iconTex.y }, iconTex };
 	};
 
+	/// Dark shade mask color.
+	const sf::Color dimTint = sf::Color(0, 0, 0, 128);
+
 	/// Missing texture replacement.
 	const sf::IntRect missing = coords(9, 3);
 

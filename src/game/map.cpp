@@ -88,6 +88,8 @@ void Map::draw(ui::RenderBuffer& target) const {
 		else {
 			tile->drawBase(target);
 			tile->drawSides(target, Draw::white(tile->hex->region == _region), sf::Color::Black);
+			if (_selection && tile->hex->selected != _select_idx)
+				tile->drawSides(target, Values::dimTint, Values::dimTint);
 		};
 	};
 
