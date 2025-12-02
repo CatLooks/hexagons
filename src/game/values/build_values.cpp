@@ -1,4 +1,5 @@
 #include "game/values/build_values.hpp"
+#include "game/logic/skill_list.hpp"
 
 namespace Values {
 	// texture array
@@ -23,12 +24,26 @@ namespace Values {
 
 	// skill array
 	const SkillArray build_skills[Build::Count] = {
-		/* castle */ { SkillArray::L11, { SkillType::Heal, SkillType::Harvest } },
-		/* farm   */ { SkillArray::L01, { SkillType::Withdraw } },
-		/* mine   */ { SkillArray::L01, { SkillType::Withdraw } },
-		/* tower  */ { SkillArray::L01, { SkillType::Withdraw } },
-		/* beacon */ { SkillArray::L11, { SkillType::Stun, SkillType::Withdraw } },
-		/* fort   */ { SkillArray::L11, { SkillType::Stun, SkillType::Withdraw } }
+		/* castle */ { SkillArray::L10, {
+			& SkillList::heal
+		} },
+		/* farm   */ { SkillArray::L01, {
+			& SkillList::withdraw
+		} },
+		/* mine   */ { SkillArray::L01, {
+			& SkillList::withdraw
+		} },
+		/* tower  */ { SkillArray::L01, {
+			& SkillList::withdraw
+		} },
+		/* beacon */ { SkillArray::L11, {
+			& SkillList::stun,
+			& SkillList::withdraw
+		} },
+		/* fort   */ { SkillArray::L11, {
+			& SkillList::stun,
+			& SkillList::withdraw
+		} }
 	};
 
 	/// Buildings available in the region shop.

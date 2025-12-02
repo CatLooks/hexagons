@@ -1,0 +1,73 @@
+#pragma once
+
+// include dependencies
+#include <variant>
+#include "spread.hpp"
+
+/// Skill description.
+struct Skill {
+	/// Skill enumeration.
+	enum Type {
+		Empty = 0,    /// Empty skill.
+
+		BuyTroop,     /// Buy a troop.
+		BuyBuild,     /// Buy a building.
+
+		Withdraw,     /// Withdraw.
+		Move,         /// Move.
+
+		AttackLumber, /// Lumberjack attack.
+		AttackSpear,  /// Spearman attack.
+		AttackArcher, /// Archer attack.
+		AttackBaron,  /// Baron attack.
+		AttackKnight, /// Knight attack.
+
+		Harvest,      /// (Farmer) Fruit harvest.
+		TreeCut,      /// (Lumberjack) Plant cut down.
+		Shield,       /// (Spearman) Spearman shield.
+		RangeBoost,   /// (Archer) Range boost.
+		DefenseBoost, /// (Baron) Defense boost.
+		OffenseBoost, /// (Knight) Attack boost.
+
+		Heal,         /// (Castle) Heal troops.
+		Stun,         /// (Beacon) Stun troops.
+		Count
+	};
+};
+
+/// Skill description object.
+struct SkillDesc {
+	/// Skill type.
+	Skill::Type type = Skill::Empty;
+
+	/// Action annotation icon.
+	enum Annotation {
+		None,   /// No annotation.
+		Peach,  /// Action costs peaches.
+		Berry,  /// Action costs berries.
+		Aim,    /// Action needs to be aimed.
+		Swap,   /// Action is an cyclic choice.
+		Manage, /// Action manages other entity.
+		Count
+	};
+
+	/// Skill annotation.
+	Annotation annotation = None;
+
+	/// Selection tile spreader generator.
+	///
+	/// @param idx Map selection index.
+	std::function<Spread(size_t idx)> select = [](size_t) { return Spread(); };
+
+	/// Selection tile spreader radius.
+	size_t radius = 0;
+
+	/// Skill action function type.
+	///
+	/// @param prev Action origin.
+	/// @param next Action destination.
+	using Action = std::function<void(const Spread::Tile& prev, const Spread::Tile& next)>;
+
+	/// Skill action.
+	Action action = [](const Spread::Tile&, const Spread::Tile&) {};
+};

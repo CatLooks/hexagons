@@ -1,0 +1,45 @@
+#include "game/logic/skill_list.hpp"
+
+namespace SkillList {
+	// entity buy
+	const SkillDesc buy_troop = { Skill::Empty, SkillDesc::None };
+	const SkillDesc buy_build = { Skill::Empty, SkillDesc::None };
+	const SkillDesc buy_troop_aim = { Skill::Empty, SkillDesc::Aim };
+	const SkillDesc buy_build_aim = { Skill::Empty, SkillDesc::Aim };
+
+	// general troop / building skills
+	const SkillDesc withdraw = { Skill::Withdraw, SkillDesc::None };
+	const SkillDesc move = {
+		.type = Skill::Move,
+		.annotation = SkillDesc::Aim,
+		.select = [](size_t idx) {
+			return Spread {
+				.effect = [=](Spread::Tile& tile) { tile.hex->selected = idx; }
+			};
+		},
+		.radius = 2,
+		.action = [](const Spread::Tile& prev, const Spread::Tile& next) {
+			next.hex->troop = std::move(prev.hex->troop);
+			prev.hex->troop = {};
+		}
+	};
+
+	// attack skills
+	const SkillDesc attack_lumber = { Skill::AttackLumber, SkillDesc::Aim };
+	const SkillDesc attack_spear  = { Skill::AttackSpear , SkillDesc::Aim };
+	const SkillDesc attack_archer = { Skill::AttackArcher, SkillDesc::Aim };
+	const SkillDesc attack_baron  = { Skill::AttackBaron , SkillDesc::Aim };
+	const SkillDesc attack_knight = { Skill::AttackKnight, SkillDesc::Aim };
+
+	// status effect skills
+	const SkillDesc effect_defend  = { Skill::Shield      , SkillDesc::None };
+	const SkillDesc effect_range   = { Skill::RangeBoost  , SkillDesc::None };
+	const SkillDesc effect_defense = { Skill::DefenseBoost, SkillDesc::None };
+	const SkillDesc effect_offense = { Skill::OffenseBoost, SkillDesc::None };
+
+	// other special skills
+	const SkillDesc fruit = { Skill::Harvest, SkillDesc::Aim  };
+	const SkillDesc cut   = { Skill::TreeCut, SkillDesc::Aim  };
+	const SkillDesc heal  = { Skill::Heal   , SkillDesc::Aim  };
+	const SkillDesc stun  = { Skill::Stun   , SkillDesc::None };
+};

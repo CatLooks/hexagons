@@ -1,5 +1,5 @@
 #pragma once
-#include "interface.hpp"
+#include "skill_values.hpp"
 #include "game/plant.hpp"
 
 namespace Values {
