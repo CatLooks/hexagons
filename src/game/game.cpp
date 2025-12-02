@@ -115,7 +115,7 @@ void Game::click(sf::Vector2i pos) {
 		// execute skill action
 		Spread::Tile prev = { last(), map.at(last()), 0 };
 		Spread::Tile next = { pos, hex, 0 };
-		skill->action(prev, next);
+		skill->action(map, prev, next);
 
 		// select target tile
 		deselectMenu();

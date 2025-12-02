@@ -45,3 +45,9 @@ struct Hex {
 	/// Checks if a tile does not contain any entities.
 	bool free() const;
 };
+
+/// Hex reference.
+struct HexRef {
+	sf::Vector2i pos {}; /// Hex position.
+	Hex*         hex {}; /// Hex pointer.
+};

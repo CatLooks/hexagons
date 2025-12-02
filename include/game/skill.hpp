@@ -64,10 +64,11 @@ struct SkillDesc {
 
 	/// Skill action function type.
 	///
+	/// @param map Map reference.
 	/// @param prev Action origin.
 	/// @param next Action destination.
-	using Action = std::function<void(const Spread::Tile& prev, const Spread::Tile& next)>;
+	using Action = std::function<void(Map& map, const HexRef& prev, const HexRef& next)>;
 
 	/// Skill action.
-	Action action = [](const Spread::Tile&, const Spread::Tile&) {};
+	Action action = [](Map&, const HexRef&, const HexRef&) {};
 };

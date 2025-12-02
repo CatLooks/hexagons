@@ -10,10 +10,8 @@
 /// Conditionally applies a function to nearby tiles.
 struct Spread {
 	/// Spread target information.
-	struct Tile {
-		sf::Vector2i pos {}; /// Tile position.
-		Hex*         hex {}; /// Tile reference.
-		size_t      left {}; /// Amount of hops left.
+	struct Tile : HexRef {
+		size_t left {}; /// Amount of hops left.
 	};
 
 	/// Condition for a spreader function to affect the tile.
