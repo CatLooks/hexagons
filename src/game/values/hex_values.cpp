@@ -6,6 +6,8 @@ namespace Values {
 	/// Hex sides.
 	const sf::IntRect sides = coords(8, 3);
 	const sf::IntRect sideShade = coords(8, 2);
+	/// Hex mask.
+	const sf::IntRect mask = coords(9, 0);
 
 	// texture array
 	const sf::IntRect hex_textures[Region::Count] = {

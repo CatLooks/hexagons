@@ -19,6 +19,7 @@ class Map : public HexArray {
 
 public:
 	sf::Vector2i camera; /// Map camera.
+	bool selection = 0;  /// Whether a selection is happening.
 
 private:
 	Pool<Troop> _troops; /// Troop pool.

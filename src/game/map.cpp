@@ -75,24 +75,31 @@ void Map::draw(ui::RenderBuffer& target) const {
 	// draw borders
 	drawer.reset();
 	while (auto tile = drawer.next()) {
-		if (!tile->hex->elevated())
-			tile->drawBorders(target, Draw::white(tile->hex->region == _region));
-	};
-
-	// draw elevated tile top
-	for (auto& tile : elevated) {
-		tile.drawBase(target);
-		tile.drawBorders(target, sf::Color::White);
+		if (tile->hex->elevated()) continue;
+		tile->drawBorders(target, Draw::white(tile->hex->region == _region));
 	};
 
 	// draw tile contents
 	drawer.reset();
 	while (auto tile = drawer.next()) {
-		Draw::troopEntity(*tile, target);
-		Draw::buildEntity(*tile, target);
-		Draw::plantEntity(*tile, target);
+		if (tile->hex->elevated()) continue;
+		tile->drawContents(target);
+	};
 
-		// debug stuff
-		if (flags::debug) tile->drawDebug(target);
+	// draw tile shading
+	if (selection) {
+		drawer.reset();
+		while (auto tile = drawer.next()) {
+			if (tile->hex->elevated()) continue;
+			if (!tile->hex->selected)
+				tile->drawShade(target);
+		};
+	};
+
+	// draw elevated tile top & contents
+	for (auto& tile : elevated) {
+		tile.drawBase(target);
+		tile.drawBorders(target, sf::Color::White);
+		tile.drawContents(target);
 	};
 };

@@ -9,6 +9,8 @@ namespace Values {
 	extern const sf::IntRect sides;
 	/// Hex sides shading.
 	extern const sf::IntRect sideShade;
+	/// Hex mask.
+	extern const sf::IntRect mask;
 
 	/// Texture maps for teams.
 	/// @param id Team ID.

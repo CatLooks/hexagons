@@ -1,4 +1,7 @@
 #include "game/draw/hex_draw.hpp"
+#include "game/draw/troop_draw.hpp"
+#include "game/draw/build_draw.hpp"
+#include "game/draw/plant_draw.hpp"
 #include "flags.hpp"
 
 namespace Draw {
@@ -74,28 +77,40 @@ namespace Draw {
 		// draw border if visible
 		if (visible) {
 			if (hex->solid()) {
-				// draw top ground sides
 				sf::IntRect area = { origin + Values::tileLevel(size), size };
-				target.quad(area, Values::sides, up);
-				if (up != low)
-					target.quad(area, Values::sideShade, low);
 
 				// draw bottom ground sides
-				/*if (!hex->elevated()) {
-					const Hex* n1 = map->at(map->neighbor(coords, Map::Right));
-					const Hex* n4 = map->at(map->neighbor(coords, Map::Left));
+				if (hex->elevated()) {
+					target.quad(
+						area + sf::Vector2i(sf::Vector2f(Values::tileLevel(size)) * hex->elevation),
+						Values::sides, low
+					);
+				};
 
-					if ((n1 && n1->type == Hex::Water) || (n4 && n4->type == Hex::Water)) {
-						area.position += Values::tileLevel(size);
-						target.quad(area, Values::sides, low);
-					};
-				};*/
+				// draw top ground sides
+				target.quad(area, Values::sides, up);
+				if (up != low) {
+					target.quad(area, Values::sideShade, low);
+				};
 			}
-			/*else if (hex->type == Hex::Water) {
+			else if (hex->type == Hex::Water) {
 				// draw water sides
 				sf::IntRect area = {origin + Values::tileLevel(size) * 2, size};
 				target.quad(area, Values::sides, sf::Color(0, 157, 251));
-			};*/
+			};
+			target.forward(&assets::tilemap);
+		};
+	};
+
+	/// Draws unselected tile shading.
+	void Tile::drawShade(ui::RenderBuffer& target) const {
+		// shade only ground tiles
+		if (hex->type == Hex::Ground) {
+			target.quad(
+				{ origin, size },
+				Values::mask,
+				sf::Color(0, 0, 0, 128)
+			);
 			target.forward(&assets::tilemap);
 		};
 	};
@@ -111,5 +126,16 @@ namespace Draw {
 		// draw index
 		target.text(text);
 		target.forward(nullptr);
+	};
+
+	/// Draws all tile contents.
+	void Tile::drawContents(ui::RenderBuffer& target) const {
+		// draw entities
+		Draw::troopEntity(*this, target);
+		Draw::buildEntity(*this, target);
+		Draw::plantEntity(*this, target);
+
+		// draw debug stuff
+		if (flags::debug) drawDebug(target);
 	};
 };

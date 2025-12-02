@@ -46,9 +46,19 @@ namespace Draw {
 		/// @param mode Side drawing mode.
 		void drawSides(ui::RenderBuffer& target, sf::Color up, sf::Color low) const;
 
+		/// Draws unselected tile shading.
+		/// 
+		/// @param target Target render buffer.
+		void drawShade(ui::RenderBuffer& target) const;
+
 		/// Draws debug stuff.
 		/// 
 		/// @param target Target render buffer.
 		void drawDebug(ui::RenderBuffer& target) const;
+
+		/// Draws all tile contents.
+		/// 
+		/// @param target Target render buffer.
+		void drawContents(ui::RenderBuffer& target) const;
 	};
 };
