@@ -40,9 +40,11 @@
     <ClCompile Include="src\game\funcs.cpp" />
     <ClCompile Include="src\game\game.cpp" />
     <ClCompile Include="src\game\hex.cpp" />
+    <ClCompile Include="src\game\logic\skill_list.cpp" />
     <ClCompile Include="src\game\map.cpp" />
     <ClCompile Include="src\game\plant.cpp" />
     <ClCompile Include="src\game\region.cpp" />
+    <ClCompile Include="src\game\skill.cpp" />
     <ClCompile Include="src\game\spread.cpp" />
     <ClCompile Include="src\game\troop.cpp" />
     <ClCompile Include="src\game\ui\action_button.cpp" />
@@ -54,6 +56,7 @@
     <ClCompile Include="src\game\values\interface.cpp" />
     <ClCompile Include="src\game\values\plant_values.cpp" />
     <ClCompile Include="src\game\values\shared.cpp" />
+    <ClCompile Include="src\game\values\skill_values.cpp" />
     <ClCompile Include="src\game\values\troop_values.cpp" />
     <ClCompile Include="src\localization\error.cpp" />
     <ClCompile Include="src\localization\parser.cpp" />
@@ -109,9 +112,11 @@
     <ClInclude Include="include\game\funcs.hpp" />
     <ClInclude Include="include\game\game.hpp" />
     <ClInclude Include="include\game\hex.hpp" />
+    <ClInclude Include="include\game\logic\skill_list.hpp" />
     <ClInclude Include="include\game\map.hpp" />
     <ClInclude Include="include\game\plant.hpp" />
     <ClInclude Include="include\game\region.hpp" />
+    <ClInclude Include="include\game\skill.hpp" />
     <ClInclude Include="include\game\spread.hpp" />
     <ClInclude Include="include\game\troop.hpp" />
     <ClInclude Include="include\game\ui\action_button.hpp" />
@@ -123,6 +128,7 @@
     <ClInclude Include="include\game\values\interface.hpp" />
     <ClInclude Include="include\game\values\plant_values.hpp" />
     <ClInclude Include="include\game\values\shared.hpp" />
+    <ClInclude Include="include\game\values\skill_values.hpp" />
     <ClInclude Include="include\game\values\troop_values.hpp" />
     <ClInclude Include="include\localization\error.hpp" />
     <ClInclude Include="include\localization\parser.hpp" />

@@ -16,12 +16,16 @@ public:
 
 private:
 	std::optional<sf::Vector2i> _select; /// Selected tile.
+	sf::Vector2i                  _last; /// Last clicked tile.
 	ui::Layer*                   _layer; /// Render layer.
 	ui::Camera                  _camera; /// Map camera.
 	gameui::Panel*               _panel; /// Game panel.
 
 	int _build = 0; /// Bought building.
 	int _troop = 0; /// Bought troop.
+
+public:
+	const SkillDesc* skill = nullptr; /// Current skill.
 
 public:
 	/// Constructs a game object.
@@ -51,6 +55,9 @@ public:
 	/// Updates the troop buying interface.
 	void updateTroop() const;
 
+	/// Deselect action buttons and cancels map selection.
+	void deselectMenu();
+
 	/// Constructs a region UI panel.
 	/// 
 	/// @param region Region object.
@@ -76,6 +83,11 @@ public:
 
 	/// Closes any open menus.
 	void closeMenu();
+	/// Updates menu state after a click.
+	void updateMenu();
+
+	/// Returns last click position.
+	sf::Vector2i last() const;
 
 	/// Returns hex coordinates at a mouse position.
 	///

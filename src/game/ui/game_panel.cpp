@@ -9,7 +9,7 @@ namespace gameui {
 	/// Panel height.
 	const ui::Dim Panel::height = float(48 * Values::k);
 	/// Action box spacing.
-	const ui::Dim Panel::spacing = Action::size * 1.6f;
+	const ui::Dim Panel::spacing = Action::side * 1.6f;
 
 	/// Box spacing table.
 	static const std::vector<float> spacing_table[Values::SkillArray::Count] = {
@@ -31,7 +31,7 @@ namespace gameui {
 	/// Constructs the game panel.
 	Panel::Panel(): ui::Panel(texture), _layout(Values::SkillArray::None) {
 		// set panel bounds
-		bounds = { 0px, 1ps + Action::size, 1ps, height };
+		bounds = { 0px, 1ps + Action::side, 1ps, height };
 		event_scissor = false;
 		padding.set(0);
 
@@ -60,8 +60,8 @@ namespace gameui {
 				};
 			};
 
-			// absorb all events
-			return true;
+			// absorb all mouse events
+			return (bool)evt.mouse();
 		});
 	};
 
@@ -77,7 +77,7 @@ namespace gameui {
 			}
 			else {
 				// hide panel
-				ui::Anim* anim = ui::AnimDim::to(&position().y, 1ps + Action::size, sf::seconds(0.2f));
+				ui::Anim* anim = ui::AnimDim::to(&position().y, 1ps + Action::side, sf::seconds(0.2f));
 				anim->setEasing(ui::Easings::quadIn);
 				push(anim);
 			};

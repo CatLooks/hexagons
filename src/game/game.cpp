@@ -1,5 +1,6 @@
 #include "game/game.hpp"
 #include "game/values/shared.hpp"
+#include "game/logic/skill_list.hpp"
 #include "mathext.hpp"
 
 /// Constructs a game object.
@@ -18,17 +19,15 @@ Game::Game(ui::Layer* layer, gameui::Panel* panel)
 				// process tile (de)selection
 				sf::Vector2i pos = mouseToHex(data->position);
 				click(pos);
-
-				// open hex menu
-				if (_select)
-					hexMenu(*map.at(*_select));
-				
-				// open untargeted region menu
-				else if (const auto& region = map.selectedRegion())
-					regionMenu(*region);
-				
-				// close menus
-				else closeMenu();
+				updateMenu();
+				return true;
+			};
+		};
+		if (auto data = evt.get<ui::Event::KeyPress>()) {
+			if (data->key == sf::Keyboard::Key::Escape) {
+				// deselect anything selected
+				click({ -1, -1 });
+				updateMenu();
 				return true;
 			};
 		};
@@ -84,6 +83,7 @@ void Game::selectTile(sf::Vector2i pos) {
 
 	// select new tile
 	_select = pos;
+	_last = pos;
 };
 /// Deselects a tile.
 void Game::deselectTile() {
@@ -103,36 +103,60 @@ void Game::deselectTile() {
 /// Clicks at a tile.
 void Game::click(sf::Vector2i pos) {
 	Hex* hex = map.at(pos);
+	if (map.isSelection()) {
+		/// tile selection ///
+		
+		// tile not selected
+		if (!hex || hex->selected != map.getSelectionIndex()) {
+			deselectMenu();
+			return;
+		};
 
-	// outside of map
-	if (!hex) {
-		// deselect the tile
-		if (_select) deselectTile();
-		// deselect the region
-		else map.deselectRegion();
-		return;
-	};
+		// execute skill action
+		Spread::Tile prev = { last(), map.at(last()), 0 };
+		Spread::Tile next = { pos, hex, 0 };
+		skill->action(prev, next);
 
-	// if a region is selected
-	if (const auto& region = map.selectedRegion()) {
-		// check if selecting the same tile
-		if (_select && *_select == pos)
-			deselectTile();
-
-		// check if in the same region
-		else if (hex->region == region)
+		// select target tile
+		deselectMenu();
+		{
+			map.selectRegion(next.hex->region);
 			selectTile(pos);
+		};
+	}
+	else {
+		/// tile look-up ///
 
-		// deselect tile
-		else if (_select) deselectTile();
+		// outside of map
+		if (!hex) {
+			// deselect the tile
+			if (_select) deselectTile();
+			// deselect the region
+			else map.deselectRegion();
+			return;
+		};
 
-		// deselect region
-		else map.deselectRegion();
-		return;
+		// if a region is selected
+		if (const auto& region = map.selectedRegion()) {
+			// check if selecting the same tile
+			if (_select && *_select == pos)
+				deselectTile();
+
+			// check if in the same region
+			else if (hex->region == region)
+				selectTile(pos);
+
+			// deselect tile
+			else if (_select) deselectTile();
+
+			// deselect region
+			else map.deselectRegion();
+			return;
+		};
+
+		// select the region
+		map.selectRegion(hex->region);
 	};
-
-	// select the region
-	map.selectRegion(hex->region);
 };
 
 /// Cycles the building buying interface.
@@ -163,6 +187,7 @@ void Game::updateBuild() const {
 	text->setPath("param");
 	text->param("value", Values::build_names[type]);
 };
+
 /// Updates the troop buying interface.
 void Game::updateTroop() const {
 	// get target button
@@ -181,13 +206,49 @@ void Game::updateTroop() const {
 	text->param("value", Values::troop_names[type]);
 };
 
+/// Deselect action buttons and cancels map selection.
+void Game::deselectMenu() {
+	map.stopSelection();
+	for (auto* button : _panel->actions())
+		button->deselect();
+};
+
+/// Attaches a callback to a button.
+/// 
+/// @param button Action button.
+/// @param game Game object.
+/// @param skill Action skill.
+static void _attach_action(
+	gameui::Action* button,
+	Game* game,
+	const SkillDesc* skill
+) {
+	button->setCall([=]() {
+		// deselect other selections
+		game->deselectMenu();
+
+		// trigger map selection
+		size_t idx = game->map.newSelectionIndex();
+
+		// generate tile selection
+		Spread spread = skill->select(idx);
+		spread.apply(game->map, game->last(), skill->radius);
+
+		// store skill description
+		game->skill = skill;
+
+	}, [game]() { game->deselectMenu(); }, gameui::Action::Select);
+};
+
 /// Constructs an entity menu.
 /// 
+/// @param game Game object.
 /// @param panel Panel element.
 /// @param data Menu data.
 /// @param texture Entity texture.
 /// @param name Entity name.
 static void _construct_menu(
+	Game* game,
 	gameui::Panel* panel,
 	const Values::SkillArray& data,
 	sf::IntRect texture,
@@ -208,12 +269,18 @@ static void _construct_menu(
 	int idx = 0;
 	for (auto* button : panel->actions()) {
 		// set button texture
-		button->setTexture(&assets::interface, Values::skill_textures[static_cast<int>(data.skills[idx])]);
+		button->setTexture(&assets::interface, Values::skill_textures[data.skills[idx]->type]);
+
+		// set skill annotation
+		button->annotate(data.skills[idx]->annotation);
 
 		// set skill label
 		auto* text = button->setLabel();
 		text->setPath("param");
-		text->param("value", Values::skill_names[static_cast<int>(data.skills[idx])]);
+		text->param("value", Values::skill_names[data.skills[idx]->type]);
+
+		// attach skill logic
+		_attach_action(button, game, data.skills[idx]);
 		idx++;
 	};
 	panel->recalculate();
@@ -238,32 +305,34 @@ void Game::regionMenu(const Region& region, bool targeted) {
 		auto* button = _panel->actions()[2];
 
 		// buy building button
-		button->annotate(targeted ? Values::Annotation::None : Values::Annotation::Aim);
+		button->annotate(targeted ? SkillDesc::None : SkillDesc::Aim);
 		button->setTexture(&assets::interface, Values::buy_build);
 		auto* text = button->setLabel();
 		text->setPath("gp.buy_build");
 
-		button->setCall([=]() { printf("buy build %d\n", _build); });
+		// attach buy build skill
+		_attach_action(button, this, targeted ? &SkillList::buy_build : &SkillList::buy_build_aim);
 	};
 	{
 		auto* button = _panel->actions()[3];
 
 		// buy troop button
-		button->annotate(targeted ? Values::Annotation::None : Values::Annotation::Aim);
+		button->annotate(targeted ? SkillDesc::None : SkillDesc::Aim);
 		button->setTexture(&assets::interface, Values::buy_troop);
 		auto* text = button->setLabel();
 		text->setPath("gp.buy_troop");
 
-		button->setCall([=]() { printf("buy troop %d\n", _troop); });
+		// attach buy build skill
+		_attach_action(button, this, targeted ? &SkillList::buy_troop : &SkillList::buy_troop_aim);
 	};
 
 	// annotate selection buttons
-	_panel->actions()[0]->annotate(Values::Annotation::Swap);
-	_panel->actions()[1]->annotate(Values::Annotation::Swap);
+	_panel->actions()[0]->annotate(SkillDesc::Swap);
+	_panel->actions()[1]->annotate(SkillDesc::Swap);
 
 	// add callbacks to selection buttons
-	_panel->actions()[0]->setCall([=]() { cycleBuild(); });
-	_panel->actions()[1]->setCall([=]() { cycleTroop(); });
+	_panel->actions()[0]->setCall([=]() { cycleBuild(); }, nullptr, gameui::Action::Click);
+	_panel->actions()[1]->setCall([=]() { cycleTroop(); }, nullptr, gameui::Action::Click);
 
 	// update entity previews
 	updateBuild();
@@ -276,7 +345,7 @@ void Game::regionMenu(const Region& region, bool targeted) {
 /// Constructs a troop UI panel.
 void Game::troopMenu(const Troop& troop) {
 	_construct_menu(
-		_panel,
+		this, _panel,
 		Values::troop_skills[troop.type],
 		Values::troop_textures[troop.type],
 		Values::troop_names[troop.type]
@@ -285,7 +354,7 @@ void Game::troopMenu(const Troop& troop) {
 /// Constructs a building UI panel.
 void Game::buildMenu(const Build& build) {
 	_construct_menu(
-		_panel,
+		this, _panel,
 		Values::build_skills[build.type],
 		Values::build_textures[build.type],
 		Values::build_names[build.type]
@@ -294,7 +363,7 @@ void Game::buildMenu(const Build& build) {
 /// Constructs a plant UI panel.
 void Game::plantMenu(const Plant& plant) {
 	_construct_menu(
-		_panel,
+		this, _panel,
 		Values::plant_skill,
 		Values::plant_textures[plant.type],
 		Values::plant_names[plant.type]
@@ -317,6 +386,25 @@ void Game::hexMenu(const Hex& hex) {
 void Game::closeMenu() {
 	_panel->construct(Values::SkillArray::None);
 	_panel->recalculate();
+};
+
+/// Updates menu state after a click.
+void Game::updateMenu() {
+	// open hex menu
+	if (_select)
+		hexMenu(*map.at(*_select));
+
+	// open untargeted region menu
+	else if (const auto& region = map.selectedRegion())
+		regionMenu(*region);
+
+	// close menus
+	else closeMenu();
+};
+
+/// Returns last click position.
+sf::Vector2i Game::last() const {
+	return _last;
 };
 
 /// Returns hex coordinates at a mouse position.
@@ -345,7 +433,7 @@ sf::Vector2i Game::mouseToHex(sf::Vector2i mouse) const {
 			// upper-left neighbor
 			if (ymod < Values::tileUnit / 4 - xmod / 2)
 				pos = map.neighbor(pos, Map::UpperLeft);
-		} 
+		}
 		else {
 			// upper-right neighbor
 			if (ymod < xmod / 2 - Values::tileUnit / 4)

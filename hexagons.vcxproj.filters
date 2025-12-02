@@ -73,6 +73,12 @@
     <Filter Include="Header Files\game\map">
       <UniqueIdentifier>{c51073a2-ee8f-40ef-b569-594562f5e4df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\game\logic">
+      <UniqueIdentifier>{df3d7d99-7f34-43a7-a818-b366e0c1cf9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\logic">
+      <UniqueIdentifier>{493a83c8-4463-495d-8c18-f18af3205a96}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -221,6 +227,15 @@
     </ClCompile>
     <ClCompile Include="src\game\ui\hex_preview.cpp">
       <Filter>Source Files\game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\skill.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\values\skill_values.cpp">
+      <Filter>Source Files\game\values</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\logic\skill_list.cpp">
+      <Filter>Source Files\game\logic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -433,6 +448,15 @@
     </ClInclude>
     <ClInclude Include="include\game\ui\hex_preview.hpp">
       <Filter>Header Files\game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\skill.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\values\skill_values.hpp">
+      <Filter>Header Files\game\values</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\logic\skill_list.hpp">
+      <Filter>Header Files\game\logic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
