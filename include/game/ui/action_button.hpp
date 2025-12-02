@@ -17,12 +17,17 @@ namespace gameui {
 		/// @param self 
 		using DrawCall = std::function<void(ui::RenderBuffer& target, sf::IntRect self)>;
 
+		/// Action click callback.
+		using Callback = std::function<void()>;
+
 	private:
 		int _hint       = -1;      /// Action hint.
 		ui::Image* _tex = nullptr; /// Action texture.
+		ui::Image* _ann = nullptr; /// Annotation texture.
 		ui::Text* _text = nullptr; /// Action label.
 		ui::Text* _sub  = nullptr; /// Action subtitle label.
 		DrawCall _draw;            /// Extra draw call.
+		Callback _call;            /// Action callback.
 
 	public:
 		/// Action button size.
@@ -46,6 +51,10 @@ namespace gameui {
 		/// Clears the action button.
 		void clear();
 
+		/// Adds an annotation icon to the action button.
+		///
+		/// @param ann Annotation type.
+		void annotate(Values::Annotation ann);
 		/// Adds an image to the action button.
 		/// 
 		/// @param texture Texture reference.
@@ -56,12 +65,17 @@ namespace gameui {
 		/// 
 		/// @param call Draw call.
 		void setDraw(DrawCall call);
+		/// Adds a callback to pressed action button.
+		///
+		/// @param call Action callback.
+		void setCall(Callback call);
+		/// Forcefully invokes the action callback.
+		void click() const;
 
 		/// Adds a text label to the action button.
 		/// 
 		/// @return Pointer to text label.
 		ui::Text* setLabel();
-
 		/// Adds a subtitle label to the action button.
 		/// 
 		/// @return Pointer to text label.

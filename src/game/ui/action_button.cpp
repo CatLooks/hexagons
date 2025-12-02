@@ -21,19 +21,58 @@ namespace gameui {
 		// add hint
 		if (hint >= 0 && hint <= 9) {
 			ui::Image* himg = new ui::Image(&assets::interface, Values::digits[hint]);
-			himg->bounds = { { 1es / 8, 1es / 8 }, Values::iconSize };
+			himg->bounds = {
+				{ 0as + Values::buttonBorder, 0as + Values::buttonBorder },
+				Values::iconSize
+			};
 			add(himg);
 		};
+
+		// event handler
+		onEvent([=](const ui::Event& evt) {
+			// check for mouse click
+			if (auto data = evt.get<ui::Event::MousePress>()) {
+				// left mouse button
+				if (data->button == sf::Mouse::Button::Left) {
+					click();
+					return true;
+				};
+			};
+			return true;
+		});
 	};
 
 	/// Clears the action button.
 	void Action::clear() {
+		// remove elements
 		ui::Panel::clear();
 		ui::Panel::clears();
+
+		// reset pointers
 		_tex = nullptr;
+		_ann = nullptr;
 		_text = nullptr;
 		_sub = nullptr;
 		_draw = nullptr;
+	};
+
+	/// Adds an annotation icon to the action button.
+	void Action::annotate(Values::Annotation ann) {
+		if (!_ann) {
+			// ignore if no annotation
+			if (ann == Values::Annotation::None) return;
+
+			// create annotation icon
+			_ann = new ui::Image(&assets::interface, Values::annotations[static_cast<int>(ann)]);
+			_ann->bounds = {
+				{ 1as - Values::buttonBorder, 1as - Values::buttonBorder },
+				Values::iconSize
+			};
+			add(_ann);
+		} else {
+			// change coordinates
+			_ann->coords = Values::annotations[static_cast<int>(ann)];
+		};
 	};
 
 	/// Adds an image to the action button.
@@ -52,6 +91,16 @@ namespace gameui {
 	/// Adds an extra draw call to the action button.
 	void Action::setDraw(DrawCall call) {
 		_draw = call;
+	};
+
+	/// Adds a callback to pressed action button.
+	void Action::setCall(Callback call) {
+		_call = call;
+	};
+
+	/// Forcefully invokes the action callback.
+	void Action::click() const {
+		if (_call) _call();
 	};
 
 	/// Adds text to the action button.

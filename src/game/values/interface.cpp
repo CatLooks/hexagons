@@ -78,6 +78,7 @@ namespace Values {
 
 	/// Action annotation icon textures.
 	const sf::IntRect annotations[static_cast<int>(Annotation::Count)] = {
+		{},                 // none
 		coords(8, 3, 0, 2), // peach
 		coords(8, 3, 1, 2), // berry
 		coords(8, 3, 2, 2), // aim

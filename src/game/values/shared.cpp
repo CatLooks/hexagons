@@ -22,6 +22,9 @@ namespace Values {
 	/// Size of rendered icon.
 	const sf::Vector2i iconSize = iconTex * k;
 
+	/// Width of button borders.
+	const float buttonBorder = 4.f * k;
+
 	/// Thickness of map backplane border.
 	const sf::Vector2i mapBorder = { tileUnit / 2, tileUnit / 2 };
 

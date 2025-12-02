@@ -26,6 +26,9 @@ namespace Values {
 	/// Size of rendered icon.
 	extern const sf::Vector2i iconSize;
 
+	/// Width of button borders.
+	extern const float buttonBorder;
+
 	/// Thickness of map backplane border.
 	extern const sf::Vector2i mapBorder;
 

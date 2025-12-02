@@ -86,6 +86,7 @@ namespace Values {
 
 	/// Action annotation icon.
 	enum class Annotation {
+		None,   /// No annotation.
 		Peach,  /// Action costs peaches.
 		Berry,  /// Action costs berries.
 		Aim,    /// Action needs to be aimed.
