@@ -208,6 +208,15 @@ namespace ui {
 		void push(Anim* anim);
 		/// @return Whether the element has any animations running.
 		bool animated() const;
+		/// Chains second animation to first.
+		/// 
+		/// Second animation will start immediately when the first one finishes.
+		/// 
+		/// @param first First animation object.
+		/// @param second Second animation object.
+		/// 
+		/// @return First animation object.
+		Anim* chain(Anim* first, Anim* second);
 
 		/// Recalculates draw area for the element.
 		/// 

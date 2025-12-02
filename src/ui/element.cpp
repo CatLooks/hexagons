@@ -159,6 +159,11 @@ namespace ui {
 	bool Element::animated() const {
 		return !_anims.empty();
 	};
+	/// Chains second animation to first.
+	Anim* Element::chain(Anim* first, Anim* second) {
+		first->addAfter([=]() { push(second); });
+		return first;
+	};
 
 	/// Recalculates draw area for the element.
 	void Element::recalculate(const sf::Time& delta, sf::IntRect parent) {
