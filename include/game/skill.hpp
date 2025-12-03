@@ -56,8 +56,12 @@ struct SkillDesc {
 
 	/// Selection tile spreader generator.
 	///
+	/// @param tile Map selection origin.
 	/// @param idx Map selection index.
-	std::function<Spread(size_t idx)> select = [](size_t) { return Spread(); };
+	using Selection = std::function<Spread(const HexRef& tile, size_t idx)>;
+
+	/// Selection tile spreader generator.
+	Selection select = [](const HexRef&, size_t) { return Spread(); };
 
 	/// Selection tile spreader radius.
 	size_t radius = 0;
@@ -71,4 +75,14 @@ struct SkillDesc {
 
 	/// Skill action.
 	Action action = [](Map&, const HexRef&, const HexRef&) {};
+
+	/// Skill format type.
+	enum Format {
+		Self,      /// Double-click on skill button.
+		SingleAim, /// Click on skill button, then on selected tile.
+		DoubleAim, /// Click on skill button, then twice on selected tiles.
+	};
+
+	/// Skill interaction format.
+	Format format = SingleAim;
 };

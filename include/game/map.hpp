@@ -90,6 +90,12 @@ public:
 	/// @param plant Plant object.
 	void setPlant(const Plant& plant);
 
+	/// Applies an effect on a troop.
+	/// 
+	/// @param tile Troop tile.
+	/// @param effect Effect type.
+	void effectTroop(const HexRef& tile, EffectType effect);
+
 public:
 	/// Returns backplane rectangle.
 	sf::IntRect backplane() const;

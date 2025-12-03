@@ -8,11 +8,15 @@
 #include "ui/game_panel.hpp"
 #include "ui/hex_preview.hpp"
 #include "map.hpp"
+#include <delegate>
 
 /// Game controller object.
 class Game : public ui::Element {
 public:
 	Map map; /// Game map.
+
+	/// Default tile position for deselection click.
+	static const sf::Vector2i unselected;
 
 private:
 	std::optional<sf::Vector2i> _select; /// Selected tile.
@@ -24,7 +28,14 @@ private:
 	int _build = 0; /// Bought building.
 	int _troop = 0; /// Bought troop.
 
+	Delegate<void()> _queue; /// Update call queue.
+
 public:
+	/// Queues a call for the next frame.
+	/// 
+	/// @param call Callback function.
+	void queueCall(Delegate<void()>::Action call);
+
 	const SkillDesc* skill = nullptr; /// Current skill.
 
 public:

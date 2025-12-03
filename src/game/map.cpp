@@ -151,6 +151,15 @@ void Map::setPlant(const Plant& plant) {
 	};
 };
 
+/// Applies an effect on a troop.
+void Map::effectTroop(const HexRef& tile, EffectType effect) {
+	// ignore if no troop
+	if (!tile.hex->troop) return;
+
+	// add effect to effect list
+	tile.hex->troop->addEffect(effect);
+};
+
 /// Returns backplane rectangle.
 sf::IntRect Map::backplane() const {
 	// calculate height

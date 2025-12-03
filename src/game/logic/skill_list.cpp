@@ -8,7 +8,14 @@ namespace SkillList {
 	const SkillDesc buy_build_aim = { Skill::Empty, SkillDesc::Aim };
 
 	// general troop / building skills
-	const SkillDesc withdraw = { Skill::Withdraw, SkillDesc::None };
+	const SkillDesc withdraw = {
+		.type = Skill::Withdraw,
+		.annotation = SkillDesc::None,
+		.action = [](Map& map, const HexRef& tile, const HexRef& _) {
+			map.removeEntity(tile.hex);
+		},
+		.format = SkillDesc::Self
+	};
 	const SkillDesc move = {
 		.type = Skill::Move,
 		.annotation = SkillDesc::Aim,
@@ -24,7 +31,8 @@ namespace SkillList {
 		.radius = 2,
 		.action = [](Map& map, const HexRef& prev, const HexRef& next) {
 			map.moveTroop(prev, next);
-		}
+		},
+		.format = SkillDesc::SingleAim
 	};
 
 	// attack skills
@@ -38,7 +46,15 @@ namespace SkillList {
 	const SkillDesc effect_defend  = { Skill::Shield      , SkillDesc::None };
 	const SkillDesc effect_range   = { Skill::RangeBoost  , SkillDesc::None };
 	const SkillDesc effect_defense = { Skill::DefenseBoost, SkillDesc::None };
-	const SkillDesc effect_offense = { Skill::OffenseBoost, SkillDesc::None };
+	const SkillDesc effect_offense = {
+		.type = Skill::OffenseBoost,
+		.annotation = SkillDesc::None,
+		.action = [](Map& map, const HexRef& tile, const HexRef& _) {
+			printf("offense\n");
+			map.effectTroop(tile, EffectType::OffenseBoost);
+		},
+		.format = SkillDesc::Self
+	};
 
 	// other special skills
 	const SkillDesc fruit = { Skill::Harvest, SkillDesc::Aim  };

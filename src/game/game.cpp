@@ -3,6 +3,14 @@
 #include "game/logic/skill_list.hpp"
 #include "mathext.hpp"
 
+/// Default tile position for deselection click.
+const sf::Vector2i Game::unselected = { -1, -1 };
+
+/// Queues a call for the next frame.
+void Game::queueCall(Delegate<void()>::Action call) {
+	_queue.add(call);
+};
+
 /// Constructs a game object.
 Game::Game(ui::Layer* layer, gameui::Panel* panel)
 	: _layer(layer), _camera(layer, &map.camera, 17.f / 16), _panel(panel)
@@ -11,6 +19,12 @@ Game::Game(ui::Layer* layer, gameui::Panel* panel)
 	_camera.minZoom = 0.5f;
 	_camera.maxZoom = 2.0f;
 	layer->infinite = true;
+
+	// add queued call handler
+	layer->onRecalculate([=](const sf::Time& _) {
+		_queue.invoke();
+		_queue.clear();
+	});
 
 	// add tile selection handler
 	layer->onEvent([=](const ui::Event& evt) {
@@ -26,7 +40,7 @@ Game::Game(ui::Layer* layer, gameui::Panel* panel)
 		if (auto data = evt.get<ui::Event::KeyPress>()) {
 			if (data->key == sf::Keyboard::Key::Escape) {
 				// deselect anything selected
-				click({ -1, -1 });
+				click(unselected);
 				updateMenu();
 				return true;
 			};
@@ -64,6 +78,13 @@ Game::Game(ui::Layer* layer, gameui::Panel* panel)
 			sf::Mouse::isButtonPressed(sf::Mouse::Button::Right),
 			ui::window.mouse(), ui::window.size()
 		);
+	});
+
+	// deselect when clicking on the panel
+	panel->onEvent([=](const ui::Event& evt) {
+		if (evt.is<ui::Event::MousePress>())
+			deselectMenu();
+		return true;
 	});
 };
 
@@ -108,6 +129,12 @@ void Game::click(sf::Vector2i pos) {
 		
 		// tile not selected
 		if (!hex || hex->selected != map.getSelectionIndex()) {
+			deselectMenu();
+			return;
+		};
+
+		// deselect if status skill
+		if (skill->format == SkillDesc::Self) {
 			deselectMenu();
 			return;
 		};
@@ -211,6 +238,7 @@ void Game::deselectMenu() {
 	map.stopSelection();
 	for (auto* button : _panel->actions())
 		button->deselect();
+	skill = nullptr;
 };
 
 /// Attaches a callback to a button.
@@ -223,21 +251,44 @@ static void _attach_action(
 	Game* game,
 	const SkillDesc* skill
 ) {
-	button->setCall([=]() {
-		// deselect other selections
-		game->deselectMenu();
+	button->setCall(
+		[=]() {
+			// deselect other selections
+			game->deselectMenu();
 
-		// trigger map selection
-		size_t idx = game->map.newSelectionIndex();
+			// trigger map selection
+			size_t idx = game->map.newSelectionIndex();
 
-		// generate tile selection
-		Spread spread = skill->select(idx);
-		spread.apply(game->map, game->last(), skill->radius);
+			// generate tile selection
+			Spread spread = skill->select({ game->last(), game->map.at(game->last()) }, idx);
+			spread.apply(game->map, game->last(), skill->radius);
 
-		// store skill description
-		game->skill = skill;
+			// store skill description
+			game->skill = skill;
+		},
+		[=]() {
+			// aimed skill
+			if (game->skill->format != SkillDesc::Self) {
+				// cancel action
+				game->deselectMenu();
+				return;
+			};
 
-	}, [game]() { game->deselectMenu(); }, gameui::Action::Select);
+			// execute the skill
+			HexRef tile = { game->last(), game->map.at(game->last()) };
+			game->skill->action(game->map, tile, tile);
+			game->deselectMenu();
+
+			// deselect the tile if entity has disappeared
+			if (tile.hex->free()) {
+				game->queueCall([=]() {
+					game->deselectTile();
+					game->updateMenu();
+				});
+			};
+		},
+		gameui::Action::Select
+	);
 };
 
 /// Constructs an entity menu.

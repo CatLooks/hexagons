@@ -31,7 +31,7 @@ public:
 	/// Adds a delegate action to callback chain.
 	/// 
 	/// @param action Action function.
-	void add(Action&& action) {
+	void add(const Action& action) {
 		_list.push_back(action);
 	};
 
@@ -88,7 +88,7 @@ public:
 	/// Adds a delegate action to callback chain.
 	/// 
 	/// @param action Action function.
-	void add(Action&& action) {
+	void add(const Action& action) {
 		_list.push_back(action);
 	};
 
