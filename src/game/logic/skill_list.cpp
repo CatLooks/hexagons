@@ -2,9 +2,40 @@
 
 namespace SkillList {
 	// entity buy
-	const SkillDesc buy_troop = { Skill::Empty, SkillDesc::None };
+	const SkillDesc buy_troop = {
+		.type = Skill::Empty,
+		.annotation = SkillDesc::None,
+		.action = [](Map& map, const HexRef& _, const HexRef& tile) {
+			Troop troop;
+			troop.pos = tile.pos;
+			troop.type = Troop::Farmer;
+			troop.hp = 100;
+			map.setTroop(troop);
+		},
+		.format = SkillDesc::Self
+	};
 	const SkillDesc buy_build = { Skill::Empty, SkillDesc::None };
-	const SkillDesc buy_troop_aim = { Skill::Empty, SkillDesc::Aim };
+	const SkillDesc buy_troop_aim = {
+		.type = Skill::Empty,
+		.annotation = SkillDesc::Aim,
+		.select = [](const HexRef& tile, size_t idx) {
+			return Spread {
+				.hop = skillf::sameRegionHop(tile.hex->region),
+				.pass = skillf::emptyPass,
+				.effect = skillf::selectTile(idx),
+				.imm = true
+			};
+		},
+		.radius = ~0ull,
+		.action = [](Map& map, const HexRef& _, const HexRef& tile) {
+			Troop troop;
+			troop.pos = tile.pos;
+			troop.type = Troop::Farmer;
+			troop.hp = 100;
+			map.setTroop(troop);
+		},
+		.format = SkillDesc::SingleAim
+	};
 	const SkillDesc buy_build_aim = { Skill::Empty, SkillDesc::Aim };
 
 	// general troop / building skills
@@ -22,9 +53,7 @@ namespace SkillList {
 		.select = [](const HexRef& tile, size_t idx) {
 			return Spread {
 				.hop = skillf::solidHop,
-				.pass = [=](const Spread::Tile& tile) {
-					return tile.hex->free();
-				},
+				.pass = skillf::emptyPass,
 				.effect = skillf::selectTile(idx)
 			};
 		},

@@ -183,6 +183,7 @@ void Game::click(sf::Vector2i pos) {
 
 		// select the region
 		map.selectRegion(hex->region);
+		_last = pos;
 	};
 };
 
@@ -281,6 +282,8 @@ static void _attach_action(
 
 			// deselect the tile if entity has disappeared
 			if (tile.hex->free()) {
+				// queue to next frame since we are still inside
+				// of a button event handler function
 				game->queueCall([=]() {
 					game->deselectTile();
 					game->updateMenu();
