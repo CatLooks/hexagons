@@ -17,7 +17,7 @@ struct Spread {
 	/// Condition for a spreader function to affect the tile.
 	///
 	/// @param tile Spread target information.
-	using Check = std::function<bool(Tile& tile)>;
+	using Check = std::function<bool(const Tile& tile)>;
 	/// Applies an effect on a tile affected by spreader.
 	///
 	/// @param tile Spread target information.
@@ -26,7 +26,7 @@ struct Spread {
 	/// Default spread check.
 	/// 
 	/// @return `true` for any hex.
-	static bool default_check(Tile&);
+	static bool default_check(const Tile&);
 	/// Default spread effect.
 	///
 	/// Performs no action.

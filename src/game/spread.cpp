@@ -1,7 +1,7 @@
 #include "game/spread.hpp"
 
 /// Default spread check.
-bool Spread::default_check(Tile&) { return true; };
+bool Spread::default_check(const Tile&) { return true; };
 /// Default spread effect.
 void Spread::default_effect(Tile&) {};
 

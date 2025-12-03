@@ -3,7 +3,7 @@
 namespace spreadf {
 	/// Creates a same team spread check.
 	Spread::Check sameTeam(Region::Team team) {
-		return [team](Spread::Tile& tile) {
+		return [team](const Spread::Tile& tile) {
 			return tile.hex->team == team && tile.hex->solid();
 		};
 	};
