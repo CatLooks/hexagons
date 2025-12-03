@@ -246,6 +246,9 @@
     <ClCompile Include="src\game\logic\troop_logic.cpp">
       <Filter>Source Files\game\logic</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\logic\skill_helper.cpp">
+      <Filter>Source Files\game\logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -474,6 +477,9 @@
       <Filter>Header Files\game\logic</Filter>
     </ClInclude>
     <ClInclude Include="include\game\logic\troop_logic.hpp">
+      <Filter>Header Files\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\logic\skill_helper.hpp">
       <Filter>Header Files\game\logic</Filter>
     </ClInclude>
   </ItemGroup>

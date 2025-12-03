@@ -1,8 +1,7 @@
 #pragma once
 
 // include dependencies
-#include "game/skill.hpp"
-#include "game/map.hpp"
+#include "skill_helper.hpp"
 
 /// List of all skills.
 namespace SkillList {

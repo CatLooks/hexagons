@@ -42,6 +42,7 @@
     <ClCompile Include="src\game\hex.cpp" />
     <ClCompile Include="src\game\logic\build_logic.cpp" />
     <ClCompile Include="src\game\logic\plant_logic.cpp" />
+    <ClCompile Include="src\game\logic\skill_helper.cpp" />
     <ClCompile Include="src\game\logic\skill_list.cpp" />
     <ClCompile Include="src\game\logic\troop_logic.cpp" />
     <ClCompile Include="src\game\map.cpp" />
@@ -117,6 +118,7 @@
     <ClInclude Include="include\game\hex.hpp" />
     <ClInclude Include="include\game\logic\build_logic.hpp" />
     <ClInclude Include="include\game\logic\plant_logic.hpp" />
+    <ClInclude Include="include\game\logic\skill_helper.hpp" />
     <ClInclude Include="include\game\logic\skill_list.hpp" />
     <ClInclude Include="include\game\logic\troop_logic.hpp" />
     <ClInclude Include="include\game\map.hpp" />

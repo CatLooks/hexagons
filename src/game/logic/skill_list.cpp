@@ -12,9 +12,13 @@ namespace SkillList {
 	const SkillDesc move = {
 		.type = Skill::Move,
 		.annotation = SkillDesc::Aim,
-		.select = [](size_t idx) {
+		.select = [](const HexRef& tile, size_t idx) {
 			return Spread {
-				.effect = [=](Spread::Tile& tile) { tile.hex->selected = idx; }
+				.hop = skillf::solidHop,
+				.pass = [=](const Spread::Tile& tile) {
+					return tile.hex->free();
+				},
+				.effect = skillf::selectTile(idx)
 			};
 		},
 		.radius = 2,
