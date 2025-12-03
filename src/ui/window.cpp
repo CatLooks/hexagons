@@ -1,5 +1,6 @@
 #include "ui/window.hpp"
 #include <SFML/Graphics.hpp>
+#include "flags.hpp"
 
 namespace ui {
 	/// Returns a reference to window interface object.
@@ -58,10 +59,17 @@ namespace ui {
 				continue;
 			};
 
-			// check for fullscreen toggle
+			// check system toggles
 			if (auto* data = event->getIf<sf::Event::KeyPressed>()) {
+				// fullscreen toggle
 				if (data->code == sf::Keyboard::Key::F11) {
 					create({ 1600, 900 }, !_full);
+					continue;
+				};
+
+				// debug toggle
+				if (data->code == sf::Keyboard::Key::F12) {
+					flags::debug = !flags::debug;
 					continue;
 				};
 			};

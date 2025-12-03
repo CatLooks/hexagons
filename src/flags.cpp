@@ -1,5 +1,5 @@
 #include "flags.hpp"
 
 namespace flags {
-	bool debug = true;
+	bool debug = false;
 };
