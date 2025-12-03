@@ -126,4 +126,9 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/assets DESTINATION share/HEXAGON-GAME
         PATTERN ".git" EXCLUDE
         PATTERN "__pycache__" EXCLUDE)
 
+install(PROGRAMS "${EOS_DLL}" DESTINATION lib)
+set_target_properties(HEXAGONS-GAME PROPERTIES
+    INSTALL_RPATH "$ORIGIN/../lib;$ORIGIN"
+)
+
 include(CPack)
