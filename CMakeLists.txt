@@ -1,23 +1,22 @@
 cmake_minimum_required(VERSION 3.28)
 project(CMakeSFMLProject LANGUAGES CXX)
 
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
-set(CMAKE_CXX_STANDARD 17)
+if(MSVC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>$<$<CONFIG:Release>:Release>")
+endif()
+
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(EOS_SDK_PATH "${CMAKE_SOURCE_DIR}/EOS_SDK")
 
 if(WIN32)
-    # --- Windows Settings ---
     message(STATUS "Configuring EOS SDK for Windows")
     set(EOS_DLL "${EOS_SDK_PATH}/Bin/EOSSDK-Win64-Shipping.dll")
     set(EOS_LIB "${EOS_SDK_PATH}/Lib/EOSSDK-Win64-Shipping.lib")
 elseif(UNIX AND NOT APPLE)
-    # --- Linux (and other UNIX-like OS) Settings ---
    message(STATUS "Configuring EOS SDK for Linux")
     if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
         message(STATUS "Detected x86_64 architecture")
@@ -34,27 +33,17 @@ endif()
 
 if(UNIX AND NOT APPLE)
     find_package(PkgConfig REQUIRED)
-
+    
+    # SFML Dependencies
     set(REQUIRED_PACKAGES
-        x11
-        xrandr
-        gl
-        glu
-        freetype2
-        openal
-        sndfile
+        x11 xrandr gl glu freetype2 openal sndfile
     )
 
-    pkg_check_modules(SFML_DEPS IMPORTED_TARGET ${REQUIRED_PACKAGES})
-
+    pkg_check_modules(SFML_DEPS REQUIRED IMPORTED_TARGET ${REQUIRED_PACKAGES})
+    
     if(NOT SFML_DEPS_FOUND)
-        message(FATAL_ERROR "SFML dependencies not found. On Debian/Ubuntu, please run:\n"
-                            "sudo apt-get install build-essential libx11-dev libxrandr-dev libgl1-mesa-dev "
-                            "libglu1-mesa-dev libfreetype6-dev libopenal-dev libsndfile1-dev")
+        message(FATAL_ERROR "SFML dependencies not found.")
     endif()
-
-    include_directories(${SFML_DEPS_INCLUDE_DIRS})
-    link_directories(${SFML_DEPS_LIBRARY_DIRS})
 endif()
 
 include(FetchContent)
@@ -66,11 +55,12 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
+# Note: Recursive glob is generally discouraged for team projects, but okay for solo.
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 add_executable(HEXAGONS-GAME ${SOURCES})
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+if(MSVC)
     target_compile_options(HEXAGONS-GAME PRIVATE /wd4455)
 else()
     target_compile_options(HEXAGONS-GAME PRIVATE -Wno-literal-suffix)
@@ -80,18 +70,27 @@ target_include_directories(HEXAGONS-GAME PRIVATE include)
 target_include_directories(HEXAGONS-GAME PRIVATE "${EOS_SDK_PATH}/Include")
 
 target_compile_features(HEXAGONS-GAME PRIVATE cxx_std_20)
+
 target_link_libraries(HEXAGONS-GAME PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio SFML::Network)
 target_link_libraries(HEXAGONS-GAME PRIVATE "${EOS_LIB}")
 
-option(PRODUCTION_BUILD "Set to ON for release builds" OFF)
 
-if(PRODUCTION_BUILD)
-    target_compile_definitions(HEXAGONS-GAME PUBLIC "ASSET_PATH=\"./assets\"")
-else()
-    target_compile_definitions(HEXAGONS-GAME PUBLIC "ASSET_PATH=\"${CMAKE_SOURCE_DIR}/assets/\"")
+if(UNIX AND NOT APPLE)
+    target_link_libraries(HEXAGONS-GAME PRIVATE PkgConfig::SFML_DEPS)
 endif()
 
-set(ASSET_DIR ${CMAKE_SOURCE_DIR}/assets)
+option(PRODUCTION_BUILD "Set to ON for release builds" OFF)
+option(SYSTEM_INSTALL "Set to ON if installing to /usr/share (Debian packaging)" OFF)
+
+
+if(SYSTEM_INSTALL)
+    target_compile_definitions(HEXAGONS-GAME PUBLIC ASSET_PATH="/usr/share/HEXAGON-GAME/assets/")
+elseif(PRODUCTION_BUILD)
+    target_compile_definitions(HEXAGONS-GAME PUBLIC ASSET_PATH="./assets/")
+else()
+    target_compile_definitions(HEXAGONS-GAME PUBLIC ASSET_PATH="${CMAKE_SOURCE_DIR}/assets/")
+endif()
+
 
 add_custom_command(TARGET HEXAGONS-GAME POST_BUILD
    COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -99,11 +98,12 @@ add_custom_command(TARGET HEXAGONS-GAME POST_BUILD
       $<TARGET_FILE_DIR:HEXAGONS-GAME>
 )
 
-if(PRODUCTION_BUILD)
+
+if(NOT SYSTEM_INSTALL)
     add_custom_command(TARGET HEXAGONS-GAME POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${ASSET_DIR} $<TARGET_FILE_DIR:HEXAGONS-GAME>/assets
-        COMMENT "Copying assets for production build"
+        ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:HEXAGONS-GAME>/assets
+        COMMENT "Copying assets to binary directory"
     )
 endif()
 
@@ -113,20 +113,17 @@ set(CPACK_PACKAGE_NAME "HEXAGONS-GAME")
 set(CPACK_PACKAGE_VERSION "0.0.1")
 set(CPACK_PACKAGE_CONTACT "hexagonteams@example.com")
 set(CPACK_PACKAGE_DESCRIPTION "Hexagons Game")
-set(CPACK_DEBIAN_PACKAGE_SHLIBDEPENDS OFF)
-set(CPACK_DEBIAN_PACKAGE_HEXAGONS-GAMETAINER "Hexagon Teams")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPENDS ON) 
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Hexagon Teams") 
 set(CPACK_DEBIAN_PACKAGE_SECTION "games")
 set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
 
 # Install binary
 install(TARGETS HEXAGONS-GAME DESTINATION bin)
 
-# === Install assets ===
+# Install assets
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/assets DESTINATION share/HEXAGON-GAME
         PATTERN ".git" EXCLUDE
         PATTERN "__pycache__" EXCLUDE)
-
-# === Define asset path in code (for .deb) ===
-target_compile_definitions(HEXAGONS-GAME PRIVATE ASSET_PATH="/usr/share/HEXAGON-GAME/assets/")
 
 include(CPack)
