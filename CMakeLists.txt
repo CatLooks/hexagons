@@ -68,41 +68,41 @@ FetchContent_MakeAvailable(SFML)
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
-add_executable(main ${SOURCES})
+add_executable(HEXAGONS-GAME ${SOURCES})
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_compile_options(main PRIVATE /wd4455)
+    target_compile_options(HEXAGONS-GAME PRIVATE /wd4455)
 else()
-    target_compile_options(main PRIVATE -Wno-literal-suffix)
+    target_compile_options(HEXAGONS-GAME PRIVATE -Wno-literal-suffix)
 endif()
 
-target_include_directories(main PRIVATE include)
-target_include_directories(main PRIVATE "${EOS_SDK_PATH}/Include")
+target_include_directories(HEXAGONS-GAME PRIVATE include)
+target_include_directories(HEXAGONS-GAME PRIVATE "${EOS_SDK_PATH}/Include")
 
-target_compile_features(main PRIVATE cxx_std_20)
-target_link_libraries(main PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio SFML::Network)
-target_link_libraries(main PRIVATE "${EOS_LIB}")
+target_compile_features(HEXAGONS-GAME PRIVATE cxx_std_20)
+target_link_libraries(HEXAGONS-GAME PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio SFML::Network)
+target_link_libraries(HEXAGONS-GAME PRIVATE "${EOS_LIB}")
 
 option(PRODUCTION_BUILD "Set to ON for release builds" OFF)
 
 if(PRODUCTION_BUILD)
-    target_compile_definitions(main PUBLIC "ASSET_PATH=\"./assets\"")
+    target_compile_definitions(HEXAGONS-GAME PUBLIC "ASSET_PATH=\"./assets\"")
 else()
-    target_compile_definitions(main PUBLIC "ASSET_PATH=\"${CMAKE_SOURCE_DIR}/assets/\"")
+    target_compile_definitions(HEXAGONS-GAME PUBLIC "ASSET_PATH=\"${CMAKE_SOURCE_DIR}/assets/\"")
 endif()
 
 set(ASSET_DIR ${CMAKE_SOURCE_DIR}/assets)
 
-add_custom_command(TARGET main POST_BUILD
+add_custom_command(TARGET HEXAGONS-GAME POST_BUILD
    COMMAND ${CMAKE_COMMAND} -E copy_if_different
       "${EOS_DLL}"
-      $<TARGET_FILE_DIR:main>
+      $<TARGET_FILE_DIR:HEXAGONS-GAME>
 )
 
 if(PRODUCTION_BUILD)
-    add_custom_command(TARGET main POST_BUILD
+    add_custom_command(TARGET HEXAGONS-GAME POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${ASSET_DIR} $<TARGET_FILE_DIR:main>/assets
+        ${ASSET_DIR} $<TARGET_FILE_DIR:HEXAGONS-GAME>/assets
         COMMENT "Copying assets for production build"
     )
 endif()
