@@ -44,3 +44,32 @@ void Regions::enumerate(Map* map) {
 		};
 	};
 };
+
+/// Merges other regions with this region.
+void Regions::merge(Map* map, Ref& region, const std::vector<AP>& aps) {
+	// merge region stats
+	for (const AP& ap : aps) {
+		region->money += (*ap.region)->money;
+		region->berry += (*ap.region)->berry;
+		region->peach += (*ap.region)->peach;
+		region->income += (*ap.region)->income;
+		region->tiles += (*ap.region)->tiles;
+		region->farms += (*ap.region)->farms;
+	};
+
+	// update region references
+	for (const AP& ap : aps) {
+		const Ref& apr = *ap.region;
+
+		Spread spread = {
+			.hop = [=](const Spread::Tile& tile) {
+				return tile.hex->region == apr;
+			},
+			.effect = [=](Spread::Tile& tile) {
+				tile.hex->region = region;
+			},
+			.imm = true
+		};
+		spread.apply(*map, ap.pos);
+	};
+};

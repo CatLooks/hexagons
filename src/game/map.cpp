@@ -45,6 +45,7 @@ void Map::repaintHex(const HexRef& origin, const HexRef& tile) {
 	if (tile.hex->region) tile.hex->region->addTile();
 
 	// check if a merge is needed
+	std::vector<Regions::AP> merged;
 	for (int i = 0; i < 6; i++) {
 		// get neighbor tile
 		sf::Vector2i pos = neighbor(tile.pos, static_cast<nbi_t>(i));
@@ -52,9 +53,13 @@ void Map::repaintHex(const HexRef& origin, const HexRef& tile) {
 		if (!hex) continue;
 
 		// check for the same team but different region
-		if (hex->team == tile.hex->team && hex->region != tile.hex->region) {
-			printf("region merge\n");
-		};
+		if (hex->team == tile.hex->team && hex->region != tile.hex->region)
+			merged.push_back({ &hex->region, pos });
+	};
+
+	// merge adjacent regions
+	if (!merged.empty()) {
+		regions.merge(this, tile.hex->region, merged);
 	};
 
 	// @todo region join / split logic
