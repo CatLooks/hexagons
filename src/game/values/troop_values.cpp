@@ -104,11 +104,6 @@ namespace Values {
 			& SkillList::attack_knight,
 			& SkillList::effect_offense,
 			& SkillList::withdraw
-	} },
-	};
-
-	// max hp
-	const int troop_hp[Troop::Count] = {
-		1, 2, 3, 2, 4, 6
+		} },
 	};
 };

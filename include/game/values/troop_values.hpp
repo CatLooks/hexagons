@@ -30,8 +30,4 @@ namespace Values {
 
 	/// Troop skills.
 	extern const SkillArray troop_skills[Troop::Count];
-
-	/// Troop max health.
-	/// @param id Troop type.
-	extern const int troop_hp[Troop::Count];
 };
