@@ -40,6 +40,7 @@ namespace gameui {
 		{
 			_preview->position() = { 0.5as, 1as };
 			_preview->bounds.size *= 1.2f;
+			_preview->display = true;
 			_preview->deactivate();
 		};
 		adds(_preview);

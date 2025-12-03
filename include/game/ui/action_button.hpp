@@ -45,6 +45,11 @@ namespace gameui {
 		/// Action button base size.
 		static const ui::DimVector base;
 
+		/// Whether the button acts as a display.
+		///
+		/// Disables click animations.
+		bool display = false;
+
 	protected:
 		/// Action button texture maps.
 		///

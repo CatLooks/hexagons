@@ -123,7 +123,8 @@ namespace gameui {
 			if (_release) _release();
 
 			// button pulse animation
-			push(chain(emitExpand(), emitShrink()));
+			if (!display)
+				push(chain(emitExpand(), emitShrink()));
 			break;
 		default:
 			if (!_state) {
@@ -133,7 +134,7 @@ namespace gameui {
 
 				// button animation
 				_map = textures[1];
-				push(emitExpand());
+				if (!display) push(emitExpand());
 			}
 			else {
 				// release button
@@ -149,8 +150,9 @@ namespace gameui {
 	/// Deselects the button.
 	void Action::deselect() {
 		if (_state) {
+			_state = false;
 			_map = textures[0];
-			push(emitShrink());
+			if (!display) push(emitShrink());
 		};
 	};
 
