@@ -106,3 +106,27 @@ if(PRODUCTION_BUILD)
         COMMENT "Copying assets for production build"
     )
 endif()
+
+# === Packaging (.deb) ===
+set(CPACK_GENERATOR "DEB")
+set(CPACK_PACKAGE_NAME "HEXAGONS-GAME")
+set(CPACK_PACKAGE_VERSION "0.0.1")
+set(CPACK_PACKAGE_CONTACT "hexagonteams@example.com")
+set(CPACK_PACKAGE_DESCRIPTION "Hexagons Game")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPENDS OFF)
+set(CPACK_DEBIAN_PACKAGE_HEXAGONS-GAMETAINER "Hexagon Teams")
+set(CPACK_DEBIAN_PACKAGE_SECTION "games")
+set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+
+# Install binary
+install(TARGETS HEXAGONS-GAME DESTINATION bin)
+
+# === Install assets ===
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/assets DESTINATION share/HEXAGON-GAME
+        PATTERN ".git" EXCLUDE
+        PATTERN "__pycache__" EXCLUDE)
+
+# === Define asset path in code (for .deb) ===
+target_compile_definitions(HEXAGONS-GAME PRIVATE ASSET_PATH="/usr/share/HEXAGON-GAME/assets/")
+
+include(CPack)
