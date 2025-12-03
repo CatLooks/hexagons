@@ -2,6 +2,7 @@
 
 // include dependencies
 #include "game/values/troop_values.hpp"
+#include "game/logic/troop_logic.hpp"
 #include "hex_draw.hpp"
 
 namespace Draw {

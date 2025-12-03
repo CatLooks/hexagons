@@ -19,8 +19,7 @@ namespace SkillList {
 		},
 		.radius = 2,
 		.action = [](Map& map, const HexRef& prev, const HexRef& next) {
-			next.hex->troop = std::move(prev.hex->troop);
-			prev.hex->troop = {};
+			map.moveTroop(prev, next);
 		}
 	};
 

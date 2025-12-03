@@ -2,6 +2,21 @@
 #include "game/map.hpp"
 #include "game/funcs.hpp"
 
+/// Adds a tile to region.
+void Region::addTile() {
+	tiles++;
+	income++;
+};
+/// Removes a tile from region.
+void Region::removeTile() {
+	tiles--;
+	income--;
+};
+/// Updates money based on income.
+void Region::tick() {
+	money += income;
+};
+
 /// Creates a new region.
 Regions::Ref Regions::create(Region&& region) {
 	return _pool.add(region);

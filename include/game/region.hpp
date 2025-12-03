@@ -30,6 +30,13 @@ struct Region {
 	int income = 0; /// Income during next turn.
 	int tiles  = 0; /// Amount of tiles captured.
 	int farms  = 0; /// Amount of farms built.
+
+	/// Adds a tile to region.
+	void addTile();
+	/// Removes a tile from region.
+	void removeTile();
+	/// Updates money based on income.
+	void tick();
 };
 
 // forward declare map

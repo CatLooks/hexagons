@@ -2,6 +2,7 @@
 
 // include dependencies
 #include "game/skill.hpp"
+#include "game/map.hpp"
 
 /// List of all skills.
 namespace SkillList {

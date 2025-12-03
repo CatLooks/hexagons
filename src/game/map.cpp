@@ -34,20 +34,121 @@ const Regions::Ref& Map::selectedRegion() const {
 	return _region;
 };
 
+/// Changes the team color of a hex.
+void Map::repaintHex(const HexRef& origin, const HexRef& tile) {
+	// repaint the tile
+	if (tile.hex->region) tile.hex->region->removeTile();
+	{
+		tile.hex->team = origin.hex->team;
+		tile.hex->region = origin.hex->region;
+	};
+	if (tile.hex->region) tile.hex->region->addTile();
+
+	// check if a merge is needed
+	for (int i = 0; i < 6; i++) {
+		// get neighbor tile
+		sf::Vector2i pos = neighbor(tile.pos, static_cast<nbi_t>(i));
+		Hex* hex = at(pos);
+		if (!hex) continue;
+
+		// check for the same team but different region
+		if (hex->team == tile.hex->team && hex->region != tile.hex->region) {
+			printf("region merge\n");
+		};
+	};
+
+	// @todo region join / split logic
+};
+
+/// Moves a troop to another tile.
+void Map::moveTroop(const HexRef& from, const HexRef& to) {
+	// remove entities at destination
+	removeEntity(to.hex);
+
+	// repaint destination
+	repaintHex(from, to);
+
+	// @todo cross region move check (for mines)
+
+	// move troop
+	to.hex->troop = std::move(from.hex->troop);
+	from.hex->troop = {};
+};
+
+/// Removes any entities from the hex.
+void Map::removeEntity(Hex* hex) {
+	// remove troop
+	if (hex->troop) {
+		// update region income
+		if (hex->region)
+			hex->region->income += logic::troop_upkeep[hex->troop->type];
+
+		// delete troop
+		hex->troop = {};
+	};
+
+	// remove building
+	if (hex->build) {
+		// update region income
+		if (hex->region)
+			hex->region->income += logic::build_upkeep[hex->build->type];
+
+		// delete building
+		hex->build = {};
+	};
+
+	// remove plant
+	if (hex->plant) {
+		// update region income
+		if (hex->region)
+			hex->region->income += logic::plant_upkeep;
+
+		// delete plant
+		hex->plant = {};
+	};
+};
+
 /// Adds a troop to the map.
 void Map::setTroop(const Troop& troop) {
 	auto hex = at(troop.pos);
-	if (hex) hex->troop = _troops.add(troop);
+	if (hex) {
+		removeEntity(hex);
+
+		// add troop
+		hex->troop = _troops.add(troop);
+
+		// update region income
+		if (hex->region)
+			hex->region->income -= logic::troop_upkeep[troop.type];
+	};
 };
 /// Adds a building to the map.
 void Map::setBuild(const Build& build) {
 	auto hex = at(build.pos);
-	if (hex) hex->build = _builds.add(build);
+	if (hex) {
+		removeEntity(hex);
+
+		// add building
+		hex->build = _builds.add(build);
+
+		// update region income
+		if (hex->region)
+			hex->region->income -= logic::build_upkeep[build.type];
+	};
 };
 /// Adds a plant to the map.
 void Map::setPlant(const Plant& plant) {
 	auto hex = at(plant.pos);
-	if (hex) hex->plant = _plants.add(plant);
+	if (hex) {
+		removeEntity(hex);
+
+		// add plant
+		hex->plant = _plants.add(plant);
+
+		// update region income
+		if (hex->region)
+			hex->region->income -= logic::plant_upkeep;
+	};
 };
 
 /// Returns backplane rectangle.

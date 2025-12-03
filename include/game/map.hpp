@@ -3,10 +3,15 @@
 // include dependencies
 #include <SFML/System/Vector2.hpp>
 #include "ui/buffer.hpp"
+
 #include "assets.hpp"
 #include "mathext.hpp"
 #include "array.hpp"
 #include "spread.hpp"
+
+#include "logic/troop_logic.hpp"
+#include "logic/build_logic.hpp"
+#include "logic/plant_logic.hpp"
 
 /// Game map object.
 /// Stores array of tiles and lists of all dynamic objects on it.
@@ -56,6 +61,22 @@ public:
 	const Regions::Ref& selectedRegion() const;
 
 public:
+	/// Changes the team color of a hex.
+	///
+	/// @param origin Repaint source tile.
+	/// @param tile Target hex reference.
+	void repaintHex(const HexRef& origin, const HexRef& tile);
+	/// Moves a troop to another tile.
+	///
+	/// @param from Source tile.
+	/// @param to Destination tile.
+	void moveTroop(const HexRef& from, const HexRef& to);
+
+	/// Removes any entities from the hex.
+	///
+	/// @param hex Hex reference.
+	void removeEntity(Hex* hex);
+
 	/// Adds a troop to the map.
 	///
 	/// @param troop Troop object.
