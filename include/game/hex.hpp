@@ -50,4 +50,13 @@ struct Hex {
 struct HexRef {
 	sf::Vector2i pos {}; /// Hex position.
 	Hex*         hex {}; /// Hex pointer.
+
+	/// Constructs an empty reference.
+	HexRef();
+
+	/// Constructs a reference directly from raw data.
+	/// 
+	/// @param hex Hex reference.
+	/// @param pos Hex position.
+	HexRef(Hex* hex, sf::Vector2i pos);
 };

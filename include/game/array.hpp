@@ -107,4 +107,11 @@ public:
 	///
 	/// @return Tile reference.
 	Hex* operator[](sf::Vector2i pos) const;
+
+	/// Returns a complete reference to a tile.
+	/// 
+	/// @param pos Tile position.
+	/// 
+	/// @return Complete tile reference.
+	HexRef atref(sf::Vector2i pos) const;
 };

@@ -20,3 +20,12 @@ bool Hex::solid() const {
 bool Hex::free() const {
 	return !troop && !build && !plant;
 };
+
+/// Constructs an empty reference.
+HexRef::HexRef() : pos{}, hex{} {};
+
+/// Constructs a reference directly from raw data.
+/// 
+/// @param hex Hex reference.
+/// @param pos Hex position.
+HexRef::HexRef(Hex* hex, sf::Vector2i pos) : pos(pos), hex(hex) {};

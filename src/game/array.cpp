@@ -73,6 +73,11 @@ Hex* HexArray::operator[](sf::Vector2i pos) const {
 	return at(pos);
 };
 
+/// Returns a complete reference to a tile.
+HexRef HexArray::atref(sf::Vector2i pos) const {
+	return HexRef(at(pos), pos);
+};
+
 /// Clears the array.
 void HexArray::clear() {
 	delete[] _tiles;

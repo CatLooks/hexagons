@@ -31,10 +31,12 @@ static inline void _spread(
 	// spread to each neighbor
 	for (int i = 0; i < 6; i++) {
 		// next tile info
-		Spread::Tile next;
-		next.pos = array.neighbor(tile.pos, static_cast<HexArray::nbi_t>(i));
-		next.hex = array.at(next.pos);
-		next.left = tile.left - 1;
+		Spread::Tile next = {
+			array.atref(
+				array.neighbor(tile.pos, static_cast<HexArray::nbi_t>(i))
+			),
+			tile.left - 1
+		};
 
 		// discard if outside the map
 		if (!next.hex) continue;
@@ -61,7 +63,7 @@ void Spread::apply(const HexArray& array, sf::Vector2i pos, size_t radius) const
 	origin->spread = idx;
 	if (imm) {
 		// affect the origin tile
-		Tile tile = { pos, origin, radius };
+		Tile tile = { { origin, pos }, radius };
 		if (pass(tile)) effect(tile);
 	};
 	if (!radius) return;
@@ -70,7 +72,7 @@ void Spread::apply(const HexArray& array, sf::Vector2i pos, size_t radius) const
 	std::list<Tile> queue;
 
 	// initial spread from origin
-	_spread(queue, array, hop, idx, { pos, origin, radius });
+	_spread(queue, array, hop, idx, { { origin, pos }, radius });
 
 	// spreader loop
 	while (!queue.empty()) {
@@ -100,7 +102,7 @@ Spread::List Spread::applylist(const HexArray& array, sf::Vector2i pos, size_t r
 	origin->spread = idx;
 	if (imm) {
 		// affect the origin tile
-		Tile tile = { pos, origin, radius };
+		Tile tile = { { origin, pos }, radius };
 		if (pass(tile)) {
 			effect(tile);
 			affected.push_back(tile.pos);
@@ -112,7 +114,7 @@ Spread::List Spread::applylist(const HexArray& array, sf::Vector2i pos, size_t r
 	std::list<Tile> queue;
 
 	// initial spread from origin
-	_spread(queue, array, hop, idx, { pos, origin, radius });
+	_spread(queue, array, hop, idx, { { origin, pos }, radius });
 
 	// spreader loop
 	while (!queue.empty()) {

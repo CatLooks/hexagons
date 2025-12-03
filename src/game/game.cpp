@@ -140,8 +140,8 @@ void Game::click(sf::Vector2i pos) {
 		};
 
 		// execute skill action
-		Spread::Tile prev = { last(), map.at(last()), 0 };
-		Spread::Tile next = { pos, hex, 0 };
+		HexRef prev = map.atref(last());
+		HexRef next = { hex, pos };
 		skill->action(map, prev, next);
 
 		// select target tile
@@ -260,7 +260,7 @@ static void _attach_action(
 			size_t idx = game->map.newSelectionIndex();
 
 			// generate tile selection
-			Spread spread = skill->select({ game->last(), game->map.at(game->last()) }, idx);
+			Spread spread = skill->select(game->map.atref(game->last()), idx);
 			spread.apply(game->map, game->last(), skill->radius);
 
 			// store skill description
@@ -275,7 +275,7 @@ static void _attach_action(
 			};
 
 			// execute the skill
-			HexRef tile = { game->last(), game->map.at(game->last()) };
+			HexRef tile = game->map.atref(game->last());
 			game->skill->action(game->map, tile, tile);
 			game->deselectMenu();
 
