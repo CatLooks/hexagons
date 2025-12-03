@@ -237,6 +237,15 @@
     <ClCompile Include="src\game\logic\skill_list.cpp">
       <Filter>Source Files\game\logic</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\logic\build_logic.cpp">
+      <Filter>Source Files\game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\logic\plant_logic.cpp">
+      <Filter>Source Files\game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\logic\troop_logic.cpp">
+      <Filter>Source Files\game\logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -456,6 +465,15 @@
       <Filter>Header Files\game\values</Filter>
     </ClInclude>
     <ClInclude Include="include\game\logic\skill_list.hpp">
+      <Filter>Header Files\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\logic\build_logic.hpp">
+      <Filter>Header Files\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\logic\plant_logic.hpp">
+      <Filter>Header Files\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\logic\troop_logic.hpp">
       <Filter>Header Files\game\logic</Filter>
     </ClInclude>
   </ItemGroup>
