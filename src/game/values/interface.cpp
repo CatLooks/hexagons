@@ -27,6 +27,7 @@ namespace Values {
 		coords(8, 3, 2, 0), // defense
 		coords(8, 3, 3, 0), // offense
 		coords(8, 3, 0, 1), // poison
+		coords(8, 3, 1, 1), // stunned
 	};
 
 	/// Interface digit textures.

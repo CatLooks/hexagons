@@ -79,7 +79,6 @@ namespace SkillList {
 		.type = Skill::OffenseBoost,
 		.annotation = SkillDesc::None,
 		.action = [](Map& map, const HexRef& tile, const HexRef& _) {
-			printf("offense\n");
 			map.effectTroop(tile, EffectType::OffenseBoost);
 		},
 		.format = SkillDesc::Self

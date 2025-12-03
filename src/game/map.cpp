@@ -233,4 +233,10 @@ void Map::draw(ui::RenderBuffer& target) const {
 		tile.drawBorders(target, sf::Color::White);
 		tile.drawContents(target);
 	};
+
+	// draw troop status
+	drawer.reset();
+	while (auto tile = drawer.next()) {
+		Draw::troopBar(*tile, target);
+	};
 };
