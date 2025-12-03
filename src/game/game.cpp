@@ -12,8 +12,8 @@ void Game::queueCall(Delegate<void()>::Action call) {
 };
 
 /// Constructs a game object.
-Game::Game(ui::Layer* layer, gameui::Panel* panel)
-	: _layer(layer), _camera(layer, &map.camera, 17.f / 16), _panel(panel)
+Game::Game(ui::Layer* layer, gameui::Panel* panel, gameui::ResourceBar* bar)
+	: _layer(layer), _camera(layer, &map.camera, 17.f / 16), _panel(panel), _bar(bar)
 {
 	// setup camera
 	_camera.minZoom = 0.5f;
@@ -121,6 +121,18 @@ void Game::deselectTile() {
 	// deselect tile
 	_select = {};
 };
+
+/// Selects a region from a tile.
+void Game::selectRegion(const Hex* hex) {
+	map.selectRegion(hex->region);
+	_bar->attachRegion(hex->region);
+};
+/// Deselects a region.
+void Game::deselectRegion() {
+	map.deselectRegion();
+	_bar->detachRegion();
+};
+
 /// Clicks at a tile.
 void Game::click(sf::Vector2i pos) {
 	Hex* hex = map.at(pos);
@@ -147,7 +159,7 @@ void Game::click(sf::Vector2i pos) {
 		// select target tile
 		deselectMenu();
 		{
-			map.selectRegion(next.hex->region);
+			selectRegion(hex);
 			selectTile(pos);
 		};
 	}
@@ -159,7 +171,7 @@ void Game::click(sf::Vector2i pos) {
 			// deselect the tile
 			if (_select) deselectTile();
 			// deselect the region
-			else map.deselectRegion();
+			else deselectRegion();
 			return;
 		};
 
@@ -177,12 +189,12 @@ void Game::click(sf::Vector2i pos) {
 			else if (_select) deselectTile();
 
 			// deselect region
-			else map.deselectRegion();
+			else deselectRegion();
 			return;
 		};
 
 		// select the region
-		map.selectRegion(hex->region);
+		selectRegion(hex);
 		_last = pos;
 	};
 };

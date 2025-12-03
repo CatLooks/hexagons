@@ -28,4 +28,6 @@ namespace Values {
 
 	/// Game panel text settings.
 	extern const ui::TextSettings panel_text;
+	/// Resource bar text settings.
+	extern const ui::TextSettings resource_text;
 };

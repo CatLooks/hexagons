@@ -6,6 +6,7 @@
 #include "ui/window.hpp"
 #include "ui/anim/linear.hpp"
 #include "ui/game_panel.hpp"
+#include "ui/resource_bar.hpp"
 #include "ui/hex_preview.hpp"
 #include "map.hpp"
 #include <delegate>
@@ -24,6 +25,7 @@ private:
 	ui::Layer*                   _layer; /// Render layer.
 	ui::Camera                  _camera; /// Map camera.
 	gameui::Panel*               _panel; /// Game panel.
+	gameui::ResourceBar*           _bar; /// Resource bar.
 
 	int _build = 0; /// Bought building.
 	int _troop = 0; /// Bought troop.
@@ -43,7 +45,8 @@ public:
 	///
 	/// @param layer Render layer.
 	/// @param panel Game control panel.
-	Game(ui::Layer* layer, gameui::Panel* panel);
+	/// @param bar Resource bar.
+	Game(ui::Layer* layer, gameui::Panel* panel, gameui::ResourceBar* bar);
 
 	/// Selects a tile at position.
 	/// 
@@ -51,6 +54,14 @@ public:
 	void selectTile(sf::Vector2i pos);
 	/// Deselects a tile.
 	void deselectTile();
+
+	/// Selects a region from a tile.
+	/// 
+	/// @param hex Reference hex.
+	void selectRegion(const Hex* hex);
+	/// Deselects a region.
+	void deselectRegion();
+
 	/// Clicks at a tile.
 	/// 
 	/// @param pos Tile position.

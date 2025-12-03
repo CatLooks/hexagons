@@ -46,7 +46,10 @@ int main() {
 	auto gp = new gameui::Panel();
 	layer_gui->add(gp);
 
-	Game* game = new Game(layer_map, gp);
+	auto rb = new gameui::ResourceBar();
+	layer_gui->add(rb);
+
+	Game* game = new Game(layer_map, gp, rb);
 	{
 		Map& map = game->map;
 
