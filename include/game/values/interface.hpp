@@ -2,16 +2,7 @@
 #include "shared.hpp"
 #include "ui/text.hpp"
 #include "assets.hpp"
-
-/// Effect enumeration.
-enum class EffectType {
-	Shielded,     /// Shield for spearman.
-	RangeBoost,   /// Range boost for archer.
-	DefenseBoost, /// Defense boost for baron.
-	OffenseBoost, /// Attack boost for knight.
-	Poisoned,     /// Poisoned by archer.
-	Count
-};
+#include "game/troop.hpp"
 
 namespace Values {
 	/// Troop buying action texture.

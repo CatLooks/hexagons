@@ -2,6 +2,17 @@
 
 // include dependencies
 #include "entity.hpp"
+#include <vector>
+
+/// Effect enumeration.
+enum class EffectType {
+	Shielded,     /// Shield for spearman.
+	RangeBoost,   /// Range boost for archer.
+	DefenseBoost, /// Defense boost for baron.
+	OffenseBoost, /// Attack boost for knight.
+	Poisoned,     /// Poisoned by archer.
+	Count
+};
 
 /// Troop object.
 /// Stores a state of a troop.
@@ -19,5 +30,17 @@ struct Troop : Entity {
 	} type = Farmer;
 
 	int hp     = 0; /// Troop health.
-	int poison = 0; /// Poison ticks left.
+
+	/// Troop effects.
+	std::vector<EffectType> effects;
+
+	/// Applies an effect to the troop.
+	/// 
+	/// @param effect Effect type.
+	void addEffect(EffectType effect);
+
+	/// Checks whether a troop has an effect applied.
+	/// 
+	/// @param effect Effect type.
+	bool hasEffect(EffectType effect) const;
 };
