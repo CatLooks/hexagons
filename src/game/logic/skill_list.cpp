@@ -8,8 +8,8 @@ namespace SkillList {
 		.action = [](Map& map, const HexRef& _, const HexRef& tile) {
 			Troop troop;
 			troop.pos = tile.pos;
-			troop.type = Troop::Farmer;
-			troop.hp = 100;
+			troop.type = Troop::Knight;
+			troop.hp = 6;
 			map.setTroop(troop);
 		},
 		.format = SkillDesc::Self
@@ -30,8 +30,8 @@ namespace SkillList {
 		.action = [](Map& map, const HexRef& _, const HexRef& tile) {
 			Troop troop;
 			troop.pos = tile.pos;
-			troop.type = Troop::Farmer;
-			troop.hp = 100;
+			troop.type = Troop::Knight;
+			troop.hp = 6;
 			map.setTroop(troop);
 		},
 		.format = SkillDesc::SingleAim
@@ -61,7 +61,8 @@ namespace SkillList {
 		.action = [](Map& map, const HexRef& prev, const HexRef& next) {
 			map.moveTroop(prev, next);
 		},
-		.format = SkillDesc::SingleAim
+		.format = SkillDesc::SingleAim,
+		.reselect = true
 	};
 
 	// attack skills
@@ -69,7 +70,39 @@ namespace SkillList {
 	const SkillDesc attack_spear  = { Skill::AttackSpear , SkillDesc::Aim };
 	const SkillDesc attack_archer = { Skill::AttackArcher, SkillDesc::Aim };
 	const SkillDesc attack_baron  = { Skill::AttackBaron , SkillDesc::Aim };
-	const SkillDesc attack_knight = { Skill::AttackKnight, SkillDesc::Aim };
+	const SkillDesc attack_knight = {
+		.type = Skill::AttackKnight,
+		.annotation = SkillDesc::Aim,
+		.select = [](const HexRef& origin, size_t idx) {
+			return Spread {
+				.hop = skillf::solidHop,
+				.pass = [=](const Spread::Tile& tile) {
+					return tile.hex->region != origin.hex->region
+						&& (bool)tile.hex->troop;
+				},
+				.effect = skillf::selectTile(idx)
+			};
+		},
+		.radius = 1,
+		.action = [](Map& map, const HexRef& prev, const HexRef& next) {
+			// ignore if no troops
+			if (!prev.hex->troop || !next.hex->troop) return;
+
+			// damage troop
+			next.hex->troop->hp -= logic::troop_dmg(*prev.hex->troop);
+			if (next.hex->troop->hp <= 0) {
+				// replace with grave if dead
+				map.removeEntity(next.hex);
+				{
+					Plant grave;
+					grave.type = Plant::Grave;
+					grave.pos = next.pos;
+					map.setPlant(grave);
+				};
+			};
+		},
+		.format = SkillDesc::SingleAim
+	};
 
 	// status effect skills
 	const SkillDesc effect_defend  = { Skill::Shield      , SkillDesc::None };

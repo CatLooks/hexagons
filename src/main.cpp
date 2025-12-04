@@ -53,34 +53,49 @@ int main() {
 	{
 		Map& map = game->map;
 
-		const int w = 14;
-		const int h = 7;
+		const int w = 13;
+		const int h = 13;
 		const char arr[h][w + 1] = {
-			"------------- ",
-			"rrrrrrrwyywrrr",
-			"rrrrrrwyywrrr ",
-			"ggggggwyywgggg",
-			"gggggwyywgggg ",
-			"bbbbbwyywbbbbb",
-			"bbbbwyywbbbbb ",
+			"bbbb    b   x",
+			"bbbbb~~~~bbbb",
+			"bbbbb---bbb~x",
+			" bbbbb--bbb~ ",
+			" bbbb----b~bx",
+			"  ~~rrgg--bb ",
+			" rrrrgg---- x",
+			" rrrrrr----  ",
+			"~rrr---yypp x",
+			"r~rr-------  ",
+			"rr~r---yypp-x",
+			" ~~rr  ----~-",
+			"   rr     --x",
 		};
 
 		map.empty({ w, h });
 		{
 			Troop troop;
-			troop.pos = { 1, 1 };
+			troop.pos = { 4, 3 };
 			troop.type = Troop::Knight;
-			troop.hp = 5;
+			troop.hp = 6;
+			map.setTroop(troop);
+
+			troop.pos = { 8, 8 };
+			map.setTroop(troop);
+			troop.pos = { 9, 8 };
+			map.setTroop(troop);
+			troop.pos = { 8, 10 };
+			map.setTroop(troop);
+			troop.pos = { 9, 10 };
 			map.setTroop(troop);
 
 			Build build;
-			build.pos = { 3, 1 };
+			build.pos = { 2, 2 };
 			build.type = Build::Tower;
 			map.setBuild(build);
 
 			Plant plant;
-			plant.pos = { 5, 1 };
-			plant.type = Plant::Peach;
+			plant.pos = { 1, 1 };
+			plant.type = Plant::Tree;
 			map.setPlant(plant);
 		};
 
@@ -109,7 +124,11 @@ int main() {
 					hex->type = Hex::Ground;
 					hex->team = Region::Yellow;
 					break;
-				case 'w':
+				case 'p':
+					hex->type = Hex::Ground;
+					hex->team = Region::Purple;
+					break;
+				case '~':
 					hex->type = Hex::Water;
 					break;
 

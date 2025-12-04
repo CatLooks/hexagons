@@ -286,18 +286,30 @@ static void _attach_action(
 				game->deselectMenu();
 				return;
 			};
+			HexRef tile = game->map.atref(game->last());
+
+			// get tile state before skill
+			bool free_before = tile.hex->free();
 
 			// execute the skill
-			HexRef tile = game->map.atref(game->last());
 			game->skill->action(game->map, tile, tile);
 			game->deselectMenu();
 
+			// get tile state after skill
+			bool free_after = tile.hex->free();
+
 			// deselect the tile if entity has disappeared
-			if (tile.hex->free()) {
+			if (!free_before && free_after) {
 				// queue to next frame since we are still inside
 				// of a button event handler function
 				game->queueCall([=]() {
 					game->deselectTile();
+					game->updateMenu();
+				});
+			};
+			// show menu of a new entity
+			if (free_before && !free_after) {
+				game->queueCall([=]() {
 					game->updateMenu();
 				});
 			};

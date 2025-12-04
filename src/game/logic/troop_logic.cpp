@@ -15,6 +15,8 @@ namespace logic {
 
 	/// Returns troop damage.
 	int troop_dmg(const Troop& troop) {
+		if (troop.hasEffect(EffectType::OffenseBoost))
+			return 67; // kill me
 		return troop_dmg_base[troop.type];
 	};
 

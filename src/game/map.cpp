@@ -53,8 +53,15 @@ void Map::repaintHex(const HexRef& origin, const HexRef& tile) {
 		if (!hex) continue;
 
 		// check for the same team but different region
-		if (hex->team == tile.hex->team && hex->region != tile.hex->region)
+		if (hex->team == tile.hex->team && hex->region != tile.hex->region) {
+			// ignore if region is registered
+			for (const auto& ap : merged)
+				if (ap.region == &hex->region)
+					continue;
+
+			// register region for merging
 			merged.push_back({ &hex->region, pos });
+		};
 	};
 
 	// merge adjacent regions
