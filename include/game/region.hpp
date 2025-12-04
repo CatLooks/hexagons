@@ -62,7 +62,7 @@ private:
 	/// @param region Initial region state.
 	/// 
 	/// @return Region shared reference.
-	Ref create(Region&& region);
+	Ref create(const Region& region);
 
 public:
 	/// Enumerates all regions in a map.
@@ -76,4 +76,6 @@ public:
 	/// @param region Target region.
 	/// @param aps List of merged regions' access points.
 	void merge(Map* map, Ref& region, const std::vector<AP>& aps);
+
+	void split(Map* map, const std::vector<AP>& aps);
 };

@@ -114,7 +114,7 @@ namespace Draw {
 	/// Draws debug stuff.
 	void Tile::drawDebug(ui::RenderBuffer& target) const {
 		// region index text
-		std::string label = hex->region ? std::format("{}", hex->region.index()) : "x";
+		std::string label = hex->region ? std::format("{}\n{}", hex->region.index(), hex->spread) : "x";
 		sf::Text text(assets::font, label, 20);
 		text.setPosition((sf::Vector2f)origin + sf::Vector2f(size.x * 3.f / 4, size.y / 2.f));
 		text.setOutlineThickness(2);

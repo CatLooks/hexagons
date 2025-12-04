@@ -18,7 +18,7 @@ void Region::tick() {
 };
 
 /// Creates a new region.
-Regions::Ref Regions::create(Region&& region) {
+Regions::Ref Regions::create(const Region& region) {
 	return _pool.add(region);
 };
 
@@ -71,5 +71,27 @@ void Regions::merge(Map* map, Ref& region, const std::vector<AP>& aps) {
 			.imm = true
 		};
 		spread.apply(*map, ap.pos);
+	};
+};
+
+void Regions::split(Map* map, const std::vector<AP>& aps) {
+	// update region references
+	for (size_t i = 1; i < aps.size(); i++) {
+		Ref apr = *aps[i].region;
+
+		// generate new region
+		Ref region = create(**aps[i].region);
+
+		// assign region to all adjacent tiles in AP
+		Spread spread = {
+			.hop = [&](const Spread::Tile& tile) {
+				return tile.hex->region == apr;
+			},
+			.effect = [&](Spread::Tile& tile) {
+				tile.hex->region = region;
+			},
+			.imm = true
+		};
+		spread.apply(*map, aps[i].pos);
 	};
 };

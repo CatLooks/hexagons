@@ -36,6 +36,9 @@ const Regions::Ref& Map::selectedRegion() const {
 
 /// Changes the team color of a hex.
 void Map::repaintHex(const HexRef& origin, const HexRef& tile) {
+	// store previous region
+	Regions::Ref prev = tile.hex->region;
+
 	// repaint the tile
 	if (tile.hex->region) tile.hex->region->removeTile();
 	{
@@ -43,6 +46,9 @@ void Map::repaintHex(const HexRef& origin, const HexRef& tile) {
 		tile.hex->region = origin.hex->region;
 	};
 	if (tile.hex->region) tile.hex->region->addTile();
+
+	// ignore merge / split checks if region hasn't changed
+	if (tile.hex->region == prev) return;
 
 	// check if a merge is needed
 	std::vector<Regions::AP> merged;
@@ -69,7 +75,45 @@ void Map::repaintHex(const HexRef& origin, const HexRef& tile) {
 		regions.merge(this, tile.hex->region, merged);
 	};
 
-	// @todo region join / split logic
+	// find all separate regions
+	std::vector<Regions::AP> splits;
+	std::vector<size_t> split_idxs;
+
+	for (int i = 0; i < 6; i++) {
+		// get neighbor tile
+		sf::Vector2i pos = neighbor(tile.pos, static_cast<nbi_t>(i));
+		Hex* hex = at(pos);
+		if (!hex) continue;
+
+		// ignore if not the same region as overwritten
+		if (hex->region != prev) continue;
+
+		// check if region has been reached already
+		bool found = false;
+		for (size_t idx : split_idxs) {
+			if (hex->spread == idx) {
+				found = true;
+				break;
+			};
+		};
+		if (found) continue;
+
+		// mark all tiles in region
+		Spread spread = {
+			.hop = [&](const Spread::Tile& tile) {
+				return tile.hex->region == prev;
+			},
+			.imm = true
+		};
+		size_t idx = spread.apply(*this, pos);
+
+		// add split data
+		splits.push_back({ &hex->region, pos });
+		split_idxs.push_back(idx);
+	};
+
+	// split regions
+	regions.split(this, splits);
 };
 
 /// Moves a troop to another tile.
