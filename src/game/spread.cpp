@@ -59,14 +59,14 @@ void Spread::apply(const HexArray& array, sf::Vector2i pos, size_t radius) const
 
 	// get origin tile
 	Hex* origin = array.at(pos);
-	if (!origin) return;
+	if (!origin) return idx;
 	origin->spread = idx;
 	if (imm) {
 		// affect the origin tile
 		Tile tile = { { origin, pos }, radius };
 		if (pass(tile)) effect(tile);
 	};
-	if (!radius) return;
+	if (!radius) return idx;
 
 	// tile queue
 	std::list<Tile> queue;
@@ -86,6 +86,9 @@ void Spread::apply(const HexArray& array, sf::Vector2i pos, size_t radius) const
 		// spread to neighboring tiles
 		_spread(queue, array, hop, idx, tile);
 	};
+
+	// return spread index
+	return idx;
 };
 
 /// Applies the spread.

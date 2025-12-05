@@ -68,7 +68,9 @@ struct Spread {
 	/// @param array Target tile array.
 	/// @param pos Spread origin.
 	/// @param radius Maximum spread radius (infinite by default).
-	void apply(const HexArray& array, sf::Vector2i pos, size_t radius = ~0ull) const;
+	///
+	/// @return Spread index.
+	size_t apply(const HexArray& array, sf::Vector2i pos, size_t radius = ~0ull) const;
 
 	/// Visited tile coordinate list.
 	///
