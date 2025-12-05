@@ -164,9 +164,12 @@ void Game::click(sf::Vector2i pos) {
 		HexRef next = { hex, pos };
 		skill->action(map, prev, next);
 
-		// select target tile
+		// cancel selection
+		bool reselect = skill->reselect;
 		deselectMenu();
-		{
+
+		// select target tile if needed
+		if (reselect) {
 			selectRegion(next);
 			selectTile(pos);
 		};
@@ -293,18 +296,24 @@ static void _attach_action(
 				game->deselectMenu();
 				return;
 			};
+			HexRef tile = game->map.atref(game->last());
 
 			// execute the skill
-			HexRef tile = game->map.atref(game->last());
-			game->skill->action(game->map, tile, tile);
-			game->deselectMenu();
+			bool free_before = tile.hex->free();
+			{
+				game->skill->action(game->map, tile, tile);
+				game->deselectMenu();
+			};
+			bool free_after = tile.hex->free();
 
-			// deselect the tile if entity has disappeared
-			if (tile.hex->free()) {
+			// update game menu
+			if (free_before != free_after) {
 				// queue to next frame since we are still inside
 				// of a button event handler function
 				game->queueCall([=]() {
-					game->deselectTile();
+					// deselect tile if entity has disappeared
+					if (free_after)
+						game->deselectTile();
 					game->updateMenu();
 				});
 			};

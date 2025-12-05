@@ -9,7 +9,7 @@ namespace SkillList {
 			Troop troop;
 			troop.pos = tile.pos;
 			troop.type = Troop::Farmer;
-			troop.hp = 100;
+			troop.hp = 1;
 			map.setTroop(troop);
 		},
 		.format = SkillDesc::Self
@@ -31,7 +31,7 @@ namespace SkillList {
 			Troop troop;
 			troop.pos = tile.pos;
 			troop.type = Troop::Farmer;
-			troop.hp = 100;
+			troop.hp = 1;
 			map.setTroop(troop);
 		},
 		.format = SkillDesc::SingleAim
@@ -61,7 +61,8 @@ namespace SkillList {
 		.action = [](Map& map, const HexRef& prev, const HexRef& next) {
 			map.moveTroop(prev, next);
 		},
-		.format = SkillDesc::SingleAim
+		.format = SkillDesc::SingleAim,
+		.reselect = true
 	};
 
 	// attack skills
@@ -69,7 +70,25 @@ namespace SkillList {
 	const SkillDesc attack_spear  = { Skill::AttackSpear , SkillDesc::Aim };
 	const SkillDesc attack_archer = { Skill::AttackArcher, SkillDesc::Aim };
 	const SkillDesc attack_baron  = { Skill::AttackBaron , SkillDesc::Aim };
-	const SkillDesc attack_knight = { Skill::AttackKnight, SkillDesc::Aim };
+	const SkillDesc attack_knight = {
+		.type = Skill::AttackKnight,
+		.annotation = SkillDesc::Aim,
+		.select = [](const HexRef& tile, size_t idx) {
+			return Spread {
+				.hop = skillf::solidHop,
+				.pass = [&](const Spread::Tile& now) {
+					return now.hex->team != tile.hex->team
+						&& (bool)now.hex->troop;
+				},
+				.effect = skillf::selectTile(idx)
+			};
+		},
+		.radius = 1,
+		.action = [](Map& map, const HexRef& prev, const HexRef& next) {
+			next.hex->troop->hp--;
+		},
+		.format = SkillDesc::SingleAim
+	};
 
 	// status effect skills
 	const SkillDesc effect_defend  = { Skill::Shield      , SkillDesc::None };

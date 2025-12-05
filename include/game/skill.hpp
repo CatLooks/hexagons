@@ -85,4 +85,7 @@ struct SkillDesc {
 
 	/// Skill interaction format.
 	Format format = SingleAim;
+
+	/// Whether to select target tile after skill action.
+	bool reselect = false;
 };
