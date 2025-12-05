@@ -53,7 +53,7 @@ static inline void _spread(
 };
 
 /// Applies the spread.
-void Spread::apply(const HexArray& array, sf::Vector2i pos, size_t radius) const {
+size_t Spread::apply(const HexArray& array, sf::Vector2i pos, size_t radius) const {
 	// get new spread index
 	size_t idx = index();
 

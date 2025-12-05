@@ -6,6 +6,7 @@
 #include "ui/window.hpp"
 #include "ui/anim/linear.hpp"
 #include "ui/game_panel.hpp"
+#include "ui/resource_bar.hpp"
 #include "ui/hex_preview.hpp"
 #include "map.hpp"
 #include <delegate>
@@ -23,7 +24,8 @@ private:
 	sf::Vector2i                  _last; /// Last clicked tile.
 	ui::Layer*                   _layer; /// Render layer.
 	ui::Camera                  _camera; /// Map camera.
-	gameui::Panel*               _panel; /// Game panel.
+	gameui::Panel*               _panel; /// UI control panel.
+	gameui::Bar*                   _bar; /// UI resource bar.
 
 	int _build = 0; /// Bought building.
 	int _troop = 0; /// Bought troop.
@@ -41,16 +43,24 @@ public:
 public:
 	/// Constructs a game object.
 	///
-	/// @param layer Render layer.
-	/// @param panel Game control panel.
-	Game(ui::Layer* layer, gameui::Panel* panel);
+	/// @param game_layer Game rendering layer.
+	/// @param ui_layer Game interface layer.
+	Game(ui::Layer* game_layer, ui::Layer* ui_layer);
 
 	/// Selects a tile at position.
 	/// 
 	/// @param pos Tile position.
 	void selectTile(sf::Vector2i pos);
-	/// Deselects a tile.
+	/// Deselects the tile.
 	void deselectTile();
+	
+	/// Selects a region attached to a tile.
+	///
+	/// @param tile Hex reference.
+	void selectRegion(const HexRef& tile);
+	/// Deselects the region.
+	void deselectRegion();
+
 	/// Clicks at a tile.
 	/// 
 	/// @param pos Tile position.

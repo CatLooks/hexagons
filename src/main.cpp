@@ -43,10 +43,7 @@ int main() {
 	auto layer_map = itf.layer();
 	auto layer_gui = itf.layer();
 
-	auto gp = new gameui::Panel();
-	layer_gui->add(gp);
-
-	Game* game = new Game(layer_map, gp);
+	Game* game = new Game(layer_map, layer_gui);
 	{
 		Map& map = game->map;
 

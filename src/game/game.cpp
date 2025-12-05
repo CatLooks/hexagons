@@ -12,22 +12,27 @@ void Game::queueCall(Delegate<void()>::Action call) {
 };
 
 /// Constructs a game object.
-Game::Game(ui::Layer* layer, gameui::Panel* panel)
-	: _layer(layer), _camera(layer, &map.camera, 17.f / 16), _panel(panel)
+Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
+	_layer(game_layer), _camera(game_layer, &map.camera, 17.f / 16),
+	_panel(new gameui::Panel()), _bar(new gameui::Bar())
 {
+	// register interface elements
+	ui_layer->add(_panel);
+	ui_layer->add(_bar);
+
 	// setup camera
 	_camera.minZoom = 0.5f;
 	_camera.maxZoom = 2.0f;
-	layer->infinite = true;
+	game_layer->infinite = true;
 
 	// add queued call handler
-	layer->onRecalculate([=](const sf::Time& _) {
+	game_layer->onRecalculate([=](const sf::Time& _) {
 		_queue.invoke();
 		_queue.clear();
 	});
 
 	// add tile selection handler
-	layer->onEvent([=](const ui::Event& evt) {
+	game_layer->onEvent([=](const ui::Event& evt) {
 		if (auto data = evt.get<ui::Event::MousePress>()) {
 			if (data->button == sf::Mouse::Button::Left) {
 				// process tile (de)selection
@@ -49,7 +54,7 @@ Game::Game(ui::Layer* layer, gameui::Panel* panel)
 	});
 
 	// add camera zoom handler
-	layer->onEvent([=](const ui::Event& evt) {
+	game_layer->onEvent([=](const ui::Event& evt) {
 		if (auto data = evt.get<ui::Event::MouseWheel>()) {
 			_camera.scroll(-data->delta, ui::window.mouse(), ui::window.size());
 			return true;
@@ -58,9 +63,9 @@ Game::Game(ui::Layer* layer, gameui::Panel* panel)
 	});
 
 	// add camera pan handler
-	layer->onUpdate([=](const sf::Time& delta) {
+	game_layer->onUpdate([=](const sf::Time& delta) {
 		// set layer scale
-		layer->setArea(ui::DimVector(1es, 1es) * _camera.zoom(), { 0px, 0px, 1ps, 1ps });
+		game_layer->setArea(ui::DimVector(1es, 1es) * _camera.zoom(), { 0px, 0px, 1ps, 1ps });
 
 		// keyboard camera pan
 		if (ui::window.focused()) {
@@ -81,7 +86,7 @@ Game::Game(ui::Layer* layer, gameui::Panel* panel)
 	});
 
 	// deselect when clicking on the panel
-	panel->onEvent([=](const ui::Event& evt) {
+	_panel->onEvent([=](const ui::Event& evt) {
 		if (evt.is<ui::Event::MousePress>())
 			deselectMenu();
 		return true;
@@ -121,6 +126,21 @@ void Game::deselectTile() {
 	// deselect tile
 	_select = {};
 };
+
+/// Selects a region attached to a tile.
+void Game::selectRegion(const HexRef& tile) {
+	if (tile.hex->region) {
+		map.selectRegion(tile.hex->region);
+		_bar->attachRegion(tile.hex->region);
+		_last = tile.pos;
+	};
+};
+/// Deselects the region.
+void Game::deselectRegion() {
+	map.deselectRegion();
+	_bar->detachRegion();
+};
+
 /// Clicks at a tile.
 void Game::click(sf::Vector2i pos) {
 	Hex* hex = map.at(pos);
@@ -147,7 +167,7 @@ void Game::click(sf::Vector2i pos) {
 		// select target tile
 		deselectMenu();
 		{
-			map.selectRegion(next.hex->region);
+			selectRegion(next);
 			selectTile(pos);
 		};
 	}
@@ -159,7 +179,7 @@ void Game::click(sf::Vector2i pos) {
 			// deselect the tile
 			if (_select) deselectTile();
 			// deselect the region
-			else map.deselectRegion();
+			else deselectRegion();
 			return;
 		};
 
@@ -177,13 +197,12 @@ void Game::click(sf::Vector2i pos) {
 			else if (_select) deselectTile();
 
 			// deselect region
-			else map.deselectRegion();
+			else deselectRegion();
 			return;
 		};
 
 		// select the region
-		map.selectRegion(hex->region);
-		_last = pos;
+		selectRegion({ hex, pos });
 	};
 };
 

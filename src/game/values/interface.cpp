@@ -49,4 +49,10 @@ namespace Values {
 		assets::font, 24, sf::Color::White,
 		sf::Color::Black, 2
 	};
+
+	/// Resource bar text settings.
+	const ui::TextSettings resource_text = {
+		assets::font, 32, sf::Color::White,
+		sf::Color::Black, 4
+	};
 };
