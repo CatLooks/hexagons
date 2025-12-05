@@ -21,4 +21,9 @@ namespace skillf {
 
 	/// Allows selection only if a tile is empty.
 	extern const Spread::Check emptyPass;
+
+	/// Generates region audit spreader effect function.
+	///
+	/// @param region Target region.
+	Spread::Effect regionAuditEffect(const Regions::Ref& region);
 };

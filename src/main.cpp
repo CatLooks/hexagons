@@ -54,8 +54,8 @@ int main() {
 			"rrrrrrrwyywrrr",
 			"rrrrrrwyywrrr ",
 			"ggggggwyywgggg",
-			"gggggwyywgggg ",
-			"bbbbbwyywbbbbb",
+			"ggrrgwyywgggg ",
+			"bbrrbwyywbbbbb",
 			"bbbbwyywbbbbb ",
 		};
 

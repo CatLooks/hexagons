@@ -24,4 +24,16 @@ namespace skillf {
 	const Spread::Check emptyPass = [](const Spread::Tile& tile) {
 		return tile.hex->free();
 	};
+
+	/// Generates region audit spreader effect function.
+	Spread::Effect regionAuditEffect(const Regions::Ref& ref) {
+		return [&ref](Spread::Tile& tile) {
+			// tile statistics
+			ref->tiles++;
+			ref->income++;
+
+			// attach region to tile
+			tile.hex->region = ref;
+		};
+	};
 };

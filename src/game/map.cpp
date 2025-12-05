@@ -36,6 +36,10 @@ const Regions::Ref& Map::selectedRegion() const {
 
 /// Changes the team color of a hex.
 void Map::repaintHex(const HexRef& origin, const HexRef& tile) {
+	// store previous region
+	Regions::Ref prev = tile.hex->region;
+	if (prev == origin.hex->region) return;
+
 	// repaint the tile
 	if (tile.hex->region) tile.hex->region->removeTile();
 	{
@@ -43,6 +47,11 @@ void Map::repaintHex(const HexRef& origin, const HexRef& tile) {
 		tile.hex->region = origin.hex->region;
 	};
 	if (tile.hex->region) tile.hex->region->addTile();
+
+	/// ==== merge ====
+
+	// merged regions list
+	std::vector<Regions::AccessPoint> merged;
 
 	// check if a merge is needed
 	for (int i = 0; i < 6; i++) {
@@ -53,11 +62,61 @@ void Map::repaintHex(const HexRef& origin, const HexRef& tile) {
 
 		// check for the same team but different region
 		if (hex->team == tile.hex->team && hex->region != tile.hex->region) {
-			printf("region merge\n");
+			// ignore if region has already been recorded
+			for (const auto& ap : merged)
+				if (hex->region == *ap.region)
+					continue;
+
+			// store region access point
+			merged.push_back({ &hex->region, pos });
 		};
 	};
 
-	// @todo region join / split logic
+	// merge regions if needed
+	regions.merge(this, tile.hex->region, merged);
+
+	/// ==== split ====
+
+	// split regions list
+	std::vector<Regions::AccessPoint> splits;
+	std::vector<size_t> indices; // spread indices for each AP
+
+	// find all separated regions
+	for (int i = 0; i < 6; i++) {
+		// get neighbor tile
+		sf::Vector2i pos = neighbor(tile.pos, static_cast<nbi_t>(i));
+		Hex* hex = at(pos);
+		if (!hex) continue;
+
+		// ignore if not overwritten region
+		if (hex->region != prev) continue;
+
+		// ignore if region has been reached
+		bool found = false;
+		for (size_t idx : indices) {
+			if (hex->spread == idx) {
+				found = true;
+				break;
+			};
+		};
+		if (found) continue;
+
+		// mark all tiles in region
+		Spread spread = {
+			.hop = [&](const Spread::Tile& tile) {
+				return tile.hex->region == prev;
+			},
+			.imm = true
+		};
+		size_t idx = spread.apply(*this, pos);
+
+		// store region access point
+		splits.push_back({ &hex->region, pos });
+		indices.push_back(idx);
+	};
+
+	// split regions if needed
+	regions.split(this, splits);
 };
 
 /// Moves a troop to another tile.

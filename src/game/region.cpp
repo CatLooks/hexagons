@@ -1,6 +1,6 @@
 #include "game/region.hpp"
 #include "game/map.hpp"
-#include "game/funcs.hpp"
+#include "game/logic/skill_helper.hpp"
 
 /// Adds a tile to region.
 void Region::addTile() {
@@ -18,7 +18,7 @@ void Region::tick() {
 };
 
 /// Creates a new region.
-Regions::Ref Regions::create(Region&& region) {
+Regions::Ref Regions::create(const Region& region) {
 	return _pool.add(region);
 };
 
@@ -40,7 +40,67 @@ void Regions::enumerate(Map* map) {
 
 			// create and spread new region
 			auto region = create({ .team = hex.team });
-			spreadf::regionCalculation(hex.team, region).apply(*map, { x, y });
+			Spread spread = {
+				.hop = [=, team = hex.team](const Spread::Tile& tile) {
+					// hop if same team and a ground tile
+					return tile.hex->team == team
+						&& tile.hex->solid();
+				},
+				.effect = skillf::regionAuditEffect(region),
+				.imm = true
+			};
+			spread.apply(*map, { x, y });
 		};
+	};
+};
+
+/// Creates a region overwrite spreader object.
+///
+/// @param prev Previous region to overwrite.
+/// @param next New region to overwrite with.
+static Spread _region_overwrite(const Regions::Ref& prev, const Regions::Ref& next) {
+	return Spread {
+		.hop = [&](const Spread::Tile& tile) {
+			// hop if same region
+			return tile.hex->region == prev;
+		},
+		.effect = [&](Spread::Tile& tile) {
+			// overwrite tile region
+			tile.hex->region = next;
+		},
+		.imm = true
+	};
+};
+
+/// Merges regions into a singular region.
+void Regions::merge(Map* map, Ref& target, const std::vector<AccessPoint>& aps) {
+	// overwrite merged regions
+	for (const auto& ap : aps) {
+		const Ref& apr = *ap.region;
+
+		// merge resources to the target region
+		// @todo
+
+		// overwrite region for all hexes
+		Ref copy = apr;
+		_region_overwrite(copy, target).apply(*map, ap.pos);
+	};
+};
+
+/// Splits a separated region into proper regions.
+void Regions::split(Map* map, const std::vector<AccessPoint>& aps) {
+	// overwrite region parts
+	for (size_t i = 1; i < aps.size(); i++) {
+		const auto& ap = aps[i];
+
+		// generate new region
+		Ref apr = *ap.region;
+		Ref region = create(*apr);
+
+		// split resources to a new region
+		// @todo
+
+		// overwrite region for all hexes
+		_region_overwrite(apr, region).apply(*map, ap.pos);
 	};
 };

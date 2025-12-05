@@ -1,7 +1,7 @@
 #pragma once
 
 // include dependencies
-//#include "spread.hpp"
+#include <SFML/System/Vector2.hpp>
 #include <refpool>
 
 /// Region statistics object.
@@ -48,6 +48,12 @@ public:
 	/// Shared region reference type.
 	using Ref = RefPool<Region>::Share;
 
+	/// Region access point.
+	struct AccessPoint {
+		Ref* region      {}; /// Region reference.
+		sf::Vector2i pos {}; /// Access position.
+	};
+
 private:
 	RefPool<Region> _pool; /// Region pool.
 
@@ -56,11 +62,24 @@ private:
 	/// @param region Initial region state.
 	/// 
 	/// @return Region shared reference.
-	Ref create(Region&& region);
+	Ref create(const Region& region);
 
 public:
 	/// Enumerates all regions in a map.
 	///
 	/// @param map Map reference.
 	void enumerate(Map* map);
+
+	/// Merges regions into a singular region.
+	///
+	/// @param map Map reference.
+	/// @param target Target region.
+	/// @param aps Merged region access points.
+	void merge(Map* map, Ref& target, const std::vector<AccessPoint>& aps);
+
+	/// Splits a separated region into proper regions.
+	///
+	/// @param map Map reference.
+	/// @param aps Access points to all separated region parts.
+	void split(Map* map, const std::vector<AccessPoint>& aps);
 };
