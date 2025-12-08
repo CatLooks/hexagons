@@ -4,8 +4,6 @@ namespace Values {
 	// skill textures
 	const sf::IntRect skill_textures[Skill::Count] = {
 		{}, // empty
-		{}, // buy troop
-		{}, // buy build
 
 		coords(0, 1), // withdraw
 		coords(6, 1), // move
@@ -31,9 +29,6 @@ namespace Values {
 	const char* skill_names[Skill::Count] = {
 		"@!skill.invalid",
 
-		"@!gp.buy_troop",
-		"@!gp.buy_build",
-
 		"@!skill.withdraw",
 		"@!skill.move",
 
@@ -57,6 +52,7 @@ namespace Values {
 	/// Action annotation icon textures.
 	const sf::IntRect annotations[SkillDesc::Count] = {
 		{},                 // none
+
 		coords(8, 3, 0, 2), // peach
 		coords(8, 3, 1, 2), // berry
 		coords(8, 3, 2, 2), // aim

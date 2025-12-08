@@ -10,9 +10,6 @@ struct Skill {
 	enum Type {
 		Empty = 0,    /// Empty skill.
 
-		BuyTroop,     /// Buy a troop.
-		BuyBuild,     /// Buy a building.
-
 		Withdraw,     /// Withdraw.
 		Move,         /// Move.
 
