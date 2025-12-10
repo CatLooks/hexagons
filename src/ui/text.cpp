@@ -66,7 +66,7 @@ namespace ui {
 		_text.setPosition({
 			self.position.x + (self.size.x - rect.size.x) * mults.x,
 			self.position.y + (self.size.y - rect.size.y) * mults.y,
-			});
+		});
 
 		// render text
 		target.text(_text);

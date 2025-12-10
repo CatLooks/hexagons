@@ -4,6 +4,7 @@
 #include "ui/units.hpp"
 #include "ui/element.hpp"
 #include "ui/layer.hpp"
+#include "ui/align.hpp"
 #include "ui/solid.hpp"
 #include "ui/panel.hpp"
 #include "ui/image.hpp"
