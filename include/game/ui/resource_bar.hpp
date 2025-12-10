@@ -13,15 +13,19 @@ namespace gameui {
 		static const ui::Dim height;
 
 	private:
-		ui::Text* t_money   {}; /// Money text.
-		ui::Text* t_income  {}; /// Income text.
-		ui::Text* t_peaches {}; /// Peach text.
-		ui::Text* t_berries {}; /// Berry text.
+		/// Resource bar displayed data enumeration.
+		enum Data {
+			Money,  /// Money amount.
+			Income, /// Income amount.
+			Berry,  /// Berry amount.
+			Peach,  /// Peach amount.
+			Count
+		};
 
-		ui::Image* i_money   {}; /// Money icon.
-		ui::Image* i_income  {}; /// Income icon.
-		ui::Image* i_peaches {}; /// Peach icon.
-		ui::Image* i_berries {}; /// Berry icon.
+		ui::Element* _resources  {}; /// Resource label space.
+		ui::Align* _conts[Count] {}; /// Data containers.
+		ui::Text* _labels[Count] {}; /// Data labels.
+		ui::Image* _icons[Count] {}; /// Data icons.
 
 		Region* _region {}; /// Displayed region.
 
