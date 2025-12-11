@@ -49,7 +49,10 @@ private:
 	bool _selection = false; /// Whether a selection is happening.
 
 public:
-	Regions regions; /// Region manager.
+	/// Region manager.
+	Regions regions;
+	/// Tile pulse annotation.
+	std::optional<sf::Vector2i> pulse;
 
 	/// Selects a region.
 	/// 
@@ -103,5 +106,6 @@ public:
 	/// Draws the map.
 	///
 	/// @param target Render buffer.
-	void draw(ui::RenderBuffer& target) const;
+	/// @param t Pulsing progression parameter.
+	void draw(ui::RenderBuffer& target, float t) const;
 };

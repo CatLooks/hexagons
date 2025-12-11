@@ -234,7 +234,7 @@ sf::IntRect Map::backplane() const {
 };
 
 /// Draws the map.
-void Map::draw(ui::RenderBuffer& target) const {
+void Map::draw(ui::RenderBuffer& target, float t) const {
 	// draw backplane
 	target.quad(backplane() - camera, {}, sf::Color(40, 42, 48));
 	target.forward(nullptr);
@@ -247,6 +247,7 @@ void Map::draw(ui::RenderBuffer& target) const {
 	// setup tile drawer
 	TileDrawer drawer(this, area, origin, Values::tileSize);
 	std::deque<Draw::Tile> elevated;
+	std::optional<Draw::Tile> pulsing;
 
 	// draw tile geometry
 	while (auto tile = drawer.next()) {
@@ -284,6 +285,12 @@ void Map::draw(ui::RenderBuffer& target) const {
 			if (tile->hex->selected != _select_idx)
 				tile->drawShade(target);
 		};
+	};
+
+	// draw tile pulse
+	if (pulse) {
+		auto tile = drawer.at(*pulse, 1.f);
+		tile.drawPulse(target, t);
 	};
 
 	// draw elevated tile top & contents

@@ -60,5 +60,11 @@ namespace Draw {
 		/// 
 		/// @param target Target render buffer.
 		void drawContents(ui::RenderBuffer& target) const;
+
+		/// Draws pulse around tile.
+		///
+		/// @param target Target render buffer.
+		/// @param t Pulse progression.
+		void drawPulse(ui::RenderBuffer& target, float t) const;
 	};
 };

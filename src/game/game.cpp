@@ -25,6 +25,13 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 	_camera.maxZoom = 2.0f;
 	game_layer->infinite = true;
 
+	// add pulse animation
+	{
+		_pulse_anim = new ui::AnimFloat(&_pulse, 0.f, 1.f, sf::seconds(0.8));
+		_pulse_anim->looped = true;
+		push(_pulse_anim);
+	};
+
 	// add queued call handler
 	game_layer->onRecalculate([=](const sf::Time& _) {
 		_queue.invoke();
@@ -258,9 +265,15 @@ void Game::updateTroop() const {
 
 /// Deselect action buttons and cancels map selection.
 void Game::deselectMenu() {
+	// disengage map
 	map.stopSelection();
+	map.pulse = {};
+
+	// disengage action buttons
 	for (auto* button : _panel->actions())
 		button->deselect();
+
+	// reset skill pointer
 	skill = nullptr;
 };
 
@@ -281,6 +294,12 @@ static void _attach_action(
 
 			// trigger map selection
 			size_t idx = game->map.newSelectionIndex();
+
+			// create tile pulse for auto skills
+			if (skill->format == SkillDesc::Self) {
+				game->map.pulse = game->last();
+				game->resetPulse();
+			};
 
 			// generate tile selection
 			Spread spread = skill->select(game->map.atref(game->last()), idx);
@@ -489,6 +508,11 @@ sf::Vector2i Game::last() const {
 	return _last;
 };
 
+/// Resets pulse animation.
+void Game::resetPulse() const {
+	_pulse_anim->restart();
+};
+
 /// Returns hex coordinates at a mouse position.
 sf::Vector2i Game::mouseToHex(sf::Vector2i mouse) const {
 	// convert to world coordinates
@@ -527,5 +551,5 @@ sf::Vector2i Game::mouseToHex(sf::Vector2i mouse) const {
 
 /// Draws the map.
 void Game::drawSelf(ui::RenderBuffer& target, sf::IntRect self) const {
-	map.draw(target);
+	map.draw(target, _pulse);
 };

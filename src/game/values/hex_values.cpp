@@ -8,6 +8,11 @@ namespace Values {
 	const sf::IntRect sideShade = coords(8, 2);
 	/// Hex mask.
 	const sf::IntRect mask = coords(9, 0);
+	/// Hex pulse.
+	const sf::IntRect pulse = {
+		{ 6 * Values::tileTex.x, 1 * Values::tileTex.y },
+		Values::tileTex + Values::tileLevel(Values::tileTex)
+	};
 
 	// texture array
 	const sf::IntRect hex_textures[Region::Count] = {

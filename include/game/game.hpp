@@ -27,8 +27,11 @@ private:
 	gameui::Panel*               _panel; /// UI control panel.
 	gameui::Bar*                   _bar; /// UI resource bar.
 
-	int _build = 0; /// Bought building.
-	int _troop = 0; /// Bought troop.
+	int _build = 0;     /// Bought building.
+	int _troop = 0;     /// Bought troop.
+
+	float _pulse = 0.f;    /// Map tile pulse.
+	ui::Anim* _pulse_anim; /// Pulse animation object.
 
 	Delegate<void()> _queue; /// Update call queue.
 
@@ -109,6 +112,9 @@ public:
 
 	/// Returns last click position.
 	sf::Vector2i last() const;
+
+	/// Resets pulse animation.
+	void resetPulse() const;
 
 	/// Returns hex coordinates at a mouse position.
 	///

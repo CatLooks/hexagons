@@ -134,4 +134,37 @@ namespace Draw {
 		// draw debug stuff
 		if (flags::debug) drawDebug(target);
 	};
+
+	/// Draws pulse around tile.
+	void Tile::drawPulse(ui::RenderBuffer& target, float t) const {
+		// max expansion scale
+		const float max = 1.5f;
+
+		// initial opacity
+		const int opacity = 192;
+
+		// get pulse size
+		sf::Vector2i asize = sf::Vector2i(
+			sf::Vector2f(Values::pulse.size)
+				* ((float)size.x / Values::pulse.size.x));
+
+		// draw dimming pulse
+		{
+			sf::Color color = sf::Color(255, 255, 255, ui::lerpi(opacity, 0, t));
+
+			// draw dimmed pulse
+			sf::Vector2i nsize = sf::Vector2i(sf::Vector2f(asize) * max);
+			target.quad({ origin - (nsize - asize) / 2, nsize }, Values::pulse, color);
+		};
+		// draw expanding pulse
+		{
+			sf::Color color = sf::Color(255, 255, 255, opacity);
+			float scale = ui::lerpf(1.0f, max, t);
+
+			// draw resized pulse
+			sf::Vector2i nsize = sf::Vector2i(sf::Vector2f(asize) * scale);
+			target.quad({ origin - (nsize - asize) / 2, nsize }, Values::pulse, color);
+		};
+		target.forward(&assets::tilemap);
+	};
 };
