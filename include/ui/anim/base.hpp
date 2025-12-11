@@ -20,6 +20,12 @@ namespace ui {
 		virtual void onTick(float t);
 
 	public:
+		bool looped = false; /// Whether to loop the animation.
+
+	public:
+		/// Restarts the animation.
+		void restart();
+
 		/// Ticks the animation.
 		/// @param time Time elapsed since last frame.
 		void update(const sf::Time& time);

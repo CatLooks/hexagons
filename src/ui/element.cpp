@@ -174,6 +174,9 @@ namespace ui {
 		for (const auto& handler : _recalc_list)
 			handler(delta);
 
+		// looped animation queue
+		std::deque<std::unique_ptr<Anim>> looped;
+
 		// update animations
 		auto it = _anims.begin();
 		while (it != _anims.end()) {
@@ -182,10 +185,23 @@ namespace ui {
 			if ((*it)->active())
 				// go to next animator
 				it++;
-			else
+			else {
+				// add animation to looped queue
+				if ((*it)->looped) {
+					(*it)->restart();
+					looped.push_back(std::move(*it));
+				};
+
 				// delete animator from list
 				it = _anims.erase(it);
+			};
 		};
+
+		// push queued animations
+		_anims.insert(_anims.end(),
+			std::make_move_iterator(looped.begin()),
+			std::make_move_iterator(looped.end())
+		);
 
 		// recalculate element draw areas
 		_outerRect = bounds.get(parent);

@@ -4,6 +4,12 @@ namespace ui {
 	/// Updates the animation target.
 	void Anim::onTick(float t) {};
 
+	/// Restarts the animation.
+	void Anim::restart() {
+		_time = 0.f;
+		_active = true;
+	};
+
 	/// Ticks the animation.
 	void Anim::update(const sf::Time& time) {
 		// ignore if inactive
