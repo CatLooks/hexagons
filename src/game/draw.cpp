@@ -23,6 +23,19 @@ void TileDrawer::reset() {
 	_draw = _org + Values::rowOffset(_coords.y);
 };
 
+/// Returns tile drawing data at specified position.
+Draw::Tile TileDrawer::at(sf::Vector2i pos, float emult) const {
+	// generate tile object
+	sf::Vector2i draw = _org + Values::rowOffset(pos.y)
+		+ sf::Vector2i(pos.x * Values::tileOff.x, pos.y * Values::tileOff.y);
+	Draw::Tile tile(_map, pos, draw, _size);
+
+	// apply elevation
+	if (tile.hex && emult != 0.f)
+		tile.origin -= sf::Vector2i(sf::Vector2f(Values::tileLevel(_size)) * tile.hex->elevation * emult);
+	return tile;
+};
+
 /// Returns the next tile drawing data.
 std::optional<Draw::Tile> TileDrawer::next() {
 	while (1) {

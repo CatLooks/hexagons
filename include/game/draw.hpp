@@ -32,6 +32,12 @@ public:
 	/// Resets the drawer to first tile.
 	void reset();
 
+	/// Returns tile drawing data at specified position.
+	///
+	/// @param pos Tile position.
+	/// @param emult Tile elevation multiplier.
+	Draw::Tile at(sf::Vector2i pos, float emult) const;
+
 	/// Returns the next tile drawing data.
 	std::optional<Draw::Tile> next();
 };
