@@ -2,6 +2,7 @@
 
 // include dependencies
 #include "skill_helper.hpp"
+#include "game/values/troop_values.hpp"
 
 /// List of all skills.
 namespace SkillList {

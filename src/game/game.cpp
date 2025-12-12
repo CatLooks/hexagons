@@ -169,7 +169,7 @@ void Game::click(sf::Vector2i pos) {
 		// execute skill action
 		HexRef prev = map.atref(last());
 		HexRef next = { hex, pos };
-		skill->action(map, prev, next);
+		skill->action(state, map, prev, next);
 
 		// cancel selection
 		bool reselect = skill->reselect;
@@ -218,12 +218,12 @@ void Game::click(sf::Vector2i pos) {
 
 /// Cycles the building buying interface.
 void Game::cycleBuild() {
-	_build = (_build + 1) % (int)Values::build_shop.size();
+	state.build = (state.build + 1) % (int)Values::build_shop.size();
 	updateBuild();
 };
 /// Cycles the troop buying interface.
 void Game::cycleTroop() {
-	_troop = (_troop + 1) % (int)Values::troop_shop.size();
+	state.troop = (state.troop + 1) % (int)Values::troop_shop.size();
 	updateTroop();
 };
 
@@ -234,7 +234,7 @@ void Game::updateBuild() const {
 	gameui::Action* button = _panel->actions()[0];
 
 	// get building type
-	Build::Type type = Values::build_shop[_build];
+	Build::Type type = Values::build_shop[state.build];
 
 	// update texture
 	button->setTexture(&assets::tilemap, Values::build_textures[type]);
@@ -252,7 +252,7 @@ void Game::updateTroop() const {
 	gameui::Action* button = _panel->actions()[1];
 
 	// get building type
-	Troop::Type type = Values::troop_shop[_troop];
+	Troop::Type type = Values::troop_shop[state.troop];
 
 	// update texture
 	button->setTexture(&assets::tilemap, Values::troop_textures[type]);
@@ -302,7 +302,7 @@ static void _attach_action(
 			};
 
 			// generate tile selection
-			Spread spread = skill->select(game->map.atref(game->last()), idx);
+			Spread spread = skill->select(game->state, game->map.atref(game->last()), idx);
 			spread.apply(game->map, game->last(), skill->radius);
 
 			// store skill description
@@ -320,7 +320,7 @@ static void _attach_action(
 			// execute the skill
 			bool free_before = tile.hex->free();
 			{
-				game->skill->action(game->map, tile, tile);
+				game->skill->action(game->state, game->map, tile, tile);
 				game->deselectMenu();
 			};
 			bool free_after = tile.hex->free();

@@ -5,11 +5,11 @@ namespace SkillList {
 	const Skill buy_troop = {
 		.type = Skills::Empty,
 		.annotation = Skill::None,
-		.action = [](Map& map, const HexRef& _, const HexRef& tile) {
+		.action = [](const SkillState& state, Map& map, const HexRef& _, const HexRef& tile) {
 			Troop troop;
 			troop.pos = tile.pos;
-			troop.type = Troop::Farmer;
-			troop.hp = 1;
+			troop.type = Values::troop_shop[state.troop];
+			troop.hp = troop.max_hp();
 			map.setTroop(troop);
 		},
 		.format = Skill::Self
@@ -18,7 +18,7 @@ namespace SkillList {
 	const Skill buy_troop_aim = {
 		.type = Skills::Empty,
 		.annotation = Skill::Aim,
-		.select = [](const HexRef& tile, size_t idx) {
+		.select = [](const SkillState&, const HexRef& tile, size_t idx) {
 			return Spread {
 				.hop = skillf::sameRegionHop(tile.hex->region),
 				.pass = skillf::emptyPass,
@@ -27,11 +27,11 @@ namespace SkillList {
 			};
 		},
 		.radius = ~0ull,
-		.action = [](Map& map, const HexRef& _, const HexRef& tile) {
+		.action = [](const SkillState& state, Map& map, const HexRef& _, const HexRef& tile) {
 			Troop troop;
 			troop.pos = tile.pos;
-			troop.type = Troop::Farmer;
-			troop.hp = 1;
+			troop.type = Values::troop_shop[state.troop];
+			troop.hp = troop.max_hp();
 			map.setTroop(troop);
 		},
 		.format = Skill::SingleAim
@@ -42,7 +42,7 @@ namespace SkillList {
 	const Skill withdraw = {
 		.type = Skills::Withdraw,
 		.annotation = Skill::None,
-		.action = [](Map& map, const HexRef& tile, const HexRef& _) {
+		.action = [](const SkillState&, Map& map, const HexRef& tile, const HexRef& _) {
 			map.removeEntity(tile.hex);
 		},
 		.format = Skill::Self
@@ -50,7 +50,7 @@ namespace SkillList {
 	const Skill move = {
 		.type = Skills::Move,
 		.annotation = Skill::Aim,
-		.select = [](const HexRef& tile, size_t idx) {
+		.select = [](const SkillState&, const HexRef& tile, size_t idx) {
 			return Spread {
 				.hop = skillf::solidHop,
 				.pass = skillf::emptyPass,
@@ -58,7 +58,7 @@ namespace SkillList {
 			};
 		},
 		.radius = 2,
-		.action = [](Map& map, const HexRef& prev, const HexRef& next) {
+		.action = [](const SkillState&, Map& map, const HexRef& prev, const HexRef& next) {
 			map.moveTroop(prev, next);
 		},
 		.format = Skill::SingleAim,
@@ -73,7 +73,7 @@ namespace SkillList {
 	const Skill attack_knight = {
 		.type = Skills::AttackKnight,
 		.annotation = Skill::Aim,
-		.select = [](const HexRef& tile, size_t idx) {
+		.select = [](const SkillState&, const HexRef& tile, size_t idx) {
 			return Spread {
 				.hop = skillf::solidHop,
 				.pass = [&](const Spread::Tile& now) {
@@ -84,7 +84,7 @@ namespace SkillList {
 			};
 		},
 		.radius = 1,
-		.action = [](Map& map, const HexRef& prev, const HexRef& next) {
+		.action = [](const SkillState&, Map& map, const HexRef& prev, const HexRef& next) {
 			next.hex->troop->hp--;
 		},
 		.format = Skill::SingleAim
@@ -97,7 +97,7 @@ namespace SkillList {
 	const Skill effect_offense = {
 		.type = Skills::OffenseBoost,
 		.annotation = Skill::None,
-		.action = [](Map& map, const HexRef& tile, const HexRef& _) {
+		.action = [](const SkillState&, Map& map, const HexRef& tile, const HexRef& _) {
 			map.effectTroop(tile, EffectType::OffenseBoost);
 		},
 		.format = Skill::Self

@@ -4,6 +4,12 @@
 #include <variant>
 #include "spread.hpp"
 
+/// Data required for skill calculations.
+struct SkillState {
+	int build = 0; /// Current building index in shop.
+	int troop = 0; /// Current troop index in shop.
+};
+
 /// Skill enumeration container.
 namespace Skills {
 	/// Skill enumeration.
@@ -53,25 +59,27 @@ struct Skill {
 
 	/// Selection tile spreader generator.
 	///
+	/// @param state Skill state.
 	/// @param tile Map selection origin.
 	/// @param idx Map selection index.
-	using Selection = std::function<Spread(const HexRef& tile, size_t idx)>;
+	using Selection = std::function<Spread(const SkillState& state, const HexRef& tile, size_t idx)>;
 
 	/// Selection tile spreader generator.
-	Selection select = [](const HexRef&, size_t) { return Spread(); };
+	Selection select = [](const SkillState&, const HexRef&, size_t) { return Spread(); };
 
 	/// Selection tile spreader radius.
 	size_t radius = 0;
 
 	/// Skill action function type.
 	///
+	/// @param state Skill state.
 	/// @param map Map reference.
 	/// @param prev Action origin.
 	/// @param next Action destination.
-	using Action = std::function<void(Map& map, const HexRef& prev, const HexRef& next)>;
+	using Action = std::function<void(const SkillState& state, Map& map, const HexRef& prev, const HexRef& next)>;
 
 	/// Skill action.
-	Action action = [](Map&, const HexRef&, const HexRef&) {};
+	Action action = [](const SkillState&, Map&, const HexRef&, const HexRef&) {};
 
 	/// Skill format type.
 	enum Format {
