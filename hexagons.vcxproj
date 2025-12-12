@@ -34,10 +34,11 @@
     <ClCompile Include="src\game\build.cpp" />
     <ClCompile Include="src\game\draw.cpp" />
     <ClCompile Include="src\game\draw\build_draw.cpp" />
+    <ClCompile Include="src\game\draw\entity_draw.cpp" />
     <ClCompile Include="src\game\draw\hex_draw.cpp" />
     <ClCompile Include="src\game\draw\plant_draw.cpp" />
     <ClCompile Include="src\game\draw\troop_draw.cpp" />
-    <ClCompile Include="src\game\funcs.cpp" />
+    <ClCompile Include="src\game\entity.cpp" />
     <ClCompile Include="src\game\game.cpp" />
     <ClCompile Include="src\game\hex.cpp" />
     <ClCompile Include="src\game\logic\build_logic.cpp" />
@@ -56,6 +57,7 @@
     <ClCompile Include="src\game\ui\hex_preview.cpp" />
     <ClCompile Include="src\game\ui\resource_bar.cpp" />
     <ClCompile Include="src\game\values\build_values.cpp" />
+    <ClCompile Include="src\game\values\entity_values.cpp" />
     <ClCompile Include="src\game\values\hex_values.cpp" />
     <ClCompile Include="src\game\values\interface.cpp" />
     <ClCompile Include="src\game\values\plant_values.cpp" />
@@ -67,6 +69,7 @@
     <ClCompile Include="src\localization\token.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mathext.cpp" />
+    <ClCompile Include="src\ui\align.cpp" />
     <ClCompile Include="src\ui\anim\base.cpp" />
     <ClCompile Include="src\ui\anim\easing.cpp" />
     <ClCompile Include="src\ui\anim\timer.cpp" />
@@ -109,11 +112,11 @@
     <ClInclude Include="include\game\build.hpp" />
     <ClInclude Include="include\game\draw.hpp" />
     <ClInclude Include="include\game\draw\build_draw.hpp" />
+    <ClInclude Include="include\game\draw\entity_draw.hpp" />
     <ClInclude Include="include\game\draw\hex_draw.hpp" />
     <ClInclude Include="include\game\draw\plant_draw.hpp" />
     <ClInclude Include="include\game\draw\troop_draw.hpp" />
     <ClInclude Include="include\game\entity.hpp" />
-    <ClInclude Include="include\game\funcs.hpp" />
     <ClInclude Include="include\game\game.hpp" />
     <ClInclude Include="include\game\hex.hpp" />
     <ClInclude Include="include\game\logic\build_logic.hpp" />
@@ -132,6 +135,7 @@
     <ClInclude Include="include\game\ui\hex_preview.hpp" />
     <ClInclude Include="include\game\ui\resource_bar.hpp" />
     <ClInclude Include="include\game\values\build_values.hpp" />
+    <ClInclude Include="include\game\values\entity_values.hpp" />
     <ClInclude Include="include\game\values\hex_values.hpp" />
     <ClInclude Include="include\game\values\interface.hpp" />
     <ClInclude Include="include\game\values\plant_values.hpp" />

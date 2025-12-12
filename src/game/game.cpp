@@ -27,13 +27,13 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 
 	// add pulse animation
 	{
-		_pulse_anim = new ui::AnimFloat(&_pulse, 0.f, 1.f, sf::seconds(0.8));
+		_pulse_anim = new ui::AnimFloat(&_pulse, 0.f, 1.f, sf::seconds(0.8f));
 		_pulse_anim->looped = true;
 		push(_pulse_anim);
 	};
 
 	// add queued call handler
-	game_layer->onRecalculate([=](const sf::Time& _) {
+	game_layer->onRecalculate([=](const sf::Time&) {
 		_queue.invoke();
 		_queue.clear();
 	});

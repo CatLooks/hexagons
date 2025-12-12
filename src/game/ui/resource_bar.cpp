@@ -39,7 +39,7 @@ namespace gameui {
 
 			// create alignment container
 			auto* cont = new ui::Align;
-			cont->bounds = { 0.25ps * i, 0px, 0.25ps, 1ps };
+			cont->bounds = { 0.25ps * (float)i, 0px, 0.25ps, 1ps };
 			_conts[i] = cont;
 
 			cont->add(text);
