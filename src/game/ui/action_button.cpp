@@ -1,10 +1,21 @@
 #include "game/ui/action_button.hpp"
+#include "mathext.hpp"
 
 namespace gameui {
 	/// Action button side length.
 	const ui::Dim Action::side = (float)(64 * Values::k);
 	/// Action button base size.
 	const ui::DimVector Action::base = { side, side };
+
+	/// Maximum opacity color of red tint during error animation.
+	const sf::Color Action::red = sf::Color(255, 32, 64, 192);
+
+	/// Minimum opacity color of red tint during error animation.
+	static const sf::Color red_dimmed = []() {
+		sf::Color color = Action::red;
+		color.a = 0;
+		return color;
+	}();
 
 	/// Action button texture maps.
 	const ui::Panel::Map Action::textures[2] = {
@@ -44,6 +55,11 @@ namespace gameui {
 			// absorb all mouse events
 			return (bool)evt.mouse();
 		});
+
+		// create error overlay
+		_err = new ui::Solid;
+		_err->color = red_dimmed;
+		adds(_err);
 	};
 
 	/// Clears the action button.
@@ -114,6 +130,47 @@ namespace gameui {
 		return ui::AnimVector::to(&size(), base, sf::seconds(0.1f));
 	};
 
+	/// Shaker function interpolation.
+	///
+	/// @param t Interpolation parameter.
+	static float shake(float t) {
+		const int shake_count = 2;
+		// 1 shake = mid -> right -> mid -> left -> mid
+		return sinf(shake_count * 2 * M_PI * t);
+	};
+
+	/// Shakes the button and highlights it in red.
+	void Action::errorShake() {
+		// ignore if already shaking
+		if (_shake) return;
+
+		// shake displacement
+		const ui::DimVector shake_amp = { 1es / 16, 0px };
+
+		// store original position
+		auto pos = position();
+		_shake = true;
+
+		// create shake animation
+		{
+			ui::Anim* anim = ui::AnimVector::to(&position(), pos + shake_amp, sf::seconds(0.4f));
+			anim->setAfter([=]() {
+				// restore original position
+				position() = pos;
+				_shake = false;
+			});
+			anim->setEasing(shake);
+			push(anim);
+		};
+
+		// create red tint animation
+		{
+			ui::Anim* anim_in = ui::AnimColor::to(&_err->color, red, sf::seconds(0.8f));
+			ui::Anim* anim_out = ui::AnimColor::to(&_err->color, red_dimmed, sf::seconds(0.8f));
+			push(chain(anim_in, anim_out));
+		};
+	};
+
 	/// Forcefully invokes the action callback.
 	void Action::click() {
 		switch (_mode) {
@@ -129,7 +186,10 @@ namespace gameui {
 		default:
 			if (!_state) {
 				// press button
-				if (_press) _press();
+				if (_press) {
+					_press();
+					errorShake();
+				};
 				_state = true;
 
 				// button animation

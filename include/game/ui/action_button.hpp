@@ -34,16 +34,21 @@ namespace gameui {
 		ui::Image* _ann = nullptr; /// Annotation texture.
 		ui::Text* _text = nullptr; /// Action label.
 		ui::Text* _sub  = nullptr; /// Action subtitle label.
+		ui::Solid* _err = nullptr; /// Error overlay.
 		DrawCall _draw;            /// Extra draw call.
 		Callback _press;           /// Button press callback.
 		Callback _release;         /// Button release callback.
 		bool _state     = false;   /// Button state.
+		bool _shake     = false;   /// Initial shake position.
 
 	public:
 		/// Action button side length.
 		static const ui::Dim side;
 		/// Action button base size.
 		static const ui::DimVector base;
+
+		/// Maximum opacity color of red tint during error animation.
+		static const sf::Color red;
 
 		/// Whether the button acts as a display.
 		///
@@ -97,6 +102,8 @@ namespace gameui {
 		///
 		/// @return Button animation object.
 		ui::Anim* emitShrink();
+		/// Shakes the button and highlights it in red.
+		void errorShake();
 
 		/// Forcefully invokes the action callback.
 		void click();
