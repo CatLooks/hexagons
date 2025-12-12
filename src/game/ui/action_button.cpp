@@ -8,7 +8,7 @@ namespace gameui {
 	const ui::DimVector Action::base = { side, side };
 
 	/// Maximum opacity color of red tint during error animation.
-	const sf::Color Action::red = sf::Color(255, 32, 64, 192);
+	const sf::Color Action::red = sf::Color(235, 0, 0, 160);
 
 	/// Minimum opacity color of red tint during error animation.
 	static const sf::Color red_dimmed = []() {
@@ -136,7 +136,7 @@ namespace gameui {
 	static float shake(float t) {
 		const int shake_count = 2;
 		// 1 shake = mid -> right -> mid -> left -> mid
-		return sinf(shake_count * 2 * M_PI * t);
+		return sinf(shake_count * 2 * (float)M_PI * t);
 	};
 
 	/// Shakes the button and highlights it in red.
@@ -148,7 +148,7 @@ namespace gameui {
 		const ui::DimVector shake_amp = { 1es / 16, 0px };
 
 		// store original position
-		auto pos = position();
+		ui::DimVector pos = position();
 		_shake = true;
 
 		// create shake animation
@@ -165,8 +165,9 @@ namespace gameui {
 
 		// create red tint animation
 		{
-			ui::Anim* anim_in = ui::AnimColor::to(&_err->color, red, sf::seconds(0.8f));
-			ui::Anim* anim_out = ui::AnimColor::to(&_err->color, red_dimmed, sf::seconds(0.8f));
+			ui::Anim* anim_in = ui::AnimColor::to(&_err->color, red, sf::seconds(0.05f));
+			ui::Anim* anim_out = new ui::AnimColor(&_err->color, red, red_dimmed, sf::seconds(0.3f));
+			anim_out->setEasing(ui::Easings::quadIn);
 			push(chain(anim_in, anim_out));
 		};
 	};
@@ -186,10 +187,7 @@ namespace gameui {
 		default:
 			if (!_state) {
 				// press button
-				if (_press) {
-					_press();
-					errorShake();
-				};
+				if (_press) _press();
 				_state = true;
 
 				// button animation
