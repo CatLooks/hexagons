@@ -11,7 +11,8 @@ namespace ui {
 	sf::Color lerpc(sf::Color a, sf::Color b, float t) { return {
 		(uint8_t)lerpi(a.r, b.r, t),
 		(uint8_t)lerpi(a.g, b.g, t),
-		(uint8_t)lerpi(a.b, b.b, t)
+		(uint8_t)lerpi(a.b, b.b, t),
+		(uint8_t)lerpf(a.a, b.a, t)
 	}; };
 
 	/// Returns dimension's true value.
