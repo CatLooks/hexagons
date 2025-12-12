@@ -300,9 +300,9 @@ void Map::draw(ui::RenderBuffer& target, float t) const {
 		tile.drawContents(target);
 	};
 
-	// draw troop status
+	// draw entity status
 	drawer.reset();
 	while (auto tile = drawer.next()) {
-		Draw::troopBar(*tile, target);
+		Draw::entityBar(*tile, target);
 	};
 };

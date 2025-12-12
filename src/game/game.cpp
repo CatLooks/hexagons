@@ -348,12 +348,14 @@ static void _attach_action(
 /// @param data Menu data.
 /// @param texture Entity texture.
 /// @param name Entity name.
+/// @param entity Entity shared data.
 static void _construct_menu(
 	Game* game,
 	gameui::Panel* panel,
 	const Values::SkillArray& data,
 	sf::IntRect texture,
-	const char* name
+	const char* name,
+	const Entity& entity
 ) {
 	// construct a panel
 	panel->construct(data.layout);
@@ -364,6 +366,11 @@ static void _construct_menu(
 		auto* text = panel->preview()->setLabel();
 		text->setPath("param");
 		text->param("value", name);
+
+		// attach entity health bar data
+		panel->preview()->setDraw([&entity](ui::RenderBuffer& target, sf::IntRect self) {
+			Draw::Bar(entity).drawSquare(self, target);
+		});
 	};
 
 	// construct skill buttons
@@ -449,7 +456,8 @@ void Game::troopMenu(const Troop& troop) {
 		this, _panel,
 		Values::troop_skills[troop.type],
 		Values::troop_textures[troop.type],
-		Values::troop_names[troop.type]
+		Values::troop_names[troop.type],
+		troop
 	);
 };
 /// Constructs a building UI panel.
@@ -458,7 +466,8 @@ void Game::buildMenu(const Build& build) {
 		this, _panel,
 		Values::build_skills[build.type],
 		Values::build_textures[build.type],
-		Values::build_names[build.type]
+		Values::build_names[build.type],
+		build
 	);
 };
 /// Constructs a plant UI panel.
@@ -467,7 +476,8 @@ void Game::plantMenu(const Plant& plant) {
 		this, _panel,
 		Values::plant_skill,
 		Values::plant_textures[plant.type],
-		Values::plant_names[plant.type]
+		Values::plant_names[plant.type],
+		plant
 	);
 };
 

@@ -2,6 +2,7 @@
 
 // include dependencies
 #include "draw/hex_draw.hpp"
+#include "draw/entity_draw.hpp"
 #include "draw/troop_draw.hpp"
 #include "draw/build_draw.hpp"
 #include "draw/plant_draw.hpp"

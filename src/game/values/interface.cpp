@@ -20,16 +20,6 @@ namespace Values {
 	/// Berry currency icon.
 	const sf::IntRect berry_icon = coords(9, 1);
 
-	/// Troop effect textures.
-	const sf::IntRect effects[static_cast<int>(EffectType::Count)] = {
-		coords(8, 3, 0, 0), // shield
-		coords(8, 3, 1, 0), // range
-		coords(8, 3, 2, 0), // defense
-		coords(8, 3, 3, 0), // offense
-		coords(8, 3, 0, 1), // poison
-		coords(8, 3, 1, 1), // stunned
-	};
-
 	/// Interface digit textures.
 	const sf::IntRect digits[10] = {
 		coords(9, 3, 0, 0),

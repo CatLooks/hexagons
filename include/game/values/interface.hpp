@@ -20,9 +20,6 @@ namespace Values {
 	/// Berry currency icon.
 	extern const sf::IntRect berry_icon;
 
-	/// Troop effect textures.
-	extern const sf::IntRect effects[static_cast<int>(EffectType::Count)];
-
 	/// Interface digit textures.
 	extern const sf::IntRect digits[10];
 
