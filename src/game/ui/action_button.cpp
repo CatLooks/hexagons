@@ -61,10 +61,10 @@ namespace gameui {
 	};
 
 	/// Adds an annotation icon to the action button.
-	void Action::annotate(SkillDesc::Annotation ann) {
+	void Action::annotate(Skill::Annotation ann) {
 		if (!_ann) {
 			// ignore if no annotation
-			if (ann == SkillDesc::None) return;
+			if (ann == Skill::None) return;
 
 			// create annotation icon
 			_ann = new ui::Image(&assets::interface, Values::annotations[static_cast<int>(ann)]);

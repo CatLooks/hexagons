@@ -71,7 +71,7 @@ namespace gameui {
 		/// Adds an annotation icon to the action button.
 		///
 		/// @param ann Annotation type.
-		void annotate(SkillDesc::Annotation ann);
+		void annotate(Skill::Annotation ann);
 		/// Adds an image to the action button.
 		/// 
 		/// @param texture Texture reference.

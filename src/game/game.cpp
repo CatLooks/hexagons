@@ -161,7 +161,7 @@ void Game::click(sf::Vector2i pos) {
 		};
 
 		// deselect if status skill
-		if (skill->format == SkillDesc::Self) {
+		if (skill->format == Skill::Self) {
 			deselectMenu();
 			return;
 		};
@@ -285,7 +285,7 @@ void Game::deselectMenu() {
 static void _attach_action(
 	gameui::Action* button,
 	Game* game,
-	const SkillDesc* skill
+	const Skill* skill
 ) {
 	button->setCall(
 		[=]() {
@@ -296,7 +296,7 @@ static void _attach_action(
 			size_t idx = game->map.newSelectionIndex();
 
 			// create tile pulse for auto skills
-			if (skill->format == SkillDesc::Self) {
+			if (skill->format == Skill::Self) {
 				game->map.pulse = game->last();
 				game->resetPulse();
 			};
@@ -310,7 +310,7 @@ static void _attach_action(
 		},
 		[=]() {
 			// aimed skill
-			if (game->skill->format != SkillDesc::Self) {
+			if (game->skill->format != Skill::Self) {
 				// cancel action
 				game->deselectMenu();
 				return;
@@ -413,7 +413,7 @@ void Game::regionMenu(const Region& region, bool targeted) {
 		auto* button = _panel->actions()[2];
 
 		// buy building button
-		button->annotate(targeted ? SkillDesc::None : SkillDesc::Aim);
+		button->annotate(targeted ? Skill::None : Skill::Aim);
 		button->setTexture(&assets::interface, Values::buy_build);
 		auto* text = button->setLabel();
 		text->setPath("gp.buy_build");
@@ -425,7 +425,7 @@ void Game::regionMenu(const Region& region, bool targeted) {
 		auto* button = _panel->actions()[3];
 
 		// buy troop button
-		button->annotate(targeted ? SkillDesc::None : SkillDesc::Aim);
+		button->annotate(targeted ? Skill::None : Skill::Aim);
 		button->setTexture(&assets::interface, Values::buy_troop);
 		auto* text = button->setLabel();
 		text->setPath("gp.buy_troop");
@@ -435,8 +435,8 @@ void Game::regionMenu(const Region& region, bool targeted) {
 	};
 
 	// annotate selection buttons
-	_panel->actions()[0]->annotate(SkillDesc::Swap);
-	_panel->actions()[1]->annotate(SkillDesc::Swap);
+	_panel->actions()[0]->annotate(Skill::Swap);
+	_panel->actions()[1]->annotate(Skill::Swap);
 
 	// add callbacks to selection buttons
 	_panel->actions()[0]->setCall([=]() { cycleBuild(); }, nullptr, gameui::Action::Click);

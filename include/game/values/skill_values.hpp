@@ -22,15 +22,15 @@ namespace Values {
 		/// Skill layout.
 		Layout layout;
 		/// Skill description array.
-		const SkillDesc* skills[4];
+		const Skill* skills[4];
 	};
 
 	/// Skills textures.
-	extern const sf::IntRect skill_textures[Skill::Count];
+	extern const sf::IntRect skill_textures[Skills::Count];
 
 	/// Skills names.
-	extern const char* skill_names[Skill::Count];
+	extern const char* skill_names[Skills::Count];
 
 	/// Action annotation icon textures.
-	extern const sf::IntRect annotations[SkillDesc::Count];
+	extern const sf::IntRect annotations[Skill::Count];
 };

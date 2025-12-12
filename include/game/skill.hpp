@@ -4,8 +4,8 @@
 #include <variant>
 #include "spread.hpp"
 
-/// Skill description.
-struct Skill {
+/// Skill enumeration container.
+namespace Skills {
 	/// Skill enumeration.
 	enum Type {
 		Empty = 0,    /// Empty skill.
@@ -33,9 +33,9 @@ struct Skill {
 };
 
 /// Skill description object.
-struct SkillDesc {
+struct Skill {
 	/// Skill type.
-	Skill::Type type = Skill::Empty;
+	Skills::Type type = Skills::Empty;
 
 	/// Action annotation icon.
 	enum Annotation {

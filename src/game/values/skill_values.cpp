@@ -2,7 +2,7 @@
 
 namespace Values {
 	// skill textures
-	const sf::IntRect skill_textures[Skill::Count] = {
+	const sf::IntRect skill_textures[Skills::Count] = {
 		{}, // empty
 
 		coords(0, 1), // withdraw
@@ -26,7 +26,7 @@ namespace Values {
 	};
 
 	// skill names
-	const char* skill_names[Skill::Count] = {
+	const char* skill_names[Skills::Count] = {
 		"@!skill.invalid",
 
 		"@!skill.withdraw",
@@ -50,7 +50,7 @@ namespace Values {
 	};
 
 	/// Action annotation icon textures.
-	const sf::IntRect annotations[SkillDesc::Count] = {
+	const sf::IntRect annotations[Skill::Count] = {
 		{},                 // none
 
 		coords(8, 3, 0, 2), // peach

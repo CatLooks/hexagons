@@ -6,31 +6,31 @@
 /// List of all skills.
 namespace SkillList {
 	// entity buy
-	extern const SkillDesc buy_troop;
-	extern const SkillDesc buy_build;
-	extern const SkillDesc buy_troop_aim;
-	extern const SkillDesc buy_build_aim;
+	extern const Skill buy_troop;
+	extern const Skill buy_build;
+	extern const Skill buy_troop_aim;
+	extern const Skill buy_build_aim;
 
 	// general troop / building skills
-	extern const SkillDesc withdraw;
-	extern const SkillDesc move;
+	extern const Skill withdraw;
+	extern const Skill move;
 	
 	// attack skills
-	extern const SkillDesc attack_lumber;
-	extern const SkillDesc attack_spear;
-	extern const SkillDesc attack_archer;
-	extern const SkillDesc attack_baron;
-	extern const SkillDesc attack_knight;
+	extern const Skill attack_lumber;
+	extern const Skill attack_spear;
+	extern const Skill attack_archer;
+	extern const Skill attack_baron;
+	extern const Skill attack_knight;
 
 	// status effect skills
-	extern const SkillDesc effect_defend;
-	extern const SkillDesc effect_range;
-	extern const SkillDesc effect_defense;
-	extern const SkillDesc effect_offense;
+	extern const Skill effect_defend;
+	extern const Skill effect_range;
+	extern const Skill effect_defense;
+	extern const Skill effect_offense;
 
 	// other special skills
-	extern const SkillDesc fruit;
-	extern const SkillDesc cut;
-	extern const SkillDesc heal;
-	extern const SkillDesc stun;
+	extern const Skill fruit;
+	extern const Skill cut;
+	extern const Skill heal;
+	extern const Skill stun;
 };

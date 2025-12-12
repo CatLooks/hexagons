@@ -2,9 +2,9 @@
 
 namespace SkillList {
 	// entity buy
-	const SkillDesc buy_troop = {
-		.type = Skill::Empty,
-		.annotation = SkillDesc::None,
+	const Skill buy_troop = {
+		.type = Skills::Empty,
+		.annotation = Skill::None,
 		.action = [](Map& map, const HexRef& _, const HexRef& tile) {
 			Troop troop;
 			troop.pos = tile.pos;
@@ -12,12 +12,12 @@ namespace SkillList {
 			troop.hp = 1;
 			map.setTroop(troop);
 		},
-		.format = SkillDesc::Self
+		.format = Skill::Self
 	};
-	const SkillDesc buy_build = { Skill::Empty, SkillDesc::None };
-	const SkillDesc buy_troop_aim = {
-		.type = Skill::Empty,
-		.annotation = SkillDesc::Aim,
+	const Skill buy_build = { Skills::Empty, Skill::None };
+	const Skill buy_troop_aim = {
+		.type = Skills::Empty,
+		.annotation = Skill::Aim,
 		.select = [](const HexRef& tile, size_t idx) {
 			return Spread {
 				.hop = skillf::sameRegionHop(tile.hex->region),
@@ -34,22 +34,22 @@ namespace SkillList {
 			troop.hp = 1;
 			map.setTroop(troop);
 		},
-		.format = SkillDesc::SingleAim
+		.format = Skill::SingleAim
 	};
-	const SkillDesc buy_build_aim = { Skill::Empty, SkillDesc::Aim };
+	const Skill buy_build_aim = { Skills::Empty, Skill::Aim };
 
 	// general troop / building skills
-	const SkillDesc withdraw = {
-		.type = Skill::Withdraw,
-		.annotation = SkillDesc::None,
+	const Skill withdraw = {
+		.type = Skills::Withdraw,
+		.annotation = Skill::None,
 		.action = [](Map& map, const HexRef& tile, const HexRef& _) {
 			map.removeEntity(tile.hex);
 		},
-		.format = SkillDesc::Self
+		.format = Skill::Self
 	};
-	const SkillDesc move = {
-		.type = Skill::Move,
-		.annotation = SkillDesc::Aim,
+	const Skill move = {
+		.type = Skills::Move,
+		.annotation = Skill::Aim,
 		.select = [](const HexRef& tile, size_t idx) {
 			return Spread {
 				.hop = skillf::solidHop,
@@ -61,18 +61,18 @@ namespace SkillList {
 		.action = [](Map& map, const HexRef& prev, const HexRef& next) {
 			map.moveTroop(prev, next);
 		},
-		.format = SkillDesc::SingleAim,
+		.format = Skill::SingleAim,
 		.reselect = true
 	};
 
 	// attack skills
-	const SkillDesc attack_lumber = { Skill::AttackLumber, SkillDesc::Aim };
-	const SkillDesc attack_spear  = { Skill::AttackSpear , SkillDesc::Aim };
-	const SkillDesc attack_archer = { Skill::AttackArcher, SkillDesc::Aim };
-	const SkillDesc attack_baron  = { Skill::AttackBaron , SkillDesc::Aim };
-	const SkillDesc attack_knight = {
-		.type = Skill::AttackKnight,
-		.annotation = SkillDesc::Aim,
+	const Skill attack_lumber = { Skills::AttackLumber, Skill::Aim };
+	const Skill attack_spear  = { Skills::AttackSpear , Skill::Aim };
+	const Skill attack_archer = { Skills::AttackArcher, Skill::Aim };
+	const Skill attack_baron  = { Skills::AttackBaron , Skill::Aim };
+	const Skill attack_knight = {
+		.type = Skills::AttackKnight,
+		.annotation = Skill::Aim,
 		.select = [](const HexRef& tile, size_t idx) {
 			return Spread {
 				.hop = skillf::solidHop,
@@ -87,25 +87,25 @@ namespace SkillList {
 		.action = [](Map& map, const HexRef& prev, const HexRef& next) {
 			next.hex->troop->hp--;
 		},
-		.format = SkillDesc::SingleAim
+		.format = Skill::SingleAim
 	};
 
 	// status effect skills
-	const SkillDesc effect_defend  = { Skill::Shield      , SkillDesc::None };
-	const SkillDesc effect_range   = { Skill::RangeBoost  , SkillDesc::None };
-	const SkillDesc effect_defense = { Skill::DefenseBoost, SkillDesc::None };
-	const SkillDesc effect_offense = {
-		.type = Skill::OffenseBoost,
-		.annotation = SkillDesc::None,
+	const Skill effect_defend  = { Skills::Shield      , Skill::None };
+	const Skill effect_range   = { Skills::RangeBoost  , Skill::None };
+	const Skill effect_defense = { Skills::DefenseBoost, Skill::None };
+	const Skill effect_offense = {
+		.type = Skills::OffenseBoost,
+		.annotation = Skill::None,
 		.action = [](Map& map, const HexRef& tile, const HexRef& _) {
 			map.effectTroop(tile, EffectType::OffenseBoost);
 		},
-		.format = SkillDesc::Self
+		.format = Skill::Self
 	};
 
 	// other special skills
-	const SkillDesc fruit = { Skill::Harvest, SkillDesc::Aim  };
-	const SkillDesc cut   = { Skill::TreeCut, SkillDesc::Aim  };
-	const SkillDesc heal  = { Skill::Heal   , SkillDesc::Aim  };
-	const SkillDesc stun  = { Skill::Stun   , SkillDesc::None };
+	const Skill fruit = { Skills::Harvest, Skill::Aim  };
+	const Skill cut   = { Skills::TreeCut, Skill::Aim  };
+	const Skill heal  = { Skills::Heal   , Skill::Aim  };
+	const Skill stun  = { Skills::Stun   , Skill::None };
 };
