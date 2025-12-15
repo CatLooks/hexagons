@@ -7,9 +7,8 @@
 #include "ui/anim/linear.hpp"
 #include "assets.hpp"
 #include "game.hpp"
-//#include "eos/EOSManager.hpp"
-#include "networking_remake/EOSManager.hpp"
-#include "networking_remake/GameConnectionManager.hpp"
+#include "networking_remake/Net.hpp"
+
 
 /// Program entry.
 /// @return Exit code.
@@ -26,7 +25,8 @@ int main() {
 
 	// initialize EOS
 	EOSManager* eos = &EOSManager::GetInstance();
-	GameConnectionManager connectionLogic(*eos);
+	// Use Net as the external networking API
+	Net net;
 
 	// connection logic temporary input
 	int temp;
@@ -34,10 +34,10 @@ int main() {
 	std::cin >> temp;
 
 	if (temp == 1) {
-		connectionLogic.HostGame();
+		net.host();
 	}
 	else {
-		connectionLogic.FindAndJoinGame();
+		net.connect();
 	}
 
 	// create window interface
@@ -57,7 +57,26 @@ int main() {
 	while (win.isOpen()) {
 		win.clear(sf::Color(34, 39, 41));
 
-		eos->Tick();
+		// drive EOS/net processing
+		net.fetch();
+
+		// handle incoming network events
+		while (auto ev = net.next()) {
+			if (std::holds_alternative<NetConnected>(*ev)) {
+				auto c = std::get<NetConnected>(*ev);
+				std::cout << "[Net] Connected: " << c.userId << std::endl;
+			}
+			else if (std::holds_alternative<NetDisconnected>(*ev)) {
+				auto d = std::get<NetDisconnected>(*ev);
+				std::cout << "[Net] Disconnected: " << d.userId << std::endl;
+			}
+			else if (std::holds_alternative<NetPacket>(*ev)) {
+				auto p = std::get<NetPacket>(*ev);
+				// interpret payload as string for simple demo
+				std::string msg(p.data.begin(), p.data.end());
+				std::cout << "[Net] Packet from " << p.senderId << ": " << msg << std::endl;
+			}
+		}
 
 		// update external state
 		game->mouse = sf::Mouse::getPosition(win);
