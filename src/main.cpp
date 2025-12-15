@@ -1,7 +1,9 @@
 #include "ui.hpp"
 #include "game.hpp"
 #include "assets.hpp"
+#include "menu.hpp"
 
+#include <iostream>
 /// Program entry.
 /// @return Exit code.
 int main() {
@@ -42,6 +44,11 @@ int main() {
 	// game test
 	auto layer_map = itf.layer();
 	auto layer_gui = itf.layer();
+
+	//menu testing
+	auto layer_menu = itf.layer();
+	auto main_menu = new MainMenu(layer_menu);
+	OptionsMenu* options_menu = new OptionsMenu(layer_menu);
 
 	Game* game = new Game(layer_map, layer_gui);
 	{
@@ -115,6 +122,54 @@ int main() {
 		map.regions.enumerate(&map);
 	};
 	layer_map->add(game);
+
+	// Start with menu visible and game hidden
+	//game->deactivate();
+	main_menu->activate();
+	main_menu->ignore = false;
+	options_menu->deactivate();
+	options_menu->ignore = true;
+
+	// 1. Main Menu -> Options
+	main_menu->bindOptions([=]() {
+		// Hide Main
+		main_menu->ignore = true;
+		// You might also want to visually hide it or animate it out
+		//main_menu->push(ui::AnimDim::to(&main_menu->position().x, -1es, sf::seconds(0.2f)));
+		main_menu->deactivate();
+		options_menu->activate();
+		// Show Options
+		options_menu->ignore = false;
+		options_menu->push(ui::AnimDim::to(&options_menu->position().x, 0px, sf::seconds(0.2f)));
+		});
+
+	// 2. Options -> Back
+	options_menu->bindBack([=]() {
+		// Hide Options
+		options_menu->ignore = true;
+		options_menu->deactivate();
+		main_menu->activate();
+
+
+		// Show Main
+		
+		main_menu->ignore = false;
+		// Optionally animate main menu back in
+		main_menu->push(ui::AnimDim::to(&main_menu->position().x, 0px, sf::seconds(0.2f)));
+		});
+
+	// 3. Start Game
+	main_menu->bindStart([=]() {
+		main_menu->deactivate();
+		// Ensure menu is hidden and game becomes active
+		main_menu->ignore = true;
+		game->activate();
+		});
+
+	// 4. Exit
+	main_menu->bindExit([=]() {
+		ui::window.close();
+		});
 
 	// window main loop
 	while (ui::window.active()) {
