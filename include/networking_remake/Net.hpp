@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include <optional>
+#include <unordered_set>
 
 #include "networking_remake/EOSManager.hpp"
 #include "networking_remake/threadsafe_queue.hpp"
@@ -36,6 +37,12 @@ public:
     /// Destroys the Net facade and cleans up connections.
     ~Net();
 
+	/// Starts the login process.
+    void login();
+
+	/// Logout and clear state.
+	void logout();
+
     /// Starts hosting a lobby.
     void host();
 
@@ -49,6 +56,7 @@ public:
     /// @param data Raw bytes to send.
     /// @param targetId Optional target id string. Empty => default routing (host/client semantics).
     void send(const std::vector<char>& data, const std::string& targetId = "");
+
 
     /// Overload for sending a plain string.
     void send(const std::string& msg) {
@@ -64,6 +72,12 @@ public:
     std::optional<NetEvent> next();
 
 private:
+    enum class Role {
+        None,
+        Host,
+        Client
+    };
+
     /// Reference to the global EOS manager instance.
     EOSManager& m_eosManager;
 
@@ -76,10 +90,17 @@ private:
     /// Attach to a LobbyManager and subscribe to its delegates.
     void AttachToLobby(std::shared_ptr<LobbyManager> lobby);
 
+    void PumpConnections(const std::shared_ptr<LobbyManager>& lobby);
+    void ResetHandshakeState();
+
     /// Convert EOS id to string for the public API.
     std::string EOSIdToString(EOS_ProductUserId userId);
 
     /// Whether we've attached to the current lobby manager.
     bool m_attached = false;
     std::weak_ptr<LobbyManager> m_lobby;
+
+	Role m_role = Role::None;
+	bool m_clientHelloSent = false;
+	std::unordered_set<std::string> m_hostHandshakePeers;
 };

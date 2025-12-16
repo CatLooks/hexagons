@@ -21,6 +21,7 @@ public:
 	void CreateLobby();
 	void FindLobby();
 
+	std::vector<std::shared_ptr<P2PManager>> GetAllP2PConnections() const { return P2PConnections; }
 	std::shared_ptr<P2PManager> GetP2PConnection(EOS_ProductUserId peerId);
 	std::shared_ptr<P2PManager> GetLocalConnection() { return LocalConnection; }
 	EOS_ProductUserId GetPeerId() const { return ExternalUsers.empty() ? nullptr : ExternalUsers[0]; }

@@ -19,7 +19,7 @@ void P2PManager::HandleIncomingConnectionRequest(const EOS_P2P_OnIncomingConnect
 	EOS_EResult acceptResult = EOS_P2P_AcceptConnection(P2PHandle, &AcceptOptions);
 	if (acceptResult == EOS_EResult::EOS_Success) {
 		std::cout << "[P2PManager] Accepted incoming connection request from user." << std::endl;
-		ReceivePacket();
+		while (ReceivePacket()) {}
 	}
 	else {
 		std::cerr << "[P2PManager] Failed to accept incoming connection request: " << EOS_EResult_ToString(acceptResult) << std::endl;
@@ -46,12 +46,17 @@ void P2PManager::SendString(const std::string& Message) {
 	EOS_EResult r = EOS_P2P_SendPacket(P2PHandle, &SendOptions);
 	if (r != EOS_EResult::EOS_Success) {
 		std::cerr << "[P2PManager] SendPacket failed: " << EOS_EResult_ToString(r) << std::endl;
-	} else {
+	}
+	else {
 		std::cout << "[P2PManager] Sent packet (" << Message.size() << " bytes)" << std::endl;
 	}
 }
 
-void P2PManager::ReceivePacket() {
+bool P2PManager::ReceivePacket() {
+	std::cout << "[P2PManager] ReceivePacket start (local=" << static_cast<const void*>(LocalUserId)
+		<< ", peer=" << static_cast<const void*>(PeerId)
+		<< ", socket=" << SocketId->SocketName << ")" << std::endl;
+
 	EOS_P2P_ReceivePacketOptions ReceiveOptions = {};
 	ReceiveOptions.ApiVersion = EOS_P2P_RECEIVEPACKET_API_LATEST;
 	ReceiveOptions.LocalUserId = LocalUserId;
@@ -67,12 +72,18 @@ void P2PManager::ReceivePacket() {
 
 	if (receiveResult == EOS_EResult::EOS_NotFound) {
 		// Brak pakietów
-		return;
+		// Commented out to reduce log spam
+		//std::cout << "[P2PManager] ReceivePacket: no packets available." << std::endl;
+		return false;
 	}
 	if (receiveResult != EOS_EResult::EOS_Success) {
 		std::cerr << "[P2PManager] Failed to receive packet: " << EOS_EResult_ToString(receiveResult) << std::endl;
-		return;
+		return false;
 	}
 
+	std::cout << "[P2PManager] ReceivePacket: received " << bytesWritten << " bytes on channel "
+		<< static_cast<int>(channel) << " from peer " << static_cast<const void*>(PeerId) << std::endl;
+
 	OnMessageReceived.Broadcast(buffer);
+	return true;
 }

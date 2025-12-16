@@ -3,17 +3,58 @@
 
 /// Constructs the Net facade and binds callbacks.
 Net::Net() : m_eosManager(EOSManager::GetInstance()) {
+    ResetHandshakeState();
     BindCallbacks();
 }
 
 /// Destructor cleans up resources.
 Net::~Net() {
     close();
+	logout();
+}
+
+/// Start the login process.
+void Net::login() {
+    auto auth = m_eosManager.GetAuthManager();
+    if (auth) {
+        auth->CreateDeviceId();
+        std::cout << "[Net] Login initiated..." << std::endl;
+    }
+}
+
+/// Logout and clear state.
+void Net::logout() {
+    auto auth = m_eosManager.GetAuthManager();
+    if (auth) {
+        auth->Logout();
+        std::cout << "[Net] Logout initiated..." << std::endl;
+    }
+    close();
 }
 
 /// Start hosting a lobby.
 void Net::host() {
+    login();
     EOS_ProductUserId localId = m_eosManager.GetAuthManager()->GetLocalUserId();
+
+    ResetHandshakeState();
+    m_role = Role::Host;
+
+    while(!localId) {
+        m_eosManager.Tick();
+        localId = m_eosManager.GetAuthManager()->GetLocalUserId();
+	}
+
+    m_eosManager.CreateLobbyManager(localId);
+    if (auto lobby = m_eosManager.GetLobbyManager()) {
+        AttachToLobby(lobby);
+        lobby->CreateLobby();
+        std::cout << "[Net] Hosting initiated..." << std::endl;
+    }
+    else {
+        std::cerr << "[Net] Failed to get LobbyManager after creation." << std::endl;
+    }
+    /*
     if (localId) {
         m_eosManager.CreateLobbyManager(localId);
         if (auto lobby = m_eosManager.GetLobbyManager()) {
@@ -28,10 +69,33 @@ void Net::host() {
     else {
         std::cerr << "[Net] Cannot host: Not logged in." << std::endl;
     }
+    */
 }
 
 /// Find and join a lobby as a client.
 void Net::connect() {
+    ResetHandshakeState();
+    m_role = Role::Client;
+
+    login();
+    EOS_ProductUserId localId = m_eosManager.GetAuthManager()->GetLocalUserId();
+
+    while (!localId) {
+        m_eosManager.Tick();
+        localId = m_eosManager.GetAuthManager()->GetLocalUserId();
+    }
+
+    m_eosManager.CreateLobbyManager(localId);
+    if (auto lobby = m_eosManager.GetLobbyManager()) {
+        AttachToLobby(lobby);
+        lobby->FindLobby();
+        std::cout << "[Net] Searching for lobby..." << std::endl;
+    }
+    else {
+        std::cerr << "[Net] Failed to get LobbyManager after creation." << std::endl;
+    }
+
+    /*
     EOS_ProductUserId localId = m_eosManager.GetAuthManager()->GetLocalUserId();
     if (localId) {
         m_eosManager.CreateLobbyManager(localId);
@@ -44,12 +108,15 @@ void Net::connect() {
             std::cerr << "[Net] Failed to get LobbyManager after creation." << std::endl;
         }
     }
+    */
 }
 
 /// Close connections and stop listening to lobby events.
 void Net::close() {
     m_lobby.reset();
     m_attached = false;
+    ResetHandshakeState();
+    m_role = Role::None;
 }
 
 /// Tick EOS and ensure we are attached to the LobbyManager when it becomes available.
@@ -57,11 +124,18 @@ void Net::fetch() {
     m_eosManager.Tick();
 
     // Attach to lobby when it is created by EOSManager.
-    if (!m_attached) {
-        if (auto lobby = m_eosManager.GetLobbyManager()) {
-            AttachToLobby(lobby);
+    auto lobby = m_lobby.lock();
+    if (!lobby || !m_attached) {
+        if (auto eosLobby = m_eosManager.GetLobbyManager()) {
+            AttachToLobby(eosLobby);
+            lobby = eosLobby;
         }
     }
+
+    if (lobby) {
+        PumpConnections(lobby);
+    }
+
 }
 
 /// Pop next network event from internal queue.
@@ -83,6 +157,12 @@ void Net::send(const std::vector<char>& data, const std::string& targetId) {
         }
 
         // Host broadcasting is not implemented here; requires LobbyManager to expose peer list.
+		std::vector<std::shared_ptr<P2PManager>> peers = lobby->GetAllP2PConnections();
+        for (const auto& peer : peers) {
+            std::string message(data.begin(), data.end());
+            peer->SendString(message);
+        }
+		return;
     }
     else {
         // Targeted send by string id is not supported without id -> EOS_ProductUserId mapping.
@@ -119,14 +199,14 @@ void Net::AttachToLobby(std::shared_ptr<LobbyManager> lobby) {
         NetConnected ev;
         ev.userId = EOSIdToString(userId);
         m_eventQueue.push(ev);
-    });
+        });
 
     // Member left -> NetDisconnected
     lobby->OnMemberLeft.Add([this](EOS_ProductUserId userId) {
         NetDisconnected ev;
         ev.userId = EOSIdToString(userId);
         m_eventQueue.push(ev);
-    });
+        });
 
     // When joining a lobby, LobbyManager creates a LocalConnection; hook its message delegate.
     lobby->OnLobbyJoined.Add([this, lobby](EOS_LobbyId id) {
@@ -136,16 +216,63 @@ void Net::AttachToLobby(std::shared_ptr<LobbyManager> lobby) {
                 NetPacket pkt;
                 std::string s(data);
                 pkt.data.assign(s.begin(), s.end());
-                pkt.senderId = EOSIdToString(nullptr); // host id unknown here
+                pkt.senderId = EOSIdToString(nullptr);
                 m_eventQueue.push(pkt);
-            });
+                });
+
+            if (m_role == Role::Client && !m_clientHelloSent) {
+                local->SendString("[Net] ClientHello");
+                m_clientHelloSent = true;
+            }
         }
-    });
+        });
 
     // Host-created lobby: peers will be reported via OnMemberJoined; additional hooking can be done in future.
     lobby->OnLobbyCreated.Add([this, lobby](EOS_LobbyId id) {
         // no-op for now
-    });
+        });
+
+    lobby->OnMemberJoined.Add([this, lobby](EOS_ProductUserId userId) {
+        auto p2p = lobby->GetP2PConnection(userId);
+        const std::string peerKey = EOSIdToString(userId);
+        if (p2p) {
+            p2p->OnMessageReceived.Add([this, userId, p2p, peerKey](char* data) {
+                NetPacket pkt;
+                std::string s(data);
+                pkt.data.assign(s.begin(), s.end());
+                pkt.senderId = peerKey;
+                m_eventQueue.push(pkt);
+
+                if (m_role == Role::Host && m_hostHandshakePeers.insert(peerKey).second) {
+                    p2p->SendString("[Net] HostHello");
+                }
+                });
+        }
+        });
+}
+
+
+void Net::PumpConnections(const std::shared_ptr<LobbyManager>& lobby) {
+    if (!lobby) {
+        return;
+    }
+
+    if (auto local = lobby->GetLocalConnection()) {
+        while (local->ReceivePacket()) {}
+    }
+
+    const auto peers = lobby->GetAllP2PConnections();
+    for (const auto& peer : peers) {
+        if (!peer) {
+            continue;
+        }
+        while (peer->ReceivePacket()) {}
+    }
+}
+
+void Net::ResetHandshakeState() {
+    m_clientHelloSent = false;
+    m_hostHandshakePeers.clear();
 }
 
 /// Convert EOS_ProductUserId to string. Fallbacks to pointer address representation.
