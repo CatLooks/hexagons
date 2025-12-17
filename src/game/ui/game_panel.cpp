@@ -112,6 +112,13 @@ namespace gameui {
 		recalculate();
 	};
 
+	/// Updates action timers.
+	void Panel::timers(uint8_t* timers) {
+		size_t i = 0;
+		for (Action* action : _boxes)
+			action->setTimer(timers[i++]);
+	};
+
 	/// Returns preview box.
 	Action* Panel::preview() const {
 		return _preview;

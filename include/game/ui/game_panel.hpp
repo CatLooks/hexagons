@@ -32,6 +32,11 @@ namespace gameui {
 		/// @param layout Layout type.
 		void construct(Values::SkillArray::Layout layout);
 
+		/// Updates action timers.
+		///
+		/// @param timers Entity timer array.
+		void timers(uint8_t* timers);
+
 		/// Returns preview box.
 		Action* preview() const;
 

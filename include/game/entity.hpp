@@ -29,6 +29,9 @@ public:
 	/// Current hitpoints.
 	int hp = max_hp();
 
+	/// Entity skill timers.
+	uint8_t timers[4] {0};
+
 	/// Returns maximum entity hitpoints.
 	virtual int max_hp() const;
 
@@ -49,4 +52,7 @@ public:
 
 	/// Returns applied effect list.
 	const Effects& effectList() const;
+
+	/// Ticks all skill timers.
+	void tickTimers();
 };

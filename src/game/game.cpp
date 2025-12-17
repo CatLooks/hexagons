@@ -357,13 +357,15 @@ static void _attach_action(
 /// @param texture Entity texture.
 /// @param name Entity name.
 /// @param entity Entity shared data.
+/// @param draw_hp Whether to draw entity health bar.
 static void _construct_menu(
 	Game* game,
 	gameui::Panel* panel,
 	const Values::SkillArray& data,
 	sf::IntRect texture,
 	const char* name,
-	const Entity& entity
+	const Entity& entity,
+	bool draw_hp
 ) {
 	// construct a panel
 	panel->construct(data.layout);
@@ -376,7 +378,7 @@ static void _construct_menu(
 		text->param("value", name);
 
 		// attach entity health bar data
-		panel->preview()->setDraw([&entity](ui::RenderBuffer& target, sf::IntRect self) {
+		if (draw_hp) panel->preview()->setDraw([&entity](ui::RenderBuffer& target, sf::IntRect self) {
 			Draw::Bar(entity).drawSquare(self, target);
 		});
 	};
@@ -415,6 +417,10 @@ static void _construct_menu(
 				text->setColor(Values::income_color[idx]);
 			});
 		};
+
+		// set skill cooldown
+		button->forwardOverlay();
+		button->setTimer(entity.timers[idx]);
 
 		// attach skill logic
 		_attach_action(button, game, data.skills[idx]);
@@ -486,7 +492,7 @@ void Game::troopMenu(const Troop& troop) {
 		Values::troop_skills[troop.type],
 		Values::troop_textures[troop.type],
 		Values::troop_names[troop.type],
-		troop
+		troop, true
 	);
 };
 /// Constructs a building UI panel.
@@ -496,7 +502,7 @@ void Game::buildMenu(const Build& build) {
 		Values::build_skills[build.type],
 		Values::build_textures[build.type],
 		Values::build_names[build.type],
-		build
+		build, build.hp != build.max_hp()
 	);
 };
 /// Constructs a plant UI panel.
@@ -506,7 +512,7 @@ void Game::plantMenu(const Plant& plant) {
 		Values::plant_skill,
 		Values::plant_textures[plant.type],
 		Values::plant_names[plant.type],
-		plant
+		plant, false
 	);
 };
 

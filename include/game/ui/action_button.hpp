@@ -31,7 +31,9 @@ namespace gameui {
 
 	private:
 		int _hint       = -1;      /// Action hint.
+		uint8_t _timer  = 0;       /// Action timer.
 		Mode _mode      = Click;   /// Action mode.
+		ui::Image* _cdi = nullptr; /// Action timer icon.
 		ui::Image* _tex = nullptr; /// Action texture.
 		ui::Image* _ann = nullptr; /// Annotation texture.
 		ui::Text* _text = nullptr; /// Action label.
@@ -52,6 +54,8 @@ namespace gameui {
 
 		/// Maximum opacity color of red tint during error animation.
 		static const sf::Color red;
+		/// Overlay color for action on cooldown.
+		static const sf::Color dim;
 
 		/// Whether the button acts as a display.
 		///
@@ -80,6 +84,11 @@ namespace gameui {
 		///
 		/// @param ann Annotation type.
 		void annotate(Skill::Annotation ann);
+		/// Adds a timer icon to the action button.
+		///
+		/// @param timer Action timer.
+		void setTimer(uint8_t timer);
+
 		/// Adds an image to the action button.
 		/// 
 		/// @param texture Texture reference.
@@ -125,5 +134,8 @@ namespace gameui {
 		/// 
 		/// @return Pointer to text label.
 		ui::Text* setSubtitle();
+
+		/// Makes the overlay the topmost element.
+		void forwardOverlay();
 	};
 };
