@@ -178,6 +178,14 @@ namespace ui {
 		/// @param old Old element pointer.
 		/// @param repl New element pointer.
 		void replace(Element* old, Element* repl);
+		/// Moves the element to be the last in element queue.
+		///
+		/// @param element Child element pointer.
+		void to_front(Element* element);
+		/// Moves the element to be the first in element queue.
+		///
+		/// @param element Child element pointer.
+		void to_back(Element* element);
 		/// Removes all child elements.
 		void clear();
 

@@ -113,6 +113,28 @@ namespace ui {
 		// add if old was not found
 		add(repl);
 	};
+	/// Moves the element to be the last in element queue.
+	void Element::to_front(Element* element) {
+		for (auto it = _elements.begin(); it != _elements.end(); it++) {
+			if (it->get() == element) {
+				auto uniq = std::move(*it);
+				_elements.erase(it);
+				_elements.push_back(std::move(uniq));
+				return;
+			};
+		};
+	};
+	/// Moves the element to be the first in element queue.
+	void Element::to_back(Element* element) {
+		for (auto it = _elements.begin(); it != _elements.end(); it++) {
+			if (it->get() == element) {
+				auto uniq = std::move(*it);
+				_elements.erase(it);
+				_elements.push_front(std::move(uniq));
+				return;
+			};
+		};
+	};
 	/// Removes all child elements.
 	void Element::clear() {
 		_elements.clear();
