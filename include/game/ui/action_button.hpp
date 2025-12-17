@@ -20,6 +20,8 @@ namespace gameui {
 
 		/// Action click callback.
 		using Callback = std::function<void()>;
+		/// Click validation callback.
+		using Validation = std::function<bool()>;
 
 		/// Action button mode.
 		enum Mode {
@@ -36,6 +38,7 @@ namespace gameui {
 		ui::Text* _sub  = nullptr; /// Action subtitle label.
 		ui::Solid* _err = nullptr; /// Error overlay.
 		DrawCall _draw;            /// Extra draw call.
+		Validation _check;         /// Button click validation callback.
 		Callback _press;           /// Button press callback.
 		Callback _release;         /// Button release callback.
 		bool _state     = false;   /// Button state.
@@ -87,6 +90,10 @@ namespace gameui {
 		/// 
 		/// @param call Draw call.
 		void setDraw(DrawCall call);
+		/// Adds a button click validation.
+		///
+		/// @param call Click validation function.
+		void setCheck(Validation call);
 		/// Adds a callback to pressed action button.
 		///
 		/// @param press Button press callback function.

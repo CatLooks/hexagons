@@ -12,6 +12,12 @@ namespace Values {
 		coords(8, 0), // zero
 		coords(9, 0), // down
 	};
+	/// Income colors.
+	const sf::Color income_color[3] = {
+		sf::Color(0  , 255, 0), // up
+		sf::Color(255, 255, 0), // zero
+		sf::Color(255, 0  , 0), // down
+	};
 
 	/// Coin currency icon.
 	const sf::IntRect coin_icon = coords(7, 1);

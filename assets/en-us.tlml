@@ -72,8 +72,13 @@ skill {
 
 # gameplay text
 gp {
-	# cost preview
-	cost: "{cost} $"
+	# cost previews
+	cost {
+		coins: "{cost} $"
+		berry: "{cost} B"
+		peach: "{cost} P"
+	}
+
 	# team name preview
 	team: "Team {team}"
 

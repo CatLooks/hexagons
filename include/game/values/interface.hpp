@@ -12,6 +12,8 @@ namespace Values {
 
 	/// Income arrow textures.
 	extern const sf::IntRect income_arrow[3];
+	/// Income colors.
+	extern const sf::Color income_color[3];
 
 	/// Coin currency icon.
 	extern const sf::IntRect coin_icon;

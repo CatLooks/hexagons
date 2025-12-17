@@ -114,6 +114,11 @@ namespace gameui {
 		_draw = call;
 	};
 
+	/// Adds a button click validation.
+	void Action::setCheck(Validation call) {
+		_check = call;
+	};
+
 	/// Adds a callback to pressed action button.
 	void Action::setCall(Callback press, Callback release, Mode mode) {
 		_press = press;
@@ -174,8 +179,18 @@ namespace gameui {
 
 	/// Forcefully invokes the action callback.
 	void Action::click() {
+		// check if validation fails
+		if (!_state && _check && !_check()) {
+			// button shake animation
+			errorShake();
+			return;
+		};
+
+		// handle button click
 		switch (_mode) {
 		case Click:
+			_state = false;
+
 			// invoke callbacks
 			if (_press) _press();
 			if (_release) _release();

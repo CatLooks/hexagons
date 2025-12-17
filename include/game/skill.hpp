@@ -3,12 +3,7 @@
 // include dependencies
 #include <variant>
 #include "spread.hpp"
-
-/// Data required for skill calculations.
-struct SkillState {
-	int build = 0; /// Current building index in shop.
-	int troop = 0; /// Current troop index in shop.
-};
+#include "region.hpp"
 
 /// Skill enumeration container.
 namespace Skills {
@@ -36,6 +31,30 @@ namespace Skills {
 		Stun,         /// (Beacon) Stun troops.
 		Count
 	};
+
+	/// Skill used resource type.
+	enum Resource {
+		None,  /// Free skill.
+		Berry, /// Skill requires berries.
+		Peach, /// Skill requires peaches.
+	};
+
+	/// Skill resource label text path.
+	extern const char* withLabel[3];
+};
+
+/// Data required for skill calculations.
+struct SkillState {
+	int build     = 0; /// Current building index in shop.
+	int troop     = 0; /// Current troop index in shop.
+	Region* region {}; /// Currently selected region.
+
+	/// Returns the amount of a specified resource.
+	///
+	/// @param resource Resource type.
+	///
+	/// @return Amount of the resource stored in state.
+	int with(Skills::Resource resource) const;
 };
 
 /// Skill description object.
@@ -57,6 +76,24 @@ struct Skill {
 	/// Skill annotation.
 	Annotation annotation = None;
 
+	/// Resource required for skill.
+	Skills::Resource resource = Skills::None;
+	/// Skill cost.
+	int cost = 0;
+
+	/// Skill action condition check type.
+	///
+	/// @param state Skill state.
+	/// @param tile Skill target tile.
+	using Condition = std::function<bool(const SkillState& state, const HexRef& tile)>;
+
+	/// Skill execution condition.
+	///
+	/// By default, uses built-in skill cost fields.
+	Condition condition = [this](const SkillState& state, const HexRef&) {
+		return state.with(resource) >= cost;
+	};
+
 	/// Selection tile spreader generator.
 	///
 	/// @param state Skill state.
@@ -65,6 +102,8 @@ struct Skill {
 	using Selection = std::function<Spread(const SkillState& state, const HexRef& tile, size_t idx)>;
 
 	/// Selection tile spreader generator.
+	///
+	/// By default, does not select any tiles.
 	Selection select = [](const SkillState&, const HexRef&, size_t) { return Spread(); };
 
 	/// Selection tile spreader radius.
@@ -79,6 +118,8 @@ struct Skill {
 	using Action = std::function<void(const SkillState& state, Map& map, const HexRef& prev, const HexRef& next)>;
 
 	/// Skill action.
+	///
+	/// By default, does nothing.
 	Action action = [](const SkillState&, Map&, const HexRef&, const HexRef&) {};
 
 	/// Skill format type.
@@ -92,5 +133,7 @@ struct Skill {
 	Format format = SingleAim;
 
 	/// Whether to select target tile after skill action.
+	///
+	/// Disabled by default.
 	bool reselect = false;
 };

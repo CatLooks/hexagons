@@ -139,6 +139,7 @@ void Game::selectRegion(const HexRef& tile) {
 	if (tile.hex->region) {
 		map.selectRegion(tile.hex->region);
 		_bar->attachRegion(tile.hex->region);
+		state.region = &*tile.hex->region;
 		_last = tile.pos;
 	};
 };
@@ -146,6 +147,7 @@ void Game::selectRegion(const HexRef& tile) {
 void Game::deselectRegion() {
 	map.deselectRegion();
 	_bar->detachRegion();
+	state.region = nullptr;
 };
 
 /// Clicks at a tile.
@@ -287,6 +289,12 @@ static void _attach_action(
 	Game* game,
 	const Skill* skill
 ) {
+	// set button validation logic
+	button->setCheck([=]() {
+		return skill->condition(game->state, game->map.atref(game->last()));
+	});
+
+	// set button press / release logic
 	button->setCall(
 		[=]() {
 			// deselect other selections
@@ -386,6 +394,27 @@ static void _construct_menu(
 		auto* text = button->setLabel();
 		text->setPath("param");
 		text->param("value", Values::skill_names[data.skills[idx]->type]);
+
+		// set cost label
+		if (data.skills[idx]->resource != Skills::None) {
+			auto res = data.skills[idx]->resource;
+			auto cost = data.skills[idx]->cost;
+
+			auto* text = button->setSubtitle();
+			text->setPath(Skills::withLabel[res]);
+			text->param("cost", std::format("{}", cost));
+
+			text->onUpdate([=](const sf::Time&) {
+				// update cost color
+				int diff = game->state.with(res) - cost;
+
+				// get cost color
+				int idx = 1;
+				if (diff > 0) idx = 0;
+				if (diff < 0) idx = 2;
+				text->setColor(Values::income_color[idx]);
+			});
+		};
 
 		// attach skill logic
 		_attach_action(button, game, data.skills[idx]);
