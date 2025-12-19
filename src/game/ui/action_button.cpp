@@ -205,12 +205,8 @@ namespace gameui {
 		// create shake animation
 		{
 			ui::Anim* anim = ui::AnimVector::to(&position(), pos + shake_amp, sf::seconds(0.4f));
-			anim->setAfter([=]() {
-				// restore original position
-				position() = pos;
-				_shake = false;
-			});
-			anim->setEasing(shake);
+			anim->setAfter([=]() { _shake = false; });
+			anim->ease = shake;
 			push(anim);
 		};
 
@@ -218,7 +214,7 @@ namespace gameui {
 		{
 			ui::Anim* anim_in = ui::AnimColor::to(&_err->color, red, sf::seconds(0.05f));
 			ui::Anim* anim_out = new ui::AnimColor(&_err->color, red, _timer > 0 ? dim : red_dimmed, sf::seconds(0.3f));
-			anim_out->setEasing(ui::Easings::quadIn);
+			anim_out->ease = ui::Easings::quadIn;
 			anim_out->setAfter([=]() {
 				// set color again
 				// in case timer has changed in the middle of the animation

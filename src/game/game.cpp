@@ -28,7 +28,7 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 	// add pulse animation
 	{
 		_pulse_anim = new ui::AnimFloat(&_pulse, 0.f, 1.f, sf::seconds(0.8f));
-		_pulse_anim->looped = true;
+		_pulse_anim->mode = ui::Anim::Loop;
 		push(_pulse_anim);
 	};
 
@@ -109,7 +109,7 @@ void Game::selectTile(sf::Vector2i pos) {
 		Hex* hex = map.at(pos);
 		if (hex) {
 			ui::Anim* anim = ui::AnimFloat::to(&hex->elevation, 1.f, sf::seconds(0.15f));
-			anim->setEasing(ui::Easings::sineIn);
+			anim->ease = ui::Easings::sineIn;
 			push(anim);
 		};
 	};
@@ -125,7 +125,7 @@ void Game::deselectTile() {
 		Hex* hex = map.at(*_select);
 		if (hex) {
 			ui::Anim* anim = ui::AnimFloat::to(&hex->elevation, 0.f, sf::seconds(0.1f));
-			anim->setEasing(ui::Easings::sineOut);
+			anim->ease = ui::Easings::sineOut;
 			push(anim);
 		};
 	};

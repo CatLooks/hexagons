@@ -73,13 +73,13 @@ namespace gameui {
 			if (layout != Values::SkillArray::None) {
 				// show panel
 				ui::Anim* anim = ui::AnimDim::to(&position().y, 1as, sf::seconds(0.2f));
-				anim->setEasing(ui::Easings::quadOut);
+				anim->ease = ui::Easings::quadOut;
 				push(anim);
 			}
 			else {
 				// hide panel
 				ui::Anim* anim = ui::AnimDim::to(&position().y, 1ps + Action::side, sf::seconds(0.2f));
-				anim->setEasing(ui::Easings::quadIn);
+				anim->ease = ui::Easings::quadIn;
 				push(anim);
 			};
 		};

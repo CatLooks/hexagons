@@ -81,7 +81,7 @@ namespace gameui {
 
 		// animate bar
 		ui::Anim* anim = ui::AnimDim::to(&position().y, 0px, sf::seconds(0.2f));
-		anim->setEasing(ui::Easings::quadOut);
+		anim->ease = ui::Easings::quadOut;
 		push(anim);
 	};
 	/// Detaches a region from displaying.
@@ -95,7 +95,7 @@ namespace gameui {
 
 		// animate bar
 		ui::Anim* anim = ui::AnimDim::to(&position().y, -height, sf::seconds(0.2f));
-		anim->setEasing(ui::Easings::quadIn);
+		anim->ease = ui::Easings::quadIn;
 		push(anim);
 	};
 };
