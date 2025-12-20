@@ -34,6 +34,11 @@ namespace ui {
 		/// @param str Window title.
 		void title(const std::string& str);
 
+		/// Sets key repeating mode.
+		///
+		/// @param enabled Whether the key repeating is enabled.
+		void setKeyRepeat(float enabled);
+
 		/// Closes the window.
 		void close();
 

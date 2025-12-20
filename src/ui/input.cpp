@@ -48,7 +48,7 @@ namespace ui {
 		sf::String next = _string;
 		{
 			next.insert(_cursor, c);
-		}
+		};
 
 		// validate new string
 		if (_f_check(next, c)) {
@@ -68,7 +68,7 @@ namespace ui {
 		sf::String next = _string;
 		{
 			next.erase(_cursor - (dir == Back ? 1ull : 0ull));
-		}
+		};
 
 		// validate new string
 		if (_f_check(next, '\b')) {
@@ -92,7 +92,7 @@ namespace ui {
 		};
 
 		// insert text from clipboard
-		if (evt.c == '\x18') {
+		if (evt.c == '\x16') {
 			const sf::String& text = sf::Clipboard::getString();
 			for (char32_t c : text) {
 				if (c >= ' ') insert(c);

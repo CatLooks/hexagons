@@ -47,6 +47,11 @@ namespace gameui {
 		bool _shake     = false;   /// Initial shake position.
 
 	public:
+		/// Action button texture maps.
+		///
+		/// @param id Whether the button is highlighted.
+		static const ui::Panel::Map textures[2];
+		
 		/// Action button side length.
 		static const ui::Dim side;
 		/// Action button base size.
@@ -63,11 +68,6 @@ namespace gameui {
 		bool display = false;
 
 	protected:
-		/// Action button texture maps.
-		///
-		/// @param id Whether the button is highlighted.
-		static const ui::Panel::Map textures[2];
-
 		/// Draws the action button.
 		void drawSelf(ui::RenderBuffer&, sf::IntRect) const override;
 

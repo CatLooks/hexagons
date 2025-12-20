@@ -123,7 +123,7 @@ namespace ui {
 #endif
 			return;
 		};
-		_ctx = &_default;
+		_next = _ctx = &_default;
 	};
 	/// Generates a new interface context.
 	Interface::Context Interface::newContext() {
@@ -134,7 +134,7 @@ namespace ui {
 			return &_default;
 		};
 		_contexts.push_back({});
-		return _ctx = &_contexts.back();
+		return _next = _ctx = &_contexts.back();
 	};
 
 	/// Switches to an interface context during the next frame.
