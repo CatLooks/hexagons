@@ -41,135 +41,95 @@ int main() {
 		target.draw(drawStats);
 	});
 
-	// game test
-	auto layer_map = itf.layer();
-	auto layer_gui = itf.layer();
 
-	//menu testing
-	auto layer_menu = itf.layer();
-	auto main_menu = new MainMenu(layer_menu);
-	OptionsMenu* options_menu = new OptionsMenu(layer_menu);
-
-	Game* game = new Game(layer_map, layer_gui);
+	//creation of game context
+	auto game_ctx = itf.newContext();
+	Game* game;
 	{
-		Map& map = game->map;
+		itf.switchContext(game_ctx);
 
-		const int w = 14;
-		const int h = 7;
-		const char arr[h][w + 1] = {
-			"------------- ",
-			"rrrrrrrwyywrrr",
-			"rrrrrrwyywrrr ",
-			"ggggggwyywgggg",
-			"ggrrgwyywgggg ",
-			"bbrrbwyywbbbbb",
-			"bbbbwyywbbbbb ",
-		};
-
-		map.empty({ w, h });
+		// game test
+		auto layer_map = itf.layer();
+		auto layer_gui = itf.layer();
+		game = new Game(layer_map, layer_gui);
 		{
-			Troop troop;
-			troop.pos = { 1, 1 };
-			troop.type = Troop::Knight;
-			troop.hp = 5;
-			map.setTroop(troop);
+			Map& map = game->map;
 
-			Build build;
-			build.pos = { 3, 1 };
-			build.type = Build::Tower;
-			map.setBuild(build);
+			const int w = 14;
+			const int h = 7;
+			const char arr[h][w + 1] = {
+				"------------- ",
+				"rrrrrrrwyywrrr",
+				"rrrrrrwyywrrr ",
+				"ggggggwyywgggg",
+				"ggrrgwyywgggg ",
+				"bbrrbwyywbbbbb",
+				"bbbbwyywbbbbb ",
+			};
 
-			Plant plant;
-			plant.pos = { 5, 1 };
-			plant.type = Plant::Peach;
-			map.setPlant(plant);
-		};
+			map.empty({ w, h });
+			{
+				Troop troop;
+				troop.pos = { 1, 1 };
+				troop.type = Troop::Knight;
+				troop.hp = 5;
+				map.setTroop(troop);
 
-		for (int y = 0; y < h; y++) {
-			for (int x = 0; x < w; x++) {
-				Hex* hex = map.at({ x, y });
-				if (hex == nullptr) continue;
+				Build build;
+				build.pos = { 3, 1 };
+				build.type = Build::Tower;
+				map.setBuild(build);
 
-				switch (arr[y][x]) {
-				case '-':
-					hex->type = Hex::Ground;
-					break;
-				case 'r':
-					hex->type = Hex::Ground;
-					hex->team = Region::Red;
-					break;
-				case 'g':
-					hex->type = Hex::Ground;
-					hex->team = Region::Green;
-					break;
-				case 'b':
-					hex->type = Hex::Ground;
-					hex->team = Region::Blue;
-					break;
-				case 'y':
-					hex->type = Hex::Ground;
-					hex->team = Region::Yellow;
-					break;
-				case 'w':
-					hex->type = Hex::Water;
-					break;
+				Plant plant;
+				plant.pos = { 5, 1 };
+				plant.type = Plant::Peach;
+				map.setPlant(plant);
+			};
 
-				default:
-					break;
+			for (int y = 0; y < h; y++) {
+				for (int x = 0; x < w; x++) {
+					Hex* hex = map.at({ x, y });
+					if (hex == nullptr) continue;
+
+					switch (arr[y][x]) {
+					case '-':
+						hex->type = Hex::Ground;
+						break;
+					case 'r':
+						hex->type = Hex::Ground;
+						hex->team = Region::Red;
+						break;
+					case 'g':
+						hex->type = Hex::Ground;
+						hex->team = Region::Green;
+						break;
+					case 'b':
+						hex->type = Hex::Ground;
+						hex->team = Region::Blue;
+						break;
+					case 'y':
+						hex->type = Hex::Ground;
+						hex->team = Region::Yellow;
+						break;
+					case 'w':
+						hex->type = Hex::Water;
+						break;
+
+					default:
+						break;
+					};
 				};
 			};
+			map.regions.enumerate(&map);
 		};
-		map.regions.enumerate(&map);
-	};
-	layer_map->add(game);
+		layer_map->add(game);
+	}
+	
 
-	// Start with menu visible and game hidden
-	//game->deactivate();
-	main_menu->activate();
-	main_menu->ignore = false;
-	options_menu->deactivate();
-	options_menu->ignore = true;
+	MenuSystem menuSystem(itf, &game_ctx, game);
+	itf.switchContext(menuSystem.context);
 
-	// 1. Main Menu -> Options
-	main_menu->bindOptions([=]() {
-		// Hide Main
-		main_menu->ignore = true;
-		// You might also want to visually hide it or animate it out
-		//main_menu->push(ui::AnimDim::to(&main_menu->position().x, -1es, sf::seconds(0.2f)));
-		main_menu->deactivate();
-		options_menu->activate();
-		// Show Options
-		options_menu->ignore = false;
-		options_menu->push(ui::AnimDim::to(&options_menu->position().x, 0px, sf::seconds(0.2f)));
-		});
-
-	// 2. Options -> Back
-	options_menu->bindBack([=]() {
-		// Hide Options
-		options_menu->ignore = true;
-		options_menu->deactivate();
-		main_menu->activate();
-
-
-		// Show Main
-		
-		main_menu->ignore = false;
-		// Optionally animate main menu back in
-		main_menu->push(ui::AnimDim::to(&main_menu->position().x, 0px, sf::seconds(0.2f)));
-		});
-
-	// 3. Start Game
-	main_menu->bindStart([=]() {
-		main_menu->deactivate();
-		// Ensure menu is hidden and game becomes active
-		main_menu->ignore = true;
-		game->activate();
-		});
-
-	// 4. Exit
-	main_menu->bindExit([=]() {
-		ui::window.close();
-		});
+	
 
 	// window main loop
 	while (ui::window.active()) {

@@ -13,4 +13,6 @@ namespace assets {
 	extern sf::Texture tilemap;
 	/// Textures used when rendering UI.
 	extern sf::Texture interface;
+	/// Texture used to demonstrate the map selection.
+	extern sf::Texture map_example;
 };

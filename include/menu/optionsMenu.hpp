@@ -8,29 +8,33 @@
 
 class OptionsMenu : public ui::Element {
 public:
+    /// Options menu callback type.
     using Action = std::function<void()>;
 
 private:
-    ui::Layer* _layer;
-    ui::Solid* _bg;
-    ui::Text* _title;
+    ui::Solid* _bg   = nullptr;  /// Background panel.
+    ui::Text*  _title = nullptr; /// Menu title label.
 
-    menuui::Button* _soundBtn;
-    menuui::Button* _backBtn;
+    menuui::Button* _soundBtn = nullptr; /// Sound toggle button.
+    menuui::Button* _backBtn  = nullptr; /// Back navigation button.
 
-    // State
-    bool _soundEnabled = true;
-    Action _onBack;
+    bool   _soundEnabled = true; /// Current sound enabled state.
+    Action _onBack;              /// Back button callback.
 
 public:
-    OptionsMenu(ui::Layer* layer);
+    /// Constructs an options menu.
+    OptionsMenu();
 
-    /// Bind the back button action
+    /// Binds back button callback.
+    /// @param action Callback invoked when the back button is pressed.
     void bindBack(Action action);
 
 protected:
+    /// Draws the options menu.
+    /// @param target Render buffer.
+    /// @param self   Element drawing area.
     void drawSelf(ui::RenderBuffer& target, sf::IntRect self) const override;
 
-    /// Helper to update sound button text
+    /// Updates sound button label text.
     void updateSoundLabel();
 };

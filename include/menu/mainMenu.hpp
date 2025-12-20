@@ -8,30 +8,42 @@
 
 class MainMenu : public ui::Element {
 public:
+    /// Main menu callback type.
     using Action = std::function<void()>;
 
 private:
-    ui::Layer* _layer;
-    ui::Solid* _bg;
-    ui::Text* _title;
-    ui::Solid* _dimmer;    // The full screen background
-    ui::Solid* _container; // The central translucent box
-    ui::Image* _bgImage;   // Optional: a static screenshot (idk if which to use)
+    ui::Solid* _bg        = nullptr; /// Optional background panel.
+    ui::Text*  _title     = nullptr; /// Menu title label.
+    ui::Solid* _dimmer    = nullptr; /// Fullscreen dimmer.
+    ui::Solid* _container = nullptr; /// Central menu box.
+    ui::Image* _bgImage   = nullptr; /// Optional background image.
 
-    menuui::Button* _playBtn;
-    menuui::Button* _optionsBtn; // Added this
-    menuui::Button* _exitBtn;
+    menuui::Button* _startBtn   = nullptr; /// "Start game" button.
+    menuui::Button* _joinBtn    = nullptr; /// "Join game" button.
+    menuui::Button* _optionsBtn = nullptr; /// "Options" button.
+    menuui::Button* _exitBtn    = nullptr; /// "Exit" button.
 
-    Action _onStart;
-    Action _onExit;
-    Action _onOptions; // Added this
+    Action _onStart;   /// Start callback.
+    Action _onExit;    /// Exit callback.
+    Action _onOptions; /// Options callback.
 
 public:
-    MainMenu(ui::Layer* layer);
+    /// Constructs a main menu.
+    MainMenu();
+
+    /// Binds start button callback.
+    /// @param action Callback invoked when the start button is pressed.
     void bindStart(Action action);
+    /// Binds exit button callback.
+    /// @param action Callback invoked when the exit button is pressed.
     void bindExit(Action action);
+    /// Binds options button callback.
+    /// @param action Callback invoked when the options button is pressed.
     void bindOptions(Action action);
 
 protected:
+    /// Draws the main menu.
+    /// @param target Render buffer.
+    /// @param self   Element drawing area.
     void drawSelf(ui::RenderBuffer& target, sf::IntRect self) const override;
 };

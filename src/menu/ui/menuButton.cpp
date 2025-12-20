@@ -19,8 +19,11 @@ namespace menuui {
 
 	/// Constructs an empty menu button.
 	Button::Button() : ui::Panel(textures[0]) {
-		// set menu button size
-		bounds.size = base;
+		// Initialize instance base size to the default static size
+		_baseSize = base;
+
+		// Set initial bounds
+		bounds.size = _baseSize;
 
 		// reset padding
 		padding.set(0);
@@ -40,6 +43,17 @@ namespace menuui {
 			return (bool)evt.mouse();
 			});
 	};
+
+	/// Sets the button size.
+	void Button::setSize(ui::DimVector newSize) {
+		_baseSize = newSize;
+		bounds.size = newSize;
+
+		if (_tex) {
+			_tex->position() = { 0.5as, 0.5as };
+		}
+	}
+
 
 	/// Clears the menu button.
 	void Button::clear() {
@@ -82,12 +96,12 @@ namespace menuui {
 
 	/// Expands the button.
 	ui::Anim* Button::emitExpand() {
-		return new ui::AnimVector(&size(), base, base * 1.125f, sf::seconds(0.06f));
+		return new ui::AnimVector(&size(), _baseSize, _baseSize * 1.125f, sf::seconds(0.06f));
 	};
 	/// Shrinks the button.
 	ui::Anim* Button::emitShrink() {
 		// Create shrink animation from expanded size back to base to avoid no-op
-		return new ui::AnimVector(&size(), base * 1.125f, base, sf::seconds(0.1f));
+		return new ui::AnimVector(&size(), _baseSize * 1.125f, _baseSize, sf::seconds(0.1f));
 	};
 
 	/// Shaker function interpolation.
@@ -112,7 +126,7 @@ namespace menuui {
 
 				// Attach the callbacks to run after the animation finishes
 				sequence->setAfter([this]() {
-					this->size() = base;
+					this->size() = _baseSize;
 					if (_press) _press();
 					if (_release) _release();
 					});
@@ -151,6 +165,15 @@ namespace menuui {
 			if (!display) push(emitShrink());
 		};
 	};
+
+	/// Selects the button.
+	void Button::select() {
+		if (!_state) {
+			_state = true;
+			_map = textures[1];
+			if (!display) push(emitExpand());
+		}
+	}
 
 	/// Game panel text settings.
 	const ui::TextSettings panel_text = {
