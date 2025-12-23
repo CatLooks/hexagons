@@ -6,7 +6,7 @@ namespace ui {
 		Panel(map),
 		_label(ui::Text::raw(settings, "")),
 		_cursor(new Solid),
-		focused(false)
+		_focused(false)
 	{
 		scissor = true;  // hide text overflow
 		infinite = true; // capture events outside of draw area
@@ -17,7 +17,7 @@ namespace ui {
 		{
 			// add cursor animation
 			auto* anim = new ui::AnimSet(sf::seconds(0.5f), [=](float t) {
-				_cursor->color.a = focused ? (uint8_t)t : 0;
+				_cursor->color.a = _focused ? (uint8_t)t : 0;
 			});
 			anim->setRange(0.f, 255.f);
 			anim->ease = ui::Easings::sineOut;
@@ -47,13 +47,12 @@ namespace ui {
 		onEvent([=](const ui::Event& evt) {
 			// mouse focus / unfocus checks
 			if (auto data = evt.get<ui::Event::MousePress>()) {
-				focused = rect().contains(data->position);
-				ui::window.setKeyRepeat(focused);
-				return focused;
+				focus(rect().contains(data->position));
+				return _focused;
 			};
 
 			// ignore if not focused
-			if (!focused) return false;
+			if (!_focused) return false;
 
 			// pass through keyboard events
 			if (auto data = evt.get<ui::Event::KeyPress>())
@@ -64,5 +63,11 @@ namespace ui {
 			// pass through
 			return false;
 		});
+	};
+
+	/// Updates text field focus.
+	void TextField::focus(bool enabled) {
+		_focused = enabled;
+		ui::window.setKeyRepeat(enabled);
 	};
 };

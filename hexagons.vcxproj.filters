@@ -258,6 +258,12 @@
     <ClCompile Include="src\ui\align.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
+    <ClCompile Include="src\ui\textfield.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\anim\setter.cpp">
+      <Filter>Source Files\anim</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -493,6 +499,12 @@
     </ClInclude>
     <ClInclude Include="include\game\values\entity_values.hpp">
       <Filter>Header Files\game\values</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\textfield.hpp">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\anim\setter.hpp">
+      <Filter>Header Files\anim</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

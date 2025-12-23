@@ -10,13 +10,13 @@
 namespace ui {
 	/// Simple text input field element.
 	class TextField : public Panel {
+	public:
+		TextInput input;    /// Input manager.
+
 	protected:
 		ui::Text* _label;   /// String display.
 		ui::Solid* _cursor; /// Cursor bar.
-
-	public:
-		TextInput input;    /// Input manager.
-		bool focused;       /// Whether the field is accepting input.
+		bool _focused;      /// Whether the field is accepting input.
 
 	public:
 		/// Constructs a text field element.
@@ -25,5 +25,10 @@ namespace ui {
 		/// @param settings Text settings.
 		/// @param cursor
 		TextField(const Panel::Map& map, const TextSettings& settings, sf::Color cursor);
+
+		/// Updates text field focus.
+		///
+		/// @param enabled Whether the field is focused.
+		void focus(bool enabled);
 	};
 };
