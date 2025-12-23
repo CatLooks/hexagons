@@ -79,6 +79,12 @@
     <Filter Include="Source Files\game\logic">
       <UniqueIdentifier>{493a83c8-4463-495d-8c18-f18af3205a96}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\game\moves">
+      <UniqueIdentifier>{2fb5033c-d53b-4124-ab1f-7be35720d2b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\moves">
+      <UniqueIdentifier>{bb4ca6bf-60f3-4a66-8837-a53b8752d5ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -263,6 +269,15 @@
     </ClCompile>
     <ClCompile Include="src\ui\anim\setter.cpp">
       <Filter>Source Files\anim</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\history.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\build_moves.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\troop_moves.cpp">
+      <Filter>Source Files\game\moves</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -505,6 +520,18 @@
     </ClInclude>
     <ClInclude Include="include\ui\anim\setter.hpp">
       <Filter>Header Files\anim</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\build_moves.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\troop_moves.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\history.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\move.hpp">
+      <Filter>Header Files\game\moves</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,9 @@
 #include "game/draw.hpp"
 #include "flags.hpp"
 
+/// Constructs an empty game map.
+Map::Map() : history(this) {};
+
 /// Generates a new selection index.
 size_t Map::newSelectionIndex() {
 	_selection = true;

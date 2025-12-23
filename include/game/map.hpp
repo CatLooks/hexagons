@@ -8,6 +8,7 @@
 #include "mathext.hpp"
 #include "array.hpp"
 #include "spread.hpp"
+#include "history.hpp"
 
 #include "logic/troop_logic.hpp"
 #include "logic/build_logic.hpp"
@@ -21,8 +22,12 @@
 /// Last hex in every shifted row is ignored.
 class Map : public HexArray {
 	friend Regions;
+	friend Move;
 
 public:
+	/// Constructs an empty game map.
+	Map();
+
 	sf::Vector2i camera; /// Map camera.
 
 	/// Generates a new selection index.
@@ -49,6 +54,8 @@ private:
 	bool _selection = false; /// Whether a selection is happening.
 
 public:
+	/// Move history.
+	History history;
 	/// Region manager.
 	Regions regions;
 	/// Tile pulse annotation.

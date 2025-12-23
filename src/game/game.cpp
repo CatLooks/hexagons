@@ -392,6 +392,13 @@ static void _construct_menu(
 		// set skill annotation
 		button->annotate(data.skills[idx]->annotation);
 
+		// set skill cooldown
+		button->forwardOverlay();
+		button->setTimer(entity.timers[idx]);
+
+		// attach skill logic
+		_attach_action(button, game, data.skills[idx]);
+
 		// set skill label
 		auto* text = button->setLabel();
 		text->setPath("param");
@@ -417,13 +424,6 @@ static void _construct_menu(
 				text->setColor(Values::income_color[idx]);
 			});
 		};
-
-		// set skill cooldown
-		button->forwardOverlay();
-		button->setTimer(entity.timers[idx]);
-
-		// attach skill logic
-		_attach_action(button, game, data.skills[idx]);
 		idx++;
 	};
 	panel->recalculate();
