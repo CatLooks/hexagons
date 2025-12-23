@@ -43,9 +43,12 @@
     <ClCompile Include="src\game\hex.cpp" />
     <ClCompile Include="src\game\history.cpp" />
     <ClCompile Include="src\game\logic\build_logic.cpp" />
+    <ClCompile Include="src\game\logic\lists\skill_list_attack.cpp" />
+    <ClCompile Include="src\game\logic\lists\skill_list_effect.cpp" />
+    <ClCompile Include="src\game\logic\lists\skill_list_other.cpp" />
+    <ClCompile Include="src\game\logic\lists\skill_list_shop.cpp" />
     <ClCompile Include="src\game\logic\plant_logic.cpp" />
     <ClCompile Include="src\game\logic\skill_helper.cpp" />
-    <ClCompile Include="src\game\logic\skill_list.cpp" />
     <ClCompile Include="src\game\logic\troop_logic.cpp" />
     <ClCompile Include="src\game\map.cpp" />
     <ClCompile Include="src\game\moves\build_moves.cpp" />

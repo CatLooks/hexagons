@@ -36,7 +36,7 @@ struct Hex {
 	/// Disabled move constructor.
 	Hex(Hex&&) noexcept;
 	/// Move assignment.
-	Hex& operator=(Hex&& hex) noexcept;
+	Hex& operator=(Hex&&) noexcept;
 
 	/// Checks if a tile is elevated.
 	bool elevated() const;
@@ -44,6 +44,12 @@ struct Hex {
 	bool solid() const;
 	/// Checks if a tile does not contain any entities.
 	bool free() const;
+
+	/// Extends entity cooldown on this hex.
+	/// 
+	/// @param idx Skill index.
+	/// @param cd Cooldown time.
+	void cooldown(uint8_t idx, uint8_t cd);
 };
 
 /// Hex reference.

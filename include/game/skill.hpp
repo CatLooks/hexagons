@@ -132,6 +132,9 @@ struct Skill {
 	/// Skill interaction format.
 	Format format = SingleAim;
 
+	/// Skill cooldown (in turns).
+	uint8_t cooldown = 1;
+
 	/// Whether to select target tile after skill action.
 	///
 	/// Disabled by default.

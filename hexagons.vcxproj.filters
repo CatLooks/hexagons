@@ -85,6 +85,9 @@
     <Filter Include="Source Files\game\moves">
       <UniqueIdentifier>{bb4ca6bf-60f3-4a66-8837-a53b8752d5ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\game\logic\lists">
+      <UniqueIdentifier>{89910916-689a-4584-825c-3d7ee1577437}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -237,9 +240,6 @@
     <ClCompile Include="src\game\values\skill_values.cpp">
       <Filter>Source Files\game\values</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\logic\skill_list.cpp">
-      <Filter>Source Files\game\logic</Filter>
-    </ClCompile>
     <ClCompile Include="src\game\logic\build_logic.cpp">
       <Filter>Source Files\game\logic</Filter>
     </ClCompile>
@@ -278,6 +278,18 @@
     </ClCompile>
     <ClCompile Include="src\game\moves\troop_moves.cpp">
       <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\logic\lists\skill_list_attack.cpp">
+      <Filter>Source Files\game\logic\lists</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\logic\lists\skill_list_effect.cpp">
+      <Filter>Source Files\game\logic\lists</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\logic\lists\skill_list_other.cpp">
+      <Filter>Source Files\game\logic\lists</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\logic\lists\skill_list_shop.cpp">
+      <Filter>Source Files\game\logic\lists</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

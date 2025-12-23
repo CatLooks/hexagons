@@ -38,6 +38,7 @@ public:
 	void queueCall(Delegate<void()>::Action call);
 
 	const Skill* skill {}; /// Current skill.
+	uint8_t  skill_idx {}; /// Skill index (for skill timers).
 	SkillState   state {}; /// Skill state.
 
 public:

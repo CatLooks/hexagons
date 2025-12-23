@@ -1,10 +1,21 @@
 #include "ui.hpp"
 #include "game.hpp"
 #include "assets.hpp"
+#include <conio.h>
+
+/// Testing phase.
+/// 
+/// @return Whether to exit the app after testing.
+static bool test() {
+	return false;
+};
 
 /// Program entry.
 /// @return Exit code.
 int main() {
+	// testing phase
+	if (test()) return 1;
+	
 	// load languages
 	if (assets::loadLanguageList())
 		return 1;
@@ -130,6 +141,7 @@ int main() {
 		auto* input = new ui::TextField(gameui::Action::textures[0], Values::resource_text, sf::Color::White);
 		input->bounds = { 50px, 50px, 600px, 100px };
 		layer_test->add(input);
+		input->focus(true);
 
 		// key repeat test
 		auto* solid = new ui::Solid;
@@ -138,7 +150,10 @@ int main() {
 		solid->onEvent([=](const ui::Event& evt) {
 			if (auto data = evt.get<ui::Event::KeyPress>()) {
 				if (data->key == sf::Keyboard::Key::Q) {
-					ui::Anim* anim = new ui::AnimDim(&solid->position().x, 50px, 250px, sf::seconds(0.5f));
+					ui::Anim* anim = new ui::AnimSet(sf::seconds(0.5f), [=](float t) {
+						solid->bounds.position.x.px = ui::lerpf(50, 250, t);
+						//printf("%f\n", solid->bounds.position.x.px);
+					});
 					solid->push(anim);
 					return true;
 				};
@@ -149,6 +164,7 @@ int main() {
 	};
 
 	itf.lock();
+	itf.switchContext(game_ctx);
 
 	// window main loop
 	while (ui::window.active()) {

@@ -21,6 +21,17 @@ bool Hex::free() const {
 	return !troop && !build && !plant;
 };
 
+/// Extends entity cooldown on this hex.
+void Hex::cooldown(uint8_t idx, uint8_t cd) {
+	// get entity pointer
+	Entity* entity = nullptr;
+	if (troop) entity = &*troop;
+	else if (build) entity = &*build;
+
+	// apply cooldown if entity found
+	if (entity) entity->timers[idx] += cd;
+};
+
 /// Constructs an empty reference.
 HexRef::HexRef() : pos{}, hex{} {};
 

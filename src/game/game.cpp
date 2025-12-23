@@ -171,6 +171,8 @@ void Game::click(sf::Vector2i pos) {
 		// execute skill action
 		HexRef prev = map.atref(last());
 		HexRef next = { hex, pos };
+		if (skill->cooldown)
+			prev.hex->cooldown(skill_idx, skill->cooldown);
 		skill->action(state, map, prev, next);
 
 		// cancel selection
@@ -282,10 +284,12 @@ void Game::deselectMenu() {
 /// Attaches a callback to a button.
 /// 
 /// @param button Action button.
+/// @param skill_idx Skill index.
 /// @param game Game object.
 /// @param skill Action skill.
 static void _attach_action(
 	gameui::Action* button,
+	uint8_t skill_idx,
 	Game* game,
 	const Skill* skill
 ) {
@@ -315,6 +319,7 @@ static void _attach_action(
 
 			// store skill description
 			game->skill = skill;
+			game->skill_idx = skill_idx;
 		},
 		[=]() {
 			// aimed skill
@@ -328,6 +333,8 @@ static void _attach_action(
 			// execute the skill
 			bool free_before = tile.hex->free();
 			{
+				if (game->skill->cooldown)
+					tile.hex->cooldown(skill_idx, game->skill->cooldown);
 				game->skill->action(game->state, game->map, tile, tile);
 				game->deselectMenu();
 			};
@@ -397,7 +404,7 @@ static void _construct_menu(
 		button->setTimer(entity.timers[idx]);
 
 		// attach skill logic
-		_attach_action(button, game, data.skills[idx]);
+		_attach_action(button, idx, game, data.skills[idx]);
 
 		// set skill label
 		auto* text = button->setLabel();
@@ -454,7 +461,7 @@ void Game::regionMenu(const Region& region, bool targeted) {
 		text->setPath("gp.buy_build");
 
 		// attach buy build skill
-		_attach_action(button, this, targeted ? &SkillList::buy_build : &SkillList::buy_build_aim);
+		_attach_action(button, 0, this, targeted ? &SkillList::buy_build : &SkillList::buy_build_aim);
 	};
 	{
 		auto* button = _panel->actions()[3];
@@ -466,7 +473,7 @@ void Game::regionMenu(const Region& region, bool targeted) {
 		text->setPath("gp.buy_troop");
 
 		// attach buy build skill
-		_attach_action(button, this, targeted ? &SkillList::buy_troop : &SkillList::buy_troop_aim);
+		_attach_action(button, 0, this, targeted ? &SkillList::buy_troop : &SkillList::buy_troop_aim);
 	};
 
 	// annotate selection buttons
