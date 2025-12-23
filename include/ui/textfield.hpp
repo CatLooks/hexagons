@@ -30,5 +30,9 @@ namespace ui {
 		///
 		/// @param enabled Whether the field is focused.
 		void focus(bool enabled);
+
+	protected:
+		/// Automatically unfocuses field on deactivation.
+		void onDeactivate() override;
 	};
 };

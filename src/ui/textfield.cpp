@@ -70,4 +70,9 @@ namespace ui {
 		_focused = enabled;
 		ui::window.setKeyRepeat(enabled);
 	};
+
+	/// Automatically unfocuses field on deactivation.
+	void TextField::onDeactivate() {
+		focus(false);
+	};
 };
