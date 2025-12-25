@@ -71,22 +71,24 @@ public:
 	const Regions::Ref& selectedRegion() const;
 
 public:
-	/// Changes the team color of a hex.
-	///
-	/// @param origin Repaint source tile.
-	/// @param tile Target hex reference.
-	void repaintHex(const HexRef& origin, const HexRef& tile);
+	/// Checks for region splits / joins.
+	/// 
+	/// @param tile Checked tile.
+	/// @param prev Previous tile region.
+	void updateRegions(const HexRef& tile, const Regions::Ref& prev);
+
 	/// Moves a troop to another tile.
 	///
 	/// @param from Source tile.
 	/// @param to Destination tile.
-	void moveTroop(const HexRef& from, const HexRef& to);
+	/// 
+	/// @return Move object.
+	Move* moveTroop(const HexRef& from, const HexRef& to);
 
 	/// Removes any entities from the hex.
 	///
 	/// @param hex Hex reference.
 	void removeEntity(Hex* hex);
-
 	/// Adds a troop to the map.
 	///
 	/// @param troop Troop object.

@@ -11,7 +11,7 @@ namespace skillf {
 	/// Allows spreading only to tiles of a region.
 	Spread::Check sameRegionHop(const Regions::Ref& region) {
 		return [&region](const Spread::Tile& tile) {
-			return tile.hex->region == region;
+			return tile.hex->region() == region;
 		};
 	};
 
@@ -28,12 +28,7 @@ namespace skillf {
 	/// Generates region audit spreader effect function.
 	Spread::Effect regionAuditEffect(const Regions::Ref& ref) {
 		return [&ref](Spread::Tile& tile) {
-			// tile statistics
-			ref->tiles++;
-			ref->income++;
-
-			// attach region to tile
-			tile.hex->region = ref;
+			tile.hex->join(ref);
 		};
 	};
 };

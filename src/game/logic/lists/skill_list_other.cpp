@@ -19,14 +19,12 @@ namespace SkillList {
 		.select = [](const SkillState&, const HexRef& tile, size_t idx) {
 			return Spread {
 				.hop = skillf::solidHop,
-				.pass = skillf::emptyPass,
 				.effect = skillf::selectTile(idx)
 			};
 		},
 		.radius = 2,
 		.action = [](const SkillState&, Map& map, const HexRef& prev, const HexRef& next) {
-			//map.moveTroop(prev, next);
-			return nullptr;
+			return map.moveTroop(prev, next);
 		},
 		.format = Skill::SingleAim,
 		.reselect = true

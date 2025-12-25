@@ -48,6 +48,11 @@ public:
 	/// @param ui_layer Game interface layer.
 	Game(ui::Layer* game_layer, ui::Layer* ui_layer);
 
+	/// Undoes last move.
+	void undoMove();
+	/// Redoes last move.
+	void redoMove();
+
 	/// Selects a tile at position.
 	/// 
 	/// @param pos Tile position.

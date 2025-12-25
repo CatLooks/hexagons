@@ -1,6 +1,16 @@
 #include "game/moves/move.hpp"
 #include "game/map.hpp"
 
+/// Returns tile to select after applying the move.
+std::optional<sf::Vector2i> Move::applyCursor() {
+	return {};
+};
+
+/// Returns tile to select after reverting the move.
+std::optional<sf::Vector2i> Move::revertCursor() {
+	return {};
+};
+
 /// Applies the move.
 void Move::apply(Map* map) {
 	// add cooldown

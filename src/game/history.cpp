@@ -17,26 +17,29 @@ void History::add(Move* move) {
 
 	// store and apply new move
 	_list.push_back(std::unique_ptr<Move>(move));
-	_cursor++;
-	move->apply(_map);
+	redo();
 };
 
 /// Undoes the last move.
-void History::undo() {
+std::optional<sf::Vector2i> History::undo() {
 	// ignore if first move
-	if (_cursor == 0) return;
+	if (_cursor == 0) return {};
 
 	// undo current move
-	_list[--_cursor].get()->revert(_map);
+	Move* move = _list[--_cursor].get();
+	move->revert(_map);
+	return move->revertCursor();
 };
 
 /// Redoes the last move.
-void History::redo() {
+std::optional<sf::Vector2i> History::redo() {
 	// ignore if last move
-	if (_cursor >= _list.size()) return;
+	if (_cursor >= _list.size()) return {};
 
 	// redo current move
-	_list[_cursor++].get()->apply(_map);
+	Move* move = _list[_cursor++].get();
+	move->apply(_map);
+	return move->applyCursor();
 };
 
 /// Returns amount of moves done & reverted. 

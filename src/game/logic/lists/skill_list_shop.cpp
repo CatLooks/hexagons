@@ -18,7 +18,7 @@ namespace SkillList {
 		.annotation = Skill::Aim,
 		.select = [](const SkillState&, const HexRef& tile, size_t idx) {
 			return Spread {
-				.hop = skillf::sameRegionHop(tile.hex->region),
+				.hop = skillf::sameRegionHop(tile.hex->region()),
 				.pass = skillf::emptyPass,
 				.effect = skillf::selectTile(idx),
 				.imm = true

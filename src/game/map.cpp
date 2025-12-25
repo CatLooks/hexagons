@@ -37,20 +37,8 @@ const Regions::Ref& Map::selectedRegion() const {
 	return _region;
 };
 
-/// Changes the team color of a hex.
-void Map::repaintHex(const HexRef& origin, const HexRef& tile) {
-	// store previous region
-	Regions::Ref prev = tile.hex->region;
-	if (prev == origin.hex->region) return;
-
-	// repaint the tile
-	if (tile.hex->region) tile.hex->region->removeTile();
-	{
-		tile.hex->team = origin.hex->team;
-		tile.hex->region = origin.hex->region;
-	};
-	if (tile.hex->region) tile.hex->region->addTile();
-
+/// Checks for region splits / joins.
+void Map::updateRegions(const HexRef& tile, const Regions::Ref& prev) {
 	/// ==== merge ==== ///
 
 	// merged regions list
@@ -64,19 +52,19 @@ void Map::repaintHex(const HexRef& origin, const HexRef& tile) {
 		if (!hex) continue;
 
 		// check for the same team but different region
-		if (hex->team == tile.hex->team && hex->region != tile.hex->region) {
+		if (hex->team == tile.hex->team && hex->region() != tile.hex->region()) {
 			// ignore if region has already been recorded
 			for (const auto& ap : merged)
-				if (hex->region == *ap.region)
+				if (hex->region() == *ap.region)
 					continue;
 
 			// store region access point
-			merged.push_back({ &hex->region, pos });
+			merged.push_back({ &hex->region(), pos });
 		};
 	};
 
 	// merge regions if needed
-	regions.merge(this, tile.hex->region, merged);
+	regions.merge(this, tile.hex->region(), merged);
 
 	/// ==== split ==== ///
 
@@ -92,7 +80,7 @@ void Map::repaintHex(const HexRef& origin, const HexRef& tile) {
 		if (!hex) continue;
 
 		// ignore if not overwritten region
-		if (hex->region != prev) continue;
+		if (hex->region() != prev) continue;
 
 		// ignore if region has been reached
 		bool found = false;
@@ -107,14 +95,14 @@ void Map::repaintHex(const HexRef& origin, const HexRef& tile) {
 		// mark all tiles in region
 		Spread spread = {
 			.hop = [&](const Spread::Tile& tile) {
-				return tile.hex->region == prev;
+				return tile.hex->region() == prev;
 			},
 			.imm = true
 		};
 		size_t idx = spread.apply(*this, pos);
 
 		// store region access point
-		splits.push_back({ &hex->region, pos });
+		splits.push_back({ &hex->region(), pos});
 		indices.push_back(idx);
 	};
 
@@ -123,27 +111,22 @@ void Map::repaintHex(const HexRef& origin, const HexRef& tile) {
 };
 
 /// Moves a troop to another tile.
-void Map::moveTroop(const HexRef& from, const HexRef& to) {
-	// remove entities at destination
-	removeEntity(to.hex);
+Move* Map::moveTroop(const HexRef& from, const HexRef& to) {
+	// ignore if no troop
+	if (!from.hex->troop) return nullptr;
 
-	// repaint destination
-	repaintHex(from, to);
-
-	// @todo cross region move check (for mines)
-
-	// move troop
-	to.hex->troop = std::move(from.hex->troop);
-	from.hex->troop = {};
+	// create move object
+	return new Moves::TroopMove(to.pos);
 };
+
 
 /// Removes any entities from the hex.
 void Map::removeEntity(Hex* hex) {
 	// remove troop
 	if (hex->troop) {
 		// update region income
-		if (hex->region)
-			hex->region->income += logic::troop_upkeep[hex->troop->type];
+		if (hex->region())
+			hex->region()->income += logic::troop_upkeep[hex->troop->type];
 
 		// delete troop
 		hex->troop = {};
@@ -152,8 +135,8 @@ void Map::removeEntity(Hex* hex) {
 	// remove building
 	if (hex->build) {
 		// update region income
-		if (hex->region)
-			hex->region->income += logic::build_upkeep[hex->build->type];
+		if (hex->region())
+			hex->region()->income += logic::build_upkeep[hex->build->type];
 
 		// delete building
 		hex->build = {};
@@ -162,8 +145,8 @@ void Map::removeEntity(Hex* hex) {
 	// remove plant
 	if (hex->plant) {
 		// update region income
-		if (hex->region)
-			hex->region->income += logic::plant_upkeep;
+		if (hex->region())
+			hex->region()->income += logic::plant_upkeep;
 
 		// delete plant
 		hex->plant = {};
@@ -180,8 +163,8 @@ void Map::setTroop(const Troop& troop) {
 		hex->troop = _troops.add(troop);
 
 		// update region income
-		if (hex->region)
-			hex->region->income -= logic::troop_upkeep[troop.type];
+		if (hex->region())
+			hex->region()->income -= logic::troop_upkeep[troop.type];
 	};
 };
 /// Adds a building to the map.
@@ -194,8 +177,8 @@ void Map::setBuild(const Build& build) {
 		hex->build = _builds.add(build);
 
 		// update region income
-		if (hex->region)
-			hex->region->income -= logic::build_upkeep[build.type];
+		if (hex->region())
+			hex->region()->income -= logic::build_upkeep[build.type];
 	};
 };
 /// Adds a plant to the map.
@@ -208,8 +191,8 @@ void Map::setPlant(const Plant& plant) {
 		hex->plant = _plants.add(plant);
 
 		// update region income
-		if (hex->region)
-			hex->region->income -= logic::plant_upkeep;
+		if (hex->region())
+			hex->region()->income -= logic::plant_upkeep;
 	};
 };
 
@@ -276,7 +259,7 @@ void Map::draw(ui::RenderBuffer& target, float t) const {
 		}
 		else {
 			tile->drawBase(target);
-			tile->drawSides(target, Draw::white(tile->hex->region == _region), sf::Color::Black);
+			tile->drawSides(target, Draw::white(tile->hex->region() == _region), sf::Color::Black);
 			if (_selection && tile->hex->selected != _select_idx)
 				tile->drawSides(target, Values::dimTint, Values::dimTint);
 		};
@@ -286,7 +269,7 @@ void Map::draw(ui::RenderBuffer& target, float t) const {
 	drawer.reset();
 	while (auto tile = drawer.next()) {
 		if (tile->hex->elevated()) continue;
-		tile->drawBorders(target, Draw::white(tile->hex->region == _region));
+		tile->drawBorders(target, Draw::white(tile->hex->region() == _region));
 	};
 
 	// draw tile contents

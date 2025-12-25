@@ -43,14 +43,12 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 		if (auto data = evt.get<ui::Event::KeyPress>()) {
 			if (data->key == sf::Keyboard::Key::Z) {
 				// undo a move
-				map.history.undo();
-				updateMenu();
+				undoMove();
 				return true;
 			};
 			if (data->key == sf::Keyboard::Key::X) {
 				// redo a move
-				map.history.redo();
-				updateMenu();
+				redoMove();
 				return true;
 			};
 		};
@@ -119,6 +117,30 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 	});
 };
 
+/// Undoes last move.
+void Game::undoMove() {
+	if (auto cursor = map.history.undo()) {
+		if (*cursor != _select) {
+			auto tile = map.atref(*cursor);
+			selectRegion(tile);
+			selectTile(tile.pos);
+		};
+	};
+	updateMenu();
+};
+
+/// Redoes last move.
+void Game::redoMove() {
+	if (auto cursor = map.history.redo()) {
+		if (*cursor != _select) {
+			auto tile = map.atref(*cursor);
+			selectRegion(tile);
+			selectTile(tile.pos);
+		};
+	};
+	updateMenu();
+};
+
 /// Selects a tile at position.
 void Game::selectTile(sf::Vector2i pos) {
 	// deselect previous tile
@@ -137,6 +159,7 @@ void Game::selectTile(sf::Vector2i pos) {
 	_select = pos;
 	_last = pos;
 };
+
 /// Deselects a tile.
 void Game::deselectTile() {
 	if (_select) {
@@ -155,10 +178,10 @@ void Game::deselectTile() {
 
 /// Selects a region attached to a tile.
 void Game::selectRegion(const HexRef& tile) {
-	if (tile.hex->region) {
-		map.selectRegion(tile.hex->region);
-		_bar->attachRegion(tile.hex->region);
-		state.region = &*tile.hex->region;
+	if (tile.hex->region()) {
+		map.selectRegion(tile.hex->region());
+		_bar->attachRegion(tile.hex->region());
+		state.region = &*tile.hex->region();
 		_last = tile.pos;
 	};
 };
@@ -224,7 +247,7 @@ void Game::click(sf::Vector2i pos) {
 				deselectTile();
 
 			// check if in the same region
-			else if (hex->region == region)
+			else if (hex->region() == region)
 				selectTile(pos);
 
 			// deselect tile
@@ -549,7 +572,7 @@ void Game::hexMenu(const Hex& hex) {
 	// plant ui
 	else if (hex.plant) plantMenu(*hex.plant);
 	// targeted region ui
-	else regionMenu(*hex.region, true);
+	else regionMenu(*hex.region(), true);
 };
 
 /// Closes any open menus.

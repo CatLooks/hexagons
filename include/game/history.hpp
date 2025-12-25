@@ -6,7 +6,7 @@
 #include "moves/troop_moves.hpp"
 #include "moves/build_moves.hpp"
 #include <memory>
-#include <span>
+#include <optional>
 
 /// History of reversible moves on a game map.
 class History {
@@ -37,11 +37,15 @@ public:
 	/// Undoes the last move.
 	///
 	/// Does nothing if no moves are left.
-	void undo();
+	/// 
+	/// @return New cursor position.
+	std::optional<sf::Vector2i> undo();
 	/// Redoes the last move.
 	///
 	/// Does nothing if no moves were undone.
-	void redo();
+	/// 
+	/// @return New cursor position.
+	std::optional<sf::Vector2i> redo();
 
 	/// Returns amount of moves done & reverted. 
 	std::pair<size_t, size_t> count() const;

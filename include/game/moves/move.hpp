@@ -4,6 +4,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <deque>
 #include <memory>
+#include <optional>
 #include "game/logic/skill_types.hpp"
 
 // map forward declaration
@@ -24,6 +25,12 @@ struct Move {
 	///
 	/// @param map Game map reference.
 	virtual void onRevert(Map* map) = 0;
+
+	/// Returns tile to select after applying the move.
+	virtual std::optional<sf::Vector2i> applyCursor();
+
+	/// Returns tile to select after reverting the move.
+	virtual std::optional<sf::Vector2i> revertCursor();
 
 	/// Applies the move.
 	///
