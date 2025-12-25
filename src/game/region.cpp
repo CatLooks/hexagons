@@ -2,16 +2,6 @@
 #include "game/map.hpp"
 #include "game/logic/skill_helper.hpp"
 
-/// Adds a tile to region.
-void Region::addTile() {
-	tiles++;
-	income++;
-};
-/// Removes a tile from region.
-void Region::removeTile() {
-	tiles--;
-	income--;
-};
 /// Updates money based on income.
 void Region::tick() {
 	money += income;
@@ -27,7 +17,7 @@ void Regions::enumerate(Map* map) {
 	// clear region pointers
 	for (int y = 0; y < map->size().y; y++)
 		for (int x = 0; x < map->size().x; x++)
-			map->ats({ x, y }).region = {};
+			map->ats({ x, y }).leave();
 
 	// enumerate region pointers
 	for (int y = 0; y < map->size().y; y++) {
@@ -36,7 +26,7 @@ void Regions::enumerate(Map* map) {
 
 			// ignore tile if already has a region
 			// or the tile does not need a region
-			if (hex.region || !hex.solid()) continue;
+			if (hex.region() || !hex.solid()) continue;
 
 			// create and spread new region
 			auto region = create({ .team = hex.team });
@@ -62,18 +52,18 @@ static Spread _region_overwrite(const Regions::Ref& prev, const Regions::Ref& ne
 	return Spread {
 		.hop = [&](const Spread::Tile& tile) {
 			// hop if same region
-			return tile.hex->region == prev;
+			return tile.hex->region() == prev;
 		},
 		.effect = [&](Spread::Tile& tile) {
 			// overwrite tile region
-			tile.hex->region = next;
+			tile.hex->join(next);
 		},
 		.imm = true
 	};
 };
 
 /// Merges regions into a singular region.
-void Regions::merge(Map* map, Ref& target, const std::vector<AccessPoint>& aps) {
+void Regions::merge(Map* map, const Ref& target, const std::vector<AccessPoint>& aps) {
 	// overwrite merged regions
 	for (const auto& ap : aps) {
 		const Ref& apr = *ap.region;

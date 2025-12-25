@@ -31,10 +31,6 @@ struct Region {
 	int tiles  = 0; /// Amount of tiles captured.
 	int farms  = 0; /// Amount of farms built.
 
-	/// Adds a tile to region.
-	void addTile();
-	/// Removes a tile from region.
-	void removeTile();
 	/// Updates money based on income.
 	void tick();
 };
@@ -50,13 +46,14 @@ public:
 
 	/// Region access point.
 	struct AccessPoint {
-		Ref* region      {}; /// Region reference.
-		sf::Vector2i pos {}; /// Access position.
+		const Ref* region {}; /// Region reference.
+		sf::Vector2i  pos {}; /// Access position.
 	};
 
 private:
 	RefPool<Region> _pool; /// Region pool.
 
+public:
 	/// Creates a new region.
 	///
 	/// @param region Initial region state.
@@ -64,7 +61,6 @@ private:
 	/// @return Region shared reference.
 	Ref create(const Region& region);
 
-public:
 	/// Enumerates all regions in a map.
 	///
 	/// @param map Map reference.
@@ -75,7 +71,7 @@ public:
 	/// @param map Map reference.
 	/// @param target Target region.
 	/// @param aps Merged region access points.
-	void merge(Map* map, Ref& target, const std::vector<AccessPoint>& aps);
+	void merge(Map* map, const Ref& target, const std::vector<AccessPoint>& aps);
 
 	/// Splits a separated region into proper regions.
 	///
