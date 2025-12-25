@@ -15,6 +15,13 @@ namespace ui {
 		_active = true;
 	};
 
+	/// Instantly ends the animation.
+	void Anim::end() {
+		onTick(prog(1.f));
+		if (_end) _end();
+		_active = false;
+	};
+
 	/// Ticks the animation.
 	void Anim::update(const sf::Time& time) {
 		// ignore if inactive

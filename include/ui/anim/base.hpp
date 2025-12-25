@@ -29,6 +29,8 @@ namespace ui {
 	public:
 		/// Restarts the animation.
 		void restart();
+		/// Instantly ends the animation.
+		void end();
 
 		/// Ticks the animation.
 		/// @param time Time elapsed since last frame.
