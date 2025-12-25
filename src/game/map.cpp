@@ -51,7 +51,7 @@ void Map::repaintHex(const HexRef& origin, const HexRef& tile) {
 	};
 	if (tile.hex->region) tile.hex->region->addTile();
 
-	/// ==== merge ====
+	/// ==== merge ==== ///
 
 	// merged regions list
 	std::vector<Regions::AccessPoint> merged;
@@ -78,7 +78,7 @@ void Map::repaintHex(const HexRef& origin, const HexRef& tile) {
 	// merge regions if needed
 	regions.merge(this, tile.hex->region, merged);
 
-	/// ==== split ====
+	/// ==== split ==== ///
 
 	// split regions list
 	std::vector<Regions::AccessPoint> splits;
@@ -214,12 +214,28 @@ void Map::setPlant(const Plant& plant) {
 };
 
 /// Applies an effect on a troop.
-void Map::effectTroop(const HexRef& tile, EffectType effect) {
+Move* Map::effectTroop(const HexRef& tile, EffectType effect) {
 	// ignore if no troop
-	if (!tile.hex->troop) return;
+	if (!tile.hex->troop) return nullptr;
 
-	// add effect to effect list
-	tile.hex->troop->addEffect(effect);
+	// create effect move
+	return new Moves::EntityEffect(
+		tile.pos, effect, tile.hex->troop->hasEffect(effect)
+	);
+};
+
+/// Executes a move.
+void Map::executeSkill(Move* move, sf::Vector2i pos, const Skill* skill) {
+	// ignore if move is not instantiated
+	if (!move) return;
+
+	// attach skill info to the move
+	move->skill_pos = pos;
+	move->skill_type = skill->type;
+	move->skill_cooldown = skill->cooldown;
+
+	// add move to history
+	history.add(move);
 };
 
 /// Returns backplane rectangle.

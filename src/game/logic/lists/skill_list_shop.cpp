@@ -6,11 +6,6 @@ namespace SkillList {
 		.type = Skills::Empty,
 		.annotation = Skill::None,
 		.action = [](const SkillState& state, Map& map, const HexRef& _, const HexRef& tile) {
-			Troop troop;
-			troop.pos = tile.pos;
-			troop.type = Values::troop_shop[state.troop];
-			troop.hp = troop.max_hp();
-			map.setTroop(troop);
 			return nullptr;
 		},
 		.format = Skill::Self,
@@ -31,11 +26,6 @@ namespace SkillList {
 		},
 		.radius = ~0ull,
 		.action = [](const SkillState& state, Map& map, const HexRef& _, const HexRef& tile) {
-			Troop troop;
-			troop.pos = tile.pos;
-			troop.type = Values::troop_shop[state.troop];
-			troop.hp = troop.max_hp();
-			map.setTroop(troop);
 			return nullptr;
 		},
 		.format = Skill::SingleAim,

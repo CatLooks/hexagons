@@ -38,6 +38,25 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 		_queue.clear();
 	});
 
+	// add game move control
+	game_layer->onEvent([=](const ui::Event& evt) {
+		if (auto data = evt.get<ui::Event::KeyPress>()) {
+			if (data->key == sf::Keyboard::Key::Z) {
+				// undo a move
+				map.history.undo();
+				updateMenu();
+				return true;
+			};
+			if (data->key == sf::Keyboard::Key::X) {
+				// redo a move
+				map.history.redo();
+				updateMenu();
+				return true;
+			};
+		};
+		return false;
+	});
+
 	// add tile selection handler
 	game_layer->onEvent([=](const ui::Event& evt) {
 		if (auto data = evt.get<ui::Event::MousePress>()) {
@@ -96,7 +115,7 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 	_panel->onEvent([=](const ui::Event& evt) {
 		if (evt.is<ui::Event::MousePress>())
 			deselectMenu();
-		return true;
+		return false;
 	});
 };
 
@@ -171,9 +190,10 @@ void Game::click(sf::Vector2i pos) {
 		// execute skill action
 		HexRef prev = map.atref(last());
 		HexRef next = { hex, pos };
-		if (skill->cooldown)
-			prev.hex->cooldown(skill_idx, skill->cooldown);
-		skill->action(state, map, prev, next);
+		map.executeSkill(
+			skill->action(state, map, prev, next),
+			prev.pos, skill
+		);
 
 		// cancel selection
 		bool reselect = skill->reselect;
@@ -331,26 +351,23 @@ static void _attach_action(
 			HexRef tile = game->map.atref(game->last());
 
 			// execute the skill
-			bool free_before = tile.hex->free();
 			{
-				if (game->skill->cooldown)
-					tile.hex->cooldown(skill_idx, game->skill->cooldown);
-				game->skill->action(game->state, game->map, tile, tile);
+				game->map.executeSkill(
+					game->skill->action(game->state, game->map, tile, tile),
+					tile.pos, game->skill
+				);
 				game->deselectMenu();
 			};
 			bool free_after = tile.hex->free();
 
-			// update game menu
-			if (free_before != free_after) {
-				// queue to next frame since we are still inside
-				// of a button event handler function
-				game->queueCall([=]() {
-					// deselect tile if entity has disappeared
-					if (free_after)
-						game->deselectTile();
-					game->updateMenu();
-				});
-			};
+			// queue to next frame since we are still inside
+			// of a button event handler function
+			game->queueCall([=]() {
+				// deselect tile if entity has disappeared
+				if (free_after)
+					game->deselectTile();
+				game->updateMenu();
+			});
 		},
 		gameui::Action::Select
 	);
@@ -368,7 +385,7 @@ static void _attach_action(
 static void _construct_menu(
 	Game* game,
 	gameui::Panel* panel,
-	const Values::SkillArray& data,
+	const logic::SkillArray& data,
 	sf::IntRect texture,
 	const char* name,
 	const Entity& entity,
@@ -438,7 +455,7 @@ static void _construct_menu(
 
 /// Constructs a region UI panel.
 void Game::regionMenu(const Region& region, bool targeted) {
-	_panel->construct(Values::SkillArray::L22);
+	_panel->construct(logic::SkillArray::L22);
 
 	// create region tile preview
 	{
@@ -496,7 +513,7 @@ void Game::regionMenu(const Region& region, bool targeted) {
 void Game::troopMenu(const Troop& troop) {
 	_construct_menu(
 		this, _panel,
-		Values::troop_skills[troop.type],
+		logic::troop_skills[troop.type],
 		Values::troop_textures[troop.type],
 		Values::troop_names[troop.type],
 		troop, true
@@ -506,7 +523,7 @@ void Game::troopMenu(const Troop& troop) {
 void Game::buildMenu(const Build& build) {
 	_construct_menu(
 		this, _panel,
-		Values::build_skills[build.type],
+		logic::build_skills[build.type],
 		Values::build_textures[build.type],
 		Values::build_names[build.type],
 		build, build.hp != build.max_hp()
@@ -516,7 +533,7 @@ void Game::buildMenu(const Build& build) {
 void Game::plantMenu(const Plant& plant) {
 	_construct_menu(
 		this, _panel,
-		Values::plant_skill,
+		logic::plant_skill,
 		Values::plant_textures[plant.type],
 		Values::plant_names[plant.type],
 		plant, false
@@ -537,7 +554,7 @@ void Game::hexMenu(const Hex& hex) {
 
 /// Closes any open menus.
 void Game::closeMenu() {
-	_panel->construct(Values::SkillArray::None);
+	_panel->construct(logic::SkillArray::None);
 	_panel->recalculate();
 };
 

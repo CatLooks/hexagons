@@ -6,7 +6,7 @@ namespace SkillList {
 		.type = Skills::Withdraw,
 		.annotation = Skill::None,
 		.action = [](const SkillState&, Map& map, const HexRef& tile, const HexRef& _) {
-			map.removeEntity(tile.hex);
+			//map.removeEntity(tile.hex);
 			return nullptr;
 		},
 		.format = Skill::Self
@@ -25,7 +25,7 @@ namespace SkillList {
 		},
 		.radius = 2,
 		.action = [](const SkillState&, Map& map, const HexRef& prev, const HexRef& next) {
-			map.moveTroop(prev, next);
+			//map.moveTroop(prev, next);
 			return nullptr;
 		},
 		.format = Skill::SingleAim,

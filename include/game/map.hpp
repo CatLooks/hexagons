@@ -104,7 +104,16 @@ public:
 	/// 
 	/// @param tile Troop tile.
 	/// @param effect Effect type.
-	void effectTroop(const HexRef& tile, EffectType effect);
+	/// 
+	/// @return Move object.
+	Move* effectTroop(const HexRef& tile, EffectType effect);
+
+	/// Executes a skill.
+	/// 
+	/// @param move Move object.
+	/// @param pos Skill origin position.
+	/// @param skill Skill description.
+	void executeSkill(Move* move, sf::Vector2i pos, const Skill* skill);
 
 public:
 	/// Returns backplane rectangle.

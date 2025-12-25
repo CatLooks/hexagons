@@ -11,7 +11,7 @@ namespace gameui {
 	private:
 		Action* _preview;                   /// Preview box.
 		std::vector<Action*> _boxes;        /// Action box list.
-		Values::SkillArray::Layout _layout; /// Current action layout.
+		logic::SkillArray::Layout _layout; /// Current action layout.
 
 	public:
 		/// Game panel height.
@@ -30,7 +30,7 @@ namespace gameui {
 		/// Reconstructs panel actions.
 		///
 		/// @param layout Layout type.
-		void construct(Values::SkillArray::Layout layout);
+		void construct(logic::SkillArray::Layout layout);
 
 		/// Updates action timers.
 		///

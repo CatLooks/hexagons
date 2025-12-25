@@ -29,7 +29,6 @@ namespace SkillList {
 		},
 		.radius = 1,
 		.action = [](const SkillState&, Map& map, const HexRef& prev, const HexRef& next) {
-			next.hex->troop->hp--;
 			return nullptr;
 		},
 		.format = Skill::SingleAim
