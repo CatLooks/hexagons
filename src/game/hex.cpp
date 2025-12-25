@@ -21,15 +21,40 @@ bool Hex::free() const {
 	return !troop && !build && !plant;
 };
 
-/// Extends entity cooldown on this hex.
-void Hex::cooldown(uint8_t idx, uint8_t cd) {
-	// get entity pointer
-	Entity* entity = nullptr;
-	if (troop) entity = &*troop;
-	else if (build) entity = &*build;
+/// Returns a reference to tile entity.
+Entity* Hex::entity() const {
+	if (troop) return &*troop;
+	if (build) return &*build;
+	if (plant) return &*plant;
+	return nullptr;
+};
 
-	// apply cooldown if entity found
-	if (entity) entity->timers[idx] += cd;
+/// Extends entity cooldown on this hex.
+void Hex::add_cooldown(Skills::Type skill, uint8_t cd) const {
+	// get entity
+	auto* e = entity();
+	if (!e) return;
+
+	// get skill index
+	int idx = e->skill_id(skill);
+	if (idx == -1) return;
+
+	// add cooldown
+	e->timers[idx] += cd;
+};
+
+/// Shortens entity cooldown on this hex.
+void Hex::sub_cooldown(Skills::Type skill, uint8_t cd) const {
+	// get entity
+	auto* e = entity();
+	if (!e) return;
+
+	// get skill index
+	int idx = e->skill_id(skill);
+	if (idx == -1) return;
+
+	// add cooldown
+	e->timers[idx] -= cd;
 };
 
 /// Constructs an empty reference.

@@ -45,11 +45,20 @@ struct Hex {
 	/// Checks if a tile does not contain any entities.
 	bool free() const;
 
-	/// Extends entity cooldown on this hex.
+	/// Returns a reference to tile entity or `null` if no entity is present.
+	Entity* entity() const;
+
+	/// Extends entity skill cooldown on this hex.
 	/// 
-	/// @param idx Skill index.
+	/// @param skill Skill type.
 	/// @param cd Cooldown time.
-	void cooldown(uint8_t idx, uint8_t cd);
+	void add_cooldown(Skills::Type skill, uint8_t cd) const;
+
+	/// Shortens entity skill cooldown on this hex.
+	/// 
+	/// @param skill Skill type.
+	/// @param cd Cooldown time.
+	void sub_cooldown(Skills::Type skill, uint8_t cd) const;
 };
 
 /// Hex reference.

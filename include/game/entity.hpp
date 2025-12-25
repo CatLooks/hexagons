@@ -4,6 +4,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <stdint.h>
 #include <vector>
+#include "logic/skill_types.hpp"
 
 /// Effect enumeration.
 enum class EffectType {
@@ -35,6 +36,11 @@ public:
 	/// Returns maximum entity hitpoints.
 	virtual int max_hp() const;
 
+	/// Returns index of an entity skill or `-1` if entity does not have the skill.
+	/// 
+	/// @param skill Skill type.
+	virtual int skill_id(Skills::Type skill) const;
+
 private:
 	/// Applied effect list.
 	Effects _effects;
@@ -44,6 +50,11 @@ public:
 	///
 	/// @param effect Effect type.
 	void addEffect(EffectType effect);
+
+	/// Removes an effect from the entity.
+	/// 
+	/// @param effect Effect type.
+	void removeEffect(EffectType effect);
 
 	/// Checks whether the entity has an effect applied.
 	///

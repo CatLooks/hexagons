@@ -17,4 +17,7 @@ struct Build : Entity {
 
 		Count   /// Building count.
 	} type = Castle;
+
+	/// Returns building skill index.
+	int skill_id(Skills::Type skill) const override;
 };

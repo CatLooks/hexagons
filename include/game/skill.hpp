@@ -4,34 +4,11 @@
 #include <variant>
 #include "spread.hpp"
 #include "region.hpp"
+#include "moves/move.hpp"
+#include "logic/skill_types.hpp"
 
 /// Skill enumeration container.
 namespace Skills {
-	/// Skill enumeration.
-	enum Type {
-		Empty = 0,    /// Empty skill.
-
-		Withdraw,     /// Withdraw.
-		Move,         /// Move.
-
-		AttackLumber, /// Lumberjack attack.
-		AttackSpear,  /// Spearman attack.
-		AttackArcher, /// Archer attack.
-		AttackBaron,  /// Baron attack.
-		AttackKnight, /// Knight attack.
-
-		Harvest,      /// (Farmer) Fruit harvest.
-		TreeCut,      /// (Lumberjack) Plant cut down.
-		Shield,       /// (Spearman) Spearman shield.
-		RangeBoost,   /// (Archer) Range boost.
-		DefenseBoost, /// (Baron) Defense boost.
-		OffenseBoost, /// (Knight) Attack boost.
-
-		Heal,         /// (Castle) Heal troops.
-		Stun,         /// (Beacon) Stun troops.
-		Count
-	};
-
 	/// Skill used resource type.
 	enum Resource {
 		None,  /// Free skill.
@@ -115,12 +92,14 @@ struct Skill {
 	/// @param map Map reference.
 	/// @param prev Action origin.
 	/// @param next Action destination.
-	using Action = std::function<void(const SkillState& state, Map& map, const HexRef& prev, const HexRef& next)>;
+	/// 
+	/// @return Action as a reversible move object (no action if `null`).
+	using Action = std::function<Move*(const SkillState& state, Map& map, const HexRef& prev, const HexRef& next)>;
 
 	/// Skill action.
 	///
 	/// By default, does nothing.
-	Action action = [](const SkillState&, Map&, const HexRef&, const HexRef&) {};
+	Action action = [](const SkillState&, Map&, const HexRef&, const HexRef&) { return nullptr; };
 
 	/// Skill format type.
 	enum Format {
