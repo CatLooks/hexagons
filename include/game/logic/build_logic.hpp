@@ -1,6 +1,7 @@
 #pragma once
 
 // include dependencies
+#include "skill_array.hpp"
 #include "game/build.hpp"
 #include "game/troop.hpp"
 
@@ -20,4 +21,7 @@ namespace logic {
 	/// Weakest troop that can damage the building.
 	/// @param id Building type.
 	extern const Troop::Type build_level[Build::Count];
+
+	/// Building skills.
+	extern const SkillArray build_skills[Build::Count];
 };

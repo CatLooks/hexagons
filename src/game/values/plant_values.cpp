@@ -22,7 +22,4 @@ namespace Values {
 		"@!plant.pine",
 		"@!plant.grave",
 	};
-
-	// plant skill
-	const SkillArray plant_skill = { SkillArray::L00, {} };
 };

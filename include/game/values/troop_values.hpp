@@ -1,5 +1,5 @@
 #pragma once
-#include "skill_values.hpp"
+#include "game/values/shared.hpp"
 #include "game/troop.hpp"
 
 namespace Values {
@@ -13,7 +13,4 @@ namespace Values {
 
 	/// Troops available in the region shoop.
 	extern const std::vector<Troop::Type> troop_shop;
-
-	/// Troop skills.
-	extern const SkillArray troop_skills[Troop::Count];
 };

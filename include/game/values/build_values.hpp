@@ -1,5 +1,5 @@
 #pragma once
-#include "skill_values.hpp"
+#include "game/values/shared.hpp"
 #include "game/build.hpp"
 
 namespace Values {
@@ -10,9 +10,6 @@ namespace Values {
 	/// Localization requests for buildings.
 	/// @param id Building type.
 	extern const char* build_names[Build::Count];
-
-	/// Building skills.
-	extern const SkillArray build_skills[Build::Count];
 
 	/// Buildings available in the region shop.
 	extern const std::vector<Build::Type> build_shop;

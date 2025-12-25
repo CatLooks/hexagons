@@ -1,5 +1,5 @@
 #pragma once
-#include "skill_values.hpp"
+#include "game/values/shared.hpp"
 #include "game/plant.hpp"
 
 namespace Values {
@@ -10,8 +10,4 @@ namespace Values {
 	/// Localization requests for plants.
 	/// @param id Plant type.
 	extern const char* plant_names[Plant::Count];
-
-	/// Plant skill.
-	/// Applied for every plant.
-	extern const SkillArray plant_skill;
 };

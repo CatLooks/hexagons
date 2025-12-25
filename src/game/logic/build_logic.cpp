@@ -1,4 +1,5 @@
 #include "game/logic/build_logic.hpp"
+#include "game/logic/skill_list.hpp"
 
 namespace logic {
 	/// Building buying cost.
@@ -14,5 +15,29 @@ namespace logic {
 	const Troop::Type build_level[Build::Count] = {
 		Troop::Spearman, Troop::Lumberjack, Troop::Spearman,
 		Troop::Archer, Troop::Baron, Troop::Knight
+	};
+
+	// skill array
+	const SkillArray build_skills[Build::Count] = {
+		/* castle */ { SkillArray::L10, {
+			&SkillList::heal
+		} },
+		/* farm   */ { SkillArray::L01, {
+			&SkillList::withdraw
+		} },
+		/* mine   */ { SkillArray::L01, {
+			&SkillList::withdraw
+		} },
+		/* tower  */ { SkillArray::L01, {
+			&SkillList::withdraw
+		} },
+		/* beacon */ { SkillArray::L11, {
+			&SkillList::stun,
+			&SkillList::withdraw
+		} },
+		/* fort   */ { SkillArray::L11, {
+			&SkillList::stun,
+			&SkillList::withdraw
+		} }
 	};
 };

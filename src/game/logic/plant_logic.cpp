@@ -6,4 +6,7 @@ namespace logic {
 
 	/// Plant upkeep cost.
 	const int plant_upkeep = 1;
+
+	// plant skill
+	const SkillArray plant_skill = { SkillArray::L00, {} };
 };

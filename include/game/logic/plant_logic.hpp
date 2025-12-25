@@ -1,6 +1,7 @@
 #pragma once
 
 // include dependencies
+#include "skill_array.hpp"
 #include "game/plant.hpp"
 
 namespace logic {
@@ -10,4 +11,8 @@ namespace logic {
 
 	/// Plant upkeep cost.
 	extern const int plant_upkeep;
+
+	/// Plant skill.
+	/// Applied for every plant.
+	extern const SkillArray plant_skill;
 };

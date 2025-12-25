@@ -1,6 +1,7 @@
 #pragma once
 
 // include dependencies
+#include "skill_array.hpp"
 #include "game/troop.hpp"
 
 namespace logic {
@@ -34,4 +35,7 @@ namespace logic {
 	///
 	/// @param troop Troop object.
 	int troop_rng(const Troop& troop);
+
+	/// Troop skills.
+	extern const SkillArray troop_skills[Troop::Count];
 };

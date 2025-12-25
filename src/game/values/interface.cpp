@@ -1,6 +1,11 @@
 #include "game/values/interface.hpp"
 
 namespace Values {
+	/// Move undo button icon.
+	const sf::IntRect undo_icon = coords(7, 2);
+	/// Move redo button icon.
+	const sf::IntRect redo_icon = coords(8, 2);
+
 	/// Troop buying action texture.
 	const sf::IntRect buy_build = coords(6, 3);
 	/// Building buying action texture.

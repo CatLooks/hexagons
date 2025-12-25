@@ -17,7 +17,7 @@ namespace SkillList {
 		.resource = Skills::Peach,
 		.cost = 10,
 		.action = [](const SkillState&, Map& map, const HexRef& tile, const HexRef& _) {
-			map.effectTroop(tile, EffectType::OffenseBoost);
+			return map.effectTroop(tile, EffectType::OffenseBoost);
 		},
 		.format = Skill::Self
 	};

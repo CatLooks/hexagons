@@ -11,6 +11,7 @@ namespace SkillList {
 			troop.type = Values::troop_shop[state.troop];
 			troop.hp = troop.max_hp();
 			map.setTroop(troop);
+			return nullptr;
 		},
 		.format = Skill::Self,
 		.cooldown = 0
@@ -35,6 +36,7 @@ namespace SkillList {
 			troop.type = Values::troop_shop[state.troop];
 			troop.hp = troop.max_hp();
 			map.setTroop(troop);
+			return nullptr;
 		},
 		.format = Skill::SingleAim,
 		.cooldown = 0

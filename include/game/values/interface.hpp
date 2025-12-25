@@ -5,6 +5,11 @@
 #include "game/troop.hpp"
 
 namespace Values {
+	/// Move undo button icon.
+	extern const sf::IntRect undo_icon;
+	/// Move redo button icon.
+	extern const sf::IntRect redo_icon;
+
 	/// Troop buying action texture.
 	extern const sf::IntRect buy_build;
 	/// Building buying action texture.
