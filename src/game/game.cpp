@@ -14,7 +14,7 @@ void Game::queueCall(Delegate<void()>::Action call) {
 /// Constructs a game object.
 Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 	_layer(game_layer), _camera(game_layer, &map.camera, 17.f / 16),
-	_panel(new gameui::Panel()), _bar(new gameui::Bar())
+	_panel(new gameui::Panel(map.history)), _bar(new gameui::Bar())
 {
 	// register interface elements
 	ui_layer->add(_panel);
@@ -33,13 +33,13 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 	};
 
 	// add queued call handler
-	game_layer->onRecalculate([=](const sf::Time&) {
+	ui_layer->onRecalculate([=](const sf::Time&) {
 		_queue.invoke();
 		_queue.clear();
 	});
 
 	// add game move control
-	game_layer->onEvent([=](const ui::Event& evt) {
+	ui_layer->onEvent([=](const ui::Event& evt) {
 		if (auto data = evt.get<ui::Event::KeyPress>()) {
 			if (data->key == sf::Keyboard::Key::Z) {
 				// undo a move
@@ -54,6 +54,12 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 		};
 		return false;
 	});
+
+	// add move controls to buttons
+	_panel->selector()->attach(
+		[=]() { undoMove(); },
+		[=]() { redoMove(); }
+	);
 
 	// add tile selection handler
 	game_layer->onEvent([=](const ui::Event& evt) {
@@ -120,11 +126,12 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 /// Undoes last move.
 void Game::undoMove() {
 	if (auto cursor = map.history.undo()) {
-		if (*cursor != _select) {
-			auto tile = map.atref(*cursor);
-			selectRegion(tile);
+		auto tile = map.atref(*cursor);
+		selectRegion(tile);
+
+		// update cursor
+		if (!_select || *cursor != _select)
 			selectTile(tile.pos);
-		};
 	};
 	updateMenu();
 };
@@ -132,11 +139,12 @@ void Game::undoMove() {
 /// Redoes last move.
 void Game::redoMove() {
 	if (auto cursor = map.history.redo()) {
-		if (*cursor != _select) {
-			auto tile = map.atref(*cursor);
-			selectRegion(tile);
+		auto tile = map.atref(*cursor);
+		selectRegion(tile);
+
+		// update cursor
+		if (!_select || *cursor != _select)
 			selectTile(tile.pos);
-		};
 	};
 	updateMenu();
 };

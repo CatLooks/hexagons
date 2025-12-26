@@ -29,7 +29,7 @@ namespace gameui {
 	};
 
 	/// Constructs the game panel.
-	Panel::Panel(): ui::Panel(texture), _layout(logic::SkillArray::None) {
+	Panel::Panel(const History& history): ui::Panel(texture), _layout(logic::SkillArray::None) {
 		// set panel bounds
 		bounds = { 0px, 1ps + Action::side, 1ps, height };
 		event_scissor = false;
@@ -44,6 +44,15 @@ namespace gameui {
 			_preview->deactivate();
 		};
 		adds(_preview);
+
+		// create move selector
+		_select = new Selector();
+		adds(_select);
+
+		// add move selector update
+		onRecalculate([this, &history](const sf::Time&) {
+			_select->update(history.count());
+		});
 
 		// absorb all events
 		onEvent([=](const ui::Event& evt) {
@@ -127,5 +136,10 @@ namespace gameui {
 	/// Returns a reference to action panels.
 	const std::vector<Action*>& Panel::actions() const {
 		return _boxes;
+	};
+
+	/// Returns move selector container element.
+	Selector* Panel::selector() const {
+		return _select;
 	};
 };
