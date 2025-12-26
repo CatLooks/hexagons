@@ -9,14 +9,15 @@ namespace Moves {
 	struct EntityEffect : Move {
 		sf::Vector2i  pos; /// Entity position.
 		EffectType effect; /// Applied effect.
-		bool       before; /// Whether the entity had the effect before.
+		int         peach; /// Effect cost (in peaches).
+		bool     a_before; /// Whether the entity had the effect before.
 
 		/// Constructs entity effect move.
 		/// 
 		/// @param pos Entity position.
 		/// @param effect Applied effect.
-		/// @param before Whether the entity had the effect before.
-		EntityEffect(sf::Vector2i pos, EffectType effect, bool before);
+		/// @param peach Effect cost.
+		EntityEffect(sf::Vector2i pos, EffectType effect, int peach);
 
 		/// Applies the move.
 		void onApply(Map* map) override;

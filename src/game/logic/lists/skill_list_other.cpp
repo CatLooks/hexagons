@@ -6,8 +6,8 @@ namespace SkillList {
 		.type = Skills::Withdraw,
 		.annotation = Skill::None,
 		.action = [](const SkillState&, Map& map, const HexRef& tile, const HexRef& _) {
-			//map.removeEntity(tile.hex);
-			return nullptr;
+			// create withdraw move
+			return new Moves::EntityWithdraw(tile.pos);
 		},
 		.format = Skill::Self
 	};
@@ -23,8 +23,12 @@ namespace SkillList {
 			};
 		},
 		.radius = 2,
-		.action = [](const SkillState&, Map& map, const HexRef& prev, const HexRef& next) {
-			return map.moveTroop(prev, next);
+		.action = [](const SkillState&, Map& map, const HexRef& prev, const HexRef& next) -> Move* {
+			// ignore if no troop
+			if (!prev.hex->troop) return nullptr;
+
+			// create movement move
+			return new Moves::TroopMove(next.pos);
 		},
 		.format = Skill::SingleAim,
 		.reselect = true

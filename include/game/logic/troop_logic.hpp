@@ -38,4 +38,7 @@ namespace logic {
 
 	/// Troop skills.
 	extern const SkillArray troop_skills[Troop::Count];
+
+	/// Cost to execute troop's special skill (in peaches).
+	extern const int troop_effect_cost[Troop::Count];
 };

@@ -300,6 +300,9 @@
     <ClCompile Include="src\ui\button.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\moves\entity_withdraw.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -568,6 +571,9 @@
     </ClInclude>
     <ClInclude Include="include\game\moves.hpp">
       <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\entity_withdraw.hpp">
+      <Filter>Header Files\game\moves</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -71,20 +71,6 @@ public:
 	const Regions::Ref& selectedRegion() const;
 
 public:
-	/// Checks for region splits / joins.
-	/// 
-	/// @param tile Checked tile.
-	/// @param prev Previous tile region.
-	void updateRegions(const HexRef& tile, const Regions::Ref& prev);
-
-	/// Moves a troop to another tile.
-	///
-	/// @param from Source tile.
-	/// @param to Destination tile.
-	/// 
-	/// @return Move object.
-	Move* moveTroop(const HexRef& from, const HexRef& to);
-
 	/// Removes any entities from the hex.
 	///
 	/// @param hex Hex reference.
@@ -102,13 +88,12 @@ public:
 	/// @param plant Plant object.
 	void setPlant(const Plant& plant);
 
-	/// Applies an effect on a troop.
+public:
+	/// Checks for region splits / joins.
 	/// 
-	/// @param tile Troop tile.
-	/// @param effect Effect type.
-	/// 
-	/// @return Move object.
-	Move* effectTroop(const HexRef& tile, EffectType effect);
+	/// @param tile Checked tile.
+	/// @param prev Previous tile region.
+	void updateRegions(const HexRef& tile, const Regions::Ref& prev);
 
 	/// Executes a skill.
 	/// 

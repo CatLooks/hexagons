@@ -4,7 +4,7 @@
 namespace Moves {
 	/// Constructs troop movement move.
 	TroopMove::TroopMove(sf::Vector2i dest)
-		: dest(dest), state{ Region::Unclaimed, {} } {};
+		: dest(dest), a_state{ Region::Unclaimed, {} } {};
 
 	/// Applies the move.
 	void TroopMove::onApply(Map* map) {
@@ -14,10 +14,10 @@ namespace Moves {
 		if (!(from.hex && to.hex)) return;
 
 		// store destination state
-		state.team = to.hex->team;
-		if (to.hex->troop) state.entity = *to.hex->troop;
-		else if (to.hex->build) state.entity = *to.hex->build;
-		else if (to.hex->plant) state.entity = *to.hex->plant;
+		a_state.team = to.hex->team;
+		if (to.hex->troop) a_state.entity = *to.hex->troop;
+		else if (to.hex->build) a_state.entity = *to.hex->build;
+		else if (to.hex->plant) a_state.entity = *to.hex->plant;
 
 		// remove entities at destination
 		map->removeEntity(to.hex);
@@ -50,7 +50,7 @@ namespace Moves {
 
 		// restore previous region
 		Regions::Ref prev = from.hex->region();
-		if (from.hex->team != state.team) {
+		if (from.hex->team != a_state.team) {
 			// check for the same team region nearby
 			Regions::Ref reg;
 			for (int i = 0; i < 6; i++) {
@@ -59,26 +59,26 @@ namespace Moves {
 				if (!hex) return;
 
 				// copy its region if has the same team
-				if (hex->team == state.team) {
+				if (hex->team == a_state.team) {
 					reg = hex->region();
 					break;
 				};
 			};
 
 			// repaint tile region back
-			from.hex->team = state.team;
-			from.hex->join(reg ? reg : map->regions.create({ .team = state.team }));
+			from.hex->team = a_state.team;
+			from.hex->join(reg ? reg : map->regions.create({ .team = a_state.team }));
 
 			// update regions
 			map->updateRegions(from, prev);
 		};
 
 		// place back previous entity
-		if (auto* troop = std::get_if<Troop>(&state.entity))
+		if (auto* troop = std::get_if<Troop>(&a_state.entity))
 			map->setTroop(*troop);
-		if (auto* build = std::get_if<Build>(&state.entity))
+		if (auto* build = std::get_if<Build>(&a_state.entity))
 			map->setBuild(*build);
-		if (auto* plant = std::get_if<Plant>(&state.entity))
+		if (auto* plant = std::get_if<Plant>(&a_state.entity))
 			map->setPlant(*plant);
 	};
 

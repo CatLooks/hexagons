@@ -5,12 +5,19 @@
 #include <deque>
 #include <memory>
 #include <optional>
+#include <variant>
+
 #include "game/logic/skill_types.hpp"
+#include "game/troop.hpp"
+#include "game/build.hpp"
+#include "game/plant.hpp"
 
 // map forward declaration
 class Map;
 
 /// Abstract reversible game move.
+///
+/// Fields prefixed with `a_` are set with `apply()` method.
 struct Move {
 	sf::Vector2i  skill_pos {}; /// Skill origin position.
 	Skills::Type skill_type {}; /// Skill type.
@@ -44,4 +51,7 @@ struct Move {
 };
 
 /// Specific moves namespace.
-namespace Moves {};
+namespace Moves {
+	/// Entity state description type.
+	using EntState = std::variant<std::monostate, Troop, Build, Plant>;
+};

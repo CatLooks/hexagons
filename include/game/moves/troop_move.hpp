@@ -20,8 +20,8 @@ namespace Moves {
 			/// Previous hex team.
 			Region::Team team;
 			/// Previous hex entity.
-			std::variant<std::monostate, Troop, Build, Plant> entity;
-		} state;
+			EntState entity;
+		} a_state;
 
 		/// Constructs troop movement move.
 		/// 

@@ -67,4 +67,9 @@ namespace logic {
 			&SkillList::withdraw
 		} },
 	};
+
+	/// Cost to execute troop's special skill (in peaches).
+	const int troop_effect_cost[Troop::Count] = {
+		0, 0, 2, 8, 10, 12
+	};
 };

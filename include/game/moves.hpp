@@ -3,4 +3,5 @@
 // include all moves
 #include "moves/move.hpp"
 #include "moves/entity_effect.hpp"
+#include "moves/entity_withdraw.hpp"
 #include "moves/troop_move.hpp"

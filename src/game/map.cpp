@@ -110,16 +110,6 @@ void Map::updateRegions(const HexRef& tile, const Regions::Ref& prev) {
 	regions.split(this, splits);
 };
 
-/// Moves a troop to another tile.
-Move* Map::moveTroop(const HexRef& from, const HexRef& to) {
-	// ignore if no troop
-	if (!from.hex->troop) return nullptr;
-
-	// create move object
-	return new Moves::TroopMove(to.pos);
-};
-
-
 /// Removes any entities from the hex.
 void Map::removeEntity(Hex* hex) {
 	// remove troop
@@ -194,17 +184,6 @@ void Map::setPlant(const Plant& plant) {
 		if (hex->region())
 			hex->region()->income -= logic::plant_upkeep;
 	};
-};
-
-/// Applies an effect on a troop.
-Move* Map::effectTroop(const HexRef& tile, EffectType effect) {
-	// ignore if no troop
-	if (!tile.hex->troop) return nullptr;
-
-	// create effect move
-	return new Moves::EntityEffect(
-		tile.pos, effect, tile.hex->troop->hasEffect(effect)
-	);
 };
 
 /// Executes a move.
