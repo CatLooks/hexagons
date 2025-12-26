@@ -178,7 +178,7 @@ namespace gameui {
 	};
 	/// Shrinks the button.
 	ui::Anim* Action::emitShrink() {
-		return ui::AnimVector::to(&size(), base, sf::seconds(0.1f));
+		return new ui::AnimVector(&size(), base * 1.125f, base, sf::seconds(0.1f));
 	};
 
 	/// Shaker function interpolation.

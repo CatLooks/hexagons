@@ -17,6 +17,8 @@ namespace ui {
 		sf::Color dim = sf::Color(0, 0, 0, 128);
 		/// Errored button overlay color.
 		sf::Color red = sf::Color(255, 32, 64);
+		/// Button expansion coefficient.
+		float exp_coef = 1.125f;
 
 	protected:
 		Solid* _overlay {}; /// Button overlay.
@@ -34,13 +36,9 @@ namespace ui {
 		Delegate<void()> _call;
 
 		/// Emits a button expansion animation.
-		///
-		/// @param size Expanded size.
-		Anim* emitExpand(const DimVector& size);
+		Anim* emitExpand();
 		/// Emits a button expansion animation.
-		///
-		/// @param size Shrinked size.
-		Anim* emitShrink(const DimVector& size);
+		Anim* emitShrink();
 
 		/// Starts an error animation.
 		void startError();

@@ -3,13 +3,13 @@
 
 namespace ui {
 	/// Emits a button expansion animation.
-	Anim* Button::emitExpand(const DimVector& size) {
-		return AnimVector::to(&this->size(), size, sf::seconds(0.06f));
+	Anim* Button::emitExpand() {
+		return AnimVector::to(&this->size(), _size * exp_coef, sf::seconds(0.06f));
 	};
 
 	/// Emits a button expansion animation.
-	Anim* Button::emitShrink(const DimVector& size) {
-		return AnimVector::to(&this->size(), size, sf::seconds(0.1f));
+	Anim* Button::emitShrink() {
+		return new AnimVector(&this->size(), _size * exp_coef, _size, sf::seconds(0.1f));
 	};
 
 	/// Shaker function interpolation.
@@ -163,7 +163,7 @@ namespace ui {
 			_call.invoke();
 
 			// create button pulse animation
-			push(chain(emitExpand(_size * 1.125f), emitShrink(_size)));
+			push(chain(emitExpand(), emitShrink()));
 		}
 		else {
 			// create error animation
