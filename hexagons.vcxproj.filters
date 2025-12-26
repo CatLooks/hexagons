@@ -291,6 +291,18 @@
     <ClCompile Include="src\game\logic\lists\skill_list_shop.cpp">
       <Filter>Source Files\game\logic\lists</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\moves\entity_moves.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\move.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\ui\move_selector.cpp">
+      <Filter>Source Files\game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\button.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -544,6 +556,21 @@
     </ClInclude>
     <ClInclude Include="include\game\moves\move.hpp">
       <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\entity_moves.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\logic\skill_array.hpp">
+      <Filter>Header Files\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\logic\skill_types.hpp">
+      <Filter>Header Files\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\ui\move_selector.hpp">
+      <Filter>Header Files\game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\button.hpp">
+      <Filter>Header Files\ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

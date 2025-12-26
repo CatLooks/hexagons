@@ -52,6 +52,8 @@
     <ClCompile Include="src\game\logic\troop_logic.cpp" />
     <ClCompile Include="src\game\map.cpp" />
     <ClCompile Include="src\game\moves\build_moves.cpp" />
+    <ClCompile Include="src\game\moves\entity_moves.cpp" />
+    <ClCompile Include="src\game\moves\move.cpp" />
     <ClCompile Include="src\game\moves\troop_moves.cpp" />
     <ClCompile Include="src\game\plant.cpp" />
     <ClCompile Include="src\game\region.cpp" />
@@ -61,6 +63,7 @@
     <ClCompile Include="src\game\ui\action_button.cpp" />
     <ClCompile Include="src\game\ui\game_panel.cpp" />
     <ClCompile Include="src\game\ui\hex_preview.cpp" />
+    <ClCompile Include="src\game\ui\move_selector.cpp" />
     <ClCompile Include="src\game\ui\resource_bar.cpp" />
     <ClCompile Include="src\game\values\build_values.cpp" />
     <ClCompile Include="src\game\values\entity_values.cpp" />
@@ -81,6 +84,7 @@
     <ClCompile Include="src\ui\anim\setter.cpp" />
     <ClCompile Include="src\ui\anim\timer.cpp" />
     <ClCompile Include="src\ui\buffer.cpp" />
+    <ClCompile Include="src\ui\button.cpp" />
     <ClCompile Include="src\ui\camera.cpp" />
     <ClCompile Include="src\ui\drag.cpp" />
     <ClCompile Include="src\ui\element.cpp" />
@@ -130,11 +134,14 @@
     <ClInclude Include="include\game\history.hpp" />
     <ClInclude Include="include\game\logic\build_logic.hpp" />
     <ClInclude Include="include\game\logic\plant_logic.hpp" />
+    <ClInclude Include="include\game\logic\skill_array.hpp" />
     <ClInclude Include="include\game\logic\skill_helper.hpp" />
     <ClInclude Include="include\game\logic\skill_list.hpp" />
+    <ClInclude Include="include\game\logic\skill_types.hpp" />
     <ClInclude Include="include\game\logic\troop_logic.hpp" />
     <ClInclude Include="include\game\map.hpp" />
     <ClInclude Include="include\game\moves\build_moves.hpp" />
+    <ClInclude Include="include\game\moves\entity_moves.hpp" />
     <ClInclude Include="include\game\moves\move.hpp" />
     <ClInclude Include="include\game\moves\troop_moves.hpp" />
     <ClInclude Include="include\game\plant.hpp" />
@@ -145,6 +152,7 @@
     <ClInclude Include="include\game\ui\action_button.hpp" />
     <ClInclude Include="include\game\ui\game_panel.hpp" />
     <ClInclude Include="include\game\ui\hex_preview.hpp" />
+    <ClInclude Include="include\game\ui\move_selector.hpp" />
     <ClInclude Include="include\game\ui\resource_bar.hpp" />
     <ClInclude Include="include\game\values\build_values.hpp" />
     <ClInclude Include="include\game\values\entity_values.hpp" />
@@ -168,6 +176,7 @@
     <ClInclude Include="include\ui\anim\setter.hpp" />
     <ClInclude Include="include\ui\anim\timer.hpp" />
     <ClInclude Include="include\ui\buffer.hpp" />
+    <ClInclude Include="include\ui\button.hpp" />
     <ClInclude Include="include\ui\camera.hpp" />
     <ClInclude Include="include\ui\drag.hpp" />
     <ClInclude Include="include\ui\element.hpp" />
