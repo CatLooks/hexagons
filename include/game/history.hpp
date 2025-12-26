@@ -1,10 +1,7 @@
 #pragma once
 
 // include dependencies
-#include "moves/move.hpp"
-#include "moves/entity_moves.hpp"
-#include "moves/troop_moves.hpp"
-#include "moves/build_moves.hpp"
+#include "moves.hpp"
 #include <memory>
 #include <optional>
 

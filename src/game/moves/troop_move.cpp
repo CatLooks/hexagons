@@ -1,4 +1,4 @@
-#include "game/moves/troop_moves.hpp"
+#include "game/moves/troop_move.hpp"
 #include "game/map.hpp"
 
 namespace Moves {

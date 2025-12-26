@@ -273,10 +273,7 @@
     <ClCompile Include="src\game\history.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\moves\build_moves.cpp">
-      <Filter>Source Files\game\moves</Filter>
-    </ClCompile>
-    <ClCompile Include="src\game\moves\troop_moves.cpp">
+    <ClCompile Include="src\game\moves\troop_move.cpp">
       <Filter>Source Files\game\moves</Filter>
     </ClCompile>
     <ClCompile Include="src\game\logic\lists\skill_list_attack.cpp">
@@ -291,7 +288,7 @@
     <ClCompile Include="src\game\logic\lists\skill_list_shop.cpp">
       <Filter>Source Files\game\logic\lists</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\moves\entity_moves.cpp">
+    <ClCompile Include="src\game\moves\entity_effect.cpp">
       <Filter>Source Files\game\moves</Filter>
     </ClCompile>
     <ClCompile Include="src\game\moves\move.cpp">
@@ -545,10 +542,7 @@
     <ClInclude Include="include\ui\anim\setter.hpp">
       <Filter>Header Files\anim</Filter>
     </ClInclude>
-    <ClInclude Include="include\game\moves\build_moves.hpp">
-      <Filter>Header Files\game\moves</Filter>
-    </ClInclude>
-    <ClInclude Include="include\game\moves\troop_moves.hpp">
+    <ClInclude Include="include\game\moves\troop_move.hpp">
       <Filter>Header Files\game\moves</Filter>
     </ClInclude>
     <ClInclude Include="include\game\history.hpp">
@@ -557,7 +551,7 @@
     <ClInclude Include="include\game\moves\move.hpp">
       <Filter>Header Files\game\moves</Filter>
     </ClInclude>
-    <ClInclude Include="include\game\moves\entity_moves.hpp">
+    <ClInclude Include="include\game\moves\entity_effect.hpp">
       <Filter>Header Files\game\moves</Filter>
     </ClInclude>
     <ClInclude Include="include\game\logic\skill_array.hpp">
@@ -571,6 +565,9 @@
     </ClInclude>
     <ClInclude Include="include\ui\button.hpp">
       <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves.hpp">
+      <Filter>Header Files\game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

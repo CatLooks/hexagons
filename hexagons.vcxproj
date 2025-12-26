@@ -51,10 +51,9 @@
     <ClCompile Include="src\game\logic\skill_helper.cpp" />
     <ClCompile Include="src\game\logic\troop_logic.cpp" />
     <ClCompile Include="src\game\map.cpp" />
-    <ClCompile Include="src\game\moves\build_moves.cpp" />
-    <ClCompile Include="src\game\moves\entity_moves.cpp" />
+    <ClCompile Include="src\game\moves\entity_effect.cpp" />
     <ClCompile Include="src\game\moves\move.cpp" />
-    <ClCompile Include="src\game\moves\troop_moves.cpp" />
+    <ClCompile Include="src\game\moves\troop_move.cpp" />
     <ClCompile Include="src\game\plant.cpp" />
     <ClCompile Include="src\game\region.cpp" />
     <ClCompile Include="src\game\skill.cpp" />
@@ -140,10 +139,10 @@
     <ClInclude Include="include\game\logic\skill_types.hpp" />
     <ClInclude Include="include\game\logic\troop_logic.hpp" />
     <ClInclude Include="include\game\map.hpp" />
-    <ClInclude Include="include\game\moves\build_moves.hpp" />
-    <ClInclude Include="include\game\moves\entity_moves.hpp" />
+    <ClInclude Include="include\game\moves.hpp" />
+    <ClInclude Include="include\game\moves\entity_effect.hpp" />
     <ClInclude Include="include\game\moves\move.hpp" />
-    <ClInclude Include="include\game\moves\troop_moves.hpp" />
+    <ClInclude Include="include\game\moves\troop_move.hpp" />
     <ClInclude Include="include\game\plant.hpp" />
     <ClInclude Include="include\game\region.hpp" />
     <ClInclude Include="include\game\skill.hpp" />

@@ -1,4 +1,4 @@
-#include "game/moves/entity_moves.hpp"
+#include "game/moves/entity_effect.hpp"
 #include "game/map.hpp"
 
 namespace Moves {
