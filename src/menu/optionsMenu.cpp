@@ -7,23 +7,22 @@ static const ui::TextSettings title_settings = {
 
 /// Constructs an options menu.
 OptionsMenu::OptionsMenu() {
-	// set root bounds
     bounds = { 0, 0, 1ps, 1ps };
 
-	// background panel
+    /// Background panel.
     _bg = new ui::Solid();
     _bg->color  = sf::Color(20, 20, 30, 255);
     _bg->bounds = { 0, 0, 1ps, 1ps };
     add(_bg);
 
-	// title label
+    /// Title label.
     _title = ui::Text::raw(title_settings, "OPTIONS");
     _title->bounds = { 0, 100px, 1ps, 0 };
     _title->align  = ui::Text::Center;
     _title->pos    = ui::Text::Static;
     add(_title);
 
-	// sound toggle button
+    /// Sound toggle button.
     _soundBtn = new menuui::Button();
     _soundBtn->setSize({ 175px, 125px });
     _soundBtn->position() = { 0.5as, 0.5as };
@@ -35,7 +34,7 @@ OptionsMenu::OptionsMenu() {
     }, nullptr, menuui::Button::Click);
     add(_soundBtn);
 
-	// back button
+    /// Back button.
     auto makeWideButton = [&](ui::Dim y_offset, std::string text) -> menuui::Button* {
         auto* btn = new menuui::Button();
         btn->setSize({ 400px, 100px });

@@ -12,30 +12,29 @@ static const sf::Color k_DimmerColor  = sf::Color(0, 0, 0, 100);
 
 /// Constructs a main menu.
 MainMenu::MainMenu() {
-	// set root bounds
     bounds = { 0, 0, 1ps, 1ps };
 
-	// background dimmer
+    /// Background dimmer.
     _dimmer = new ui::Solid();
     _dimmer->color  = k_DimmerColor;
     _dimmer->bounds = { 0, 0, 1ps, 1ps };
     add(_dimmer);
 
-	// menu container
+    /// Menu container.
     _container = new ui::Solid();
     _container->color  = k_MenuBoxColor;
     _container->bounds = { 0, 0, 500px, 700px };
     _container->position() = { 0.5as, 0.5as };
     add(_container);
 
-	// title label
+    /// Title label.
     _title = ui::Text::raw(title_text_settings, "HEXAGONS");
     _title->bounds = { 0, 60px, 1ps, 0 };
     _title->align  = ui::Text::Center;
     _title->pos    = ui::Text::Static;
     _container->add(_title);
 
-	// button factory
+    /// Wide button factory.
     auto makeWideButton = [&](ui::Dim y_offset, std::string text) -> menuui::Button* {
         auto* btn = new menuui::Button();
         btn->setSize({ 400px, 100px });
@@ -44,22 +43,22 @@ MainMenu::MainMenu() {
         return btn;
     };
 
-	// start button
+    /// Start button.
     _startBtn = makeWideButton(-100px, "START GAME");
     _startBtn->setCall([this]() { if (_onStart) _onStart(); }, nullptr, menuui::Button::Click);
     _container->add(_startBtn);
 
-	// join button
+    /// Join button.
     _joinBtn = makeWideButton(20px, "JOIN GAME");
-    _joinBtn->setCall([this]() { if (_onStart) _onStart(); }, nullptr, menuui::Button::Click);
+    _joinBtn->setCall([this]() { if (_onJoin) _onJoin(); }, nullptr, menuui::Button::Click);
     _container->add(_joinBtn);
 
-	// options button
+    /// Options button.
     _optionsBtn = makeWideButton(140px, "OPTIONS");
     _optionsBtn->setCall([this]() { if (_onOptions) _onOptions(); }, nullptr, menuui::Button::Click);
     _container->add(_optionsBtn);
 
-	// exit button
+    /// Exit button.
     _exitBtn = makeWideButton(260px, "EXIT");
     _exitBtn->setCall([this]() { if (_onExit) _onExit(); }, nullptr, menuui::Button::Click);
     _container->add(_exitBtn);
@@ -67,6 +66,8 @@ MainMenu::MainMenu() {
 
 /// Binds start button callback.
 void MainMenu::bindStart(Action action)   { _onStart   = action; }
+/// Binds join button callback.
+void MainMenu::bindJoin(Action action)    { _onJoin = action; }
 /// Binds exit button callback.
 void MainMenu::bindExit(Action action)    { _onExit    = action; }
 /// Binds options button callback.

@@ -1,5 +1,7 @@
 #include "menu.hpp"
 #include "game.hpp"
+// Include the new header
+#include "menu/gameJoinMenu.hpp" 
 
 MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game* gameInstance)
     : context(itf.newContext())
@@ -14,45 +16,70 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
     menu_layer->add(pages);
 
     // construct pages
-    mainMenu    = new MainMenu();
+    mainMenu = new MainMenu();
     optionsMenu = new OptionsMenu();
-    startMenu   = new GameStartMenu();
+    startMenu = new GameStartMenu();
+    joinMenu = new GameJoinMenu();
 
     pages->add(mainMenu);
     pages->add(optionsMenu);
     pages->add(startMenu);
+    pages->add(joinMenu);
 
     // show initial page
     pages->show(mainMenu);
 
-    // main -> game start
+    // main -> game start (Host/Singleplayer)
     mainMenu->bindStart([=]() {
         pages->show(startMenu);
-    });
+        });
+
+    // main -> join game
+    mainMenu->bindJoin([=]() {
+        pages->show(joinMenu);
+        });
 
     // main -> options
     mainMenu->bindOptions([=]() {
         pages->show(optionsMenu);
-    });
+        });
 
     // main -> exit
     mainMenu->bindExit([=]() {
         ui::window.close();
-    });
+        });
 
     // options -> back
     optionsMenu->bindBack([=]() {
         pages->show(mainMenu);
-    });
+        });
 
     // start menu -> back
     startMenu->bindBack([=]() {
         pages->show(mainMenu);
-    });
+        });
 
     // start menu -> start game
     startMenu->bindStart([&itf, gameCtx, gameInstance]() {
+        // Configure game based on startMenu selections here
+        // e.g., gameInstance->configure(startMenu->getSelectedMode(), ...);
+
         gameInstance->activate();
         itf.switchContext(*gameCtx);
-    });
+        });
+
+    // join menu -> back
+    joinMenu->bindBack([=]() {
+        pages->show(mainMenu);
+        });
+
+    // join menu -> join action
+    joinMenu->bindJoin([&itf, gameCtx, gameInstance](const std::string& code) {
+        // 1. Pass the code to the game instance to initiate connection
+        // gameInstance->connect(code); or smth like that?
+
+		// 2. Switch to the game context - temp while no multiplayer implemented here
+        gameInstance->activate();
+        itf.switchContext(*gameCtx);
+        });
 }

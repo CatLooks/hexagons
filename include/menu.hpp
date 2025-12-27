@@ -4,6 +4,7 @@
 #include "menu/mainMenu.hpp"
 #include "menu/optionsMenu.hpp"
 #include "menu/gameStartMenu.hpp"
+#include "menu/gameJoinMenu.hpp"
 #include <iostream>
 
 class Game;
@@ -21,6 +22,7 @@ public:
     MainMenu*      mainMenu    = nullptr; /// Main menu page.
     OptionsMenu*   optionsMenu = nullptr; /// Options menu page.
     GameStartMenu* startMenu   = nullptr; /// Game start page.
+    GameJoinMenu*  joinMenu = nullptr; /// Game join page.
 
     /// Constructs a menu system.
     ///

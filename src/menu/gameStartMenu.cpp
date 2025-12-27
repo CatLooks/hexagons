@@ -1,14 +1,24 @@
 #include "menu/gameStartMenu.hpp"
 #include "assets.hpp"
+#include <random>
+#include <iomanip>
+#include <sstream>
 
+/// Header text settings.
 static const ui::TextSettings k_HeaderFont = {
     assets::font, 60, sf::Color::White, sf::Color::Black, 3
 };
+/// Sidebar text settings.
 static const ui::TextSettings k_SidebarFont = {
     assets::font, 30, sf::Color(150, 150, 150), sf::Color::Black, 0
 };
+/// Active sidebar text settings.
 static const ui::TextSettings k_SidebarFontActive = {
     assets::font, 35, sf::Color::White, sf::Color::Black, 2
+};
+/// Room code text settings.
+static const ui::TextSettings k_CodeFont = {
+    assets::font, 80, sf::Color::Yellow, sf::Color::Black, 4
 };
 
 /// Creates a full-screen container element.
@@ -30,52 +40,67 @@ static void applySettings(ui::Text* text, const ui::TextSettings& settings) {
 GameStartMenu::GameStartMenu() {
     bounds = { 0, 0, 1ps, 1ps };
 
+    // defaults
+    _selectedMode = Mode_None;
+    _selectedDiff = Diff_None;
+    _selectedMap = Map_None;
+    _currentStep = STEP_MODE;
+    _maxPlayers = 2;
+    generateGameCode();
+
     buildSidebar();
 
-    // content page container
+    /// Content page container.
     _contentPages = new ui::Pages();
     _contentPages->bounds = { 0.25ps, 0, 0.75ps, 0.85ps };
     add(_contentPages);
 
-    // build pages
+    /// Build pages.
     _pageMode = createModePage();
     _pageDiff = createDiffPage();
-    _pageMap  = createMapPage();
+    _pageMap = createMapPage();
+    _pageLobby = createLobbyPage();
 
     _contentPages->add(_pageMode);
     _contentPages->add(_pageDiff);
     _contentPages->add(_pageMap);
+    _contentPages->add(_pageLobby);
 
     buildNavigation();
 
-    _selectedMode = Mode_None;
-    _selectedDiff = Diff_None;
-    _selectedMap  = Map_None;
-    _currentStep  = 0;
-
     updateUI();
+}
+
+/// Generates a new room code.
+void GameStartMenu::generateGameCode() {
+    static std::mt19937 rng(std::random_device{}());
+    std::uniform_int_distribution<int> dist(100000, 999999);
+    _gameCode = std::to_string(dist(rng));
 }
 
 /// Builds sidebar UI elements.
 void GameStartMenu::buildSidebar() {
     _sidebarBg = new ui::Solid();
-    _sidebarBg->color  = sf::Color(15, 15, 25, 255);
+    _sidebarBg->color = sf::Color(15, 15, 25, 255);
     _sidebarBg->bounds = { 0, 0, 0.25ps, 1ps };
     add(_sidebarBg);
 
-    auto addLabel = [this](const std::string& text, ui::Dim yPos) -> ui::Text* {
-        auto* lbl = ui::Text::raw(k_SidebarFont, text);
+    auto addLabel = [this](ui::Dim yPos) -> ui::Text* {
+        auto* lbl = ui::Text::raw(k_SidebarFont, "");
         lbl->bounds = { 0.1as, yPos, 0.8as, 0 };
-        lbl->align  = ui::Text::Center;
-        lbl->pos    = ui::Text::Static;
+        lbl->align = ui::Text::Center;
+        lbl->pos = ui::Text::Static;
         _sidebarBg->add(lbl);
         return lbl;
     };
 
-    _lblMode = addLabel("1. Mode",      0.3ps);
-    _lblDiff = addLabel("2. Difficulty", 0.4ps);
-    _lblMap  = addLabel("3. Map",       0.5ps);
+    /// Static label order.
+    _lblMode = addLabel(0.25ps);
+    _lblDiff = addLabel(0.35ps);
+    _lblMap = addLabel(0.45ps);
+    _lblLobby = addLabel(0.55ps);
 
+    /// Back button.
     _backBtn = new menuui::Button();
     _backBtn->setSize({ 180px, 80px });
     _backBtn->position() = { 0.5as, 1as - 25px };
@@ -92,13 +117,15 @@ void GameStartMenu::buildNavigation() {
     navArea->bounds = { 0.25ps, 0.85ps, 0.75ps, 0.15ps };
     add(navArea);
 
+    /// Previous button.
     _prevBtn = new menuui::Button();
     _prevBtn->setSize({ 180px, 80px });
-    _prevBtn->position() = {0.2as, 0.5as };
+    _prevBtn->position() = { 0.2as, 0.5as };
     _prevBtn->setLabel()->setRaw("< PREV");
     _prevBtn->setCall([this]() { prevStep(); }, nullptr, menuui::Button::Click);
     navArea->add(_prevBtn);
 
+    /// Next/start button.
     _nextBtn = new menuui::Button();
     _nextBtn->setSize({ 180px, 80px });
     _nextBtn->position() = { 0.8as, 0.5as };
@@ -113,8 +140,8 @@ ui::Element* GameStartMenu::createModePage() {
 
     auto* title = ui::Text::raw(k_HeaderFont, "Select Mode");
     title->bounds = { 0, 100px, 1ps, 0 };
-    title->align  = ui::Text::Center;
-    title->pos    = ui::Text::Static;
+    title->align = ui::Text::Center;
+    title->pos = ui::Text::Static;
     page->add(title);
 
     auto makeBtn = [this, page](ui::Dim xOff, const std::string& txt, GameMode val) {
@@ -127,8 +154,8 @@ ui::Element* GameStartMenu::createModePage() {
         _modeButtons.push_back(btn);
     };
 
-    makeBtn(-250px, "Singleplayer",       Mode_Single);
-    makeBtn( 250px, "Multiplayer\n(Host)", Mode_Host);
+    makeBtn(-250px, "Singleplayer", Mode_Single);
+    makeBtn(250px, "Multiplayer\n(Host)", Mode_Host);
 
     return page;
 }
@@ -139,8 +166,8 @@ ui::Element* GameStartMenu::createDiffPage() {
 
     auto* title = ui::Text::raw(k_HeaderFont, "Select Difficulty");
     title->bounds = { 0, 100px, 1ps, 0 };
-    title->align  = ui::Text::Center;
-    title->pos    = ui::Text::Static;
+    title->align = ui::Text::Center;
+    title->pos = ui::Text::Static;
     page->add(title);
 
     auto makeBtn = [this, page](ui::Dim xOff, const std::string& txt, Difficulty val) {
@@ -153,9 +180,9 @@ ui::Element* GameStartMenu::createDiffPage() {
         _diffButtons.push_back(btn);
     };
 
-    makeBtn(-300px, "EASY",   Diff_Easy);
-    makeBtn(   0px, "MEDIUM", Diff_Medium);
-    makeBtn( 300px, "HARD",   Diff_Hard);
+    makeBtn(-300px, "EASY", Diff_Easy);
+    makeBtn(0px, "MEDIUM", Diff_Medium);
+    makeBtn(300px, "HARD", Diff_Hard);
 
     return page;
 }
@@ -166,8 +193,8 @@ ui::Element* GameStartMenu::createMapPage() {
 
     auto* title = ui::Text::raw(k_HeaderFont, "Select Map");
     title->bounds = { 0, 80px, 1ps, 0 };
-    title->align  = ui::Text::Center;
-    title->pos    = ui::Text::Static;
+    title->align = ui::Text::Center;
+    title->pos = ui::Text::Static;
     page->add(title);
 
     auto makeBtn = [this, page](ui::Dim xOff, const std::string& txt, MapID val) {
@@ -175,25 +202,20 @@ ui::Element* GameStartMenu::createMapPage() {
         btn->setSize({ 260px, 360px });
         btn->position() = { 0.5as + xOff, 0.5as };
 
-        // map preview (centered square crop)
+        // map preview
         {
             sf::Vector2u size = assets::map_example.getSize();
             unsigned texW = size.x;
             unsigned texH = size.y;
-            unsigned cropSize = texW < texH ? texW : texH;
-
+            int cropSize = texW < texH ? texW : texH;
             int left = static_cast<int>((texW - cropSize) / 2);
-            int top  = static_cast<int>((texH - cropSize) / 2);
+            int top = static_cast<int>((texH - cropSize) / 2);
 
-            sf::IntRect texRect;
-            texRect.position.x = left;
-            texRect.position.y = top;
-            texRect.size.x     = static_cast<int>(cropSize);
-            texRect.size.y     = static_cast<int>(cropSize);
+            sf::IntRect texRect({ left, top }, { cropSize, cropSize });
 
             auto* img = new ui::Image(&assets::map_example, texRect);
             img->bounds = { 0.1ps, 0.1ps, 0.8ps, 0.8ps };
-            img->tint   = sf::Color::White;
+            img->tint = sf::Color::White;
             btn->add(img);
         }
 
@@ -205,97 +227,205 @@ ui::Element* GameStartMenu::createMapPage() {
     };
 
     makeBtn(-300px, "Map 1", Map_1);
-    makeBtn(   0px, "Map 2", Map_2);
-    makeBtn( 300px, "Map 3", Map_3);
+    makeBtn(0px, "Map 2", Map_2);
+    makeBtn(300px, "Map 3", Map_3);
 
     return page;
 }
 
-/// Selects a game mode.
-void GameStartMenu::selectMode(GameMode mode, menuui::Button* btn) {
-    for (auto* b : _modeButtons)
-        if (b != btn) b->deselect();
+/// Creates multiplayer lobby page.
+ui::Element* GameStartMenu::createLobbyPage() {
+    auto* page = makeContainer();
 
-    _selectedMode = mode;
-    btn->select();
-    updateUI();
+    auto* title = ui::Text::raw(k_HeaderFont, "Lobby Settings");
+    title->bounds = { 0, 80px, 1ps, 0 };
+    title->align = ui::Text::Center;
+    title->pos = ui::Text::Static;
+    page->add(title);
+
+    /// Max players section.
+    auto* lblPlayers = ui::Text::raw(k_SidebarFont, "Max Players:");
+    lblPlayers->bounds = { 0, 200px, 1ps, 0 };
+    lblPlayers->align = ui::Text::Center;
+    lblPlayers->pos = ui::Text::Static;
+    page->add(lblPlayers);
+
+    auto makeCountBtn = [this, page](ui::Dim xOff, int count) {
+        auto* btn = new menuui::Button();
+        btn->setSize({ 100px, 100px });
+        btn->position() = { 0.5as + xOff, 280px };
+        btn->setLabel()->setRaw(std::to_string(count));
+        btn->setCall([this, btn, count]() { selectMaxPlayers(count, btn); }, nullptr, menuui::Button::Click);
+        page->add(btn);
+        _playerCountButtons.push_back(btn);
+        if (count == 2) btn->select();
+    };
+
+    makeCountBtn(-120px, 2);
+    makeCountBtn(0px, 3);
+    makeCountBtn(120px, 4);
+
+    /// Room code section.
+    auto* lblCodeDesc = ui::Text::raw(k_SidebarFont, "Room Code (Share this!):");
+    lblCodeDesc->bounds = { 0, 450px, 1ps, 0 };
+    lblCodeDesc->align = ui::Text::Center;
+    lblCodeDesc->pos = ui::Text::Static;
+    page->add(lblCodeDesc);
+
+    auto* lblCode = ui::Text::raw(k_CodeFont, _gameCode);
+    lblCode->bounds = { 0, 520px, 1ps, 0 };
+    lblCode->align = ui::Text::Center;
+    lblCode->pos = ui::Text::Static;
+    lblCode->hook([=]() { lblCode->setRaw(_gameCode); });
+    page->add(lblCode);
+
+    return page;
 }
 
-/// Selects a difficulty.
-void GameStartMenu::selectDifficulty(Difficulty diff, menuui::Button* btn) {
-    for (auto* b : _diffButtons)
-        if (b != btn) b->deselect();
+/// Selects game mode.
+void GameStartMenu::selectMode(GameMode mode, menuui::Button* btn) {
+    for (auto* b : _modeButtons) if (b != btn) b->deselect();
+    bool modeChanged = (_selectedMode != mode);
+    _selectedMode = mode;
+    btn->select();
+    if (modeChanged) {
+        generateGameCode();
+        updateUI();
+    }
+}
 
+/// Selects max player count.
+void GameStartMenu::selectMaxPlayers(int count, menuui::Button* btn) {
+    for (auto* b : _playerCountButtons) if (b != btn) b->deselect();
+    _maxPlayers = count;
+    btn->select();
+}
+
+/// Selects difficulty.
+void GameStartMenu::selectDifficulty(Difficulty diff, menuui::Button* btn) {
+    for (auto* b : _diffButtons) if (b != btn) b->deselect();
     _selectedDiff = diff;
     btn->select();
     updateUI();
 }
 
-/// Selects a map.
+/// Selects map.
 void GameStartMenu::selectMap(MapID map, menuui::Button* btn) {
-    for (auto* b : _mapButtons)
-        if (b != btn) b->deselect();
-
+    for (auto* b : _mapButtons) if (b != btn) b->deselect();
     _selectedMap = map;
     btn->select();
     updateUI();
 }
 
-/// @return Whether the current step has all required selections.
+/// Checks if current step can proceed.
 bool GameStartMenu::canProceed() const {
     switch (_currentStep) {
-    case 0: return _selectedMode != Mode_None;
-    case 1: return _selectedDiff != Diff_None;
-    case 2: return _selectedMap  != Map_None;
+    case STEP_MODE:  return _selectedMode != Mode_None;
+    case STEP_DIFF:  return _selectedDiff != Diff_None;
+    case STEP_MAP:   return _selectedMap != Map_None;
+    case STEP_LOBBY: return true;
     default: return false;
     }
 }
 
-/// Advances to the next configuration step or starts the game.
+/// Advances to next step.
 void GameStartMenu::nextStep() {
     if (!canProceed()) return;
 
-    if (_currentStep < 2) {
-        _currentStep++;
-        updateUI();
-    } else {
+    int next = _currentStep + 1;
+    bool isHost = (_selectedMode == Mode_Host);
+
+    // flow control
+    if (next == STEP_LOBBY && !isHost) {
+        // If singleplayer, trying to go to Lobby -> Start Game
         if (_onStartGame) _onStartGame();
+        return;
     }
+
+    if (next > STEP_LOBBY) {
+        // End of Host flow -> Start Game
+        if (_onStartGame) _onStartGame();
+        return;
+    }
+
+    _currentStep = next;
+    updateUI();
 }
 
-/// Returns to the previous configuration step.
+/// Goes to previous step.
 void GameStartMenu::prevStep() {
-    if (_currentStep > 0) {
-        _currentStep--;
+    int prev = _currentStep - 1;
+    if (prev >= STEP_MODE) {
+        _currentStep = prev;
         updateUI();
     }
 }
 
-/// Updates visible page and sidebar state.
+/// Updates menu UI.
 void GameStartMenu::updateUI() {
+    /// Show correct page.
     ui::Element* page = nullptr;
     switch (_currentStep) {
-    case 0: page = _pageMode; break;
-    case 1: page = _pageDiff; break;
-    case 2: page = _pageMap;  break;
-    default: page = nullptr;  break;
+    case STEP_MODE:  page = _pageMode;  break;
+    case STEP_DIFF:  page = _pageDiff;  break;
+    case STEP_MAP:   page = _pageMap;   break;
+    case STEP_LOBBY: page = _pageLobby; break;
     }
     _contentPages->show(page);
 
-    applySettings(_lblMode, _currentStep == 0 ? k_SidebarFontActive : k_SidebarFont);
-    applySettings(_lblDiff, _currentStep == 1 ? k_SidebarFontActive : k_SidebarFont);
-    applySettings(_lblMap,  _currentStep == 2 ? k_SidebarFontActive : k_SidebarFont);
+    /// Update sidebar labels.
+    updateSidebarLabels();
 
+    /// Update navigation buttons.
     updateNavigationButtons();
 }
 
-/// Updates navigation button labels and enabled state.
+/// Updates sidebar labels.
+void GameStartMenu::updateSidebarLabels() {
+    bool isMP = (_selectedMode == Mode_Host);
+
+    /// 1. Mode.
+    _lblMode->setRaw("1. Mode");
+    _lblMode->activate();
+    applySettings(_lblMode, (_currentStep == STEP_MODE) ? k_SidebarFontActive : k_SidebarFont);
+
+    /// 2. Difficulty.
+    _lblDiff->setRaw("2. Difficulty");
+    _lblDiff->activate();
+    applySettings(_lblDiff, (_currentStep == STEP_DIFF) ? k_SidebarFontActive : k_SidebarFont);
+
+    /// 3. Map.
+    _lblMap->setRaw("3. Map");
+    _lblMap->activate();
+    applySettings(_lblMap, (_currentStep == STEP_MAP) ? k_SidebarFontActive : k_SidebarFont);
+
+    /// 4. Lobby (conditional).
+    if (isMP) {
+        _lblLobby->setRaw("4. Lobby");
+        _lblLobby->activate();
+        applySettings(_lblLobby, (_currentStep == STEP_LOBBY) ? k_SidebarFontActive : k_SidebarFont);
+    }
+    else {
+        _lblLobby->deactivate();
+    }
+}
+
+/// Updates navigation buttons.
 void GameStartMenu::updateNavigationButtons() {
     bool canContinue = canProceed();
+    bool isMP = (_selectedMode == Mode_Host);
 
-    _prevBtn->display = (_currentStep > 0);
+    _prevBtn->display = (_currentStep > STEP_MODE);
 
-    if (_currentStep == 2)
+    bool isLastStep = false;
+    if (isMP) {
+        isLastStep = (_currentStep == STEP_LOBBY);
+    }
+    else {
+        isLastStep = (_currentStep == STEP_MAP);
+    }
+
+    if (isLastStep)
         _nextBtn->setLabel()->setRaw("START GAME");
     else
         _nextBtn->setLabel()->setRaw("NEXT >");
@@ -303,23 +433,24 @@ void GameStartMenu::updateNavigationButtons() {
     if (canContinue) {
         _nextBtn->setLabel()->setColor(sf::Color::White);
         _nextBtn->setCall([this]() { nextStep(); }, nullptr, menuui::Button::Click);
-    } else {
+    }
+    else {
         _nextBtn->setLabel()->setColor(sf::Color(100, 100, 100));
         _nextBtn->setCall(nullptr, nullptr, menuui::Button::Click);
     }
 }
 
-/// Binds back button callback.
+/// Binds back callback.
 void GameStartMenu::bindBack(Action action) {
     _onBack = action;
 }
 
-/// Binds start button callback.
+/// Binds start callback.
 void GameStartMenu::bindStart(Action action) {
     _onStartGame = action;
 }
 
-/// Draws the game start menu.
+/// Draws the menu.
 void GameStartMenu::drawSelf(ui::RenderBuffer& target, sf::IntRect self) const {
     ui::Element::drawSelf(target, self);
 }

@@ -24,6 +24,7 @@ private:
     menuui::Button* _exitBtn    = nullptr; /// "Exit" button.
 
     Action _onStart;   /// Start callback.
+    Action _onJoin;    /// Join callback.
     Action _onExit;    /// Exit callback.
     Action _onOptions; /// Options callback.
 
@@ -34,6 +35,9 @@ public:
     /// Binds start button callback.
     /// @param action Callback invoked when the start button is pressed.
     void bindStart(Action action);
+    /// Binds join button callback.
+    /// @param action Callback invoked when the join button is pressed.
+    void bindJoin(Action action);
     /// Binds exit button callback.
     /// @param action Callback invoked when the exit button is pressed.
     void bindExit(Action action);
