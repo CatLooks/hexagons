@@ -39,6 +39,11 @@ namespace ui {
 		_win.setTitle(str);
 	};
 
+	/// Sets key repeating mode.
+	void Window::setKeyRepeat(float enabled) {
+		_win.setKeyRepeatEnabled(enabled);
+	};
+
 	/// Closes the window.
 	void Window::close() {
 		_win.close();

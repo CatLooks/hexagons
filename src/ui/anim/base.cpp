@@ -4,6 +4,11 @@ namespace ui {
 	/// Updates the animation target.
 	void Anim::onTick(float t) {};
 
+	/// Returns interpolated animation progress.
+	float Anim::prog(float t) {
+		return ease(reversed ? 1.f - t : t);
+	};
+
 	/// Restarts the animation.
 	void Anim::restart() {
 		_time = 0.f;
@@ -22,12 +27,12 @@ namespace ui {
 		if (_time >= _dur) {
 			_time = _dur;
 			_active = false;
-			onTick(1.f);
+			onTick(prog(1.f));
 			if (_end) _end();
 		}
 
 		// tick animation
-		else onTick(_ease(_time / _dur));
+		else onTick(prog(_time / _dur));
 	};
 
 	/// @return Whether the animation is active.
@@ -50,11 +55,5 @@ namespace ui {
 		// create a callback chain
 		std::function<void()> prev = _end;
 		_end = [=]() { prev(); call(); };
-	};
-
-	/// Sets animation easing.
-	Anim& Anim::setEasing(Easing easing) {
-		_ease = easing;
-		return *this;
 	};
 };

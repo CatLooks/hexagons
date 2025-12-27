@@ -28,7 +28,7 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 	// add pulse animation
 	{
 		_pulse_anim = new ui::AnimFloat(&_pulse, 0.f, 1.f, sf::seconds(0.8f));
-		_pulse_anim->looped = true;
+		_pulse_anim->mode = ui::Anim::Loop;
 		push(_pulse_anim);
 	};
 
@@ -109,7 +109,7 @@ void Game::selectTile(sf::Vector2i pos) {
 		Hex* hex = map.at(pos);
 		if (hex) {
 			ui::Anim* anim = ui::AnimFloat::to(&hex->elevation, 1.f, sf::seconds(0.15f));
-			anim->setEasing(ui::Easings::sineIn);
+			anim->ease = ui::Easings::sineIn;
 			push(anim);
 		};
 	};
@@ -125,7 +125,7 @@ void Game::deselectTile() {
 		Hex* hex = map.at(*_select);
 		if (hex) {
 			ui::Anim* anim = ui::AnimFloat::to(&hex->elevation, 0.f, sf::seconds(0.1f));
-			anim->setEasing(ui::Easings::sineOut);
+			anim->ease = ui::Easings::sineOut;
 			push(anim);
 		};
 	};
@@ -139,6 +139,7 @@ void Game::selectRegion(const HexRef& tile) {
 	if (tile.hex->region) {
 		map.selectRegion(tile.hex->region);
 		_bar->attachRegion(tile.hex->region);
+		state.region = &*tile.hex->region;
 		_last = tile.pos;
 	};
 };
@@ -146,6 +147,7 @@ void Game::selectRegion(const HexRef& tile) {
 void Game::deselectRegion() {
 	map.deselectRegion();
 	_bar->detachRegion();
+	state.region = nullptr;
 };
 
 /// Clicks at a tile.
@@ -287,6 +289,12 @@ static void _attach_action(
 	Game* game,
 	const Skill* skill
 ) {
+	// set button validation logic
+	button->setCheck([=]() {
+		return skill->condition(game->state, game->map.atref(game->last()));
+	});
+
+	// set button press / release logic
 	button->setCall(
 		[=]() {
 			// deselect other selections
@@ -349,13 +357,15 @@ static void _attach_action(
 /// @param texture Entity texture.
 /// @param name Entity name.
 /// @param entity Entity shared data.
+/// @param draw_hp Whether to draw entity health bar.
 static void _construct_menu(
 	Game* game,
 	gameui::Panel* panel,
 	const Values::SkillArray& data,
 	sf::IntRect texture,
 	const char* name,
-	const Entity& entity
+	const Entity& entity,
+	bool draw_hp
 ) {
 	// construct a panel
 	panel->construct(data.layout);
@@ -368,7 +378,7 @@ static void _construct_menu(
 		text->param("value", name);
 
 		// attach entity health bar data
-		panel->preview()->setDraw([&entity](ui::RenderBuffer& target, sf::IntRect self) {
+		if (draw_hp) panel->preview()->setDraw([&entity](ui::RenderBuffer& target, sf::IntRect self) {
 			Draw::Bar(entity).drawSquare(self, target);
 		});
 	};
@@ -386,6 +396,31 @@ static void _construct_menu(
 		auto* text = button->setLabel();
 		text->setPath("param");
 		text->param("value", Values::skill_names[data.skills[idx]->type]);
+
+		// set cost label
+		if (data.skills[idx]->resource != Skills::None) {
+			auto res = data.skills[idx]->resource;
+			auto cost = data.skills[idx]->cost;
+
+			auto* text = button->setSubtitle();
+			text->setPath(Skills::withLabel[res]);
+			text->param("cost", std::format("{}", cost));
+
+			text->onUpdate([=](const sf::Time&) {
+				// update cost color
+				int diff = game->state.with(res) - cost;
+
+				// get cost color
+				int idx = 1;
+				if (diff > 0) idx = 0;
+				if (diff < 0) idx = 2;
+				text->setColor(Values::income_color[idx]);
+			});
+		};
+
+		// set skill cooldown
+		button->forwardOverlay();
+		button->setTimer(entity.timers[idx]);
 
 		// attach skill logic
 		_attach_action(button, game, data.skills[idx]);
@@ -457,7 +492,7 @@ void Game::troopMenu(const Troop& troop) {
 		Values::troop_skills[troop.type],
 		Values::troop_textures[troop.type],
 		Values::troop_names[troop.type],
-		troop
+		troop, true
 	);
 };
 /// Constructs a building UI panel.
@@ -467,7 +502,7 @@ void Game::buildMenu(const Build& build) {
 		Values::build_skills[build.type],
 		Values::build_textures[build.type],
 		Values::build_names[build.type],
-		build
+		build, build.hp != build.max_hp()
 	);
 };
 /// Constructs a plant UI panel.
@@ -477,7 +512,7 @@ void Game::plantMenu(const Plant& plant) {
 		Values::plant_skill,
 		Values::plant_textures[plant.type],
 		Values::plant_names[plant.type],
-		plant
+		plant, false
 	);
 };
 

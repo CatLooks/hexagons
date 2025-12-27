@@ -39,7 +39,7 @@ int main() {
 		drawStats.setString(format);
 		drawStats.setPosition({ ui::window.size().x - drawStats.getLocalBounds().size.x - 4, 0 });
 		target.draw(drawStats);
-	});
+		});
 
 
 	//creation of game context
@@ -124,12 +124,12 @@ int main() {
 		};
 		layer_map->add(game);
 	}
-	
+
 
 	MenuSystem menuSystem(itf, &game_ctx, game);
 	itf.switchContext(menuSystem.context);
 
-	
+
 
 	// window main loop
 	while (ui::window.active()) {

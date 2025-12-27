@@ -20,6 +20,8 @@ namespace gameui {
 
 		/// Action click callback.
 		using Callback = std::function<void()>;
+		/// Click validation callback.
+		using Validation = std::function<bool()>;
 
 		/// Action button mode.
 		enum Mode {
@@ -29,19 +31,27 @@ namespace gameui {
 
 	private:
 		int _hint       = -1;      /// Action hint.
+		uint8_t _timer  = 0;       /// Action timer.
 		Mode _mode      = Click;   /// Action mode.
+		ui::Image* _cdi = nullptr; /// Action timer icon.
 		ui::Image* _tex = nullptr; /// Action texture.
 		ui::Image* _ann = nullptr; /// Annotation texture.
 		ui::Text* _text = nullptr; /// Action label.
 		ui::Text* _sub  = nullptr; /// Action subtitle label.
 		ui::Solid* _err = nullptr; /// Error overlay.
 		DrawCall _draw;            /// Extra draw call.
+		Validation _check;         /// Button click validation callback.
 		Callback _press;           /// Button press callback.
 		Callback _release;         /// Button release callback.
 		bool _state     = false;   /// Button state.
 		bool _shake     = false;   /// Initial shake position.
 
 	public:
+		/// Action button texture maps.
+		///
+		/// @param id Whether the button is highlighted.
+		static const ui::Panel::Map textures[2];
+		
 		/// Action button side length.
 		static const ui::Dim side;
 		/// Action button base size.
@@ -49,6 +59,8 @@ namespace gameui {
 
 		/// Maximum opacity color of red tint during error animation.
 		static const sf::Color red;
+		/// Overlay color for action on cooldown.
+		static const sf::Color dim;
 
 		/// Whether the button acts as a display.
 		///
@@ -56,11 +68,6 @@ namespace gameui {
 		bool display = false;
 
 	protected:
-		/// Action button texture maps.
-		///
-		/// @param id Whether the button is highlighted.
-		static const ui::Panel::Map textures[2];
-
 		/// Draws the action button.
 		void drawSelf(ui::RenderBuffer&, sf::IntRect) const override;
 
@@ -77,6 +84,11 @@ namespace gameui {
 		///
 		/// @param ann Annotation type.
 		void annotate(Skill::Annotation ann);
+		/// Adds a timer icon to the action button.
+		///
+		/// @param timer Action timer.
+		void setTimer(uint8_t timer);
+
 		/// Adds an image to the action button.
 		/// 
 		/// @param texture Texture reference.
@@ -87,6 +99,10 @@ namespace gameui {
 		/// 
 		/// @param call Draw call.
 		void setDraw(DrawCall call);
+		/// Adds a button click validation.
+		///
+		/// @param call Click validation function.
+		void setCheck(Validation call);
 		/// Adds a callback to pressed action button.
 		///
 		/// @param press Button press callback function.
@@ -118,5 +134,8 @@ namespace gameui {
 		/// 
 		/// @return Pointer to text label.
 		ui::Text* setSubtitle();
+
+		/// Makes the overlay the topmost element.
+		void forwardOverlay();
 	};
 };

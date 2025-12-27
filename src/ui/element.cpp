@@ -113,6 +113,28 @@ namespace ui {
 		// add if old was not found
 		add(repl);
 	};
+	/// Moves the element to be the last in element queue.
+	void Element::to_front(Element* element) {
+		for (auto it = _elements.begin(); it != _elements.end(); it++) {
+			if (it->get() == element) {
+				auto uniq = std::move(*it);
+				_elements.erase(it);
+				_elements.push_back(std::move(uniq));
+				return;
+			};
+		};
+	};
+	/// Moves the element to be the first in element queue.
+	void Element::to_back(Element* element) {
+		for (auto it = _elements.begin(); it != _elements.end(); it++) {
+			if (it->get() == element) {
+				auto uniq = std::move(*it);
+				_elements.erase(it);
+				_elements.push_front(std::move(uniq));
+				return;
+			};
+		};
+	};
 	/// Removes all child elements.
 	void Element::clear() {
 		_elements.clear();
@@ -180,15 +202,22 @@ namespace ui {
 		// update animations
 		auto it = _anims.begin();
 		while (it != _anims.end()) {
+			const auto& anim = *it;
+
 			// tick animator
-			(*it)->update(delta);
-			if ((*it)->active())
+			anim->update(delta);
+			if (anim->active())
 				// go to next animator
 				it++;
 			else {
 				// add animation to looped queue
-				if ((*it)->looped) {
-					(*it)->restart();
+				if (anim->mode) {
+					// reverse animation if needed
+					if (anim->mode == Anim::Bounce)
+						anim->reversed = !anim->reversed;
+
+					// restart animation
+					anim->restart();
 					looped.push_back(std::move(*it));
 				};
 

@@ -12,6 +12,15 @@ namespace Values {
 		coords(8, 0), // zero
 		coords(9, 0), // down
 	};
+	/// Income colors.
+	const sf::Color income_color[3] = {
+		sf::Color(0  , 255, 0), // up
+		sf::Color(255, 255, 0), // zero
+		sf::Color(255, 0  , 0), // down
+	};
+
+	/// Cooldown annotation color.
+	const sf::Color cooldown_color = sf::Color(255, 32, 64);
 
 	/// Coin currency icon.
 	const sf::IntRect coin_icon = coords(7, 1);
@@ -21,7 +30,7 @@ namespace Values {
 	const sf::IntRect berry_icon = coords(9, 1);
 
 	/// Interface digit textures.
-	const sf::IntRect digits[10] = {
+	const sf::IntRect digits[11] = {
 		coords(9, 3, 0, 0),
 		coords(9, 3, 1, 0),
 		coords(9, 3, 2, 0),
@@ -32,6 +41,7 @@ namespace Values {
 		coords(9, 3, 3, 1),
 		coords(9, 3, 0, 2),
 		coords(9, 3, 1, 2),
+		coords(9, 3, 2, 2),
 	};
 
 	/// Game panel text settings.

@@ -17,6 +17,9 @@ namespace gameui {
 		return color;
 	}();
 
+	/// Overlay color for action on cooldown.
+	const sf::Color Action::dim = sf::Color(0, 0, 0, 128);
+
 	/// Action button texture maps.
 	const ui::Panel::Map Action::textures[2] = {
 		ui::Panel::Map::rect(&assets::interface, Values::coords(0, 0), { 6, 6 }, 2),
@@ -24,15 +27,22 @@ namespace gameui {
 	};
 
 	/// Constructs an empty action button.
-	Action::Action(int hint) : ui::Panel(textures[0]), _hint(hint) {
+	Action::Action(int hint) : ui::Panel(textures[0]), _hint(hint), _timer(0) {
 		// set action button size
 		bounds.size = base;
+
+		// create button overlay
+		clear();
 
 		// reset padding
 		padding.set(0);
 
 		// add hint
-		if (hint >= 0 && hint <= 9) {
+		if (hint >= 0) {
+			// cap at '?'
+			if (hint > 10) hint = 10;
+
+			// generate hint icon
 			ui::Image* himg = new ui::Image(&assets::interface, Values::digits[hint]);
 			himg->bounds = {
 				{ 0as + Values::buttonBorder, 0as + Values::buttonBorder },
@@ -55,11 +65,6 @@ namespace gameui {
 			// absorb all mouse events
 			return (bool)evt.mouse();
 		});
-
-		// create error overlay
-		_err = new ui::Solid;
-		_err->color = red_dimmed;
-		adds(_err);
 	};
 
 	/// Clears the action button.
@@ -69,11 +74,17 @@ namespace gameui {
 		ui::Panel::clears();
 
 		// reset pointers
+		_cdi = nullptr;
 		_tex = nullptr;
 		_ann = nullptr;
 		_text = nullptr;
 		_sub = nullptr;
 		_draw = nullptr;
+
+		// create error overlay
+		_err = new ui::Solid;
+		_err->color = red_dimmed;
+		add(_err);
 	};
 
 	/// Adds an annotation icon to the action button.
@@ -95,6 +106,41 @@ namespace gameui {
 		};
 	};
 
+	/// Adds a timer icon to the action button.
+	void Action::setTimer(uint8_t timer) {
+		// store timer
+		_timer = timer;
+
+		// cap displayed value
+		if (timer > 10) timer = 10;
+
+		// create timer icon
+		if (!_cdi) {
+			if (!timer) return; // ignore if timer is 0
+
+			_cdi = new ui::Image(&assets::interface, Values::digits[timer]);
+			_cdi->bounds = {
+				{ 0as + Values::buttonBorder, 1as - Values::buttonBorder },
+				Values::iconSize
+			};
+			_cdi->tint = Values::cooldown_color;
+			add(_cdi);
+		};
+
+		// change icon state
+		if (timer) {
+			// enable timer
+			_cdi->coords = Values::digits[timer];
+			_cdi->activate();
+			_err->color = dim;
+		}
+		else {
+			// disable timer
+			_cdi->deactivate();
+			_err->color = red_dimmed;
+		};
+	};
+
 	/// Adds an image to the action button.
 	void Action::setTexture(const sf::Texture* texture, sf::IntRect map) {
 		if (!_tex) {
@@ -112,6 +158,11 @@ namespace gameui {
 	/// Adds an extra draw call to the action button.
 	void Action::setDraw(DrawCall call) {
 		_draw = call;
+	};
+
+	/// Adds a button click validation.
+	void Action::setCheck(Validation call) {
+		_check = call;
 	};
 
 	/// Adds a callback to pressed action button.
@@ -154,28 +205,39 @@ namespace gameui {
 		// create shake animation
 		{
 			ui::Anim* anim = ui::AnimVector::to(&position(), pos + shake_amp, sf::seconds(0.4f));
-			anim->setAfter([=]() {
-				// restore original position
-				position() = pos;
-				_shake = false;
-			});
-			anim->setEasing(shake);
+			anim->setAfter([=]() { _shake = false; });
+			anim->ease = shake;
 			push(anim);
 		};
 
 		// create red tint animation
 		{
 			ui::Anim* anim_in = ui::AnimColor::to(&_err->color, red, sf::seconds(0.05f));
-			ui::Anim* anim_out = new ui::AnimColor(&_err->color, red, red_dimmed, sf::seconds(0.3f));
-			anim_out->setEasing(ui::Easings::quadIn);
+			ui::Anim* anim_out = new ui::AnimColor(&_err->color, red, _timer > 0 ? dim : red_dimmed, sf::seconds(0.3f));
+			anim_out->ease = ui::Easings::quadIn;
+			anim_out->setAfter([=]() {
+				// set color again
+				// in case timer has changed in the middle of the animation
+				push(ui::AnimColor::to(&_err->color, _timer > 0 ? dim : red_dimmed, sf::seconds(0.05f)));
+			});
 			push(chain(anim_in, anim_out));
 		};
 	};
 
 	/// Forcefully invokes the action callback.
 	void Action::click() {
+		// check if validation fails
+		if (!_state && ((_check && !_check()) || _timer)) {
+			// button shake animation
+			errorShake();
+			return;
+		};
+
+		// handle button click
 		switch (_mode) {
 		case Click:
+			_state = false;
+
 			// invoke callbacks
 			if (_press) _press();
 			if (_release) _release();
@@ -248,5 +310,10 @@ namespace gameui {
 	void Action::drawSelf(ui::RenderBuffer& target, sf::IntRect self) const {
 		ui::Panel::drawSelf(target, self);
 		if (_draw) _draw(target, self);
+	};
+
+	/// Makes the overlay the topmost element.
+	void Action::forwardOverlay() {
+		to_front(_err);
 	};
 };

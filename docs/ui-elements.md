@@ -117,3 +117,17 @@ To clear parameter values, use:
 |-|-|
 | `string() -> const sf::String&` | Returns currently shown text label. |
 | `charpos(size_t idx) -> sf::Vector2i` | Returns local position of a character within the text label. |
+
+## `ui::TextField` - text input
+
+Text field than is used to input text from keyboard.
+
+### Construction
+
+A text field is a panel with a text label inside, which means text field constructor requires panel map, text configuration and cursor color.
+
+### Interface
+
+To control how the text input works, use the public field `input: ui::TextInput`.
+
+To manually focus / unfocus the text field, use `focus(bool)` method.

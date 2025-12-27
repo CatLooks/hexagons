@@ -97,6 +97,8 @@ namespace SkillList {
 	const Skill effect_offense = {
 		.type = Skills::OffenseBoost,
 		.annotation = Skill::None,
+		.resource = Skills::Peach,
+		.cost = 10,
 		.action = [](const SkillState&, Map& map, const HexRef& tile, const HexRef& _) {
 			map.effectTroop(tile, EffectType::OffenseBoost);
 		},

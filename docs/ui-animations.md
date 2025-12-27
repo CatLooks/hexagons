@@ -4,10 +4,10 @@
 
 Animations are stored inside UI elements, and are managed and ticked during element recalculation.
 
-Every animation is described by:
-* Animation time left.
-* Finishing callback.
-* Interpolation easing function (presets in `ui::Easings`).
+Abstract animation object described shared animation state:
+* Time management.
+* Animation progress interpolation.
+* Animation ending actions.
 
 To start an animation, `push()` the animation object into an element:
 ```cpp
@@ -24,6 +24,16 @@ if (!element.animated()) {
 ```
 
 Due to internal animation ordering, animations that were created later take priority (this applies to animations that animate the same value).
+
+## Animation settings
+
+| Field | Type | Description |
+|-|-|-|
+| `ease` | `(float) -> float` | Pointer to interpolation parameter easing function. <br> Normally, easing functions should satisfy `f(0) = 0` and `f(1) = 1` \*. |
+| `reversed` | `bool` | Whether the animation should run in reverse. |
+| `mode` | `None`, `Loop` or `Bounce` | `None` - animation ends normally. <br> `Loop` - animations loops after ending. <br> `Bounce` - animation loops and reverses every time. |
+
+\* *This is not technically required. `f(1)` value can return any value to fit the animation logic.*
 
 # Animation timer
 
@@ -63,12 +73,12 @@ Usage example:
 ui::Anim* anim = ui::AnimDim::to(
 	&element->position().y, // animates element's y position
 	-1es,                   // to -element_size (i.e. off-screen)
-	sf::seconds(0.5)        // in half a second
+	sf::seconds(0.5f)       // in half a second
 );
 anim->setAfter([=]() {
 	element->deactivate();  // deactivates the element after animation
 });
-anim->setEasing(ui::Easings::sineIn); // sets easing to sine in / linear out
-                                      // = instead of sharp movements, element accelerates at the start
+anim->ease = ui::Easings::sineIn; // sets easing to sine in / linear out
+                                  // = instead of sharp movements, element accelerates at the start
 element->push(anim);
 ```

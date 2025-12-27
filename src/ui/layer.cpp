@@ -123,7 +123,7 @@ namespace ui {
 #endif
 			return;
 		};
-		_ctx = &_default;
+		_next = _ctx = &_default;
 	};
 	/// Generates a new interface context.
 	Interface::Context Interface::newContext() {
@@ -134,7 +134,7 @@ namespace ui {
 			return &_default;
 		};
 		_contexts.push_back({});
-		return _ctx = &_contexts.back();
+		return _next = _ctx = &_contexts.back();
 	};
 
 	/// Switches to an interface context during the next frame.
@@ -149,7 +149,16 @@ namespace ui {
 	/// Recalculates interface.
 	void Interface::recalculate(sf::Vector2u windowSize) {
 		// switch to next context
-		_ctx = _next;
+		if (_ctx != _next) {
+			// deactivate previous context
+			for (auto& layer : *_ctx)
+				layer->deactivate();
+
+			// activate next context
+			_ctx = _next;
+			for (auto& layer : *_ctx)
+				layer->activate();
+		};
 
 		// update window rectangle
 		_win_rect = { {}, (sf::Vector2i)windowSize };

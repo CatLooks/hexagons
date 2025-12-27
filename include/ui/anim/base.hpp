@@ -8,19 +8,23 @@
 namespace ui {
 	/// Abstract animator object.
 	class Anim {
-	protected:
-		float _time  = 0.f;             /// Time since animation start.
-		float _dur   = 0.f;             /// Animation duration.
-		Easing _ease = Easings::linear; /// Animation easing function.
-		bool _active = false;           /// Whether the animation is active.
-		std::function<void()> _end;     /// Animation end callback.
-
-		/// Updates the animation target.
-		/// @param t Interpolation progress.
-		virtual void onTick(float t);
-
 	public:
-		bool looped = false; /// Whether to loop the animation.
+		/// Animation looping mode.
+		enum Looping {
+			None   = 0, /// Animation does not loop.
+			Loop   = 1, /// Animation restarts after the loop.
+			Bounce = 2, /// Animations loops and reverses.
+		};
+
+		Easing ease   = Easings::linear; /// Animation easing function.
+		Looping mode  = None;            /// Animation looping mode.
+		bool reversed = false;           /// Whether the animation runs in reverse.
+
+	protected:
+		bool _active  = false;           /// Whether the animation is active.
+		float _time   = 0.f;             /// Time since animation start.
+		float _dur    = 0.f;             /// Animation duration.
+		std::function<void()> _end;      /// Animation end callback.
 
 	public:
 		/// Restarts the animation.
@@ -40,11 +44,16 @@ namespace ui {
 		/// Adds animation end callback.
 		void addAfter(std::function<void()> call);
 
-		/// Sets animation easing.
-		/// 
-		/// @param easing Easing function.
-		/// 
-		/// @return Self-reference.
-		Anim& setEasing(Easing easing);
+	protected:
+		/// Returns interpolated animation progress.
+		///
+		/// @param t Raw animation progress.
+		///
+		/// @return Interpolated animation progress.
+		float prog(float t);
+
+		/// Updates the animation target.
+		/// @param t Interpolation progress.
+		virtual void onTick(float t);
 	};
 };

@@ -23,3 +23,11 @@ bool Entity::hasEffect(EffectType effect) const {
 const Entity::Effects& Entity::effectList() const {
 	return _effects;
 };
+
+/// Ticks all skill timers.
+void Entity::tickTimers() {
+	for (int i = 0; i < 4; i++) {
+		if (timers[i] > 0)
+			timers[i]--;
+	};
+};
