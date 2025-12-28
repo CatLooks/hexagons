@@ -9,10 +9,13 @@
 #include "ui/resource_bar.hpp"
 #include "ui/hex_preview.hpp"
 #include "map.hpp"
+#include "dev/dev_game.hpp"
 #include <delegate>
 
 /// Game controller object.
 class Game : public ui::Element {
+	friend dev::Panel* dev::game_panel(Game*);
+
 public:
 	Map map; /// Game map.
 

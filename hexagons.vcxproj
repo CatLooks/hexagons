@@ -32,6 +32,8 @@
     <ClCompile Include="src\flags.cpp" />
     <ClCompile Include="src\game\array.cpp" />
     <ClCompile Include="src\game\build.cpp" />
+    <ClCompile Include="src\game\dev\dev_game.cpp" />
+    <ClCompile Include="src\game\dev\dev_panel.cpp" />
     <ClCompile Include="src\game\draw.cpp" />
     <ClCompile Include="src\game\draw\build_draw.cpp" />
     <ClCompile Include="src\game\draw\entity_draw.cpp" />
@@ -118,6 +120,8 @@
     <ClInclude Include="include\assetload.hpp" />
     <ClInclude Include="include\assets.hpp" />
     <ClInclude Include="include\delegate.hpp" />
+    <ClInclude Include="include\dev\dev_game.hpp" />
+    <ClInclude Include="include\dev\dev_panel.hpp" />
     <ClInclude Include="include\flags.hpp" />
     <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\game\array.hpp" />

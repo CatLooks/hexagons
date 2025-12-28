@@ -10,7 +10,7 @@ namespace dev {
 	const float Panel::height = 24;
 
 	/// Constructs a section element.
-	Section::Section() {
+	Section::Section() : h(0.f) {
 		// set panel color
 		color = sf::Color(0, 0, 0, 64);
 		padding.set(4);
@@ -35,6 +35,7 @@ namespace dev {
 
 		// update section size
 		size().y += Panel::height;
+		h += Panel::height;
 		return text;
 	};
 
@@ -58,7 +59,12 @@ namespace dev {
 
 	/// Returns section height.
 	float Section::height() const {
-		return lines.size() * Panel::height;
+		return h;
+	};
+
+	/// Attaches an argument update callback.
+	void Section::attach(StaticHandler handler) {
+		argupdate = handler;
 	};
 
 	/// Constructs the developer panel.
@@ -86,13 +92,29 @@ namespace dev {
 			// ignore if predicate is not met
 			if (!info.pred()) continue;
 
+			// update arguments
+			if (info.elem->argupdate)
+				info.elem->argupdate();
+
 			// set section position
 			info.elem->position().y = y;
 			info.elem->recalculate();
-			y += info.elem->height() + height;
+			y += info.elem->height() + height * 0.5f;
 
 			// draw section
 			info.elem->draw(buffer);
+		};
+	};
+
+	/// Constructs a panel using the layout.
+	void SectionLayout::construct(Section* section) const {
+		// add title
+		section->line(title, sf::Color::Magenta);
+		
+		// add key-value pairs
+		for (const auto& p : kv) {
+			section->line(p + ".k", sf::Color::White);
+			section->extra(p + ".v", sf::Color::White);
 		};
 	};
 };

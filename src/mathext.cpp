@@ -1,6 +1,11 @@
 #include "mathext.hpp"
 
 namespace ext {
+	/// Returns absolute value of an integer.
+	int iabs(int x) {
+		return x >= 0 ? x : -x;
+	};
+
 	/// Returns `a / d` rounded down.
 	int idiv(int a, int d) {
 		return (int)floorf((float)a / d);
@@ -56,6 +61,20 @@ namespace ext {
 			while (index++ < 0);
 		};
 		return scale;
+	};
+
+	/// Returns a string representation of a vector.
+	std::string str_vec(sf::Vector2i vec) {
+		return std::format("{}, {}", vec.x, vec.y);
+	};
+
+	/// Returns a string representation of a rectangle.
+	std::string str_rect(sf::IntRect rect) {
+		return std::format(
+			"{}, {} ({} x {})",
+			rect.position.x, rect.position.y,
+			rect.size.x, rect.size.y
+		);
 	};
 };
 

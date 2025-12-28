@@ -1,7 +1,7 @@
 #include "ui.hpp"
 #include "game.hpp"
 #include "assets.hpp"
-#include <conio.h>
+#include "dev/dev_panel.hpp"
 
 /// Testing phase.
 /// 
@@ -73,24 +73,6 @@ int main() {
 			};
 
 			map.empty({ w, h });
-			{
-				Troop troop;
-				troop.pos = { 1, 1 };
-				troop.type = Troop::Knight;
-				troop.hp = 5;
-				troop.timers[2] = 1;
-				map.setTroop(troop);
-
-				Build build;
-				build.pos = { 3, 1 };
-				build.type = Build::Tower;
-				map.setBuild(build);
-
-				Plant plant;
-				plant.pos = { 5, 1 };
-				plant.type = Plant::Peach;
-				map.setPlant(plant);
-			};
 
 			for (int y = 0; y < h; y++) {
 				for (int x = 0; x < w; x++) {
@@ -128,9 +110,34 @@ int main() {
 			};
 			map.regions.enumerate(&map);
 
-			map.at({ 1, 1 })->region->peach = 10;
+			{
+				Troop troop;
+				troop.pos = { 1, 1 };
+				troop.type = Troop::Knight;
+				troop.hp = 5;
+				map.setTroop(troop);
+
+				troop.pos = { 2, 2 };
+				troop.type = Troop::Baron;
+				map.setTroop(troop);
+
+				Build build;
+				build.pos = { 3, 1 };
+				build.type = Build::Tower;
+				map.setBuild(build);
+
+				Plant plant;
+				plant.pos = { 2, 1 };
+				plant.type = Plant::Peach;
+				map.setPlant(plant);
+			};
+
+			map.at({ 1, 1 })->region()->peach = 10;
 		};
 		layer_map->add(game);
+
+		// developer panel
+		layer_gui->add(dev::game_panel(game));
 	};
 
 	auto test_ctx = itf.newContext();
@@ -152,7 +159,6 @@ int main() {
 				if (data->key == sf::Keyboard::Key::Q) {
 					ui::Anim* anim = new ui::AnimSet(sf::seconds(0.5f), [=](float t) {
 						solid->bounds.position.x.px = ui::lerpf(50, 250, t);
-						//printf("%f\n", solid->bounds.position.x.px);
 					});
 					solid->push(anim);
 					return true;

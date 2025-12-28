@@ -3,6 +3,7 @@
 // include dependencies
 #include <SFML/System/Vector2.hpp>
 #include "ui/buffer.hpp"
+#include "dev/dev_game.hpp"
 
 #include "assets.hpp"
 #include "mathext.hpp"
@@ -23,6 +24,7 @@
 class Map : public HexArray {
 	friend Regions;
 	friend Move;
+	friend dev::Panel* dev::game_panel(Game* game);
 
 public:
 	/// Constructs an empty game map.

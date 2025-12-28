@@ -6,11 +6,19 @@
 
 /// Developer stuff.
 namespace dev {
+	class Panel;
+
 	/// Text section element.
 	class Section : public ui::Solid {
+		friend Panel;
+
 	private:
 		/// Text lines.
 		std::vector<ui::Text*> lines;
+		/// Argument update function.
+		StaticHandler argupdate;
+		/// Height.
+		float h;
 
 	public:
 		/// Shared text argument list.
@@ -40,6 +48,11 @@ namespace dev {
 
 		/// Returns section height.
 		float height() const;
+
+		/// Attaches an argument update callback.
+		/// 
+		/// @param handler Callback function.
+		void attach(StaticHandler handler);
 	};
 
 	/// Developer panel.
@@ -78,5 +91,20 @@ namespace dev {
 	protected:
 		/// Draws text sections.
 		void drawChildren(ui::RenderBuffer& buffer) const override;
+	};
+
+	/// Section layout description.
+	struct SectionLayout {
+		/// Section title.
+		std::string title;
+		/// Section key-value pairs.
+		///
+		/// Suffixed with `.k` and `.v`.
+		std::vector<std::string> kv;
+
+		/// Constructs a panel using the layout.
+		/// 
+		/// @param section Target section.
+		void construct(Section* section) const;
 	};
 };

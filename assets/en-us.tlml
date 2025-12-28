@@ -1,4 +1,5 @@
 # parameter text
+# displays a parameter directly
 param: "{value}"
 
 # team names
@@ -70,13 +71,20 @@ skill {
 	stun   : Stun
 }
 
+# currency symbols
+currency {
+	coin: "$"
+	berry: "B"
+	peach: "P"
+}
+
 # gameplay text
 gp {
 	# cost previews
 	cost {
-		coins: "{cost} $"
-		berry: "{cost} B"
-		peach: "{cost} P"
+		coins: "{cost} $(currency.coin)"
+		berry: "{cost} $(currency.berry)"
+		peach: "{cost} $(currency.peach)"
 	}
 
 	# team name preview
@@ -91,4 +99,122 @@ gp {
 # debug info
 debug {
 	fps: "{fps} FPS"
+}
+
+# dev panel text
+dp {
+	# not selected option
+	null: "Not Selected"
+	# "in pool" text
+	in_pool: "in pool"
+
+	# counters
+	count {
+		title: "[ Object Count ]"
+		hex {
+			k: "Hex Count"
+			v: "{hex}"
+		}
+		region {
+			k: "Region Count"
+			v: "{region} ({region_pool} $(dp.in_pool))"
+		}
+		troop {
+			k: "Troop Count"
+			v: "{troop} ({troop_pool} $(dp.in_pool))"
+		}
+		build {
+			k: "Build Count"
+			v: "{build} ({build_pool} $(dp.in_pool))"
+		}
+		plant {
+			k: "Plant Count"
+			v: "{plant} ({plant_pool} $(dp.in_pool))"
+		}
+	}
+
+	# map info
+	map {
+		title: "[ Map Info ]"
+		team {
+			k: "Player Team"
+			v: "{team}"
+		}
+		size_cursor {
+			k: "Size: {size}"
+			v: "Cursor: {cursor}"
+		}
+		camera {
+			k: "Camera"
+			v: "{camera}"
+		}
+	}
+
+	# region info
+	region {
+		title: "[ Region Info ]"
+		id {
+			k: "ID"
+			v: "{id}"
+		}
+		size {
+			k: "Tile Count"
+			v: "{size}"
+		}
+		farm {
+			k: "Farm Count"
+			v: "{farm}"
+		}
+		money {
+			k: "Money"
+			v: "{money}$(currency.coin) {sign}{income}"
+		}
+		fruit {
+			k: "Berry: {berry} $(currency.berry)"
+			v: "Peach: {peach} $(currency.peach)"
+		}
+	}
+
+	# hex info
+	hex {
+		title: "[ Hex Info ]"
+		general {
+			k: "Coords: {pos}"
+			v: "Team: {team}"
+		}
+		selection {
+			k: "Selection ID"
+			v: "{select_id}"
+		}
+		spread {
+			k: "Spread ID"
+			v: "{spread_id}"
+		}
+	}
+
+	# entity info
+	entity {
+		title: "[ Entity Info ]"
+		values {
+			k: "HP: {hp} / {max}"
+			v: "Timers: {t0} {t1} {t2} {t3}"
+		}
+		effects: "Effects: {effects}"
+		empty: "(empty)"
+	}
+
+	# troop info
+	troop {
+		title: "[ Troop Info ]"
+	}
+
+	# build info
+	build {
+		title: "[ Build Info ]"
+	}
+
+	# plant info
+	plant {
+		title: "[ Plant Info ]"
+	}
 }

@@ -4,6 +4,7 @@
 #define _USE_MATH_DEFINES
 #include "math.h"
 #include <SFML/Graphics/Rect.hpp>
+#include <format>
 
 /// Math extension function namespace.
 namespace ext {
@@ -30,6 +31,13 @@ namespace ext {
 			b = this->b;
 		};
 	};
+
+	/// Returns absolute value of an integer.
+	/// 
+	/// @param x Any integer.
+	/// 
+	/// @return Non-negative integer.
+	int iabs(int x);
 
 	/// Returns `a / d` rounded down.
 	///
@@ -84,6 +92,20 @@ namespace ext {
 	/// 
 	/// @return `base ^ index`.
 	float fpown(float base, int index);
+
+	/// Returns a string representation of a vector.
+	/// 
+	/// @param vec Source vector.
+	/// 
+	/// @return String representation.
+	std::string str_vec(sf::Vector2i vec);
+
+	/// Returns a string representation of a rectangle.
+	/// 
+	/// @param vec Source rectangle.
+	/// 
+	/// @return String representation.
+	std::string str_rect(sf::IntRect rect);
 };
 
 /// Shifts a rectangle by a vector.

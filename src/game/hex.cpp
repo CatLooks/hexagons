@@ -7,13 +7,16 @@ void Hex::join(Regions::Ref ref) {
 
 	// join new region
 	_region = ref;
-	
-	// @todo
+	if (_region) {
+		_region->tiles++;
+	};
 };
 
 /// Removes the tile from the region.
 void Hex::leave() {
-	// @todo
+	if (_region) {
+		_region->tiles--;
+	};
 
 	// leave the region
 	_region = {};

@@ -3,6 +3,7 @@
 // include dependencies
 #include <SFML/System/Vector2.hpp>
 #include <refpool>
+#include "dev/dev_game.hpp"
 
 /// Region statistics object.
 struct Region {
@@ -40,6 +41,8 @@ class Map;
 
 /// Region manager object.
 class Regions {
+	friend dev::Panel* dev::game_panel(Game* game);
+
 public:
 	/// Shared region reference type.
 	using Ref = RefPool<Region>::Share;
