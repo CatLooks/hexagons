@@ -42,9 +42,8 @@ public:
 		};
 		/// Move assignment.
 		Ref& operator=(Ref&& ref) noexcept {
-			_pool = ref._pool;
-			_idx = ref._idx;
-			ref._pool = nullptr;
+			std::swap(_pool, ref._pool);
+			std::swap(_idx, ref._idx);
 			return *this;
 		};
 

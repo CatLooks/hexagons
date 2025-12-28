@@ -45,9 +45,8 @@ public:
 		};
 		/// Move assignment.
 		Share& operator=(Share&& item) noexcept {
-			_pool = item._pool;
-			_index = item._index;
-			item._pool = nullptr;
+			std::swap(_pool, item._pool);
+			std::swap(_index, item._index);
 			return *this;
 		};
 
