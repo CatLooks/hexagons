@@ -34,6 +34,7 @@ namespace Moves {
 
 		// move troop
 		to.hex->troop = std::move(from.hex->troop);
+		to.hex->troop->pos = to.pos;
 		from.hex->troop = {};
 	};
 
@@ -46,6 +47,7 @@ namespace Moves {
 
 		// move troop
 		to.hex->troop = std::move(from.hex->troop);
+		to.hex->troop->pos = to.pos;
 		from.hex->troop = {};
 
 		// restore previous region

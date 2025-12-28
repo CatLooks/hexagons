@@ -1,5 +1,7 @@
 #include "dev/dev_game.hpp"
 #include "game.hpp"
+#include "mathext.hpp"
+#include "flags.hpp"
 
 namespace dev {
 	/// Constructs a developer panel for the game.

@@ -2,8 +2,6 @@
 
 // include dependencies
 #include "dev_panel.hpp"
-#include "mathext.hpp"
-#include "flags.hpp"
 
 class Game;
 

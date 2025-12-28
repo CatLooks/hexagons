@@ -7,7 +7,7 @@ namespace dev {
 	};
 
 	/// Panel text height.
-	const float Panel::height = 24;
+	const float Panel::height = 22;
 
 	/// Constructs a section element.
 	Section::Section() : h(0.f) {
