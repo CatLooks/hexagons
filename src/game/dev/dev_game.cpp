@@ -7,6 +7,14 @@ namespace dev {
 		// construct panel
 		Panel* panel = new Panel(300px);
 
+		// add debug mode display check
+		game->onRecalculate([=](const sf::Time&) {
+			if (flags::debug)
+				panel->activate();
+			else
+				panel->deactivate();
+		});
+
 		/// counters ///
 		{
 			static const SectionLayout layout = {
