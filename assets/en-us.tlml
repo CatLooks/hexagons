@@ -201,6 +201,12 @@ dp {
 		}
 		effects: "Effects: {effects}"
 		empty: "(empty)"
+
+		# generic entity info
+		type {
+			k: "Type"
+			v: "({id}) {type}"
+		}
 	}
 
 	# troop info

@@ -203,7 +203,9 @@ namespace dev {
 		{
 			static const SectionLayout layout = {
 				.title = "dp.troop.title",
-				.kv = {}
+				.kv = {
+					"dp.entity.type"
+				}
 			};
 			auto* sec = panel->push([=]() {
 				troop = (tile.hex && tile.hex->troop) ? &*tile.hex->troop : nullptr;
@@ -216,7 +218,10 @@ namespace dev {
 				if (!troop) return;
 
 				// set arguments
-				sec->args = {};
+				sec->args = {
+					{ "id", std::format("{}", (int)troop->type) },
+					{ "type", Values::troop_names[troop->type] }
+				};
 			});
 		};
 		/// build info ///
@@ -224,7 +229,9 @@ namespace dev {
 		{
 			static const SectionLayout layout = {
 				.title = "dp.build.title",
-				.kv = {}
+				.kv = {
+					"dp.entity.type"
+				}
 			};
 			auto* sec = panel->push([=]() {
 				build = (tile.hex && tile.hex->build) ? &*tile.hex->build : nullptr;
@@ -237,7 +244,10 @@ namespace dev {
 				if (!build) return;
 
 				// set arguments
-				sec->args = {};
+				sec->args = {
+					{ "id", std::format("{}", (int)build->type) },
+					{ "type", Values::build_names[build->type] }
+				};
 			});
 		};
 		/// plant info ///
@@ -245,7 +255,9 @@ namespace dev {
 		{
 			static const SectionLayout layout = {
 				.title = "dp.plant.title",
-				.kv = {}
+				.kv = {
+					"dp.entity.type"
+				}
 			};
 			auto* sec = panel->push([=]() {
 				plant = (tile.hex && tile.hex->plant) ? &*tile.hex->plant : nullptr;
@@ -258,7 +270,10 @@ namespace dev {
 				if (!plant) return;
 
 				// set arguments
-				sec->args = {};
+				sec->args = {
+					{ "id", std::format("{}", (int)plant->type) },
+					{ "type", Values::plant_names[plant->type] }
+				};
 			});
 		};
 
