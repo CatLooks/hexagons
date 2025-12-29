@@ -8,9 +8,9 @@ namespace ui {
 	/// Layer camera control object.
 	class Camera {
 	protected:
-		Layer* _layer;     /// Controlled layer.
-		Drag _drag;        /// Drag event.
-		float _zoom = 1.f; /// Layer zoom.
+		Drag        _drag; /// Drag event.
+		sf::Vector2f _cam; /// Camera position.
+		Layer*     _layer; /// Controlled layer.
 
 	public:
 		float minZoom = 0.f;      /// Minimal zoom value.
@@ -18,33 +18,53 @@ namespace ui {
 		float scrollPower;        /// Scrolling coefficient.
 
 	public:
+		/// Starts camera position drag event.
+		/// 
+		/// @param mouse Mouse position.
+		void start(sf::Vector2i mouse);
+
+		/// Stops camera position drag event.
+		void stop();
+
+		/// Moves the camera by an offset.
+		/// 
+		/// @param offset Camera offset.
+		void move(sf::Vector2f offset);
+
+		/// Sets new camera position.
+		/// 
+		/// @param pos Camera position.
+		void setPosition(sf::Vector2f pos);
+
+		/// Updates the camera position.
+		/// 
+		/// @param mouse Mouse position.
+		/// @param pressed Whether the drag button is pressed.
+		void update(sf::Vector2i mouse, bool pressed);
+
+	public:
 		/// Constructs a camera object.
 		/// 
 		/// @param layer Layer reference.
-		/// @param camera Camera position reference.
 		/// @param scroll Scroll coefficient.
-		Camera(Layer* layer, sf::Vector2i* camera, float scroll);
-
-		/// Controls camera panning.
-		/// 
-		/// @param pressed Whether the camera button is pressed.
-		/// @param mouse Mouse position.
-		/// @param window Window size.
-		void pan(bool pressed, sf::Vector2i mouse, sf::Vector2i window);
+		Camera(Layer* layer, float scroll);
 
 		/// Controls camera zoom.
 		/// 
 		/// @param wheel Mouse wheel delta.
 		/// @param mouse Mouse position.
-		/// @param window Window size.
-		void scroll(int wheel, sf::Vector2i mouse, sf::Vector2i window);
+		void scroll(int wheel, sf::Vector2i mouse);
 
 		/// Sets a new zoom value.
 		/// 
 		/// @param zoom Zoom value.
-		void set(float zoom);
-
-		/// @return Current zoom.
+		void setZoom(float zoom);
+		/// Returns current zoom value.
 		float zoom() const;
+
+		/// Returns camera view rectangle.
+		///
+		/// @param window Window size.
+		sf::FloatRect view(sf::Vector2i window) const;
 	};
 };

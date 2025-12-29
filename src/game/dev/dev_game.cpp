@@ -86,7 +86,8 @@ namespace dev {
 					{ "team", "all" },
 					{ "size", ext::str_vec(game->map.size()) },
 					{ "cursor", ext::str_vec(coords) },
-					{ "camera", ext::str_vec(game->map.camera) }
+					{ "camera", ext::str_vec(game->map.camera) },
+					{ "zoom", ext::str_float(game->_camera.zoom(), 2) }
 				};
 			});
 		};

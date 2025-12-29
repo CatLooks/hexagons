@@ -181,7 +181,7 @@ dp {
 		}
 		camera {
 			k: "Camera"
-			v: "{camera}"
+			v: "{camera} ({zoom}x)"
 		}
 	}
 

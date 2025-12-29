@@ -1,4 +1,6 @@
 #include "mathext.hpp"
+#include <sstream>
+#include <iomanip>
 
 namespace ext {
 	/// Returns absolute value of an integer.
@@ -49,18 +51,21 @@ namespace ext {
 		return fmin(fmax(x, lower), upper);
 	};
 
+	// power for unsigned integer powers
+	static float _pow(float x, int p) {
+		float a = 1.f;
+		while (p > 0) {
+			if (p & 1) a *= x;
+			x *= x; p >>= 1;
+		};
+		return a;
+	};
+
 	/// Raises a float to an integer power.
 	float fpown(float base, int index) {
-		float scale = 1.f;
-		if (index > 0) {
-			do scale *= base;
-			while (index-- > 0);
-		}
-		else if (index < 0) {
-			do scale /= base;
-			while (index++ < 0);
-		};
-		return scale;
+		return index >= 0
+			? _pow(base, index)
+			: 1.f / _pow(base, -index);
 	};
 
 	/// Returns a string representation of a vector.
@@ -85,6 +90,13 @@ namespace ext {
 	/// Returns a string representation of an unsigned integer.
 	std::string str_int(size_t n) {
 		return std::format("{}", n);
+	};
+
+	/// Returns a string representation of a float.
+	std::string str_float(float f, unsigned int digits) {
+		std::stringstream ss;
+		ss << std::fixed << std::setprecision(digits) << f;
+		return ss.str();
 	};
 
 	/// Returns percentage of `count` in `total`.

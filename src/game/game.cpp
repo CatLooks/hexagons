@@ -13,7 +13,7 @@ void Game::queueCall(Delegate<void()>::Action call) {
 
 /// Constructs a game object.
 Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
-	_layer(game_layer), _camera(game_layer, &map.camera, 17.f / 16),
+	_layer(game_layer), _camera(game_layer, 17.f / 16),
 	_panel(new gameui::Panel(map.history)), _bar(new gameui::Bar())
 {
 	// register interface elements
@@ -87,14 +87,21 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 	game_layer->onEvent([=](const ui::Event& evt) {
 		// zoom scroll
 		if (auto data = evt.get<ui::Event::MouseWheel>()) {
-			_camera.scroll(-data->delta, ui::window.mouse(), ui::window.size());
+			_camera.scroll(-data->delta, data->original);
 			return true;
 		};
 
-		// zoom reset
+		// mouse press
 		if (auto data = evt.get<ui::Event::MousePress>()) {
+			// zoom reset
 			if (data->button == sf::Mouse::Button::Middle) {
-				_camera.set(1.f);
+				_camera.setZoom(1.f);
+				return true;
+			};
+
+			// camera pan start
+			if (data->button == sf::Mouse::Button::Right) {
+				_camera.start(data->original);
 				return true;
 			};
 		};
@@ -113,15 +120,15 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) offset.y++;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) offset.x--;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) offset.x++;
-			map.camera += sf::Vector2i(sf::Vector2f(offset * Values::k)
+			_camera.move(sf::Vector2f(offset * Values::k)
 				* Values::panSpeed * delta.asSeconds());
 		};
 
 		// mouse camera pan
-		_camera.pan(
-			sf::Mouse::isButtonPressed(sf::Mouse::Button::Right),
-			ui::window.mouse(), ui::window.size()
-		);
+		_camera.update(ui::window.mouse(), sf::Mouse::isButtonPressed(sf::Mouse::Button::Right));
+
+		// set map camera position
+		map.camera = (sf::Vector2i)_camera.view(ui::window.size()).position;
 	});
 
 	// deselect when clicking on the panel

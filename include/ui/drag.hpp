@@ -12,10 +12,16 @@ namespace ui {
 	class Drag {
 		friend Camera;
 
+	public:
+		/// Drag value setter.
+		///
+		/// @param offset Value offset since last frame.
+		using Set = std::function<void(sf::Vector2f offset)>;
+
 	protected:
+		Set _set; /// Dragged value setter.
+
 		sf::Vector2i _mouse; /// Initial mouse position.
-		sf::Vector2i _value; /// Initial value.
-		sf::Vector2i*  _ref; /// Drag value setter.
 
 		float    _scale = 1.f; /// Default drag scaling.
 		bool  _active = false; /// Whether the event is active.
@@ -24,10 +30,6 @@ namespace ui {
 	public:
 		bool invert = false; /// Inverts the drag direction.
 
-		std::optional<sf::Vector2i> min = {}; /// Minimal drag values for both axes.
-		std::optional<sf::Vector2i> max = {}; /// First out-of-range drag values for both axes.
-
-	protected:
 		/// Starts the drag event.
 		/// 
 		/// Uses current dragged value for initialization.
@@ -36,6 +38,8 @@ namespace ui {
 		void start(sf::Vector2i mouse);
 		/// Stops the drag event.
 		void stop();
+
+	protected:
 		/// Updates the dragged value.
 		/// 
 		/// @param mouse Current mouse position.
@@ -44,8 +48,8 @@ namespace ui {
 	public:
 		/// Constructs an inactive drag event.
 		///
-		/// @param ref Dragged value reference.
-		Drag(sf::Vector2i* ref);
+		/// @param setter Dragged value setter function.
+		Drag(const Set& setter);
 
 		/// Sets drag multiplier.
 		/// 
@@ -55,8 +59,7 @@ namespace ui {
 		/// Updates the drag event.
 		/// 
 		/// @param mouse Mouse position.
-		/// @param window Window size.
 		/// @param pressed Whether the drag button is pressed.
-		void update(sf::Vector2i mouse, sf::Vector2i window, bool pressed);
+		void update(sf::Vector2i mouse, bool pressed);
 	};
 };

@@ -113,6 +113,12 @@ namespace ext {
 	/// @param vec Source integer.
 	std::string str_int(size_t n);
 
+	/// Returns a string representation of a float.
+	/// 
+	/// @param f Source float.
+	/// @param digits Digits after floating point.
+	std::string str_float(float f, unsigned int digits = 1);
+
 	/// Returns percentage of `count` in `total`.
 	/// 
 	/// @param count Partial amount.

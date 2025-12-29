@@ -4,12 +4,11 @@
 
 namespace ui {
 	/// Constructs an inactive drag event.
-	Drag::Drag(sf::Vector2i* ref): _ref(ref) {};
+	Drag::Drag(const Set& setter): _set(setter) {};
 
 	/// Starts the drag event.
 	void Drag::start(sf::Vector2i mouse) {
 		_mouse = mouse;
-		_value = *_ref;
 		_active = true;
 	};
 
@@ -23,25 +22,17 @@ namespace ui {
 		// ignore if not active
 		if (!_active) return;
 
-		// calculate new value
-		sf::Vector2i diff = {
-			int((mouse.x - _mouse.x) * _scale),
-			int((mouse.y - _mouse.y) * _scale)
-		};
-		sf::Vector2i value = invert ? (_value - diff) : (_value + diff);
-
-		// clamp value
-		if (max) {
-			value.x = ext::imin(value.x, max->x - 1);
-			value.y = ext::imin(value.y, max->y - 1);
-		};
-		if (min) {
-			value.x = ext::imax(value.x, min->x);
-			value.y = ext::imax(value.y, min->y);
+		// calculate offset
+		sf::Vector2f diff = {
+			float(mouse.x - _mouse.x) * _scale,
+			float(mouse.y - _mouse.y) * _scale
 		};
 
-		// set reference to new value
-		*_ref = value;
+		// apply offset
+		_set(invert ? -diff : diff);
+
+		// rebase mouse position
+		_mouse = mouse;
 	};
 
 	/// Sets drag multiplier.
@@ -50,12 +41,7 @@ namespace ui {
 	};
 
 	/// Updates the drag event.
-	void Drag::update(sf::Vector2i mouse, sf::Vector2i window, bool pressed) {
-		// check for press
-		if (!_pressed && pressed)
-			if (sf::IntRect({}, ui::window.size()).contains(mouse))
-				start(mouse);
-
+	void Drag::update(sf::Vector2i mouse, bool pressed) {
 		// update drag
 		move(mouse);
 
