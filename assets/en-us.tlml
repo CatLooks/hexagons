@@ -192,13 +192,9 @@ dp {
 			k: "ID"
 			v: "{id}"
 		}
-		size {
-			k: "Tile Count"
-			v: "{size}"
-		}
-		farm {
-			k: "Farm Count"
-			v: "{farm}"
+		count {
+			k: "Tiles: {size}"
+			v: "Farms: {farm}"
 		}
 		money {
 			k: "Money"
@@ -217,13 +213,9 @@ dp {
 			k: "Coords: {pos}"
 			v: "Team: {team}"
 		}
-		selection {
-			k: "Selection ID"
-			v: "{select_id}"
-		}
-		spread {
-			k: "Spread ID"
-			v: "{spread_id}"
+		ids {
+			k: "Select: {select_id}"
+			v: "Spread: {spread_id}"
 		}
 	}
 

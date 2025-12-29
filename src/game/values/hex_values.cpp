@@ -14,6 +14,9 @@ namespace Values {
 		Values::tileTex + Values::tileLevel(Values::tileTex)
 	};
 
+	/// Water side color.
+	const sf::Color waterSide = sf::Color(0, 157, 251);
+
 	// texture array
 	const sf::IntRect hex_textures[Region::Count] = {
 		coords(0, 0), // void

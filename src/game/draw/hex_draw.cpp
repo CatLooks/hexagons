@@ -96,7 +96,7 @@ namespace Draw {
 			else if (hex->type == Hex::Water) {
 				// draw water sides
 				sf::IntRect area = {origin + Values::tileLevel(size) * 2, size};
-				target.quad(area, Values::sides, sf::Color(0, 157, 251));
+				target.quad(area, Values::sides, Values::waterSide);
 			};
 			target.forward(&assets::tilemap);
 		};

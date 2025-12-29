@@ -60,16 +60,16 @@ int main() {
 		{
 			Map& map = game->map;
 
-			const int w = 14;
+			const int w = 7;
 			const int h = 7;
 			const char arr[h][w + 1] = {
-				"------------- ",
-				"rrrrrrrwyywrrr",
-				"rrrrrrwyywrrr ",
-				"ggggggwyywgggg",
-				"ggrrgwyywgggg ",
-				"bbrrbwyywbbbbb",
-				"bbbbwyywbbbbb ",
+				"------ ",
+				"--rr---",
+				"---rbb ",
+				"rrrrbbb",
+				"---rbb ",
+				"--rr---",
+				"------ "
 			};
 
 			map.empty({ w, h });
@@ -81,7 +81,7 @@ int main() {
 
 					switch (arr[y][x]) {
 					case '-':
-						hex->type = Hex::Ground;
+						hex->type = Hex::Water;
 						break;
 					case 'r':
 						hex->type = Hex::Ground;
@@ -112,27 +112,13 @@ int main() {
 
 			{
 				Troop troop;
-				troop.pos = { 1, 1 };
-				troop.type = Troop::Knight;
-				troop.hp = 5;
+				troop.pos = { 5, 3 };
+				troop.type = Troop::Archer;
+				troop.hp = troop.max_hp();
 				map.setTroop(troop);
-
-				troop.pos = { 2, 2 };
-				troop.type = Troop::Baron;
-				map.setTroop(troop);
-
-				Build build;
-				build.pos = { 3, 1 };
-				build.type = Build::Tower;
-				map.setBuild(build);
-
-				Plant plant;
-				plant.pos = { 2, 1 };
-				plant.type = Plant::Peach;
-				map.setPlant(plant);
 			};
 
-			map.at({ 1, 1 })->region()->peach = 10;
+			map.at({ 3, 3 })->region()->money = 11;
 		};
 		layer_map->add(game);
 

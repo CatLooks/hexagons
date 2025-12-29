@@ -96,8 +96,7 @@ namespace dev {
 				.title = "dp.region.title",
 				.kv = {
 					"dp.region.id",
-					"dp.region.size",
-					"dp.region.farm",
+					"dp.region.count",
 					"dp.region.money",
 					"dp.region.fruit"
 				}
@@ -135,8 +134,7 @@ namespace dev {
 				.title = "dp.hex.title",
 				.kv = {
 					"dp.hex.general",
-					"dp.hex.selection",
-					"dp.hex.spread",
+					"dp.hex.ids"
 				}
 			};
 			auto* sec = panel->push([=]() {
