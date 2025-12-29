@@ -85,9 +85,18 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 
 	// add camera zoom handler
 	game_layer->onEvent([=](const ui::Event& evt) {
+		// zoom scroll
 		if (auto data = evt.get<ui::Event::MouseWheel>()) {
 			_camera.scroll(-data->delta, ui::window.mouse(), ui::window.size());
 			return true;
+		};
+
+		// zoom reset
+		if (auto data = evt.get<ui::Event::MousePress>()) {
+			if (data->button == sf::Mouse::Button::Middle) {
+				_camera.set(1.f);
+				return true;
+			};
 		};
 		return false;
 	});

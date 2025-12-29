@@ -39,6 +39,11 @@ namespace ui {
 		/// @param window Window size.
 		void scroll(int wheel, sf::Vector2i mouse, sf::Vector2i window);
 
+		/// Sets a new zoom value.
+		/// 
+		/// @param zoom Zoom value.
+		void set(float zoom);
+
 		/// @return Current zoom.
 		float zoom() const;
 	};

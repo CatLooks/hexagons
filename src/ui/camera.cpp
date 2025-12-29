@@ -27,6 +27,11 @@ namespace ui {
 		//camera = window / 2 - sf::Vector2i(sf::Vector2f(window / 2 - camera) * zoom / _zoom);
 
 		// set new zoom
+		set(zoom);
+	};
+
+	/// Sets a new zoom value.
+	void Camera::set(float zoom) {
 		_zoom = zoom;
 		_drag._scale = zoom;
 	};
