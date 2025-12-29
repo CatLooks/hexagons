@@ -46,3 +46,21 @@ std::optional<sf::Vector2i> History::redo() {
 std::pair<size_t, size_t> History::count() const {
 	return std::make_pair(_cursor, _list.size() - _cursor);
 };
+
+/// Returns last move.
+const Move* History::last() const {
+	// ignore if no moves
+	if (_list.empty() || _cursor == 0) return nullptr;
+
+	// return last move
+	return _list[_cursor - 1].get();
+};
+
+/// Returns next move.
+const Move* History::next() const {
+	// ignore if no moves
+	if (_cursor >= _list.size()) return nullptr;
+
+	// return next move
+	return _list[_cursor].get();
+};

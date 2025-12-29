@@ -46,4 +46,9 @@ public:
 
 	/// Returns amount of moves done & reverted. 
 	std::pair<size_t, size_t> count() const;
+
+	/// Returns last move.
+	const Move* last() const;
+	/// Returns next move.
+	const Move* next() const;
 };
