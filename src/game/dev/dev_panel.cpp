@@ -13,8 +13,20 @@ namespace dev {
 	Section::Section() : h(0.f) {
 		// set panel color
 		color = sf::Color(0, 0, 0, 64);
-		padding.set(4);
+		padding.setHorizontal(8);
+		padding.setVertical(4);
 		bounds = { 0px, 0px, 1ps, (float)(padding.top + padding.bottom) };
+	};
+
+	/// Clears the section.
+	void Section::clear() {
+		// clear all lines
+		lines.clear();
+		Solid::clear();
+
+		// reset height
+		bounds.size.y = (float)(padding.top + padding.bottom);
+		h = 0.f;
 	};
 
 	/// Pushes a new text line.
@@ -83,9 +95,17 @@ namespace dev {
 		return sec;
 	};
 
+	/// Attaches a global update callback.
+	void Panel::attach(StaticHandler handler) {
+		_upd = handler;
+	};
+
 	/// Draws text sections.
 	void Panel::drawChildren(ui::RenderBuffer& buffer) const {
 		ui::Dim y = 0px;
+
+		// global update
+		if (_upd) _upd();
 
 		// draw all active sections
 		for (const auto& info : _ctx) {

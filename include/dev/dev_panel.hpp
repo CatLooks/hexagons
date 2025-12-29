@@ -1,7 +1,8 @@
 #pragma once
 
 // include dependencies
-#include "ui.hpp"
+#include "ui/solid.hpp"
+#include "ui/text.hpp"
 #include "assets.hpp"
 
 /// Developer stuff.
@@ -26,6 +27,9 @@ namespace dev {
 
 		/// Constructs a section element.
 		Section();
+
+		/// Clears the section.
+		void clear();
 
 		/// Text line position.
 		enum Position { Left, Right };
@@ -74,6 +78,8 @@ namespace dev {
 
 		/// List of sections.
 		std::vector<secinfo> _ctx;
+		/// Draw update call.
+		StaticHandler _upd;
 
 	public:
 		/// Constructs the developer panel.
@@ -87,6 +93,11 @@ namespace dev {
 		/// 
 		/// @return New section element.
 		Section* push(std::function<bool()> predicate = []() { return true; });
+
+		/// Attaches a global update callback.
+		/// 
+		/// @param handler Callback function.
+		void attach(StaticHandler handler);
 
 	protected:
 		/// Draws text sections.
