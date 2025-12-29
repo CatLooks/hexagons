@@ -14,7 +14,7 @@
 
 /// Game controller object.
 class Game : public ui::Element {
-	friend dev::Panel* dev::game_panel(Game*);
+	friend dev::Factory;
 
 public:
 	Map map; /// Game map.

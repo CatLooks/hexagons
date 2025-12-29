@@ -6,10 +6,28 @@
 class Game;
 
 namespace dev {
-	/// Constructs a developer panel for the game.
-	/// 
-	/// @param game Game element.
-	/// 
-	/// @return Panel element.
-	Panel* game_panel(Game* game);
+	/// Developer panel factory.
+	struct Factory {
+		// no instances
+		Factory() = delete;
+
+		/// Constructs a developer panel for the game.
+		/// 
+		/// @param game Game element.
+		/// 
+		/// @return Panel element.
+		static Panel* game_panel(Game* game);
+
+		/// Creates sections for map related stuff.
+		/// 
+		/// @param panel Panel element.
+		/// @param game Game element.
+		static void attach_map(Panel* panel, Game* game);
+
+		/// Creates sections for all moves.
+		///
+		/// @param panel Panel element.
+		/// @param game Game element.
+		static void attach_moves(Panel* panel, Game* game);
+	};
 };

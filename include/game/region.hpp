@@ -41,7 +41,7 @@ class Map;
 
 /// Region manager object.
 class Regions {
-	friend dev::Panel* dev::game_panel(Game* game);
+	friend dev::Factory;
 
 public:
 	/// Shared region reference type.

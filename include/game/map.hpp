@@ -24,7 +24,7 @@
 class Map : public HexArray {
 	friend Regions;
 	friend Move;
-	friend dev::Panel* dev::game_panel(Game* game);
+	friend dev::Factory;
 
 public:
 	/// Constructs an empty game map.

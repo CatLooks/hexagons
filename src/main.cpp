@@ -137,7 +137,7 @@ int main() {
 		layer_map->add(game);
 
 		// developer panel
-		layer_gui->add(dev::game_panel(game));
+		layer_gui->add(dev::Factory::game_panel(game));
 	};
 
 	auto test_ctx = itf.newContext();

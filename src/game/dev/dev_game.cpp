@@ -5,7 +5,7 @@
 
 namespace dev {
 	/// Constructs a developer panel for the game.
-	Panel* game_panel(Game* game) {
+	Panel* Factory::game_panel(Game* game) {
 		// construct panel
 		Panel* panel = new Panel(300px);
 
