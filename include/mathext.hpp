@@ -96,16 +96,30 @@ namespace ext {
 	/// Returns a string representation of a vector.
 	/// 
 	/// @param vec Source vector.
-	/// 
-	/// @return String representation.
 	std::string str_vec(sf::Vector2i vec);
 
 	/// Returns a string representation of a rectangle.
 	/// 
 	/// @param vec Source rectangle.
-	/// 
-	/// @return String representation.
 	std::string str_rect(sf::IntRect rect);
+
+	/// Returns a string representation of a signed integer.
+	/// 
+	/// @param vec Source integer.
+	std::string str_int(int n);
+
+	/// Returns a string representation of an unsigned integer.
+	/// 
+	/// @param vec Source integer.
+	std::string str_int(size_t n);
+
+	/// Returns percentage of `count` in `total`.
+	/// 
+	/// @param count Partial amount.
+	/// @param total Total amount.
+	/// 
+	/// @return Percentage string.
+	std::string str_percent(size_t count, size_t total);
 };
 
 /// Shifts a rectangle by a vector.

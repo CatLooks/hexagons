@@ -45,21 +45,21 @@ namespace dev {
 			// attach info update
 			sec->attach([=]() {
 				sec->args = {
-					{ "hex", std::format("{}", game->map.size().x * game->map.size().y) },
+					{ "hex", ext::str_int(game->map.size().x * game->map.size().y) },
 
 					// entity count
-					{ "troop", std::format("{}", game->map._troops.count()) },
-					{ "build", std::format("{}", game->map._builds.count()) },
-					{ "plant", std::format("{}", game->map._plants.count()) },
+					{ "troop", ext::str_int(game->map._troops.count()) },
+					{ "build", ext::str_int(game->map._builds.count()) },
+					{ "plant", ext::str_int(game->map._plants.count()) },
 
 					// entity pool count
-					{ "troop_pool", std::format("{}", game->map._troops.capacity()) },
-					{ "build_pool", std::format("{}", game->map._builds.capacity()) },
-					{ "plant_pool", std::format("{}", game->map._plants.capacity()) },
+					{ "troop_pool", ext::str_int(game->map._troops.capacity()) },
+					{ "build_pool", ext::str_int(game->map._builds.capacity()) },
+					{ "plant_pool", ext::str_int(game->map._plants.capacity()) },
 
 					// region stuff
-					{ "region", std::format("{}", game->map.regions._pool.count()) },
-					{ "region_pool", std::format("{}", game->map.regions._pool.capacity()) }
+					{ "region", ext::str_int(game->map.regions._pool.count()) },
+					{ "region_pool", ext::str_int(game->map.regions._pool.capacity()) }
 				};
 			});
 		};
@@ -112,18 +112,18 @@ namespace dev {
 
 				// set arguments
 				sec->args = {
-					{ "id", std::format("{}", reg.index()) },
-					{ "size", std::format("{}", reg->tiles) },
-					{ "farm", std::format("{}", reg->farms) },
+					{ "id", ext::str_int(reg.index()) },
+					{ "size", ext::str_int(reg->tiles) },
+					{ "farm", ext::str_int(reg->farms) },
 
 					// money
-					{ "money", std::format("{}", reg->money) },
+					{ "money", ext::str_int(reg->money) },
 					{ "sign", reg->income == 0 ? "=" : (reg->income > 0 ? "+" : "-")},
-					{ "income", std::format("{}", ext::iabs(reg->income)) },
+					{ "income", ext::str_int(ext::iabs(reg->income)) },
 
 					// fruits
-					{ "berry", std::format("{}", reg->berry) },
-					{ "peach", std::format("{}", reg->peach) },
+					{ "berry", ext::str_int(reg->berry) },
+					{ "peach", ext::str_int(reg->peach) },
 				};
 			});
 		};
@@ -154,8 +154,8 @@ namespace dev {
 				sec->args = {
 					{ "pos", ext::str_vec(tile.pos) },
 					{ "team", Values::hex_names[tile.hex->team] },
-					{ "select_id", std::format("{}", tile.hex->selected) },
-					{ "spread_id", std::format("{}", tile.hex->spread) }
+					{ "select_id", ext::str_int(tile.hex->selected) },
+					{ "spread_id", ext::str_int(tile.hex->spread) }
 				};
 			});
 		};
@@ -204,14 +204,14 @@ namespace dev {
 				// set arguments
 				sec->args = {
 					// hp
-					{ "hp", std::format("{}", entity->hp) },
-					{ "max", std::format("{}", entity->max_hp()) },
+					{ "hp", ext::str_int(entity->hp) },
+					{ "max", ext::str_int(entity->max_hp()) },
 
 					// timers
-					{ "t0", std::format("{}", entity->timers[0]) },
-					{ "t1", std::format("{}", entity->timers[1]) },
-					{ "t2", std::format("{}", entity->timers[2]) },
-					{ "t3", std::format("{}", entity->timers[3]) },
+					{ "t0", ext::str_int(entity->timers[0]) },
+					{ "t1", ext::str_int(entity->timers[1]) },
+					{ "t2", ext::str_int(entity->timers[2]) },
+					{ "t3", ext::str_int(entity->timers[3]) },
 
 					// effects
 					{ "effects", effects }
@@ -239,7 +239,7 @@ namespace dev {
 
 				// set arguments
 				sec->args = {
-					{ "id", std::format("{}", (int)troop->type) },
+					{ "id", ext::str_int((int)troop->type) },
 					{ "type", Values::troop_names[troop->type] }
 				};
 			});
@@ -265,7 +265,7 @@ namespace dev {
 
 				// set arguments
 				sec->args = {
-					{ "id", std::format("{}", (int)build->type) },
+					{ "id", ext::str_int((int)build->type) },
 					{ "type", Values::build_names[build->type] }
 				};
 			});
@@ -291,7 +291,7 @@ namespace dev {
 
 				// set arguments
 				sec->args = {
-					{ "id", std::format("{}", (int)plant->type) },
+					{ "id", ext::str_int((int)plant->type) },
 					{ "type", Values::plant_names[plant->type] }
 				};
 			});
@@ -334,7 +334,7 @@ namespace dev {
 				sec->args = {
 					{ "skill_type", Values::skill_names[move->skill_type] },
 					{ "skill_pos", ext::str_vec(move->skill_pos) },
-					{ "skill_time", std::format("{}", move->skill_cooldown) }
+					{ "skill_time", ext::str_int(move->skill_cooldown) }
 				};
 
 				// add move specific info

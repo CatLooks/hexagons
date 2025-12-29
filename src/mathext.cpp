@@ -76,6 +76,22 @@ namespace ext {
 			rect.size.x, rect.size.y
 		);
 	};
+
+	/// Returns a string representation of a signed integer.
+	std::string str_int(int n) {
+		return std::format("{}", n);
+	};
+
+	/// Returns a string representation of an unsigned integer.
+	std::string str_int(size_t n) {
+		return std::format("{}", n);
+	};
+
+	/// Returns percentage of `count` in `total`.
+	std::string str_percent(size_t count, size_t total) {
+		if (!count && !total) return "0%";
+		return std::format("{:.1f}%", (float)count / total * 100.f);
+	};
 };
 
 /// Shifts a rectangle by a vector.

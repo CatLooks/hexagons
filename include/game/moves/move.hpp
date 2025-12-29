@@ -61,7 +61,5 @@ namespace Moves {
 	/// Returns string representation of an entity.
 	/// 
 	/// @param entity Entity variant pointer.
-	/// 
-	/// @return String representation.
 	std::string str_ent(const EntState* entity);
 };
