@@ -12,13 +12,16 @@
 #include "game/build.hpp"
 #include "game/plant.hpp"
 
+#include "dev/dev_move.hpp"
+#include <format>
+
 // map forward declaration
 class Map;
 
 /// Abstract reversible game move.
 ///
 /// Fields prefixed with `a_` are set with `apply()` method.
-struct Move {
+struct Move : dev::Move {
 	sf::Vector2i  skill_pos {}; /// Skill origin position.
 	Skills::Type skill_type {}; /// Skill type.
 	uint8_t  skill_cooldown {}; /// Skill cooldown.
@@ -54,4 +57,11 @@ struct Move {
 namespace Moves {
 	/// Entity state description type.
 	using EntState = std::variant<std::monostate, Troop, Build, Plant>;
+
+	/// Returns string representation of an entity.
+	/// 
+	/// @param entity Entity variant pointer.
+	/// 
+	/// @return String representation.
+	std::string str_ent(const EntState* entity);
 };

@@ -315,6 +315,9 @@
     <ClCompile Include="src\game\dev\dev_game.cpp">
       <Filter>Source Files\game\dev</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\dev\dev_move.cpp">
+      <Filter>Source Files\game\dev</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -591,6 +594,9 @@
       <Filter>Header Files\game\dev</Filter>
     </ClInclude>
     <ClInclude Include="include\dev\dev_game.hpp">
+      <Filter>Header Files\game\dev</Filter>
+    </ClInclude>
+    <ClInclude Include="include\dev\dev_move.hpp">
       <Filter>Header Files\game\dev</Filter>
     </ClInclude>
   </ItemGroup>
