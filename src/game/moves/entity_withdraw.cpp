@@ -35,4 +35,14 @@ namespace Moves {
 		if (auto* plant = std::get_if<Plant>(&a_state))
 			map->setPlant(*plant);
 	};
+
+	/// Emits move section info.
+	void EntityWithdraw::emitDev(dev::Section* section, ui::Text::List& list) const {
+		// construct new fields
+		section->line("dp.move.override");
+
+		// add arguments
+		list["entity"] = str_ent(&a_state);
+		list["skill_name"] = "@!dp.move.name.entity_withdraw";
+	};
 };

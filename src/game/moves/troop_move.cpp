@@ -1,4 +1,5 @@
 #include "game/moves/troop_move.hpp"
+#include "game/values/hex_values.hpp"
 #include "game/map.hpp"
 
 namespace Moves {
@@ -58,7 +59,7 @@ namespace Moves {
 			for (int i = 0; i < 6; i++) {
 				// get neighbor tile
 				auto* hex = map->at(map->neighbor(from.pos, static_cast<Map::nbi_t>(i)));
-				if (!hex) return;
+				if (!hex) continue;
 
 				// copy its region if has the same team
 				if (hex->team == a_state.team) {
@@ -92,5 +93,19 @@ namespace Moves {
 	/// Returns tile to select after returning.
 	std::optional<sf::Vector2i> TroopMove::revertCursor() {
 		return skill_pos;
+	};
+
+	/// Emits move section info.
+	void TroopMove::emitDev(dev::Section* section, ui::Text::List& list) const {
+		// construct new fields
+		section->extra("dp.move.troop_move.to");
+		section->line("dp.move.troop_move.team");
+		section->line("dp.move.override");
+
+		// add arguments
+		list["pos"] = ext::str_vec(dest);
+		list["team"] = Values::hex_names[a_state.team];
+		list["entity"] = str_ent(&a_state.entity);
+		list["skill_name"] = "@!dp.move.name.troop_move";
 	};
 };

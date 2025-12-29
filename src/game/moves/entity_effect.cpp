@@ -1,4 +1,5 @@
 #include "game/moves/entity_effect.hpp"
+#include "game/values/entity_values.hpp"
 #include "game/map.hpp"
 
 namespace Moves {
@@ -42,5 +43,17 @@ namespace Moves {
 		// add effect cost
 		if (hex->region())
 			hex->region()->peach += peach;
+	};
+
+	/// Emits move section info.
+	void EntityEffect::emitDev(dev::Section* section, ui::Text::List& list) const {
+		// construct new fields
+		section->line("dp.move.entity_effect.effect");
+		section->line("dp.move.entity_effect.before");
+
+		// add arguments
+		list["effect"] = Values::effect_names[static_cast<int>(effect)];
+		list["before"] = a_before ? "@!yes" : "@!no";
+		list["skill_name"] = "@!dp.move.name.entity_effect";
 	};
 };

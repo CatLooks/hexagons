@@ -16,7 +16,17 @@ namespace dev {
 			else
 				panel->deactivate();
 		});
+		
+		// instantiate all sections
+		attach_map(panel, game);
+		attach_moves(panel, game);
 
+		// return panel
+		return panel;
+	};
+
+	/// Creates sections for map related stuff.
+	void Factory::attach_map(Panel* panel, Game* game) {
 		/// counters ///
 		{
 			static const SectionLayout layout = {
@@ -132,9 +142,9 @@ namespace dev {
 			auto* sec = panel->push([=]() {
 				tile = game->_select
 					? game->map.atref(*game->_select)
-					: HexRef { nullptr, {} };
+					: HexRef{ nullptr, {} };
 				return tile.hex != nullptr;
-			
+
 			});
 			layout.construct(sec);
 
@@ -157,7 +167,8 @@ namespace dev {
 			static const SectionLayout layout = {
 				.title = "dp.entity.title",
 				.kv = {
-					"dp.entity.values"
+					"dp.entity.values",
+					"dp.entity.effects"
 				}
 			};
 			auto* sec = panel->push([=]() {
@@ -165,7 +176,6 @@ namespace dev {
 				return entity != nullptr;
 			});
 			layout.construct(sec);
-			sec->line("dp.entity.effects");
 
 			// attach info update
 			sec->attach([=]() {
@@ -174,12 +184,24 @@ namespace dev {
 				// effect list
 				std::string effects;
 				for (EffectType effect : entity->effectList()) {
+					// separators
 					if (!effects.empty())
 						effects.append(", ");
-					effects.append(std::format("{}", static_cast<int>(effect)));
+					else
+						effects.append("[ ");
+
+					// short effect name
+					effects.append(
+						assets::lang::locale.req(Values::effect_names_short[static_cast<int>(effect)])
+							.get({}, &assets::lang::locale)
+					);
 				};
+
+				// ending
 				if (entity->effectList().empty())
 					effects = "@!dp.entity.empty";
+				else
+					effects.append(" ]");
 
 				// set arguments
 				sec->args = {
@@ -276,8 +298,54 @@ namespace dev {
 				};
 			});
 		};
+	};
 
-		// return panel
-		return panel;
+	/// Creates a section for all moves.
+	void Factory::attach_moves(Panel* panel, Game* game) {
+		/// move info ///
+		static const ::Move* c_move = nullptr; // current move capture pointer
+		static const ::Move* n_move = nullptr; // next move capture pointer
+
+		// create sections
+		auto* c_sec = panel->push([=]() {
+			// fetch move object
+			c_move = game->map.history.last();
+			return c_move != nullptr;
+		});
+		auto* n_sec = panel->push([=]() {
+			// fetch move object
+			n_move = game->map.history.next();
+			return n_move != nullptr;
+		});
+
+		// attaches a section constructor
+		auto attach = [](Section* sec, const ::Move*& move, std::function<void(Section*)> title) {
+			sec->attach([sec, title, &move]() {
+				// ignore if no move
+				if (!move) return;
+
+				// clear section
+				sec->clear();
+
+				// add shared data
+				title(sec);
+				sec->line("dp.move.name.field", sf::Color::Cyan);
+				sec->line("dp.move.shared");
+
+				// set shared arguments
+				sec->args = {
+					{ "skill_type", Values::skill_names[move->skill_type] },
+					{ "skill_pos", ext::str_vec(move->skill_pos) },
+					{ "skill_time", std::format("{}", move->skill_cooldown) }
+				};
+
+				// add move specific info
+				move->emitDev(sec, sec->args);
+			});
+		};
+
+		// attach section constructors
+		attach(c_sec, c_move, [](Section* sec) { sec->line("dp.move.last", sf::Color::Green); });
+		attach(n_sec, n_move, [](Section* sec) { sec->line("dp.move.next", sf::Color::Red); });
 	};
 };

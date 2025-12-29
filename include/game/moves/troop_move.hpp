@@ -39,5 +39,8 @@ namespace Moves {
 
 		/// Returns tile to select after returning.
 		std::optional<sf::Vector2i> revertCursor() override;
+
+		/// Emits move section info.
+		void emitDev(dev::Section* section, ui::Text::List& list) const override;
 	};
 };

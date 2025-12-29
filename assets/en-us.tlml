@@ -2,6 +2,10 @@
 # displays a parameter directly
 param: "{value}"
 
+# boolean values
+yes: "Yes"
+no: "No"
+
 # team names
 team {
 	v: Unclaimed
@@ -129,6 +133,16 @@ dp {
 	# "in pool" text
 	in_pool: "in pool"
 
+	# entity state
+	entity_state {
+		# no entity
+		none: "None"
+		# unknown entity
+		unknown: "Unknown"
+		# entity info format
+		format: "{name} [{hp} / {max}]"
+	}
+
 	# counters
 	count {
 		title: "[ Object Count ]"
@@ -220,7 +234,10 @@ dp {
 			k: "HP: {hp} / {max}"
 			v: "Timers: {t0} {t1} {t2} {t3}"
 		}
-		effects: "Effects: {effects}"
+		effects {
+			k: "Effects"
+			v: "{effects}"
+		}
 		empty: "(empty)"
 
 		# generic entity info
@@ -243,5 +260,40 @@ dp {
 	# plant info
 	plant {
 		title: "[ Plant Info ]"
+	}
+
+	# move info
+	move {
+		# move section titles
+		last: "[ Last Move ]"
+		next: "[ Next Move ]"
+
+		# shared info
+		shared: "\"{skill_type}\" at {skill_pos} (+{skill_time})"
+
+		# move names
+		name {
+			field: "Name: {skill_name}"
+
+			troop_move: "Troop Move"
+
+			entity_withdraw: "Entity Withdraw"
+			entity_effect: "Entity Effect"
+		}
+
+		# entity override
+		override: "Override of {entity}"
+
+		# troop move
+		troop_move {
+			to: "To: {pos}"
+			team: "Repaint from {team}"
+		}
+
+		# entity effect
+		entity_effect {
+			effect: "Effect: {effect}"
+			before: "Applied before: {before}"
+		}
 	}
 }
