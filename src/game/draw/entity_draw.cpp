@@ -36,14 +36,14 @@ namespace Draw {
 		// get position of the first icon
 		sf::Vector2i icon_pos = {
 			pos.x + Values::tileSize.x / 2
-				- (int)effects.size() * Values::effects[0].size.x * Values::k / 2,
+				- (int)effects.size() * Values::effect_textures[0].size.x * Values::k / 2,
 			pos.y - Values::tileSize.y / 4
 		};
 
 		// draw effect icons
 		for (EffectType effect : effects) {
 			// draw icon
-			sf::IntRect icon = Values::effects[static_cast<int>(effect)];
+			sf::IntRect icon = Values::effect_textures[static_cast<int>(effect)];
 			buffer.quad({ icon_pos, icon.size * Values::k }, icon);
 
 			// increment x
@@ -78,7 +78,7 @@ namespace Draw {
 		// draw effect icons
 		for (EffectType effect : effects) {
 			// draw icon
-			sf::IntRect icon = Values::effects[static_cast<int>(effect)];
+			sf::IntRect icon = Values::effect_textures[static_cast<int>(effect)];
 			buffer.quad({
 				icon_pos - sf::Vector2i(icon.size.x * Values::k, 0),
 				icon.size * Values::k

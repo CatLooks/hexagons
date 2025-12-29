@@ -14,6 +14,27 @@ team {
 	p: Purple
 	m: Magenta
 }
+
+# entity effect names
+effect {
+	shield : Shielded
+	range  : Range Boost
+	defense: Defense Boost
+	offense: Offense Boost
+	poison : Poisoned
+	stun   : Stunned
+
+	# short entity effect names
+	short {
+		shield : SHD
+		range  : RNG
+		defense: DEF
+		offense: OFF
+		poison : PSN
+		stun   : STN
+	}
+}
+
 # troop names
 troop {
 	farmer: Farmer
