@@ -198,7 +198,7 @@ namespace dev {
 
 				// ending
 				if (entity->effectList().empty())
-					effects = "@!dp.entity.empty";
+					effects = "@!dp.empty";
 				else
 					effects.append(" ]");
 

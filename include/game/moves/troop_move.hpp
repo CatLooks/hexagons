@@ -19,8 +19,12 @@ namespace Moves {
 		struct Prev {
 			/// Previous hex team.
 			Region::Team team;
+			/// Previous region resources.
+			RegionRes resources;
 			/// Previous hex entity.
 			EntState entity;
+			/// Resource distribution.
+			Regions::Split split;
 		} a_state;
 
 		/// Constructs troop movement move.

@@ -143,7 +143,10 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 void Game::undoMove() {
 	if (auto cursor = map.history.undo()) {
 		auto tile = map.atref(*cursor);
-		selectRegion(tile);
+
+		// update region
+		if (map.selectedRegion())
+			selectRegion(tile);
 
 		// update cursor
 		if (!_select || *cursor != _select)
@@ -156,7 +159,10 @@ void Game::undoMove() {
 void Game::redoMove() {
 	if (auto cursor = map.history.redo()) {
 		auto tile = map.atref(*cursor);
-		selectRegion(tile);
+
+		// update region
+		if (map.selectedRegion())
+			selectRegion(tile);
 
 		// update cursor
 		if (!_select || *cursor != _select)

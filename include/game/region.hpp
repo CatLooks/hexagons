@@ -5,8 +5,28 @@
 #include <refpool>
 #include "dev/dev_game.hpp"
 
+/// Region resources.
+struct RegionRes {
+	int money = 0; /// Amount of money.
+	int berry = 0; /// Amount of berries.
+	int peach = 0; /// Amount of peaches.
+
+	/// Adds another region resources.
+	void add(const RegionRes& oth);
+
+	/// Subtracts another region resources.
+	void sub(const RegionRes& oth);
+
+	/// Divides region resources rounded down.
+	/// 
+	/// @param count Division count.
+	/// 
+	/// @return New region resource object.
+	RegionRes div(int count) const;
+};
+
 /// Region statistics object.
-struct Region {
+struct Region : RegionRes {
 	/// Region team color.
 	enum Team {
 		/// (0) No owner.
@@ -25,9 +45,6 @@ struct Region {
 		Count   /// Team count.
 	} team = Unclaimed;
 
-	int money  = 0; /// Amount of money.
-	int berry  = 0; /// Amount of berries.
-	int peach  = 0; /// Amount of peaches.
 	int income = 0; /// Income during next turn.
 	int tiles  = 0; /// Amount of tiles captured.
 	int farms  = 0; /// Amount of farms built.
@@ -46,6 +63,8 @@ class Regions {
 public:
 	/// Shared region reference type.
 	using Ref = RefPool<Region>::Share;
+	/// Region split distribution.
+	using Split = std::vector<RegionRes>;
 
 	/// Region access point.
 	struct AccessPoint {
@@ -74,11 +93,22 @@ public:
 	/// @param map Map reference.
 	/// @param target Target region.
 	/// @param aps Merged region access points.
-	void merge(Map* map, const Ref& target, const std::vector<AccessPoint>& aps);
+	/// @param origin Merge origin access point index.
+	/// 
+	/// @return Previous resource distribution.
+	Split merge(
+		Map* map,
+		const Ref& target,
+		const std::vector<AccessPoint>& aps,
+		int origin
+	);
 
 	/// Splits a separated region into proper regions.
 	///
+	/// Regions not described by `dist` will have the remaining resources split equally. 
+	/// 
 	/// @param map Map reference.
 	/// @param aps Access points to all separated region parts.
-	void split(Map* map, const std::vector<AccessPoint>& aps);
+	/// @param dist Previous resource distribution.
+	void split(Map* map, const std::vector<AccessPoint>& aps, const Split& dist);
 };

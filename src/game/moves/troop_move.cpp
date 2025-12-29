@@ -14,8 +14,11 @@ namespace Moves {
 		auto to = map->atref(dest);
 		if (!(from.hex && to.hex)) return;
 
-		// store destination state
+		// store region state
 		a_state.team = to.hex->team;
+		a_state.resources = static_cast<RegionRes>(*to.hex->region());
+
+		// store entity state
 		if (to.hex->troop) a_state.entity = *to.hex->troop;
 		else if (to.hex->build) a_state.entity = *to.hex->build;
 		else if (to.hex->plant) a_state.entity = *to.hex->plant;
@@ -30,7 +33,7 @@ namespace Moves {
 			to.hex->join(from.hex->region());
 
 			// update regions
-			map->updateRegions(to, prev);
+			a_state.split = map->updateRegions(to, prev, {});
 		};
 
 		// move troop
@@ -68,12 +71,18 @@ namespace Moves {
 				};
 			};
 
+			// reconstruct previous region
+			if (!reg) {
+				reg = map->regions.create({ .team = a_state.team });
+				reg->add(a_state.resources);
+			};
+
 			// repaint tile region back
 			from.hex->team = a_state.team;
-			from.hex->join(reg ? reg : map->regions.create({ .team = a_state.team }));
+			from.hex->join(reg);
 
 			// update regions
-			map->updateRegions(from, prev);
+			map->updateRegions(from, prev, a_state.split);
 		};
 
 		// place back previous entity
@@ -99,13 +108,28 @@ namespace Moves {
 	void TroopMove::emitDev(dev::Section* section, ui::Text::List& list) const {
 		// construct new fields
 		section->extra("dp.move.troop_move.to");
-		section->line("dp.move.troop_move.team");
 		section->line("dp.move.override");
+		section->line("dp.move.troop_move.region");
+		section->line("dp.move.troop_move.splits");
 
 		// add arguments
 		list["pos"] = ext::str_vec(dest);
 		list["team"] = Values::hex_names[a_state.team];
+		list["res"] = std::format(
+			"{}/{}/{}",
+			a_state.resources.money,
+			a_state.resources.berry,
+			a_state.resources.peach
+		);
 		list["entity"] = str_ent(&a_state.entity);
 		list["skill_name"] = "@!dp.move.name.troop_move";
+
+		// split data
+		std::string splits;
+		for (const auto& split : a_state.split) {
+			if (!splits.empty()) splits.append(" + ");
+			splits.append(std::format("{}/{}/{}", split.money, split.berry, split.peach));
+		};
+		list["splits"] = splits.empty() ? "@!dp.empty" : splits;
 	};
 };

@@ -38,11 +38,16 @@ const Regions::Ref& Map::selectedRegion() const {
 };
 
 /// Checks for region splits / joins.
-void Map::updateRegions(const HexRef& tile, const Regions::Ref& prev) {
+Regions::Split Map::updateRegions(
+	const HexRef& tile,
+	const Regions::Ref& prev,
+	const Regions::Split& split
+) {
 	/// ==== merge ==== ///
 
 	// merged regions list
 	std::vector<Regions::AccessPoint> merged;
+	int origin = -1;
 
 	// check if a merge is needed
 	for (int i = 0; i < 6; i++) {
@@ -51,20 +56,35 @@ void Map::updateRegions(const HexRef& tile, const Regions::Ref& prev) {
 		Hex* hex = at(pos);
 		if (!hex) continue;
 
-		// check for the same team but different region
-		if (hex->team == tile.hex->team && hex->region() != tile.hex->region()) {
-			// ignore if region has already been recorded
-			for (const auto& ap : merged)
-				if (hex->region() == *ap.region)
-					continue;
+		// check for the same team
+		if (hex->team == tile.hex->team) {
+			// but different region
+			if (hex->region() != tile.hex->region()) {
+				// ignore if region has already been recorded
+				bool match = false;
+				for (const auto& ap : merged) {
+					if (hex->region() == *ap.region) {
+						match = true;
+						break;
+					};
+				};
 
-			// store region access point
-			merged.push_back({ &hex->region(), pos });
+				// store region access point
+				if (!match)
+					merged.push_back({ &hex->region(), pos });
+			}
+			else if (origin < 0) {
+				// record merge origin
+				origin = (int)merged.size();
+
+				// store region access point
+				merged.push_back({ &hex->region(), pos });
+			};
 		};
 	};
 
 	// merge regions if needed
-	regions.merge(this, tile.hex->region(), merged);
+	auto dist = regions.merge(this, tile.hex->region(), merged, origin);
 
 	/// ==== split ==== ///
 
@@ -107,7 +127,10 @@ void Map::updateRegions(const HexRef& tile, const Regions::Ref& prev) {
 	};
 
 	// split regions if needed
-	regions.split(this, splits);
+	regions.split(this, splits, split);
+
+	// return merge distribution
+	return dist;
 };
 
 /// Removes any entities from the hex.

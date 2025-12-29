@@ -66,8 +66,8 @@ int main() {
 				"------ ",
 				"--rr---",
 				"---rbb ",
-				"rrrrbbb",
-				"---rbb ",
+				"rrrrbb#",
+				"---rrb ",
 				"--rr---",
 				"------ "
 			};
@@ -99,8 +99,8 @@ int main() {
 						hex->type = Hex::Ground;
 						hex->team = Region::Yellow;
 						break;
-					case 'w':
-						hex->type = Hex::Water;
+					case '#':
+						hex->type = Hex::Ground;
 						break;
 
 					default:
@@ -116,9 +116,20 @@ int main() {
 				troop.type = Troop::Archer;
 				troop.hp = troop.max_hp();
 				map.setTroop(troop);
+
+				troop.pos = { 2, 3 };
+				troop.type = Troop::Spearman;
+				troop.hp = troop.max_hp();
+				map.setTroop(troop);
+
+				troop.pos = { 4, 4 };
+				troop.type = Troop::Baron;
+				troop.hp = troop.max_hp();
+				map.setTroop(troop);
 			};
 
 			map.at({ 3, 3 })->region()->money = 11;
+			map.at({ 5, 3 })->region()->money = 20;
 		};
 		layer_map->add(game);
 

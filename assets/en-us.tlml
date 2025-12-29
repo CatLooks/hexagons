@@ -133,6 +133,9 @@ dp {
 	# "in pool" text
 	in_pool: "in pool"
 
+	# empty list
+	empty: "(empty)"
+
 	# entity state
 	entity_state {
 		# no entity
@@ -230,7 +233,6 @@ dp {
 			k: "Effects"
 			v: "{effects}"
 		}
-		empty: "(empty)"
 
 		# generic entity info
 		type {
@@ -279,7 +281,8 @@ dp {
 		# troop move
 		troop_move {
 			to: "To: {pos}"
-			team: "Repaint from {team}"
+			region: "Tile Info: {team} | {res}"
+			splits: "Merge: {splits}"
 		}
 
 		# entity effect

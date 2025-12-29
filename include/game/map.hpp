@@ -95,7 +95,14 @@ public:
 	/// 
 	/// @param tile Checked tile.
 	/// @param prev Previous tile region.
-	void updateRegions(const HexRef& tile, const Regions::Ref& prev);
+	/// @param split Region resource split distribution for splitting.
+	/// 
+	/// @return Resource distribution from merging.
+	Regions::Split updateRegions(
+		const HexRef& tile,
+		const Regions::Ref& prev,
+		const Regions::Split& split
+	);
 
 	/// Executes a skill.
 	/// 
