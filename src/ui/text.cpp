@@ -41,7 +41,7 @@ namespace ui {
 			std::string value = _format.get(*list, &assets::lang::locale);
 
 			// set new value
-			_text.setString(value);
+			_text.setString(sf::String::fromUtf8(value.begin(), value.end()));
 		};
 
 		// set label size
@@ -102,7 +102,7 @@ namespace ui {
 
 	/// Sets text label to a raw string.
 	void Text::setRaw(const sf::String& string) {
-		_text.setString(string);
+		_text.setString(sf::String::fromUtf8(string.begin(), string.end()));
 		_raw = true;
 	};
 	/// Sets text label to a localization path.
