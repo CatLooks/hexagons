@@ -50,7 +50,7 @@ static inline void _spread(
 
 		// queue tile if passes blocking check
 		if (hop(next))
-			queue.push_front(next);
+			queue.push_back(next);
 	};
 };
 
