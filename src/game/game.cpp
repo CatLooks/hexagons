@@ -141,6 +141,11 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 
 /// Undoes last move.
 void Game::undoMove() {
+	// stop selection
+	if (map.isSelection())
+		deselectMenu();
+
+	// undo the move
 	if (auto cursor = map.history.undo()) {
 		auto tile = map.atref(*cursor);
 
@@ -157,6 +162,11 @@ void Game::undoMove() {
 
 /// Redoes last move.
 void Game::redoMove() {
+	// stop selection
+	if (map.isSelection())
+		deselectMenu();
+
+	// redo the move
 	if (auto cursor = map.history.redo()) {
 		auto tile = map.atref(*cursor);
 
