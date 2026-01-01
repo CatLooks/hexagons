@@ -77,7 +77,7 @@ static Spread _region_overwrite(const Regions::Ref& prev, const Regions::Ref& ne
 			// hop if same region
 			return tile.hex->region() == prev;
 		},
-		.effect = [&](Spread::Tile& tile) {
+		.effect = [&](const Spread::Tile& tile) {
 			// overwrite tile region
 			tile.hex->join(next);
 		},

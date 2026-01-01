@@ -3,7 +3,7 @@
 namespace skillf {
 	/// Generates tile selector spreader effect function.
 	Spread::Effect selectTile(size_t idx) {
-		return [=](Spread::Tile& tile) {
+		return [=](const Spread::Tile& tile) {
 			tile.hex->selected = idx;
 		};
 	};
@@ -27,7 +27,7 @@ namespace skillf {
 
 	/// Generates region audit spreader effect function.
 	Spread::Effect regionAuditEffect(const Regions::Ref& ref) {
-		return [&ref](Spread::Tile& tile) {
+		return [&ref](const Spread::Tile& tile) {
 			tile.hex->join(ref);
 		};
 	};

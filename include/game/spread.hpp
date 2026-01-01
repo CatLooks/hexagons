@@ -2,6 +2,7 @@
 
 // include dependencies
 #include <functional>
+#include <optional>
 #include <deque>
 #include "array.hpp"
 
@@ -21,7 +22,11 @@ struct Spread {
 	/// Applies an effect on a tile affected by spreader.
 	///
 	/// @param tile Spread target information.
-	using Effect = std::function<void(Tile& tile)>;
+	using Effect = std::function<void(const Tile& tile)>;
+	/// Optionally overrides the spread radius.
+	///
+	/// @param tile Spread origin tile.
+	using Radius = std::function<std::optional<size_t>(const Tile& tile)>;
 
 	/// Default spread check.
 	/// 
@@ -30,7 +35,11 @@ struct Spread {
 	/// Default spread effect.
 	///
 	/// Performs no action.
-	static void default_effect(Tile&);
+	static void default_effect(const Tile&);
+	/// Default radius override.
+	/// 
+	/// Does not override the radius value.
+	static std::optional<size_t> default_radius(const Tile&);
 
 	/// Blocking check.
 	///
@@ -50,6 +59,10 @@ struct Spread {
 	/// 
 	/// By default, does nothing.
 	Effect effect = default_effect;
+	/// Optional radius override.
+	///
+	/// 
+	Radius radius = default_radius;
 	/// Whether the spread affects the origin tile.
 	bool imm      = false;
 
