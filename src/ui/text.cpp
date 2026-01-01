@@ -41,7 +41,7 @@ namespace ui {
 			std::string value = _format.get(*list, &assets::lang::locale);
 
 			// set new value
-			_text.setString(value);
+			_text.setString(sf::String::fromUtf8(value.begin(), value.end()));
 		};
 
 		// set label size
