@@ -25,6 +25,8 @@ namespace Moves {
 			EntState entity;
 			/// Resource distribution.
 			Regions::Split split;
+			/// Other skill cooldown.
+			Skills::Type oth_skill;
 		} a_state;
 
 		/// Constructs troop movement move.

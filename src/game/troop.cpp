@@ -1,4 +1,6 @@
 #include "game/troop.hpp"
+#include "game/build.hpp"
+#include "game/plant.hpp"
 #include "game/logic/troop_logic.hpp"
 
 /// Returns troop maximum hitpoints.
@@ -7,47 +9,67 @@ int Troop::max_hp() const {
 };
 
 /// Returns troop damage.
-int Troop::offense() {
+Entity::Damage Troop::offense(Access acc) {
+	// get base damage
 	int pts = logic::troop_dmg[type];
 	
 	// apply boosts
-	if (removeEffect(EffectType::OffenseBoost))
+	if (useEffect(EffectType::OffenseBoost, acc))
 		pts *= 5;
 
-	return pts;
+	// return damage
+	return { pts, logic::troop_pow[type] };
 };
 
-/// Returns troop power level.
-int Troop::power() {
-	return logic::troop_pow[type];
-};
-
-/// Deals damage to the troop.
-int Troop::damage(int pts, int pow) {
-	auto own_pow = power();
+/// Defends the troop against incoming damage.
+Entity::Damage Troop::defend(Damage dmg, Access acc) {
+	// get own power level
+	auto own = logic::troop_pow[type];
 
 	// apply debuffs
-	if (removeEffect(EffectType::Shielded))
-		pts /= 2;
-	if (removeEffect(EffectType::DefenseBoost))
-		pts /= 10;
-	if (pow < own_pow)
-		pts /= 2;
-
+	if (useEffect(EffectType::Shielded, acc))
+		dmg.pts /= 2;
+	if (useEffect(EffectType::DefenseBoost, acc))
+		dmg.pts /= 10;
+	
 	// cap to 1 damage
-	if (pow >= own_pow && pts < 1)
-		pts = 1;
-
-	// deal damage
-	hp -= pts;
-	return pts;
+	if (dmg.pow >= own && dmg.pts < 1)
+		dmg.pts = 1;
+	return dmg;
 };
 
 /// Returns troop skill index.
 int Troop::skill_id(Skills::Type skill) const {
-	for (size_t i = 0; i < 4; i++) {
+	// ignore empty skill
+	if (skill == Skills::Empty) return -1;
+
+	// check each skill slot
+	for (int i = 0; i < 4; i++) {
 		if (logic::troop_skills[type].skills[i]->type == skill)
-			return (int)i;
+			return i;
 	};
+
+	// not found
 	return -1;
+};
+
+/// Returns troop targeted skill index.
+Skills::Type Troop::skill_into(const Entity* entity) const {
+	// troop target
+	if (auto* oth = dynamic_cast<const Troop*>(entity)) {
+		switch (type) {
+			case Lumberjack: return Skills::AttackLumber;
+			case Spearman  : return Skills::AttackSpear;
+			case Archer    : return Skills::AttackArcher;
+			case Baron     : return Skills::AttackBaron;
+			case Knight    : return Skills::AttackKnight;
+		};
+	};
+
+	// plant target
+	if (auto* oth = dynamic_cast<const Plant*>(entity))
+		if (type == Lumberjack) return Skills::TreeCut;
+
+	// unknown target
+	return Skills::Empty;
 };

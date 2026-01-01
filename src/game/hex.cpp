@@ -56,34 +56,6 @@ Entity* HexEnt::entity() const {
 	return nullptr;
 };
 
-/// Extends entity cooldown on this hex.
-void Hex::add_cooldown(Skills::Type skill, uint8_t cd) const {
-	// get entity
-	auto* e = entity();
-	if (!e) return;
-
-	// get skill index
-	int idx = e->skill_id(skill);
-	if (idx == -1) return;
-
-	// add cooldown
-	e->timers[idx] += cd;
-};
-
-/// Shortens entity cooldown on this hex.
-void Hex::sub_cooldown(Skills::Type skill, uint8_t cd) const {
-	// get entity
-	auto* e = entity();
-	if (!e) return;
-
-	// get skill index
-	int idx = e->skill_id(skill);
-	if (idx == -1) return;
-
-	// add cooldown
-	e->timers[idx] -= cd;
-};
-
 /// Constructs an empty reference.
 HexRef::HexRef() : pos{}, hex{} {};
 

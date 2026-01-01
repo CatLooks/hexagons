@@ -21,10 +21,10 @@ std::optional<sf::Vector2i> Move::revertCursor() {
 /// Applies the move.
 void Move::apply(Map* map) {
 	// add cooldown
-	if (skill_cooldown) {
-		Hex* hex = map->at(skill_pos);
-		if (hex) hex->add_cooldown(skill_type, skill_cooldown);
-	};
+	if (skill_cooldown)
+		if (Hex* hex = map->at(skill_pos))
+			if (Entity* ent = hex->entity())
+				ent->add_cooldown(skill_type, skill_cooldown);
 
 	// apply the move
 	onApply(map);
@@ -36,10 +36,10 @@ void Move::revert(Map* map) {
 	onRevert(map);
 
 	// remove cooldown
-	if (skill_cooldown) {
-		Hex* hex = map->at(skill_pos);
-		if (hex) hex->sub_cooldown(skill_type, skill_cooldown);
-	};
+	if (skill_cooldown)
+		if (Hex* hex = map->at(skill_pos))
+			if (Entity* ent = hex->entity())
+				ent->sub_cooldown(skill_type, skill_cooldown);
 };
 
 namespace Moves {

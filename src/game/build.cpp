@@ -1,14 +1,11 @@
 #include "game/build.hpp"
 #include "game/logic/build_logic.hpp"
 
-/// Deals damage to the building.
-int Build::damage(int pts, int pow) {
+/// Defends the building against incoming damage.
+Entity::Damage Build::defend(Damage dmg, Access acc) {
 	// half the damage
-	pts /= 2;
-
-	// deal damage
-	hp -= pts;
-	return pts;
+	dmg.pts /= 2;
+	return dmg;
 };
 
 /// Returns building skill index.

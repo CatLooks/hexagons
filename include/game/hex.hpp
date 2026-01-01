@@ -66,18 +66,6 @@ public:
 	bool elevated() const;
 	/// Checks if a tile can be stood on.
 	bool solid() const;
-
-	/// Extends entity skill cooldown on this hex.
-	/// 
-	/// @param skill Skill type.
-	/// @param cd Cooldown time.
-	void add_cooldown(Skills::Type skill, uint8_t cd) const;
-
-	/// Shortens entity skill cooldown on this hex.
-	/// 
-	/// @param skill Skill type.
-	/// @param cd Cooldown time.
-	void sub_cooldown(Skills::Type skill, uint8_t cd) const;
 };
 
 /// Hex reference.

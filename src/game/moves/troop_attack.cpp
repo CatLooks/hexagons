@@ -30,7 +30,7 @@ namespace Moves {
 		src->removeEffect(EffectType::RangeBoost);
 
 		// deal damage to entity
-		a_dmg = dst->damage(src->offense(), src->power());
+		a_dmg = dst->damage(src->offense(Access::Use));
 
 		// replace by a grave if dead
 		if (dst->dead()) {
@@ -72,7 +72,7 @@ namespace Moves {
 		// add arguments
 		list["pos"] = ext::str_vec(dest);
 		list["entity"] = str_ent(&a_state);
-		list["dmg"] = ext::str_int(a_dmg);
+		list["dmg"] = std::format("{} @ {}!", a_dmg.pts, a_dmg.pow);
 		list["effects"] = str_eff(a_eff);
 		list["skill_name"] = "@!dp.move.name.troop_move";
 	};

@@ -29,6 +29,7 @@ effect {
 	stun   : Stunned
 
 	# short entity effect names
+	# [ DEBUG ]
 	short {
 		shield : SHD
 		range  : RNG
@@ -125,6 +126,9 @@ gp {
 debug {
 	fps: "{fps} FPS"
 }
+
+## ALL FURTHER TEXT IS DEBUG MODE ONLY
+## DO NOT TRANSLATE FURTHER
 
 # dev panel text
 dp {

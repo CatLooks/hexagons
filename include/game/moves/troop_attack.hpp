@@ -7,7 +7,7 @@ namespace Moves {
 	/// Troop attack move.
 	struct TroopAttack : Move {
 		sf::Vector2i     dest; /// Attacked entity position.
-		int             a_dmg; /// Dealt damage.
+		Entity::Damage  a_dmg; /// Dealt damage.
 		EntState      a_state; /// Previous entity state.
 		Entity::Effects a_eff; /// Previous attacker effects.
 

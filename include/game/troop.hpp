@@ -22,12 +22,12 @@ struct Troop : Entity {
 	int max_hp() const override;
 
 	/// Returns troop damage.
-	int offense() override;
-	/// Returns troop power level.
-	int power() override;
-	/// Deals damage to the troop.
-	int damage(int pts, int pow) override;
+	Damage offense(Access acc) override;
+	/// Defends the troop against incoming damage.
+	Damage defend(Damage dmg, Access acc) override;
 
 	/// Returns troop skill index.
 	int skill_id(Skills::Type skill) const override;
+	/// Returns troop targeted skill index.
+	Skills::Type skill_into(const Entity* entity) const override;
 };

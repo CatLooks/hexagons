@@ -18,8 +18,8 @@ struct Build : Entity {
 		Count   /// Building count.
 	} type = Castle;
 
-	/// Deals damage to the building.
-	int damage(int pts, int pow) override;
+	/// Defends the building against incoming damage.
+	Damage defend(Damage dmg, Access acc) override;
 
 	/// Returns building skill index.
 	int skill_id(Skills::Type skill) const override;

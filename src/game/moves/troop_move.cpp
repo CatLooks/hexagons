@@ -5,7 +5,7 @@
 namespace Moves {
 	/// Constructs troop movement move.
 	TroopMove::TroopMove(sf::Vector2i dest)
-		: dest(dest), a_state{ Region::Unclaimed, {} } {};
+		: dest(dest), a_state{ Region::Unclaimed, {}, {}, {}, Skills::Empty } {};
 
 	/// Applies the move.
 	void TroopMove::onApply(Map* map) {
@@ -13,6 +13,7 @@ namespace Moves {
 		auto from = map->atref(skill_pos);
 		auto to = map->atref(dest);
 		if (!(from.hex && to.hex)) return;
+		if (!from.hex->troop) return;
 
 		// store region state
 		a_state.team = to.hex->team;
@@ -22,6 +23,10 @@ namespace Moves {
 		if (to.hex->troop) a_state.entity = *to.hex->troop;
 		else if (to.hex->build) a_state.entity = *to.hex->build;
 		else if (to.hex->plant) a_state.entity = *to.hex->plant;
+
+		// apply cooldown based on erased entity
+		a_state.oth_skill = from.hex->troop->skill_into(to.hex->entity());
+		from.hex->troop->add_cooldown(a_state.oth_skill, 1);
 
 		// remove entities at destination
 		map->removeEntity(to.hex);
@@ -39,7 +44,6 @@ namespace Moves {
 		// move troop
 		to.hex->troop = std::move(from.hex->troop);
 		to.hex->troop->pos = to.pos;
-		from.hex->troop = {};
 	};
 
 	/// Reverts the move.
@@ -52,7 +56,6 @@ namespace Moves {
 		// move troop
 		to.hex->troop = std::move(from.hex->troop);
 		to.hex->troop->pos = to.pos;
-		from.hex->troop = {};
 
 		// restore previous region
 		Regions::Ref prev = from.hex->region();
@@ -84,6 +87,9 @@ namespace Moves {
 			// update regions
 			map->updateRegions(from, prev, a_state.split);
 		};
+		
+		// restore target skill cooldown
+		to.hex->troop->sub_cooldown(a_state.oth_skill, 1);
 
 		// place back previous entity
 		if (auto* troop = std::get_if<Troop>(&a_state.entity))
