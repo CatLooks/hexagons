@@ -4,7 +4,7 @@ namespace SkillList {
 	/// ======== SPEARMAN BLOCK EFFECT ======== ///
 	const Skill effect_defend = {
 		.type = Skills::Shield,
-		.annotation = Skill::None,
+		.annotation = Skill::Peach,
 		.resource = Skills::Peach,
 		.cost = logic::troop_effect_cost[Troop::Spearman],
 		.action = [](const SkillState&, Map& map, const HexRef& tile, const HexRef& _) -> Move* {
@@ -17,13 +17,14 @@ namespace SkillList {
 				logic::troop_effect_cost[Troop::Knight]
 			);
 		},
-		.format = Skill::Self
+		.format = Skill::Self,
+		.cooldown = 2
 	};
 
 	/// ======== ARCHER RANGE BOOST EFFECT ======== ///
 	const Skill effect_range = {
 		.type = Skills::RangeBoost,
-		.annotation = Skill::None,
+		.annotation = Skill::Peach,
 		.resource = Skills::Peach,
 		.cost = logic::troop_effect_cost[Troop::Archer],
 		.action = [](const SkillState&, Map& map, const HexRef& tile, const HexRef& _) -> Move* {
@@ -36,13 +37,14 @@ namespace SkillList {
 				logic::troop_effect_cost[Troop::Archer]
 			);
 		},
-		.format = Skill::Self
+		.format = Skill::Self,
+		.cooldown = 3
 	};
 
 	/// ======== BARON DEFENSE BOOST EFFECT ======== ///
 	const Skill effect_defense = {
 		.type = Skills::DefenseBoost,
-		.annotation = Skill::None,
+		.annotation = Skill::Peach,
 		.resource = Skills::Peach,
 		.cost = logic::troop_effect_cost[Troop::Baron],
 		.action = [](const SkillState&, Map& map, const HexRef& tile, const HexRef& _) -> Move* {
@@ -55,13 +57,14 @@ namespace SkillList {
 				logic::troop_effect_cost[Troop::Baron]
 			);
 		},
-		.format = Skill::Self
+		.format = Skill::Self,
+		.cooldown = 4
 	};
 
 	/// ======== KNIGHT OFFENSE BOOST EFFECT ======== ///
 	const Skill effect_offense = {
 		.type = Skills::OffenseBoost,
-		.annotation = Skill::None,
+		.annotation = Skill::Peach,
 		.resource = Skills::Peach,
 		.cost = logic::troop_effect_cost[Troop::Knight],
 		.action = [](const SkillState&, Map& map, const HexRef& tile, const HexRef& _) -> Move* {
@@ -74,6 +77,7 @@ namespace SkillList {
 				logic::troop_effect_cost[Troop::Knight]
 			);
 		},
-		.format = Skill::Self
+		.format = Skill::Self,
+		.cooldown = 4
 	};
 };

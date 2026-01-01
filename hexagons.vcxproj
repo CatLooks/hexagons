@@ -55,6 +55,7 @@
     <ClCompile Include="src\game\logic\troop_logic.cpp" />
     <ClCompile Include="src\game\map.cpp" />
     <ClCompile Include="src\game\moves\entity_effect.cpp" />
+    <ClCompile Include="src\game\moves\entity_place.cpp" />
     <ClCompile Include="src\game\moves\entity_withdraw.cpp" />
     <ClCompile Include="src\game\moves\move.cpp" />
     <ClCompile Include="src\game\moves\troop_attack.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="include\game\map.hpp" />
     <ClInclude Include="include\game\moves.hpp" />
     <ClInclude Include="include\game\moves\entity_effect.hpp" />
+    <ClInclude Include="include\game\moves\entity_place.hpp" />
     <ClInclude Include="include\game\moves\entity_withdraw.hpp" />
     <ClInclude Include="include\game\moves\move.hpp" />
     <ClInclude Include="include\game\moves\troop_attack.hpp" />

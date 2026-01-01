@@ -5,6 +5,9 @@ namespace Values {
 	const sf::IntRect skill_textures[Skills::Count] = {
 		{}, // empty
 
+		{}, // buy build
+		{}, // buy troop
+
 		coords(0, 1), // withdraw
 		coords(6, 1), // move
 
@@ -28,6 +31,9 @@ namespace Values {
 	// skill names
 	const char* skill_names[Skills::Count] = {
 		"@!skill.invalid",
+
+		"@!gp.buy_build",
+		"@!gp.buy_troop",
 
 		"@!skill.withdraw",
 		"@!skill.move",

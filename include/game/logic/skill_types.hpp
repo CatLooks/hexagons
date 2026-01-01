@@ -6,6 +6,9 @@ namespace Skills {
 	enum Type {
 		Empty = 0,    /// Empty skill.
 
+		BuyBuild,     /// Buy a building.
+		BuyTroop,     /// Buy a troop.
+
 		Withdraw,     /// Withdraw.
 		Move,         /// Move.
 

@@ -74,6 +74,6 @@ namespace Moves {
 		list["entity"] = str_ent(&a_state);
 		list["dmg"] = std::format("{} @ {}!", a_dmg.pts, a_dmg.pow);
 		list["effects"] = str_eff(a_eff);
-		list["skill_name"] = "@!dp.move.name.troop_move";
+		list["skill_name"] = "@!dp.move.name.troop_attack";
 	};
 };

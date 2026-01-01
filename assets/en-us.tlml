@@ -274,7 +274,9 @@ dp {
 			field: "Name: {skill_name}"
 
 			troop_move: "Troop Move"
+			troop_attack: "Troop Attack"
 
+			entity_place: "Entity Place"
 			entity_withdraw: "Entity Withdraw"
 			entity_effect: "Entity Effect"
 		}
@@ -300,6 +302,12 @@ dp {
 		entity_effect {
 			effect: "Effect: {effect}"
 			before: "Applied before: {before}"
+		}
+
+		# entity place
+		entity_place {
+			at: "At: {pos}"
+			what: "Entity: {entity}"
 		}
 	}
 }
