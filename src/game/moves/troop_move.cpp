@@ -16,7 +16,7 @@ namespace Moves {
 
 		// store region state
 		a_state.team = to.hex->team;
-		a_state.resources = static_cast<RegionRes>(*to.hex->region());
+		a_state.resources = to.hex->region()->res();
 
 		// store entity state
 		if (to.hex->troop) a_state.entity = *to.hex->troop;

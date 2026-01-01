@@ -57,6 +57,7 @@
     <ClCompile Include="src\game\moves\entity_effect.cpp" />
     <ClCompile Include="src\game\moves\entity_withdraw.cpp" />
     <ClCompile Include="src\game\moves\move.cpp" />
+    <ClCompile Include="src\game\moves\troop_attack.cpp" />
     <ClCompile Include="src\game\moves\troop_move.cpp" />
     <ClCompile Include="src\game\plant.cpp" />
     <ClCompile Include="src\game\region.cpp" />
@@ -150,6 +151,7 @@
     <ClInclude Include="include\game\moves\entity_effect.hpp" />
     <ClInclude Include="include\game\moves\entity_withdraw.hpp" />
     <ClInclude Include="include\game\moves\move.hpp" />
+    <ClInclude Include="include\game\moves\troop_attack.hpp" />
     <ClInclude Include="include\game\moves\troop_move.hpp" />
     <ClInclude Include="include\game\plant.hpp" />
     <ClInclude Include="include\game\region.hpp" />

@@ -180,28 +180,6 @@ namespace dev {
 			sec->attach([=]() {
 				if (!entity) return;
 
-				// effect list
-				std::string effects;
-				for (EffectType effect : entity->effectList()) {
-					// separators
-					if (!effects.empty())
-						effects.append(", ");
-					else
-						effects.append("[ ");
-
-					// short effect name
-					effects.append(
-						assets::lang::locale.req(Values::effect_names_short[static_cast<int>(effect)])
-							.get({}, &assets::lang::locale)
-					);
-				};
-
-				// ending
-				if (entity->effectList().empty())
-					effects = "@!dp.empty";
-				else
-					effects.append(" ]");
-
 				// set arguments
 				sec->args = {
 					// hp
@@ -215,7 +193,7 @@ namespace dev {
 					{ "t3", ext::str_int(entity->timers[3]) },
 
 					// effects
-					{ "effects", effects }
+					{ "effects", Moves::str_eff(entity->effectList()) }
 				};
 			});
 		};

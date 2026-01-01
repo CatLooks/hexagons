@@ -60,16 +60,16 @@ int main() {
 		{
 			Map& map = game->map;
 
-			const int w = 7;
+			const int w = 17;
 			const int h = 7;
 			const char arr[h][w + 1] = {
-				"------ ",
-				"--rr---",
-				"---rbb ",
-				"rrrrbb#",
-				"---rrb ",
-				"--rr---",
-				"------ "
+				"------   ggggyyyy",
+				"--rr---  ggggyyyy",
+				"---rbb   gggyyyyy",
+				"rrrrbb#  gggg-yyy",
+				"---rrb   ggggyyyy",
+				"--rr---  ggggyyyy",
+				"------   ggggyyyy"
 			};
 
 			map.empty({ w, h });
@@ -126,10 +126,45 @@ int main() {
 				troop.type = Troop::Baron;
 				troop.hp = troop.max_hp();
 				map.setTroop(troop);
+
+				// range test
+				{
+					troop.pos = { 12, 1 };
+					troop.type = Troop::Lumberjack;
+					troop.hp = troop.max_hp();
+					map.setTroop(troop);
+
+					troop.pos = { 13, 1 };
+					troop.type = Troop::Lumberjack;
+					troop.hp = troop.max_hp();
+					map.setTroop(troop);
+
+					troop.pos = { 14, 1 };
+					troop.type = Troop::Farmer;
+					troop.hp = troop.max_hp();
+					map.setTroop(troop);
+				};
+				{
+					troop.pos = { 12, 3 };
+					troop.type = Troop::Archer;
+					troop.hp = troop.max_hp();
+					map.setTroop(troop);
+
+					troop.pos = { 12, 2 };
+					troop.type = Troop::Lumberjack;
+					troop.hp = troop.max_hp();
+					map.setTroop(troop);
+
+					troop.pos = { 14, 3 };
+					troop.type = Troop::Farmer;
+					troop.hp = troop.max_hp();
+					map.setTroop(troop);
+				};
 			};
 
 			map.at({ 3, 3 })->region()->money = 11;
 			map.at({ 5, 3 })->region()->money = 20;
+			map.at({ 12, 3 })->region()->peach = 99;
 		};
 		layer_map->add(game);
 

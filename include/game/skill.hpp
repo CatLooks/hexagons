@@ -67,21 +67,22 @@ struct Skill {
 	/// Skill execution condition.
 	///
 	/// By default, uses built-in skill cost fields.
-	Condition condition = [this](const SkillState& state, const HexRef&) {
-		return state.with(resource) >= cost;
-	};
+	Condition condition = [this](const SkillState& state, const HexRef&)
+		{ return state.with(resource) >= cost; };
 
 	/// Selection tile spreader generator.
 	///
 	/// @param state Skill state.
 	/// @param tile Map selection origin.
 	/// @param idx Map selection index.
-	using Selection = std::function<Spread(const SkillState& state, const HexRef& tile, size_t idx)>;
+	using Selection = std::function<Spread
+		(const SkillState& state, const HexRef& tile, size_t idx)>;
 
 	/// Selection tile spreader generator.
 	///
 	/// By default, does not select any tiles.
-	Selection select = [](const SkillState&, const HexRef&, size_t) { return Spread(); };
+	Selection select = [](const SkillState&, const HexRef&, size_t)
+		{ return Spread(); };
 
 	/// Selection tile spreader radius.
 	size_t radius = 0;
@@ -94,12 +95,14 @@ struct Skill {
 	/// @param next Action destination.
 	/// 
 	/// @return Action as a reversible move object (no action if `null`).
-	using Action = std::function<Move*(const SkillState& state, Map& map, const HexRef& prev, const HexRef& next)>;
+	using Action = std::function<Move*
+		(const SkillState& state, Map& map, const HexRef& prev, const HexRef& next)>;
 
 	/// Skill action.
 	///
 	/// By default, does nothing.
-	Action action = [](const SkillState&, Map&, const HexRef&, const HexRef&) { return nullptr; };
+	Action action = [](const SkillState&, Map&, const HexRef&, const HexRef&)
+		{ return nullptr; };
 
 	/// Skill format type.
 	enum Format {

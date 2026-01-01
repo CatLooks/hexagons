@@ -62,4 +62,9 @@ namespace Moves {
 	/// 
 	/// @param entity Entity variant pointer.
 	std::string str_ent(const EntState* entity);
+
+	/// Returns string representation of an effect list.
+	/// 
+	/// @param list Entity effect list.
+	std::string str_eff(const Entity::Effects& list);
 };

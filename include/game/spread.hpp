@@ -61,7 +61,7 @@ struct Spread {
 	Effect effect = default_effect;
 	/// Optional radius override.
 	///
-	/// 
+	/// By default, no override is done.
 	Radius radius = default_radius;
 	/// Whether the spread affects the origin tile.
 	bool imm      = false;

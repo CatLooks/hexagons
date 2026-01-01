@@ -285,6 +285,13 @@ dp {
 			splits: "Merge: {splits}"
 		}
 
+		# troop attack
+		troop_attack {
+			to: "To: {pos}"
+			dmg: "Damage: {dmg}"
+			effects: "Before: {effects}"
+		}
+
 		# entity effect
 		entity_effect {
 			effect: "Effect: {effect}"

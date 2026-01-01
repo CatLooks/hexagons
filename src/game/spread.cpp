@@ -66,7 +66,7 @@ size_t Spread::apply(const HexArray& array, sf::Vector2i pos, size_t radius) con
 	// override radius
 	Tile tile = { { origin, pos }, radius };
 	if (auto nr = this->radius(tile))
-		radius = *nr;
+		tile.left = radius = *nr;
 
 	// apply effect to origin if needed
 	origin->spread = idx;
@@ -112,7 +112,7 @@ Spread::List Spread::applylist(const HexArray& array, sf::Vector2i pos, size_t r
 	// override radius
 	Tile tile = { { origin, pos }, radius };
 	if (auto nr = this->radius(tile))
-		radius = *nr;
+		tile.left = radius = *nr;
 
 	// apply effect to origin if needed
 	origin->spread = idx;

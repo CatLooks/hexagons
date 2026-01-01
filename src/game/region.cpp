@@ -25,6 +25,15 @@ RegionRes RegionRes::div(int count) const {
 	};
 };
 
+/// Returns region resources.
+RegionRes Region::res() const {
+	return {
+		.money = money,
+		.berry = berry,
+		.peach = peach
+	};
+};
+
 /// Updates money based on income.
 void Region::tick() {
 	money += income;

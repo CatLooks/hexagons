@@ -1,9 +1,12 @@
 #include "game/moves/move.hpp"
 #include "game/map.hpp"
 
+#include "game/values/entity_values.hpp"
 #include "game/values/troop_values.hpp"
 #include "game/values/build_values.hpp"
 #include "game/values/plant_values.hpp"
+
+#include "assets.hpp"
 
 /// Returns tile to select after applying the move.
 std::optional<sf::Vector2i> Move::applyCursor() {
@@ -68,5 +71,31 @@ namespace Moves {
 			{ "hp", std::format("{}", ent ? ent->hp : 0) },
 			{ "max", std::format("{}", ent ? ent->max_hp() : 0) }
 		}, &assets::lang::locale);
+	};
+
+	/// Returns string representation of an effect list.
+	std::string str_eff(const Entity::Effects& list) {
+		// return special string if empty
+		if (list.empty()) return "@!dp.empty";
+
+		// effect list
+		std::string effects;
+		for (EffectType effect : list) {
+			// separators
+			if (!effects.empty())
+				effects.append(", ");
+			else
+				effects.append("[ ");
+
+			// short effect name
+			effects.append(
+				assets::lang::locale.req(Values::effect_names_short[static_cast<int>(effect)])
+				.get({}, &assets::lang::locale)
+			);
+		};
+
+		// ending
+		effects.append(" ]");
+		return effects;
 	};
 };

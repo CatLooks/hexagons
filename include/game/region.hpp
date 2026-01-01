@@ -27,6 +27,9 @@ struct RegionRes {
 
 /// Region statistics object.
 struct Region : RegionRes {
+	/// Returns region resources.
+	RegionRes res() const;
+
 	/// Region team color.
 	enum Team {
 		/// (0) No owner.
