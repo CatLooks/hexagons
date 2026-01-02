@@ -128,7 +128,7 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 		_camera.update(ui::window.mouse(), sf::Mouse::isButtonPressed(sf::Mouse::Button::Right));
 
 		// set map camera position
-		map.camera = (sf::Vector2i)_camera.view(ui::window.size()).position;
+		map.camera = (sf::IntRect)_camera.view(ui::window.size());
 	});
 
 	// deselect when clicking on the panel
@@ -649,18 +649,16 @@ void Game::resetPulse() const {
 /// Returns hex coordinates at a mouse position.
 sf::Vector2i Game::mouseToHex(sf::Vector2i mouse) const {
 	// convert to world coordinates
-	mouse += map.camera;
+	mouse += (sf::Vector2i)_camera.view(ui::window.size()).position;
 
 	// calculate y
-	int y, ymod;
-	ext::idivmod(mouse.y, Values::tileOff.y).into(y, ymod);
+	auto [y, ymod] = ext::idivmod(mouse.y, Values::tileOff.y);
 
 	// shift x if odd row
 	mouse -= Values::rowOffset(y);
 
 	// calculate x
-	int x, xmod;
-	ext::idivmod(mouse.x, Values::tileSize.x).into(x, xmod);
+	auto [x, xmod] = ext::idivmod(mouse.x, Values::tileSize.x);
 
 	// get base tile position
 	sf::Vector2i pos = { x, y };

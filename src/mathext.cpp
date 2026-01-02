@@ -21,7 +21,7 @@ namespace ext {
 	};
 
 	/// Calculates quotient and remainder rounded down.
-	Pair<int, int> idivmod(int a, int d) {
+	std::pair<int, int> idivmod(int a, int d) {
 		return { idiv(a, d), imod(a, d) };
 	};
 

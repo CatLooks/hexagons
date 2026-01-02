@@ -112,7 +112,7 @@ int main() {
 
 			{
 				Troop troop;
-				troop.pos = { 5, 3 };
+				troop.pos = { 6, 3 };
 				troop.type = Troop::Archer;
 				troop.hp = troop.max_hp();
 				map.setTroop(troop);
@@ -145,7 +145,7 @@ int main() {
 					map.setTroop(troop);
 				};
 				{
-					troop.pos = { 12, 3 };
+					troop.pos = { 10, 3 };
 					troop.type = Troop::Archer;
 					troop.hp = troop.max_hp();
 					map.setTroop(troop);
@@ -158,6 +158,16 @@ int main() {
 					troop.pos = { 14, 3 };
 					troop.type = Troop::Farmer;
 					troop.hp = troop.max_hp();
+
+					troop.addEffect(EffectType::Poisoned);
+					troop.addEffect(EffectType::RangeBoost);
+					troop.addEffect(EffectType::OffenseBoost);
+					troop.addEffect(EffectType::DefenseBoost);
+					troop.addEffect(EffectType::Stunned);
+					troop.addEffect(EffectType::Shielded);
+					map.setTroop(troop);
+
+					troop.pos = { 14, 4 };
 					map.setTroop(troop);
 				};
 			};

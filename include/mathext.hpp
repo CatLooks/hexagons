@@ -8,30 +8,6 @@
 
 /// Math extension function namespace.
 namespace ext {
-	/// Pair of 2 values.
-	///
-	/// @tparam Type of first object.
-	/// @tparam Type of second object.
-	template <typename A, typename B> struct Pair {
-		A a;
-		B b;
-
-		/// Constructs a pair.
-		///
-		/// @param a First value.
-		/// @param b Second value.
-		Pair(A a, B b): a(a), b(b) {};
-
-		/// Copies values from the pair into references.
-		///
-		/// @param reference to first object destination.
-		/// @param reference to second object destination.
-		void into(A& a, B& b) {
-			a = this->a;
-			b = this->b;
-		};
-	};
-
 	/// Returns absolute value of an integer.
 	/// 
 	/// @param x Any integer.
@@ -61,7 +37,7 @@ namespace ext {
 	/// @param d Divisor.
 	///
 	/// @return Quotient and remainder pair.
-	Pair<int, int> idivmod(int a, int d);
+	std::pair<int, int> idivmod(int a, int d);
 
 	/// Returns smaller integer.
 	int imin(int a, int b);

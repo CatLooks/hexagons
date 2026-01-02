@@ -30,7 +30,7 @@ public:
 	/// Constructs an empty game map.
 	Map();
 
-	sf::Vector2i camera; /// Map camera.
+	sf::IntRect camera; /// Map camera.
 
 	/// Generates a new selection index.
 	/// 

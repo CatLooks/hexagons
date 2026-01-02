@@ -240,18 +240,27 @@ sf::IntRect Map::backplane() const {
 /// Draws the map.
 void Map::draw(ui::RenderBuffer& target, float t) const {
 	// draw backplane
-	target.quad(backplane() - camera, {}, sf::Color(40, 42, 48));
+	target.quad(backplane() - camera.position, {}, sf::Color(40, 42, 48));
 	target.forward(nullptr);
 
+	// get top-left corner tile position
+	auto [tx, mx] = ext::idivmod(camera.position.x, Values::tileOff.x);
+	auto [ty, my] = ext::idivmod(camera.position.y, Values::tileOff.y);
+
+	// shift corner further
+	tx--; mx += Values::tileOff.x;
+	ty--; my += Values::tileOff.y;
+
+	// get map view size in tiles
+	sf::Vector2i view = camera.size.componentWiseDiv(Values::tileOff);
+
 	// calculate drawn area
-	// @todo
-	sf::IntRect area = { {}, size() };
-	sf::Vector2i origin = -camera;
+	sf::IntRect area = { { tx, ty }, view + sf::Vector2i(4, 4) };
+	sf::Vector2i origin = { -mx, -my };
 
 	// setup tile drawer
 	TileDrawer drawer(this, area, origin, Values::tileSize);
 	std::deque<Draw::Tile> elevated;
-	std::optional<Draw::Tile> pulsing;
 
 	// draw tile geometry
 	while (auto tile = drawer.next()) {
