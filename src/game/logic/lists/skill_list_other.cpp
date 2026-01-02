@@ -44,5 +44,23 @@ namespace SkillList {
 	const Skill heal = { Skills::Heal, Skill::Aim };
 
 	/// ======== BEACON STUN ======== ///
-	const Skill stun = { Skills::Stun, Skill::None };
+	const Skill stun = {
+		.type = Skills::Stun,
+		.annotation = Skill::Peach,
+		.resource = Skills::Peach,
+		.cost = 20,
+		.radius = 3,
+		.action = [](const SkillState&, Map& map, const HexRef& _, const HexRef& tile) -> Move* {
+			// ignore if no building
+			if (!tile.hex->build) return nullptr;
+
+			// create movement move
+			return new Moves::RadiusEffect(
+				tile.pos, stun.radius,
+				EffectType::Stunned, tile.hex->team
+			);
+		},
+		.format = Skill::Self,
+		.cooldown = 3
+	};
 };

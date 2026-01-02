@@ -81,8 +81,13 @@ struct Skill {
 	/// Selection tile spreader generator.
 	///
 	/// By default, does not select any tiles.
-	Selection select = [](const SkillState&, const HexRef&, size_t)
-		{ return Spread(); };
+	Selection select = [](const SkillState&, const HexRef&, size_t idx)
+	{
+		return Spread {
+			.effect = [=](const Spread::Tile& tile)
+				{ tile.hex->selected = idx; }
+		};
+	};
 
 	/// Selection tile spreader radius.
 	size_t radius = 0;

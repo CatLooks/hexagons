@@ -318,6 +318,15 @@
     <ClCompile Include="src\game\dev\dev_move.cpp">
       <Filter>Source Files\game\dev</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\moves\entity_place.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\troop_attack.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\radius_effect.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -598,6 +607,15 @@
     </ClInclude>
     <ClInclude Include="include\dev\dev_move.hpp">
       <Filter>Header Files\game\dev</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\troop_attack.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\entity_place.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\radius_effect.hpp">
+      <Filter>Header Files\game\moves</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -96,7 +96,8 @@ namespace ext {
 	/// Returns a string representation of a vector.
 	/// 
 	/// @param vec Source vector.
-	std::string str_vec(sf::Vector2i vec);
+	/// @param sep Separator.
+	std::string str_vec(sf::Vector2i vec, const char* sep = ", ");
 
 	/// Returns a string representation of a rectangle.
 	/// 

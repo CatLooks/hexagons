@@ -3,6 +3,18 @@
 #include "game/values/build_values.hpp"
 
 namespace SkillList {
+	/// Selects tiles for region shop.
+	static const Skill::Selection region_shop =
+		[](const SkillState&, const HexRef& tile, size_t idx)
+	{
+		return Spread{
+			.hop = skillf::sameRegionHop(tile.hex->region()),
+			.pass = skillf::emptyPass,
+			.effect = skillf::selectTile(idx),
+			.imm = true
+		};
+	};
+
 	/// Places a new troop.
 	static const Skill::Action place_troop =
 		[](const SkillState& state, Map& map, const HexRef& _, const HexRef& tile) -> Move*
@@ -50,14 +62,7 @@ namespace SkillList {
 	const Skill buy_troop_aim = {
 		.type = Skills::BuyTroop,
 		.annotation = Skill::Aim,
-		.select = [](const SkillState&, const HexRef& tile, size_t idx) {
-			return Spread {
-				.hop = skillf::sameRegionHop(tile.hex->region()),
-				.pass = skillf::emptyPass,
-				.effect = skillf::selectTile(idx),
-				.imm = true
-			};
-		},
+		.select = region_shop,
 		.radius = ~0ull,
 		.action = place_troop,
 		.format = Skill::SingleAim,
@@ -77,14 +82,7 @@ namespace SkillList {
 	const Skill buy_build_aim = {
 		.type = Skills::BuyBuild,
 		.annotation = Skill::Aim,
-		.select = [](const SkillState&, const HexRef& tile, size_t idx) {
-			return Spread {
-				.hop = skillf::sameRegionHop(tile.hex->region()),
-				.pass = skillf::emptyPass,
-				.effect = skillf::selectTile(idx),
-				.imm = true
-			};
-		},
+		.select = region_shop,
 		.radius = ~0ull,
 		.action = place_build,
 		.format = Skill::SingleAim,

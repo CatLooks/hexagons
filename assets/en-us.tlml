@@ -29,7 +29,7 @@ effect {
 	stun   : Stunned
 
 	# short entity effect names
-	# [ DEBUG ]
+	# debug only
 	short {
 		shield : SHD
 		range  : RNG
@@ -56,7 +56,7 @@ build {
 	farm  : Farm
 	mine  : Mine
 	tower : Watchtower
-	beacon: Beacontower
+	beacon: Beacon
 	fort  : Fortress
 }
 
@@ -279,6 +279,8 @@ dp {
 			entity_place: "Entity Place"
 			entity_withdraw: "Entity Withdraw"
 			entity_effect: "Entity Effect"
+
+			aoe_effect: "AoE Effect"
 		}
 
 		# entity override
@@ -308,6 +310,12 @@ dp {
 		entity_place {
 			at: "At: {pos}"
 			what: "Entity: {entity}"
+		}
+
+		# aoe effect
+		aoe_effect {
+			effect: "Effect: {effect}"
+			spread: "Info: {team} {radius}Ω @ {pos}"
 		}
 	}
 }

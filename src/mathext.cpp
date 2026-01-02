@@ -69,8 +69,8 @@ namespace ext {
 	};
 
 	/// Returns a string representation of a vector.
-	std::string str_vec(sf::Vector2i vec) {
-		return std::format("{}, {}", vec.x, vec.y);
+	std::string str_vec(sf::Vector2i vec, const char* sep) {
+		return std::format("{}{}{}", vec.x, sep, vec.y);
 	};
 
 	/// Returns a string representation of a rectangle.

@@ -84,7 +84,7 @@ namespace dev {
 				// set arguments
 				sec->args = {
 					{ "team", "all" },
-					{ "size", ext::str_vec(game->map.size()) },
+					{ "size", ext::str_vec(game->map.size(), " x ") },
 					{ "cursor", ext::str_vec(coords) },
 					{ "camera", ext::str_vec(game->map.camera) },
 					{ "zoom", ext::str_float(game->_camera.zoom(), 2) }
