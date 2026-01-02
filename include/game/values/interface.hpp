@@ -32,6 +32,8 @@ namespace Values {
 
 	/// Interface digit textures.
 	extern const sf::IntRect digits[11];
+	/// Stunned skill digit replacement.
+	extern const sf::IntRect stun_digit;
 
 	/// Game panel text settings.
 	extern const ui::TextSettings panel_text;

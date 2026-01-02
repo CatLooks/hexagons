@@ -481,7 +481,8 @@ static void _construct_menu(
 
 		// set skill cooldown
 		button->forwardOverlay();
-		button->setTimer(entity.timers[idx]);
+		button->setTimer(entity.hasEffect(EffectType::Stunned)
+			? gameui::Action::StunTimer : entity.timers[idx]);
 
 		// attach skill logic
 		_attach_action(button, idx, game, data.skills[idx]);

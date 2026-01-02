@@ -20,6 +20,9 @@ namespace gameui {
 	/// Overlay color for action on cooldown.
 	const sf::Color Action::dim = sf::Color(0, 0, 0, 128);
 
+	/// Stunned timer value.
+	const uint8_t Action::StunTimer = 0xFF;
+
 	/// Action button texture maps.
 	const ui::Panel::Map Action::textures[2] = {
 		ui::Panel::Map::rect(&assets::interface, Values::coords(0, 0), { 6, 6 }, 2),
@@ -112,13 +115,18 @@ namespace gameui {
 		_timer = timer;
 
 		// cap displayed value
-		if (timer > 10) timer = 10;
+		if (timer > 10 && timer != StunTimer) timer = 10;
 
 		// create timer icon
 		if (!_cdi) {
 			if (!timer) return; // ignore if timer is 0
 
-			_cdi = new ui::Image(&assets::interface, Values::digits[timer]);
+			_cdi = new ui::Image(
+				&assets::interface,
+				timer > 10
+					? Values::stun_digit
+					: Values::digits[timer]
+			);
 			_cdi->bounds = {
 				{ 0as + Values::buttonBorder, 1as - Values::buttonBorder },
 				Values::iconSize
@@ -130,7 +138,9 @@ namespace gameui {
 		// change icon state
 		if (timer) {
 			// enable timer
-			_cdi->coords = Values::digits[timer];
+			_cdi->coords = timer > 10
+				? Values::stun_digit
+				: Values::digits[timer];
 			_cdi->activate();
 			_err->color = dim;
 		}

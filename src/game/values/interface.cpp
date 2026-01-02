@@ -48,6 +48,8 @@ namespace Values {
 		coords(9, 3, 1, 2),
 		coords(9, 3, 2, 2),
 	};
+	/// Stunned skill digit replacement.
+	const sf::IntRect stun_digit = coords(9, 3, 3, 2);
 
 	/// Game panel text settings.
 	const ui::TextSettings panel_text = {

@@ -62,6 +62,9 @@ namespace gameui {
 		/// Overlay color for action on cooldown.
 		static const sf::Color dim;
 
+		/// Stunned timer value.
+		static const uint8_t StunTimer;
+
 		/// Whether the button acts as a display.
 		///
 		/// Disables click animations.
