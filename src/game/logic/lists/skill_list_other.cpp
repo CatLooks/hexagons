@@ -35,7 +35,36 @@ namespace SkillList {
 	};
 
 	/// ======== FRUIT HARVEST ======== ///
-	const Skill fruit = { Skills::Harvest, Skill::Aim };
+	const Skill fruit = {
+		.type = Skills::Harvest,
+		.condition = [](const SkillState&, Map& map, const HexRef& tile) {
+			bool found = false;
+
+			// find at least 1 harvestable plant
+			Spread spread = {
+				.pass = Moves::harvestablePlant,
+				.effect = [&found](const Spread::Tile& tile)
+					{ found = true; }
+			};
+			spread.apply(map, tile.pos, logic::harvest_range);
+			return found;
+		},
+		.select = [](const SkillState&, const HexRef& tile, size_t idx) {
+			return Spread {
+				.hop = skillf::solidHop,
+				.effect = skillf::selectTile(idx)
+			};
+		},
+		.radius = logic::harvest_range,
+		.action = [](const SkillState&, Map& map, const HexRef& prev, const HexRef& next) -> Move* {
+			// ignore if no troop
+			if (!prev.hex->troop) return nullptr;
+
+			// create plant modification move
+			return new Moves::PlantMod(next.pos, logic::harvest_range);
+		},
+		.format = Skill::Self
+	};
 
 	/// ======== PLANT CUT-DOWN ======== ///
 	const Skill cut = {
@@ -57,7 +86,7 @@ namespace SkillList {
 			if (!prev.hex->troop) return nullptr;
 
 			// create plant cut move
-			return new Moves::PlantCut(prev.pos, next.pos);
+			return new Moves::PlantCut(next.pos);
 		}
 	};
 
@@ -108,7 +137,8 @@ namespace SkillList {
 			heal1.cost = [=](const SkillState&) { return cost; };
 
 			// check if enough resources are present
-			return state.with(heal1.resource) >= cost;
+			// fallback if no troops to heal
+			return cost && state.with(heal1.resource) >= cost;
 		},
 		.radius = logic::heal_range,
 		.action = [](const SkillState&, Map& map, const HexRef& _, const HexRef& tile) -> Move* {
@@ -138,7 +168,8 @@ namespace SkillList {
 			heal2.cost = [=](const SkillState&) { return cost; };
 
 			// check if enough resources are present
-			return state.with(heal2.resource) >= cost;
+			// fallback if no troops to heal
+			return cost && state.with(heal2.resource) >= cost;
 		},
 		.radius = logic::heal_range,
 		.action = [](const SkillState&, Map& map, const HexRef& _, const HexRef& tile) -> Move* {

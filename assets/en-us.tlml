@@ -285,7 +285,7 @@ dp {
 			entity_effect: "Entity Effect"
 
 			plant_cut: "Plant Cut"
-			plant_collect: "Plant Collect"
+			plant_modify: "Plant Modify"
 
 			aoe_effect: "AoE Effect"
 		}
@@ -332,9 +332,12 @@ dp {
 		}
 
 		# plant cut
-		plant_cut {
-			vector: "From {from} to {to}"
-			info: "Plant: {plant} (Bonus: {bonus} $(currency.coin))"
+		plant_cut: "Plant: {plant} at {to} | Bonus: {bonus} $(currency.coin)"
+
+		# plant modify
+		plant_modify {
+			res: "Resources: {res} from {count} plants"
+			spread: "Spread: {radius}Ω @ {pos}"
 		}
 	}
 }

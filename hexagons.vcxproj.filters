@@ -330,6 +330,12 @@
     <ClCompile Include="src\game\moves\troop_heal.cpp">
       <Filter>Source Files\game\moves</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\moves\plant_modify.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\plant_cut.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -621,6 +627,12 @@
       <Filter>Header Files\game\moves</Filter>
     </ClInclude>
     <ClInclude Include="include\game\moves\troop_heal.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\plant_cut.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\plant_modify.hpp">
       <Filter>Header Files\game\moves</Filter>
     </ClInclude>
   </ItemGroup>
