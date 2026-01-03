@@ -63,13 +63,13 @@ int main() {
 			const int w = 24;
 			const int h = 7;
 			const char arr[h][w + 1] = {
-				"------   ggggyyy   vvvv ",
+				"------   ggggyyy   oooo ",
 				"--rr---  ggggyyyy  vvvvv",
 				"---rbb   gggyyyy   vvvv ",
 				"rrrrbb#  gggg-yyy  vvvvv",
 				"---rrb   ggggyyy   vvvv ",
 				"--rr---  ggggyyyy  vvvvv",
-				"------   ggggyyy   vvvv "
+				"------   ggggyyy   oooo "
 			};
 
 			map.empty({ w, h });
@@ -203,6 +203,32 @@ int main() {
 					build.pos = { 21, 3 };
 					map.setBuild(build);
 				};
+
+				// plants test
+				{
+					Troop troop;
+					troop.pos = { 20, 0 };
+					troop.type = Troop::Farmer;
+					troop.hp = troop.max_hp();
+					map.setTroop(troop);
+
+					Plant plant;
+					plant.pos = { 21, 0 };
+					plant.type = Plant::Peach;
+					map.setPlant(plant);
+				};
+				{
+					Troop troop;
+					troop.pos = { 20, 6 };
+					troop.type = Troop::Lumberjack;
+					troop.hp = troop.max_hp();
+					map.setTroop(troop);
+
+					Plant plant;
+					plant.pos = { 21, 6 };
+					plant.type = Plant::Tree;
+					map.setPlant(plant);
+				};
 			};
 
 			map.at({ 3, 3 })->region()->money = 11;
@@ -215,6 +241,9 @@ int main() {
 			map.at({ 14, 3 })->region()->money = 100;
 			map.at({ 21, 3 })->region()->money = 1000;
 			map.at({ 21, 3 })->region()->berry = 12;
+
+			map.at({ 20, 0 })->region()->money = 50;
+			map.at({ 20, 6 })->region()->money = 50;
 		};
 		layer_map->add(game);
 

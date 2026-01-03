@@ -38,7 +38,28 @@ namespace SkillList {
 	const Skill fruit = { Skills::Harvest, Skill::Aim };
 
 	/// ======== PLANT CUT-DOWN ======== ///
-	const Skill cut = { Skills::TreeCut, Skill::Aim };
+	const Skill cut = {
+		.type = Skills::TreeCut,
+		.annotation = Skill::Aim,
+		.select = [](const SkillState&, const HexRef& tile, size_t idx) {
+			return Spread {
+				.hop = skillf::solidHop,
+				.pass = [](const Spread::Tile& tile) {
+					// select if tile has plant
+					return (bool)tile.hex->plant;
+				},
+				.effect = skillf::selectTile(idx)
+			};
+		},
+		.radius = 1,
+		.action = [](const SkillState&, Map& map, const HexRef& prev, const HexRef& next) -> Move* {
+			// ignore if no troop
+			if (!prev.hex->troop) return nullptr;
+
+			// create plant cut move
+			return new Moves::PlantCut(prev.pos, next.pos);
+		}
+	};
 
 	/// ======== HEAL OTHER TROOPS ======== ///
 	const Skill tent = {
@@ -89,7 +110,7 @@ namespace SkillList {
 			// check if enough resources are present
 			return state.with(heal1.resource) >= cost;
 		},
-		.radius = (size_t)logic::heal_range,
+		.radius = logic::heal_range,
 		.action = [](const SkillState&, Map& map, const HexRef& _, const HexRef& tile) -> Move* {
 			// ignore if no building
 			if (!tile.hex->build) return nullptr;
@@ -119,7 +140,7 @@ namespace SkillList {
 			// check if enough resources are present
 			return state.with(heal2.resource) >= cost;
 		},
-		.radius = (size_t)logic::heal_range,
+		.radius = logic::heal_range,
 		.action = [](const SkillState&, Map& map, const HexRef& _, const HexRef& tile) -> Move* {
 			// ignore if no building
 			if (!tile.hex->build) return nullptr;
@@ -139,8 +160,8 @@ namespace SkillList {
 		.type = Skills::Stun,
 		.annotation = Skill::Peach,
 		.resource = Skills::Peach,
-		.cost = skillf::cost(20),
-		.radius = 3,
+		.cost = skillf::cost(logic::stun_cost),
+		.radius = logic::stun_range,
 		.action = [](const SkillState&, Map& map, const HexRef& _, const HexRef& tile) -> Move* {
 			// ignore if no building
 			if (!tile.hex->build) return nullptr;

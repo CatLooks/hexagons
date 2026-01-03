@@ -284,6 +284,9 @@ dp {
 			entity_withdraw: "Entity Withdraw"
 			entity_effect: "Entity Effect"
 
+			plant_cut: "Plant Cut"
+			plant_collect: "Plant Collect"
+
 			aoe_effect: "AoE Effect"
 		}
 
@@ -326,6 +329,12 @@ dp {
 		aoe_effect {
 			effect: "Effect: {effect} for {count} troops"
 			spread: "Info: {team} {radius}Ω @ {pos}"
+		}
+
+		# plant cut
+		plant_cut {
+			vector: "From {from} to {to}"
+			info: "Plant: {plant} (Bonus: {bonus} $(currency.coin))"
 		}
 	}
 }

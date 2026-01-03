@@ -16,7 +16,12 @@ namespace logic {
 	/// HP healed by tents.
 	extern const int heal_amount[2];
 	/// Tent heal range.
-	extern const int heal_range;
+	extern const size_t heal_range;
+
+	/// Beacon stun skill cost.
+	extern const int stun_cost;
+	/// Beacon stun skill range.
+	extern const size_t stun_range;
 
 	/// Building destruction bonus.
 	/// @param id Building type.

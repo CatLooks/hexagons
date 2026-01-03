@@ -11,7 +11,12 @@ namespace logic {
 	/// HP healed by tents.
 	const int heal_amount[2] = { 1, 2 };
 	/// Tent heal range.
-	const int heal_range = 1;
+	const size_t heal_range = 1;
+
+	/// Beacon stun skill cost.
+	const int stun_cost = 20;
+	/// Beacon stun skill range.
+	const size_t stun_range = 3;
 
 	/// Building destruction bonus.
 	const int build_bonus[Build::Count] = { 30, 5, 8, 6, 16, 43, 8 };
