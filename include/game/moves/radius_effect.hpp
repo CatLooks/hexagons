@@ -13,14 +13,8 @@ namespace Moves {
 		Region::Team team; /// Effect origin team.
 		Spread     spread; /// Target list populator.
 
-		/// Effect target.
-		struct Target {
-			sf::Vector2i pos; /// Target position.
-			bool      before; /// Whether the effect was applied before.
-		};
-
 		/// List of affected targets.
-		std::vector<Target> a_target;
+		std::vector<sf::Vector2i> a_target;
 
 		/// Constructs an AoE effect move.
 		/// 

@@ -173,8 +173,13 @@ int main() {
 			};
 
 			map.at({ 3, 3 })->region()->money = 11;
-			map.at({ 5, 3 })->region()->money = 20;
 			map.at({ 3, 3 })->region()->peach = 11;
+			map.at({ 5, 3 })->region()->money = 20;
+
+			map.at({ 9, 3 })->region()->money = 100;
+			map.at({ 9, 3 })->region()->peach = 100;
+
+			map.at({ 14, 3 })->region()->money = 100;
 		};
 		layer_map->add(game);
 

@@ -10,16 +10,15 @@ namespace Moves {
 		: effect(effect), mid(mid), radius(radius), team(team)
 	{
 		spread = {
-			// troops of enemy teams
+			// unaffected troops of enemy teams
 			.pass = [=](const Spread::Tile& tile) {
-				return tile.hex->troop && tile.hex->team != team;
+				return tile.hex->troop
+					&& tile.hex->team != team
+					&& !tile.hex->troop->hasEffect(effect);
 			},
 			// add troop to target list
 			.effect = [=](const Spread::Tile& tile) {
-				a_target.push_back({
-					.pos = tile.pos,
-					.before = tile.hex->troop->hasEffect(effect)
-				});
+				a_target.push_back(tile.pos);
 			}
 		};
 	};
@@ -31,9 +30,9 @@ namespace Moves {
 		spread.apply(*map, mid, radius);
 
 		// apply effects to all target troops
-		for (const auto& target : a_target) {
+		for (sf::Vector2i target : a_target) {
 			// get hex
-			Hex* hex = map->at(target.pos);
+			Hex* hex = map->at(target);
 			if (!hex) continue;
 
 			// apply effect
@@ -44,12 +43,9 @@ namespace Moves {
 	/// Reverts the move.
 	void RadiusEffect::onRevert(Map* map) {
 		// revert effect from all target troops
-		for (const auto& target : a_target) {
-			// ignore if applied before
-			if (target.before) continue;
-
+		for (sf::Vector2i target : a_target) {
 			// get hex
-			Hex* hex = map->at(target.pos);
+			Hex* hex = map->at(target);
 			if (!hex) continue;
 
 			// revert effect
@@ -68,6 +64,7 @@ namespace Moves {
 		list["pos"] = ext::str_vec(mid);
 		list["radius"] = ext::str_int(radius);
 		list["team"] = Values::hex_names[team];
+		list["count"] = ext::str_int(a_target.size());
 		list["skill_name"] = "@!dp.move.name.aoe_effect";
 	};
 };

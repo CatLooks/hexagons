@@ -314,7 +314,7 @@ dp {
 
 		# aoe effect
 		aoe_effect {
-			effect: "Effect: {effect}"
+			effect: "Effect: {effect} for {count} troops"
 			spread: "Info: {team} {radius}Ω @ {pos}"
 		}
 	}

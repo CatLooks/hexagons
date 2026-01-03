@@ -597,7 +597,6 @@ void Game::regionMenu(const Region& region, bool targeted) {
 
 		// attach buy build skill
 		_attach_action(button, 0, this, targeted ? &SkillList::buy_build : &SkillList::buy_build_aim);
-		if (region.dead()) button->disable(Values::dead_digit);
 	};
 	{
 		auto* button = _panel->actions()[3];
@@ -610,7 +609,6 @@ void Game::regionMenu(const Region& region, bool targeted) {
 
 		// attach buy build skill
 		_attach_action(button, 0, this, targeted ? &SkillList::buy_troop : &SkillList::buy_troop_aim);
-		if (region.dead()) button->disable(Values::dead_digit);
 	};
 
 	// annotate selection buttons
@@ -624,6 +622,12 @@ void Game::regionMenu(const Region& region, bool targeted) {
 	// update entity previews
 	updateBuild();
 	updateTroop();
+
+	// disable buttons if region is dead
+	if (region.dead()) {
+		_panel->actions()[2]->disable(Values::dead_digit);
+		_panel->actions()[3]->disable(Values::dead_digit);
+	};
 
 	// recalculate panel
 	_panel->recalculate();
