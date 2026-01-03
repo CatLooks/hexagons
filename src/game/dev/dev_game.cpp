@@ -116,6 +116,7 @@ namespace dev {
 					{ "id", ext::str_int(reg.index()) },
 					{ "size", ext::str_int(reg->tiles) },
 					{ "farm", ext::str_int(reg->farms) },
+					{ "tent", ext::str_int(reg->tents) },
 
 					// money
 					{ "money", ext::str_int(reg->money) },

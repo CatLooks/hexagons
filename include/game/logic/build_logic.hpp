@@ -6,12 +6,22 @@
 #include "game/troop.hpp"
 
 namespace logic {
-	/// Building buying cost.
+	/// Building base buying cost.
 	/// @param id Building type.
-	extern const int build_cost[Build::Count];
+	extern const int build_cost_base[Build::Count];
+
+	/// Building buying cost.
+	/// 
+	/// @param type Building type.
+	/// @param state Current skill selection state.
+	/// 
+	/// @return True building cost.
+	int build_cost(Build::Type type, const SkillState& state);
 
 	/// Extra farm cost per farm built.
 	extern const int farm_cost_inc;
+	/// Extra tent cost per tent built.
+	extern const int tent_cost_inc;
 
 	/// HP healed by tents.
 	extern const int heal_amount[2];

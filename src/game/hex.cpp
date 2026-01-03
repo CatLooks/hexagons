@@ -10,10 +10,15 @@ void Hex::join(Regions::Ref ref) {
 	if (_region) {
 		// update tile count
 		_region->tiles++;
+		_region->income++;
 
 		// update farm count
 		if (build && build->type == Build::Farm)
 			_region->farms++;
+
+		// update tent count
+		if (build && build->type == Build::Tent)
+			_region->tents++;
 	};
 };
 
@@ -22,10 +27,15 @@ void Hex::leave() {
 	if (_region) {
 		// update tile count
 		_region->tiles--;
+		_region->income--;
 
 		// update farm count
 		if (build && build->type == Build::Farm)
 			_region->farms--;
+
+		// update tent count
+		if (build && build->type == Build::Tent)
+			_region->tents--;
 	};
 
 	// leave the region

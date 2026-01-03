@@ -7,7 +7,7 @@ namespace SkillList {
 	static const Skill::Selection region_shop =
 		[](const SkillState&, const HexRef& tile, size_t idx)
 	{
-		return Spread{
+		return Spread {
 			.hop = skillf::sameRegionHop(tile.hex->region()),
 			.pass = skillf::emptyPass,
 			.effect = skillf::selectTile(idx),
@@ -26,11 +26,7 @@ namespace SkillList {
 	static const Skill::Cost cost_build =
 		[](const SkillState& state)
 	{
-		auto type = Values::build_shop[state.build];
-		int cost = logic::build_cost[type];
-		if (type == Build::Farm && state.region)
-			cost += logic::farm_cost_inc * state.region->farms;
-		return cost;
+		return logic::build_cost(Values::build_shop[state.build], state);
 	};
 
 	/// Places a new troop.
@@ -47,7 +43,7 @@ namespace SkillList {
 		troop.add_cooldown(Skills::Withdraw, 1);
 
 		// create placement move
-		return new Moves::EntityPlace(troop, tile.pos);
+		return new Moves::EntityPlace(troop, tile.pos, state);
 	};
 
 	/// Places a new building.
@@ -64,7 +60,7 @@ namespace SkillList {
 		build.add_cooldown(Skills::Withdraw, 1);
 
 		// create placement move
-		return new Moves::EntityPlace(build, tile.pos);
+		return new Moves::EntityPlace(build, tile.pos, state);
 	};
 
 	/// ======== BUY TROOP IN-PLACE ======== ///

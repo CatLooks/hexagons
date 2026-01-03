@@ -95,7 +95,9 @@ namespace SkillList {
 		.type = Skills::TentSet,
 		.annotation = Skill::Aim,
 		.resource = Skills::Money,
-		.cost = skillf::cost(logic::build_cost[Build::Tent]),
+		.cost = [](const SkillState& state) {
+			return logic::build_cost(Build::Tent, state);
+		},
 		.select = [](const SkillState&, const HexRef& tile, size_t idx) {
 			return Spread {
 				.hop = skillf::solidHop,
@@ -104,7 +106,7 @@ namespace SkillList {
 			};
 		},
 		.radius = 1,
-		.action = [](const SkillState&, Map& map, const HexRef& prev, const HexRef& next) -> Move* {
+		.action = [](const SkillState& state, Map& map, const HexRef& prev, const HexRef& next) -> Move* {
 			// ignore if no troop
 			if (!prev.hex->troop) return nullptr;
 
@@ -115,7 +117,7 @@ namespace SkillList {
 			build.add_cooldown(Skills::Withdraw, 1);
 
 			// create tent setup move
-			return new Moves::EntityPlace(build, next.pos);
+			return new Moves::EntityPlace(build, next.pos, state);
 		},
 		.format = Skill::SingleAim,
 		.cooldown = 2,

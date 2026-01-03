@@ -150,7 +150,11 @@ void Map::removeEntity(Hex* hex) {
 		// update region income
 		if (hex->region()) {
 			hex->region()->income += logic::build_upkeep[hex->build->type];
+
+			// update farm count
 			if (hex->build->type == Build::Farm) hex->region()->farms--;
+			// update tent count
+			if (hex->build->type == Build::Tent) hex->region()->tents--;
 		};
 
 		// delete building
@@ -194,7 +198,11 @@ void Map::setBuild(const Build& build) {
 		// update region income
 		if (hex->region()) {
 			hex->region()->income -= logic::build_upkeep[build.type];
-			if (build.type == Build::Farm) hex->region()->farms++;
+
+			// update farm count
+			if (hex->build->type == Build::Farm) hex->region()->farms++;
+			// update tent count
+			if (hex->build->type == Build::Tent) hex->region()->tents++;
 		};
 	};
 };

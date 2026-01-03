@@ -199,12 +199,12 @@ dp {
 	region {
 		title: "[ Region Info ]"
 		id {
-			k: "ID"
-			v: "{id}"
+			k: "ID: {id}"
+			v: "Tiles: {size}"
 		}
 		count {
-			k: "Tiles: {size}"
-			v: "Farms: {farm}"
+			k: "Farms: {farm}"
+			v: "Tents: {tent}"
 		}
 		money {
 			k: "Money"
@@ -214,6 +214,7 @@ dp {
 			k: "Berry: {berry} $(currency.berry)"
 			v: "Peach: {peach} $(currency.peach)"
 		}
+		count: "Tiles: {size} | Farms: {farm} | Tents: {tent}"
 	}
 
 	# hex info

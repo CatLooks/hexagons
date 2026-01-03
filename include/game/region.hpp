@@ -51,6 +51,7 @@ struct Region : RegionRes {
 	int income = 0; /// Income during next turn.
 	int tiles  = 0; /// Amount of tiles captured.
 	int farms  = 0; /// Amount of farms built.
+	int tents  = 0; /// Amount of tents built.
 
 	/// Checks whether the region is dead.
 	bool dead() const;

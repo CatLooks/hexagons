@@ -7,17 +7,17 @@
 
 namespace Moves {
 	/// Returns placement cost of an entity.
-	int entity_cost(const Entity* entity) {
+	int entity_cost(const Entity* entity, const SkillState& state) {
 		if (auto* data = dynamic_cast<const Troop*>(entity))
 			return logic::troop_cost[data->type];
 		if (auto* data = dynamic_cast<const Build*>(entity))
-			return logic::build_cost[data->type];
+			return logic::build_cost(data->type, state);
 		return 0;
 	};
 
 	/// Constructs an entity placement move.
-	EntityPlace::EntityPlace(EntState entity, sf::Vector2i pos)
-		: entity(entity), pos(pos) {};
+	EntityPlace::EntityPlace(EntState entity, sf::Vector2i pos, SkillState state)
+		: entity(entity), pos(pos), state(state) {};
 
 	/// Applies the move.
 	void EntityPlace::onApply(Map* map) {
@@ -37,7 +37,7 @@ namespace Moves {
 
 		// subtract entity cost
 		if (hex->region())
-			hex->region()->money -= entity_cost(hex->entity());
+			hex->region()->money -= entity_cost(hex->entity(), state);
 	};
 
 	/// Reverts the move.
@@ -48,7 +48,7 @@ namespace Moves {
 
 		// recompensate entity cost
 		if (hex->region())
-			hex->region()->money += entity_cost(hex->entity());
+			hex->region()->money += entity_cost(hex->entity(), state);
 
 		// remove entity
 		map->removeEntity(hex);
