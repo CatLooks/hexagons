@@ -13,6 +13,11 @@ namespace logic {
 	/// Extra farm cost per farm built.
 	extern const int farm_cost_inc;
 
+	/// HP healed by tents.
+	extern const int heal_amount[2];
+	/// Tent heal range.
+	extern const int heal_range;
+
 	/// Building destruction bonus.
 	/// @param id Building type.
 	extern const int build_bonus[Build::Count];

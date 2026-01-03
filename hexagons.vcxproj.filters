@@ -327,6 +327,9 @@
     <ClCompile Include="src\game\moves\radius_effect.cpp">
       <Filter>Source Files\game\moves</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\moves\troop_heal.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -615,6 +618,9 @@
       <Filter>Header Files\game\moves</Filter>
     </ClInclude>
     <ClInclude Include="include\game\moves\radius_effect.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\troop_heal.hpp">
       <Filter>Header Files\game\moves</Filter>
     </ClInclude>
   </ItemGroup>

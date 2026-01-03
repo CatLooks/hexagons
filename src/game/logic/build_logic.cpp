@@ -8,6 +8,11 @@ namespace logic {
 	/// Extra farm cost per farm built.
 	const int farm_cost_inc = 1;
 
+	/// HP healed by tents.
+	const int heal_amount[2] = { 1, 2 };
+	/// Tent heal range.
+	const int heal_range = 1;
+
 	/// Building destruction bonus.
 	const int build_bonus[Build::Count] = { 30, 5, 8, 6, 16, 43, 8 };
 
@@ -39,6 +44,11 @@ namespace logic {
 		/* fort   */ { SkillArray::L11, {
 			&SkillList::stun,
 			&SkillList::withdraw
-		} }
+		} },
+		/* tent   */ { SkillArray::L21,
+			&SkillList::heal1,
+			&SkillList::heal2,
+			&SkillList::withdraw
+		}
 	};
 };

@@ -60,6 +60,7 @@
     <ClCompile Include="src\game\moves\move.cpp" />
     <ClCompile Include="src\game\moves\radius_effect.cpp" />
     <ClCompile Include="src\game\moves\troop_attack.cpp" />
+    <ClCompile Include="src\game\moves\troop_heal.cpp" />
     <ClCompile Include="src\game\moves\troop_move.cpp" />
     <ClCompile Include="src\game\plant.cpp" />
     <ClCompile Include="src\game\region.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="include\game\moves\move.hpp" />
     <ClInclude Include="include\game\moves\radius_effect.hpp" />
     <ClInclude Include="include\game\moves\troop_attack.hpp" />
+    <ClInclude Include="include\game\moves\troop_heal.hpp" />
     <ClInclude Include="include\game\moves\troop_move.hpp" />
     <ClInclude Include="include\game\plant.hpp" />
     <ClInclude Include="include\game\region.hpp" />

@@ -7,4 +7,5 @@
 #include "moves/entity_withdraw.hpp"
 #include "moves/troop_move.hpp"
 #include "moves/troop_attack.hpp"
+#include "moves/troop_heal.hpp"
 #include "moves/radius_effect.hpp"

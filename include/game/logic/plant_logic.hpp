@@ -12,6 +12,9 @@ namespace logic {
 	/// Plant upkeep cost.
 	extern const int plant_upkeep;
 
+	/// Amount of berries needed to heal 1 HP.
+	extern const int berry_per_hp;
+
 	/// Plant skill.
 	/// Applied for every plant.
 	extern const SkillArray plant_skill;

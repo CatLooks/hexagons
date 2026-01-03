@@ -33,7 +33,7 @@ namespace logic {
 		/* spear  */ { SkillArray::L22, {
 			&SkillList::move,
 			&SkillList::attack_spear,
-			&SkillList::effect_defend,
+			&SkillList::tent,
 			&SkillList::withdraw
 		} },
 		/* archer */ { SkillArray::L22, {

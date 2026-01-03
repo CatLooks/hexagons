@@ -278,6 +278,7 @@ dp {
 
 			troop_move: "Troop Move"
 			troop_attack: "Troop Attack"
+			troop_heal: "Troop Heal"
 
 			entity_place: "Entity Place"
 			entity_withdraw: "Entity Withdraw"
@@ -301,6 +302,12 @@ dp {
 			to: "To: {pos}"
 			dmg: "Damage: {dmg}"
 			effects: "Before: {effects}"
+		}
+
+		# troop heal
+		troop_heal {
+			heal: "Heal: {hp} HP for {count} troops"
+			spread: "Info: {team} @ {pos} for {cost} $(currency.berry)"
 		}
 
 		# entity effect
