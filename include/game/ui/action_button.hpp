@@ -45,6 +45,7 @@ namespace gameui {
 		Callback _release;         /// Button release callback.
 		bool _state     = false;   /// Button state.
 		bool _shake     = false;   /// Initial shake position.
+		bool _disabled  = false;   /// Whether the button is disabled.
 
 	public:
 		/// Action button texture maps.
@@ -82,6 +83,11 @@ namespace gameui {
 
 		/// Clears the action button.
 		void clear();
+
+		/// Manually disables the button.
+		///
+		/// @param icon Button status icon.
+		void disable(sf::IntRect icon = {});
 
 		/// Adds an annotation icon to the action button.
 		///

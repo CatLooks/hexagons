@@ -50,6 +50,8 @@ namespace Values {
 	};
 	/// Stunned skill digit replacement.
 	const sf::IntRect stun_digit = coords(9, 3, 3, 2);
+	/// Dead region skill digit replacement.
+	const sf::IntRect dead_digit = coords(9, 3, 0, 3);
 
 	/// Game panel text settings.
 	const ui::TextSettings panel_text = {

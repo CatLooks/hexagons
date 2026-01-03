@@ -470,6 +470,9 @@ static void _construct_menu(
 		});
 	};
 
+	// entity tile
+	HexRef tile = game->map.atref(entity.pos);
+
 	// construct skill buttons
 	int idx = 0;
 	for (auto* button : panel->actions()) {
@@ -486,6 +489,15 @@ static void _construct_menu(
 
 		// attach skill logic
 		_attach_action(button, idx, game, data.skills[idx]);
+		if (tile.hex) {
+			// disable if the region is dead
+			if (tile.hex->region() && tile.hex->region()->dead())
+				button->disable(Values::dead_digit);
+
+			// disable if skill cannot be executed
+			else if (!data.skills[idx]->condition(game->state, tile))
+				button->disable();
+		};
 
 		// set skill label
 		auto* text = button->setLabel();
@@ -543,6 +555,7 @@ void Game::regionMenu(const Region& region, bool targeted) {
 
 		// attach buy build skill
 		_attach_action(button, 0, this, targeted ? &SkillList::buy_build : &SkillList::buy_build_aim);
+		if (region.dead()) button->disable(Values::dead_digit);
 	};
 	{
 		auto* button = _panel->actions()[3];
@@ -555,6 +568,7 @@ void Game::regionMenu(const Region& region, bool targeted) {
 
 		// attach buy build skill
 		_attach_action(button, 0, this, targeted ? &SkillList::buy_troop : &SkillList::buy_troop_aim);
+		if (region.dead()) button->disable(Values::dead_digit);
 	};
 
 	// annotate selection buttons

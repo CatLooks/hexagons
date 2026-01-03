@@ -34,6 +34,8 @@ namespace Values {
 	extern const sf::IntRect digits[11];
 	/// Stunned skill digit replacement.
 	extern const sf::IntRect stun_digit;
+	/// Dead region skill digit replacement.
+	extern const sf::IntRect dead_digit;
 
 	/// Game panel text settings.
 	extern const ui::TextSettings panel_text;

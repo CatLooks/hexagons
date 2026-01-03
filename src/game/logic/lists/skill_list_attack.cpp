@@ -76,7 +76,7 @@ namespace SkillList {
 
 	/// ======== BARON ATTACK ======== ///
 	const Skill attack_baron = {
-		.type = Skills::AttackKnight,
+		.type = Skills::AttackBaron,
 		.annotation = Skill::Aim,
 		.select = [](const SkillState&, const HexRef& tile, size_t idx) {
 			return Spread {

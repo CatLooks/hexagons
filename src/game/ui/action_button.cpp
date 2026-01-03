@@ -85,9 +85,30 @@ namespace gameui {
 		_draw = nullptr;
 
 		// create error overlay
+		_disabled = false;
 		_err = new ui::Solid;
 		_err->color = red_dimmed;
 		add(_err);
+	};
+
+	/// Manually disables the button.
+	void Action::disable(sf::IntRect icon) {
+		_disabled = true;
+		_err->color = dim;
+
+		// change overlay color
+		_err->color = _disabled ? dim : red_dimmed;
+
+		// create timer icon
+		if (!_cdi && icon.size.x && icon.size.y) {
+			_cdi = new ui::Image(&assets::interface, icon);
+			_cdi->bounds = {
+				{ 0as + Values::buttonBorder, 1as - Values::buttonBorder },
+				Values::iconSize
+			};
+			_cdi->tint = Values::cooldown_color;
+			add(_cdi);
+		};
 	};
 
 	/// Adds an annotation icon to the action button.
@@ -111,44 +132,16 @@ namespace gameui {
 
 	/// Adds a timer icon to the action button.
 	void Action::setTimer(uint8_t timer) {
+		// cap timer
+		if (timer > 10 && timer != StunTimer)
+			timer = 10;
+
 		// store timer
 		_timer = timer;
-
-		// cap displayed value
-		if (timer > 10 && timer != StunTimer) timer = 10;
-
-		// create timer icon
-		if (!_cdi) {
-			if (!timer) return; // ignore if timer is 0
-
-			_cdi = new ui::Image(
-				&assets::interface,
-				timer > 10
-					? Values::stun_digit
-					: Values::digits[timer]
-			);
-			_cdi->bounds = {
-				{ 0as + Values::buttonBorder, 1as - Values::buttonBorder },
-				Values::iconSize
-			};
-			_cdi->tint = Values::cooldown_color;
-			add(_cdi);
-		};
-
-		// change icon state
-		if (timer) {
-			// enable timer
-			_cdi->coords = timer > 10
-				? Values::stun_digit
-				: Values::digits[timer];
-			_cdi->activate();
-			_err->color = dim;
-		}
-		else {
-			// disable timer
-			_cdi->deactivate();
-			_err->color = red_dimmed;
-		};
+		if (!_timer) return;
+		
+		// disable the button
+		disable(timer > 10 ? Values::stun_digit : Values::digits[timer]);
 	};
 
 	/// Adds an image to the action button.
@@ -223,12 +216,12 @@ namespace gameui {
 		// create red tint animation
 		{
 			ui::Anim* anim_in = ui::AnimColor::to(&_err->color, red, sf::seconds(0.05f));
-			ui::Anim* anim_out = new ui::AnimColor(&_err->color, red, _timer > 0 ? dim : red_dimmed, sf::seconds(0.3f));
+			ui::Anim* anim_out = new ui::AnimColor(&_err->color, red, _disabled ? dim : red_dimmed, sf::seconds(0.3f));
 			anim_out->ease = ui::Easings::quadIn;
 			anim_out->setAfter([=]() {
 				// set color again
 				// in case timer has changed in the middle of the animation
-				push(ui::AnimColor::to(&_err->color, _timer > 0 ? dim : red_dimmed, sf::seconds(0.05f)));
+				push(ui::AnimColor::to(&_err->color, _disabled ? dim : red_dimmed, sf::seconds(0.05f)));
 			});
 			push(chain(anim_in, anim_out));
 		};
@@ -237,7 +230,7 @@ namespace gameui {
 	/// Forcefully invokes the action callback.
 	void Action::click() {
 		// check if validation fails
-		if (!_state && ((_check && !_check()) || _timer)) {
+		if (!_state && ((_check && !_check()) || _timer) || _disabled) {
 			// button shake animation
 			errorShake();
 			return;

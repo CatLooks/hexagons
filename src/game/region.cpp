@@ -34,6 +34,11 @@ RegionRes Region::res() const {
 	};
 };
 
+/// Checks whether the region is dead.
+bool Region::dead() const {
+	return money <= 0 && income < 0;
+};
+
 /// Updates money based on income.
 void Region::tick() {
 	money += income;
@@ -105,7 +110,7 @@ Regions::Split Regions::merge(
 	Split dist;
 
 	// store target resources
-	auto res = static_cast<RegionRes>(*target);
+	auto res = target->res();
 
 	// overwrite merged regions
 	int idx = 0;
