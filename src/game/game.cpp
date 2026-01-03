@@ -330,6 +330,27 @@ void Game::updateBuild() const {
 	auto* text = button->setLabel();
 	text->setPath("param");
 	text->param("value", Values::build_names[type]);
+
+	// update cost
+	int cost = SkillList::buy_build.cost(state);
+
+	// set cost text
+	auto* sub = button->setSubtitle();
+	sub->setPath(Skills::withLabel[SkillList::buy_build.resource]);
+	sub->param("cost", ext::str_int(cost));
+
+	// set cost color
+	int diff = state.with(SkillList::buy_build.resource) - cost;
+	int color = 1;
+	if (diff > 0) color = 0;
+	if (diff < 0) color = 2;
+	sub->setColor(Values::income_color[color]);
+
+	// disable buy button if not enough resources
+	if (diff < 0)
+		_panel->actions()[2]->disable(Values::insufficient_digit);
+	else
+		_panel->actions()[2]->enable();
 };
 
 /// Updates the troop buying interface.
@@ -348,6 +369,27 @@ void Game::updateTroop() const {
 	auto* text = button->setLabel();
 	text->setPath("param");
 	text->param("value", Values::troop_names[type]);
+
+	// update cost
+	int cost = SkillList::buy_troop.cost(state);
+
+	// set cost text
+	auto* sub = button->setSubtitle();
+	sub->setPath(Skills::withLabel[SkillList::buy_troop.resource]);
+	sub->param("cost", ext::str_int(cost));
+
+	// set cost color
+	int diff = state.with(SkillList::buy_troop.resource) - cost;
+	int color = 1;
+	if (diff > 0) color = 0;
+	if (diff < 0) color = 2;
+	sub->setColor(Values::income_color[color]);
+
+	// disable buy button if not enough resources
+	if (diff < 0)
+		_panel->actions()[3]->disable(Values::insufficient_digit);
+	else
+		_panel->actions()[3]->enable();
 };
 
 /// Deselect action buttons and cancels map selection.
@@ -507,7 +549,7 @@ static void _construct_menu(
 		// set cost label
 		if (data.skills[idx]->resource != Skills::None) {
 			auto res = data.skills[idx]->resource;
-			auto cost = data.skills[idx]->cost;
+			auto cost = data.skills[idx]->cost(game->state);
 
 			auto* text = button->setSubtitle();
 			text->setPath(Skills::withLabel[res]);

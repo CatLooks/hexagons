@@ -88,6 +88,8 @@ namespace gameui {
 		///
 		/// @param icon Button status icon.
 		void disable(sf::IntRect icon = {});
+		/// Manually enables the button.
+		void enable();
 
 		/// Adds an annotation icon to the action button.
 		///

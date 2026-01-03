@@ -15,6 +15,20 @@ namespace SkillList {
 		};
 	};
 
+	/// Troop buy cost.
+	static const Skill::Cost cost_troop =
+		[](const SkillState& state)
+	{
+		return logic::troop_cost[Values::troop_shop[state.troop]];
+	};
+
+	/// Building buy cost.
+	static const Skill::Cost cost_build =
+		[](const SkillState& state)
+	{
+		return logic::build_cost[Values::build_shop[state.build]];
+	};
+
 	/// Places a new troop.
 	static const Skill::Action place_troop =
 		[](const SkillState& state, Map& map, const HexRef& _, const HexRef& tile) -> Move*
@@ -53,6 +67,8 @@ namespace SkillList {
 	const Skill buy_troop = {
 		.type = Skills::BuyTroop,
 		.annotation = Skill::None,
+		.resource = Skills::Money,
+		.cost = cost_troop,
 		.action = place_troop,
 		.format = Skill::Self,
 		.cooldown = 0
@@ -62,6 +78,8 @@ namespace SkillList {
 	const Skill buy_troop_aim = {
 		.type = Skills::BuyTroop,
 		.annotation = Skill::Aim,
+		.resource = Skills::Money,
+		.cost = cost_troop,
 		.select = region_shop,
 		.radius = ~0ull,
 		.action = place_troop,
@@ -73,6 +91,8 @@ namespace SkillList {
 	const Skill buy_build = {
 		.type = Skills::BuyBuild,
 		.annotation = Skill::None,
+		.resource = Skills::Money,
+		.cost = cost_build,
 		.action = place_build,
 		.format = Skill::Self,
 		.cooldown = 0
@@ -82,6 +102,8 @@ namespace SkillList {
 	const Skill buy_build_aim = {
 		.type = Skills::BuyBuild,
 		.annotation = Skill::Aim,
+		.resource = Skills::Money,
+		.cost = cost_build,
 		.select = region_shop,
 		.radius = ~0ull,
 		.action = place_build,

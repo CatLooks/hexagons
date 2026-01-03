@@ -6,6 +6,11 @@
 
 /// Skill implementation helper functions.
 namespace skillf {
+	/// Generates static skill cost generator.
+	/// 
+	/// @param pts Currency amount.
+	Skill::Cost cost(int pts);
+
 	/// Generates tile selector spreader effect function.
 	/// 
 	/// @param idx Selection index.

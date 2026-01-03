@@ -48,7 +48,7 @@ namespace SkillList {
 		.type = Skills::Stun,
 		.annotation = Skill::Peach,
 		.resource = Skills::Peach,
-		.cost = 20,
+		.cost = skillf::cost(20),
 		.radius = 3,
 		.action = [](const SkillState&, Map& map, const HexRef& _, const HexRef& tile) -> Move* {
 			// ignore if no building

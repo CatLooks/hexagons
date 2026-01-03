@@ -109,6 +109,21 @@ namespace gameui {
 			_cdi->tint = Values::cooldown_color;
 			add(_cdi);
 		};
+
+		// reconfigure timer icon
+		if (icon.size.x && icon.size.y) {
+			_cdi->coords = icon;
+			_cdi->activate();
+		};
+	};
+
+	/// Manually enables the button.
+	void Action::enable() {
+		_disabled = false;
+		_err->color = red_dimmed;
+
+		// hide timer icon
+		if (_cdi) _cdi->deactivate();
 	};
 
 	/// Adds an annotation icon to the action button.

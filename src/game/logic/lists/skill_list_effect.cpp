@@ -6,15 +6,15 @@ namespace SkillList {
 		.type = Skills::Shield,
 		.annotation = Skill::Peach,
 		.resource = Skills::Peach,
-		.cost = logic::troop_effect_cost[Troop::Spearman],
-		.action = [](const SkillState&, Map& map, const HexRef& tile, const HexRef& _) -> Move* {
+		.cost = skillf::cost(logic::troop_effect_cost[Troop::Spearman]),
+		.action = [](const SkillState& state, Map& map, const HexRef& tile, const HexRef& _) -> Move* {
 			// ignore if no entity
 			if (!tile.hex->entity()) return nullptr;
 
 			// create effect move
 			return new Moves::EntityEffect(
 				tile.pos, EffectType::Shielded,
-				logic::troop_effect_cost[Troop::Knight]
+				effect_defend.cost(state)
 			);
 		},
 		.format = Skill::Self,
@@ -26,15 +26,15 @@ namespace SkillList {
 		.type = Skills::RangeBoost,
 		.annotation = Skill::Peach,
 		.resource = Skills::Peach,
-		.cost = logic::troop_effect_cost[Troop::Archer],
-		.action = [](const SkillState&, Map& map, const HexRef& tile, const HexRef& _) -> Move* {
+		.cost = skillf::cost(logic::troop_effect_cost[Troop::Archer]),
+		.action = [](const SkillState& state, Map& map, const HexRef& tile, const HexRef& _) -> Move* {
 			// ignore if no entity
 			if (!tile.hex->entity()) return nullptr;
 
 			// create effect move
 			return new Moves::EntityEffect(
 				tile.pos, EffectType::RangeBoost,
-				logic::troop_effect_cost[Troop::Archer]
+				effect_range.cost(state)
 			);
 		},
 		.format = Skill::Self,
@@ -46,15 +46,15 @@ namespace SkillList {
 		.type = Skills::DefenseBoost,
 		.annotation = Skill::Peach,
 		.resource = Skills::Peach,
-		.cost = logic::troop_effect_cost[Troop::Baron],
-		.action = [](const SkillState&, Map& map, const HexRef& tile, const HexRef& _) -> Move* {
+		.cost = skillf::cost(logic::troop_effect_cost[Troop::Baron]),
+		.action = [](const SkillState& state, Map& map, const HexRef& tile, const HexRef& _) -> Move* {
 			// ignore if no entity
 			if (!tile.hex->entity()) return nullptr;
 
 			// create effect move
 			return new Moves::EntityEffect(
 				tile.pos, EffectType::DefenseBoost,
-				logic::troop_effect_cost[Troop::Baron]
+				effect_defense.cost(state)
 			);
 		},
 		.format = Skill::Self,
@@ -66,15 +66,15 @@ namespace SkillList {
 		.type = Skills::OffenseBoost,
 		.annotation = Skill::Peach,
 		.resource = Skills::Peach,
-		.cost = logic::troop_effect_cost[Troop::Knight],
-		.action = [](const SkillState&, Map& map, const HexRef& tile, const HexRef& _) -> Move* {
+		.cost = skillf::cost(logic::troop_effect_cost[Troop::Knight]),
+		.action = [](const SkillState& state, Map& map, const HexRef& tile, const HexRef& _) -> Move* {
 			// ignore if no entity
 			if (!tile.hex->entity()) return nullptr;
 
 			// create effect move
 			return new Moves::EntityEffect(
 				tile.pos, EffectType::OffenseBoost,
-				logic::troop_effect_cost[Troop::Knight]
+				effect_offense.cost(state)
 			);
 		},
 		.format = Skill::Self,

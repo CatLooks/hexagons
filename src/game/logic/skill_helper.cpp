@@ -1,6 +1,13 @@
 #include "game/logic/skill_helper.hpp"
 
 namespace skillf {
+	/// Generates static skill cost generator.
+	Skill::Cost cost(int pts) {
+		return [=](const SkillState&) {
+			return pts;
+		};
+	};
+
 	/// Generates tile selector spreader effect function.
 	Spread::Effect selectTile(size_t idx) {
 		return [=](const Spread::Tile& tile) {

@@ -12,12 +12,13 @@ namespace Skills {
 	/// Skill used resource type.
 	enum Resource {
 		None,  /// Free skill.
+		Money, /// Skill requires money.
 		Berry, /// Skill requires berries.
 		Peach, /// Skill requires peaches.
 	};
 
 	/// Skill resource label text path.
-	extern const char* withLabel[3];
+	extern const char* withLabel[4];
 };
 
 /// Data required for skill calculations.
@@ -45,7 +46,7 @@ struct Skill {
 		Peach,  /// Action costs peaches.
 		Berry,  /// Action costs berries.
 		Aim,    /// Action needs to be aimed.
-		Swap,   /// Action is an cyclic choice.
+		Swap,   /// Action is a cyclic choice.
 		Manage, /// Action manages other entity.
 		Count
 	};
@@ -55,8 +56,14 @@ struct Skill {
 
 	/// Resource required for skill.
 	Skills::Resource resource = Skills::None;
+
+	/// Skill cost generator.
+	///
+	/// @param state Skill state.
+	using Cost = std::function<int(const SkillState& state)>;
+
 	/// Skill cost.
-	int cost = 0;
+	Cost cost = [](const SkillState&) { return 0; };
 
 	/// Skill action condition check type.
 	///
@@ -68,7 +75,7 @@ struct Skill {
 	///
 	/// By default, uses built-in skill cost fields.
 	Condition condition = [this](const SkillState& state, const HexRef&)
-		{ return state.with(resource) >= cost; };
+		{ return state.with(resource) >= cost(state); };
 
 	/// Selection tile spreader generator.
 	///
