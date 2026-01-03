@@ -8,14 +8,24 @@ void Hex::join(Regions::Ref ref) {
 	// join new region
 	_region = ref;
 	if (_region) {
+		// update tile count
 		_region->tiles++;
+
+		// update farm count
+		if (build && build->type == Build::Farm)
+			_region->farms++;
 	};
 };
 
 /// Removes the tile from the region.
 void Hex::leave() {
 	if (_region) {
+		// update tile count
 		_region->tiles--;
+
+		// update farm count
+		if (build && build->type == Build::Farm)
+			_region->farms--;
 	};
 
 	// leave the region

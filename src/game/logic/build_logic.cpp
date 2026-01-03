@@ -3,7 +3,10 @@
 
 namespace logic {
 	/// Building buying cost.
-	const int build_cost[Build::Count] = { 0, 12, 80, 15, 35, 95 };
+	const int build_cost[Build::Count] = { 0, 4, 80, 15, 35, 95 };
+
+	/// Extra farm cost per farm built.
+	const int farm_cost_inc = 1;
 
 	/// Building destruction bonus.
 	const int build_bonus[Build::Count] = { 30, 5, 8, 6, 16, 43 };

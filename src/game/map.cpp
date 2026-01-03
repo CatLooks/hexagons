@@ -148,8 +148,10 @@ void Map::removeEntity(Hex* hex) {
 	// remove building
 	if (hex->build) {
 		// update region income
-		if (hex->region())
+		if (hex->region()) {
 			hex->region()->income += logic::build_upkeep[hex->build->type];
+			hex->region()->farms--;
+		};
 
 		// delete building
 		hex->build = {};
@@ -190,8 +192,10 @@ void Map::setBuild(const Build& build) {
 		hex->build = _builds.add(build);
 
 		// update region income
-		if (hex->region())
+		if (hex->region()) {
 			hex->region()->income -= logic::build_upkeep[build.type];
+			hex->region()->farms++;
+		};
 	};
 };
 /// Adds a plant to the map.

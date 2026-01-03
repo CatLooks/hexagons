@@ -10,6 +10,9 @@ namespace logic {
 	/// @param id Building type.
 	extern const int build_cost[Build::Count];
 
+	/// Extra farm cost per farm built.
+	extern const int farm_cost_inc;
+
 	/// Building destruction bonus.
 	/// @param id Building type.
 	extern const int build_bonus[Build::Count];

@@ -26,7 +26,11 @@ namespace SkillList {
 	static const Skill::Cost cost_build =
 		[](const SkillState& state)
 	{
-		return logic::build_cost[Values::build_shop[state.build]];
+		auto type = Values::build_shop[state.build];
+		int cost = logic::build_cost[type];
+		if (type == Build::Farm && state.region)
+			cost += logic::farm_cost_inc * state.region->farms;
+		return cost;
 	};
 
 	/// Places a new troop.
