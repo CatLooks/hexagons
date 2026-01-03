@@ -420,7 +420,7 @@ static void _attach_action(
 ) {
 	// set button validation logic
 	button->setCheck([=]() {
-		return skill->condition(game->state, game->map.atref(game->last()));
+		return skill->condition(game->state, game->map, game->map.atref(game->last()));
 	});
 
 	// set button press / release logic
@@ -537,7 +537,7 @@ static void _construct_menu(
 				button->disable(Values::dead_digit);
 
 			// disable if skill cannot be executed
-			else if (!data.skills[idx]->condition(game->state, tile))
+			else if (!data.skills[idx]->condition(game->state, game->map, tile))
 				button->disable();
 		};
 

@@ -32,6 +32,8 @@ namespace SkillList {
 	// other special skills
 	extern const Skill fruit;
 	extern const Skill cut;
-	extern const Skill heal;
+	extern const Skill tent;
+	extern Skill heal1;
+	extern Skill heal2;
 	extern const Skill stun;
 };

@@ -14,6 +14,7 @@ struct Build : Entity {
 		Tower,  /// Watchtower (basic defense).
 		Beacon, /// Beacon (stunning defense).
 		Fort,   /// Fortress (strong defense).
+		Tent,   /// Tent (troop healing station).
 
 		Count   /// Building count.
 	} type = Castle;

@@ -20,12 +20,16 @@ namespace Skills {
 
 		Harvest,      /// (Farmer) Fruit harvest.
 		TreeCut,      /// (Lumberjack) Plant cut down.
+
+		TentSet,      /// (Spearman) Tent setup.
 		Shield,       /// (Spearman) Spearman shield.
+
 		RangeBoost,   /// (Archer) Range boost.
 		DefenseBoost, /// (Baron) Defense boost.
 		OffenseBoost, /// (Knight) Attack boost.
 
-		Heal,         /// (Castle) Heal troops.
+		Heal_1,       /// (Tent) 1 HP troop heal.
+		Heal_2,       /// (Tent) 2 HP troop heal.
 		Stun,         /// (Beacon) Stun troops.
 		Count
 	};

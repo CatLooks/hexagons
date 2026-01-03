@@ -33,9 +33,16 @@ namespace skillf {
 	};
 
 	/// Generates region audit spreader effect function.
-	Spread::Effect regionAuditEffect(const Regions::Ref& ref) {
+	Spread::Effect regionJoin(const Regions::Ref& ref) {
 		return [&ref](const Spread::Tile& tile) {
 			tile.hex->join(ref);
+		};
+	};
+
+	/// Generates a same region spreader for empty tiles.
+	Spread::Check sameRegionEmptyHop(const Regions::Ref& region) {
+		return [&region](const Spread::Tile& tile) {
+			return tile.hex->region() == region && !tile.hex->entity();
 		};
 	};
 };

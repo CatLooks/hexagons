@@ -150,7 +150,7 @@ void Map::removeEntity(Hex* hex) {
 		// update region income
 		if (hex->region()) {
 			hex->region()->income += logic::build_upkeep[hex->build->type];
-			hex->region()->farms--;
+			if (hex->build->type == Build::Farm) hex->region()->farms--;
 		};
 
 		// delete building
@@ -194,7 +194,7 @@ void Map::setBuild(const Build& build) {
 		// update region income
 		if (hex->region()) {
 			hex->region()->income -= logic::build_upkeep[build.type];
-			hex->region()->farms++;
+			if (build.type == Build::Farm) hex->region()->farms++;
 		};
 	};
 };

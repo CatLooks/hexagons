@@ -60,16 +60,16 @@ int main() {
 		{
 			Map& map = game->map;
 
-			const int w = 17;
+			const int w = 24;
 			const int h = 7;
 			const char arr[h][w + 1] = {
-				"------   ggggyyyy",
-				"--rr---  ggggyyyy",
-				"---rbb   gggyyyyy",
-				"rrrrbb#  gggg-yyy",
-				"---rrb   ggggyyyy",
-				"--rr---  ggggyyyy",
-				"------   ggggyyyy"
+				"------   ggggyyy   vvvv ",
+				"--rr---  ggggyyyy  vvvvv",
+				"---rbb   gggyyyy   vvvv ",
+				"rrrrbb#  gggg-yyy  vvvvv",
+				"---rrb   ggggyyy   vvvv ",
+				"--rr---  ggggyyyy  vvvvv",
+				"------   ggggyyy   vvvv "
 			};
 
 			map.empty({ w, h });
@@ -98,6 +98,14 @@ int main() {
 					case 'y':
 						hex->type = Hex::Ground;
 						hex->team = Region::Yellow;
+						break;
+					case 'v':
+						hex->type = Hex::Ground;
+						hex->team = Region::Purple;
+						break;
+					case 'o':
+						hex->type = Hex::Ground;
+						hex->team = Region::Orange;
 						break;
 					case '#':
 						hex->type = Hex::Ground;
@@ -170,6 +178,31 @@ int main() {
 					troop.pos = { 14, 4 };
 					map.setTroop(troop);
 				};
+
+				// tent test
+				{
+					Troop troop;
+					troop.pos = { 20, 2 };
+					troop.type = Troop::Knight;
+					troop.hp = 5;
+					map.setTroop(troop);
+
+					troop.pos = { 20, 4 };
+					troop.type = Troop::Knight;
+					troop.hp = 4;
+					map.setTroop(troop);
+
+					troop.pos = { 22, 3 };
+					troop.type = Troop::Baron;
+					troop.hp = 1;
+					map.setTroop(troop);
+				};
+				{
+					Build build;
+					build.type = Build::Tent;
+					build.pos = { 21, 3 };
+					map.setBuild(build);
+				};
 			};
 
 			map.at({ 3, 3 })->region()->money = 11;
@@ -180,6 +213,8 @@ int main() {
 			map.at({ 9, 3 })->region()->peach = 100;
 
 			map.at({ 14, 3 })->region()->money = 100;
+			map.at({ 21, 3 })->region()->money = 1000;
+			map.at({ 21, 3 })->region()->berry = 12;
 		};
 		layer_map->add(game);
 

@@ -68,13 +68,15 @@ struct Skill {
 	/// Skill action condition check type.
 	///
 	/// @param state Skill state.
+	/// @param map Map reference.
 	/// @param tile Skill target tile.
-	using Condition = std::function<bool(const SkillState& state, const HexRef& tile)>;
+	using Condition = std::function<bool
+		(const SkillState& state, Map& map, const HexRef& tile)>;
 
 	/// Skill execution condition.
 	///
 	/// By default, uses built-in skill cost fields.
-	Condition condition = [this](const SkillState& state, const HexRef&)
+	Condition condition = [this](const SkillState& state, Map&, const HexRef&)
 		{ return state.with(resource) >= cost(state); };
 
 	/// Selection tile spreader generator.

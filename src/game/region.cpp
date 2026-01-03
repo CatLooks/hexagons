@@ -73,7 +73,7 @@ void Regions::enumerate(Map* map) {
 					return tile.hex->team == team
 						&& tile.hex->solid();
 				},
-				.effect = skillf::regionAuditEffect(region),
+				.effect = skillf::regionJoin(region),
 				.imm = true
 			};
 			spread.apply(*map, { x, y });

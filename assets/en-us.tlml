@@ -54,10 +54,11 @@ troop {
 build {
 	castle: Town Hall
 	farm  : Farm
-	mine  : Mine
+	mine  : Mine # unused
 	tower : Watchtower
 	beacon: Beacon
 	fort  : Fortress
+	tent  : Tent
 }
 
 # plant names
@@ -88,12 +89,14 @@ skill {
 
 	harvest: Harvest
 	cut    : Cut Down
-	defend : Defend
+	defend : Defend # unused
 	range  : Range Boost
 	defense: Reinforce
 	offense: Sharpen
 
-	heal   : Heal
+	tent   : Setup Tent
+	heal_1 : Small Heal
+	heal_2 : Big Heal
 	stun   : Stun
 }
 

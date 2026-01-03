@@ -9,6 +9,7 @@ namespace Values {
 		coords(3, 2), // tower
 		coords(4, 2), // beacon
 		coords(5, 2), // fort
+		coords(2, 2), // tent
 	};
 
 	// name array
@@ -19,6 +20,7 @@ namespace Values {
 		"@!build.tower",
 		"@!build.beacon",
 		"@!build.fort",
+		"@!build.tent"
 	};
 
 	/// Buildings available in the region shop.
