@@ -9,19 +9,19 @@ namespace Moves {
 	/// Applies the move.
 	void TroopAttack::onApply(Map* map) {
 		// get tiles
-		auto from = map->atref(skill_pos);
-		auto to = map->atref(dest);
-		if (!(from.hex && to.hex)) return;
+		auto from = map->at(skill_pos);
+		auto to = map->at(dest);
+		if (!(from && to)) return;
 
 		// get entity pointers
-		Entity* src = from.hex->entity();
-		Entity* dst = to.hex->entity();
+		Entity* src = from->entity();
+		Entity* dst = to->entity();
 		if (!(src && dst)) return;
 
 		// store attacked entity state
-		if (to.hex->troop) a_state = *to.hex->troop;
-		else if (to.hex->build) a_state = *to.hex->build;
-		else if (to.hex->plant) a_state = *to.hex->plant;
+		if (to->troop) a_state = *to->troop;
+		else if (to->build) a_state = *to->build;
+		else if (to->plant) a_state = *to->plant;
 
 		// store attacking entity effects
 		a_eff = src->effectList();
@@ -32,12 +32,18 @@ namespace Moves {
 		// deal damage to entity
 		a_dmg = dst->damage(src->offense(Access::Use));
 
-		// replace by a grave if dead
+		// clean up a dead entity
 		if (dst->dead()) {
-			Plant grave;
-			grave.pos = to.pos;
-			grave.type = Plant::Grave;
-			map->setPlant(grave);
+			// replace troop by a grave
+			if (dynamic_cast<Troop*>(dst)) {
+				Plant grave;
+				grave.pos = dest;
+				grave.type = Plant::Grave;
+				map->setPlant(grave);
+			}
+
+			// otherwise delete entity
+			else map->removeEntity(to);
 		};
 	};
 

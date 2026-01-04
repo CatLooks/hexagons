@@ -19,6 +19,9 @@ struct Build : Entity {
 		Count   /// Building count.
 	} type = Castle;
 
+	/// Return building's max hitpoints.
+	int max_hp() const override;
+
 	/// Defends the building against incoming damage.
 	Damage defend(Damage dmg, Access acc) override;
 

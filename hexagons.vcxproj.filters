@@ -336,6 +336,9 @@
     <ClCompile Include="src\game\moves\plant_cut.cpp">
       <Filter>Source Files\game\moves</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\logic\lists\skill_list_generic.cpp">
+      <Filter>Source Files\game\logic\lists</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

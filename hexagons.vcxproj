@@ -48,6 +48,7 @@
     <ClCompile Include="src\game\logic\build_logic.cpp" />
     <ClCompile Include="src\game\logic\lists\skill_list_attack.cpp" />
     <ClCompile Include="src\game\logic\lists\skill_list_effect.cpp" />
+    <ClCompile Include="src\game\logic\lists\skill_list_generic.cpp" />
     <ClCompile Include="src\game\logic\lists\skill_list_other.cpp" />
     <ClCompile Include="src\game\logic\lists\skill_list_shop.cpp" />
     <ClCompile Include="src\game\logic\plant_logic.cpp" />

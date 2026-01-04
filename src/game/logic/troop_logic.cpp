@@ -9,7 +9,7 @@ namespace logic {
 	const int troop_dmg[Troop::Count] = { 0, 1, 2, 1, 3, 4 };
 
 	/// Troop power level.
-	const int troop_pow[Troop::Count] = { 0, 1, 1, 2, 2, 2 };
+	const int troop_pow[Troop::Count] = { 0, 1, 1, 2, 3, 3 };
 
 	/// Troop buying cost.
 	const int troop_cost[Troop::Count] = { 10, 15, 20, 25, 30, 40 };

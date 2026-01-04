@@ -2,6 +2,9 @@
 #include "game/logic/skill_list.hpp"
 
 namespace logic {
+	/// Building hitpoint count.
+	extern const int build_hp[Build::Count] = { 6, 1, 2, 3, 4, 6, 1 };
+
 	/// Building buying cost.
 	const int build_cost_base[Build::Count] = { 0, 4, 80, 15, 35, 95, 10 };
 

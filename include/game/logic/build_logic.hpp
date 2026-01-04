@@ -6,6 +6,10 @@
 #include "game/troop.hpp"
 
 namespace logic {
+	/// Building hitpoint count.
+	/// @param id Building type.
+	extern const int build_hp[Build::Count];
+
 	/// Building base buying cost.
 	/// @param id Building type.
 	extern const int build_cost_base[Build::Count];
