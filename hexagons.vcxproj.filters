@@ -94,6 +94,12 @@
     <Filter Include="Source Files\game\dev">
       <UniqueIdentifier>{2758b7f7-ffc1-4937-a00a-c6efca7f30bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\game\sync">
+      <UniqueIdentifier>{6ce7c79f-af31-4c48-97fc-5ec9bb0b0d47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\sync">
+      <UniqueIdentifier>{4f36068f-ea4c-4a37-acf5-70654160b8f5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -338,6 +344,24 @@
     </ClCompile>
     <ClCompile Include="src\game\logic\lists\skill_list_generic.cpp">
       <Filter>Source Files\game\logic\lists</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\game_turn.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\sync\state.cpp">
+      <Filter>Source Files\game\sync</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\sync\ai.cpp">
+      <Filter>Source Files\game\sync</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\sync\net.cpp">
+      <Filter>Source Files\game\sync</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\sync\test.cpp">
+      <Filter>Source Files\game\sync</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\logic\turn_logic.cpp">
+      <Filter>Source Files\game\logic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -637,6 +661,30 @@
     </ClInclude>
     <ClInclude Include="include\game\moves\plant_modify.hpp">
       <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\game_turn.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\adapter.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\sync\adapter.hpp">
+      <Filter>Header Files\game\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\sync\state.hpp">
+      <Filter>Header Files\game\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\sync\ai.hpp">
+      <Filter>Header Files\game\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\sync\net.hpp">
+      <Filter>Header Files\game\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\sync\test.hpp">
+      <Filter>Header Files\game\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\logic\turn_logic.hpp">
+      <Filter>Header Files\game\logic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

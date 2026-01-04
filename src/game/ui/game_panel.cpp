@@ -47,6 +47,7 @@ namespace gameui {
 
 		// create move selector
 		_select = new Selector();
+		_select->position().x = 1as + Selector::width * 2;
 		adds(_select);
 
 		// add move selector update
@@ -81,15 +82,25 @@ namespace gameui {
 		if ((_layout == logic::SkillArray::None) != (layout == logic::SkillArray::None)) {
 			if (layout != logic::SkillArray::None) {
 				// show panel
-				ui::Anim* anim = ui::AnimDim::to(&position().y, 1as, sf::seconds(0.2f));
-				anim->ease = ui::Easings::quadOut;
-				push(anim);
+				ui::Anim* anim0 = ui::AnimDim::to(&position().y, 1as, sf::seconds(0.2f));
+				anim0->ease = ui::Easings::quadOut;
+				push(anim0);
+
+				// show selectors
+				ui::Anim* anim1 = ui::AnimDim::to(&_select->position().x, 1as, sf::seconds(0.2f));
+				anim1->ease = ui::Easings::quadOut;
+				push(anim1);
 			}
 			else {
 				// hide panel
-				ui::Anim* anim = ui::AnimDim::to(&position().y, 1ps + Action::side, sf::seconds(0.2f));
-				anim->ease = ui::Easings::quadIn;
-				push(anim);
+				ui::Anim* anim0 = ui::AnimDim::to(&position().y, 1ps + Action::side, sf::seconds(0.2f));
+				anim0->ease = ui::Easings::quadIn;
+				push(anim0);
+
+				// hide selectors
+				ui::Anim* anim1 = ui::AnimDim::to(&_select->position().x, 1as + Selector::width * 2, sf::seconds(0.2f));
+				anim1->ease = ui::Easings::quadOut;
+				push(anim1);
 			};
 		};
 

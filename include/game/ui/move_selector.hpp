@@ -15,11 +15,13 @@ namespace gameui {
 		static const ui::Dim width;
 
 	private:
-		ui::Button* _undo {}; /// Amount of moves done.
-		ui::Button* _redo {}; /// Amount of moves reverted.
+		ui::Button* _undo {}; /// Undo a move.
+		ui::Button* _redo {}; /// Redo a move.
+		ui::Button* _next {}; /// Finish the turn.
 
 		ui::Text* _undo_t {}; /// Amount of moves done.
 		ui::Text* _redo_t {}; /// Amount of moves reverted.
+		ui::Text* _next_t {}; /// Current turn.
 
 	public:
 		/// Constructs the move selector element.
@@ -29,7 +31,8 @@ namespace gameui {
 		///
 		/// @param undo Undo button callback.
 		/// @param redo Redo button callback.
-		void attach(StaticHandler undo, StaticHandler redo);
+		/// @param next Turn finish callback.
+		void attach(StaticHandler undo, StaticHandler redo, std::function<bool()> next);
 
 		/// Updates move counter.
 		/// 

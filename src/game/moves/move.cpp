@@ -43,6 +43,14 @@ void Move::revert(Map* map) {
 };
 
 namespace Moves {
+	/// Returns entity state's position.
+	std::optional<sf::Vector2i> entity_pos(const EntState* entity) {
+		if (auto* data = std::get_if<Troop>(entity)) return data->pos;
+		if (auto* data = std::get_if<Build>(entity)) return data->pos;
+		if (auto* data = std::get_if<Plant>(entity)) return data->pos;
+		return std::nullopt;
+	};
+
 	/// Returns string representation of an entity.
 	std::string str_ent(const EntState* entity) {
 		// no entity

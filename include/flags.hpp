@@ -8,6 +8,9 @@ namespace flags {
 	/// Whether the debug mode is enabled.
 	extern bool debug;
 
+	/// Whether any region is selectable.
+	extern bool any_region;
+
 	/// Whether to show spread index for every tile.
 	extern bool spread;
 

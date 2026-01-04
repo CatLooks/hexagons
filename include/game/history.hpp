@@ -4,6 +4,7 @@
 #include "moves.hpp"
 #include <memory>
 #include <optional>
+#include <span>
 
 /// History of reversible moves on a game map.
 class History {
@@ -44,6 +45,13 @@ public:
 	/// @return New cursor position.
 	std::optional<sf::Vector2i> redo();
 
+	/// Reference move list type.
+	using RList = std::span<const std::unique_ptr<Move>>;
+	/// Transfer move list type.
+	using TList = std::vector<std::unique_ptr<Move>>;
+
+	/// Returns a list of applied moves.
+	RList list() const;
 	/// Returns amount of moves done & reverted. 
 	std::pair<size_t, size_t> count() const;
 

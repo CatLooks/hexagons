@@ -2,6 +2,7 @@
 #include "game/values/shared.hpp"
 #include "game/logic/skill_list.hpp"
 #include "mathext.hpp"
+#include "flags.hpp"
 
 /// Default tile position for deselection click.
 const sf::Vector2i Game::unselected = { -1, -1 };
@@ -12,7 +13,8 @@ void Game::queueCall(Delegate<void()>::Action call) {
 };
 
 /// Constructs a game object.
-Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
+Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, Adapter* adapter):
+	_state(map, adapter),
 	_layer(game_layer), _camera(game_layer, 17.f / 16),
 	_panel(new gameui::Panel(map.history)), _bar(new gameui::Bar())
 {
@@ -58,7 +60,8 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 	// add move controls to buttons
 	_panel->selector()->attach(
 		[=]() { undoMove(); },
-		[=]() { redoMove(); }
+		[=]() { redoMove(); },
+		[=]() { return _state.finish(); }
 	);
 
 	// add tile selection handler
@@ -218,13 +221,12 @@ void Game::deselectTile() {
 
 /// Selects a region attached to a tile.
 void Game::selectRegion(const HexRef& tile) {
-	if (tile.hex->region()) {
-		map.selectRegion(tile.hex->region());
-		_bar->attachRegion(tile.hex->region());
-		state.region = &*tile.hex->region();
-		_last = tile.pos;
-	};
+	map.selectRegion(tile.hex->region());
+	_bar->attachRegion(tile.hex->region());
+	state.region = &*tile.hex->region();
+	_last = tile.pos;
 };
+
 /// Deselects the region.
 void Game::deselectRegion() {
 	map.deselectRegion();
@@ -299,7 +301,8 @@ void Game::click(sf::Vector2i pos) {
 		};
 
 		// select the region
-		selectRegion({ hex, pos });
+		if (hex->region() && (hex->region()->team == _state.team || flags::any_region))
+			selectRegion({ hex, pos });
 	};
 };
 
@@ -308,6 +311,7 @@ void Game::cycleBuild() {
 	state.build = (state.build + 1) % (int)Values::build_shop.size();
 	updateBuild();
 };
+
 /// Cycles the troop buying interface.
 void Game::cycleTroop() {
 	state.troop = (state.troop + 1) % (int)Values::troop_shop.size();

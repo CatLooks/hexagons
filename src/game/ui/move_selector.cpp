@@ -12,6 +12,19 @@ namespace gameui {
 	Selector::Selector() {
 		event_scissor = false;
 
+		// create turn button
+		_next = new ui::Button(texture, { width, width });
+		_next->setIcon(&assets::interface, Values::next_icon);
+		{
+			_next_t = _next->setLabel(Values::panel_text);
+			_next_t->pos = ui::Text::ShrinkY;
+			_next_t->position() = { -4px - 1es, 0.5as };
+			_next_t->autosize = true;
+			_next_t->setPath("param");
+			_next_t->param("value", "0");
+		};
+		add(_next);
+
 		// create redo button
 		_redo = new ui::Button(texture, { width, width });
 		_redo->setIcon(&assets::interface, Values::redo_icon);
@@ -55,9 +68,10 @@ namespace gameui {
 	};
 
 	/// Attaches callbacks to move selector element.
-	void Selector::attach(StaticHandler undo, StaticHandler redo) {
+	void Selector::attach(StaticHandler undo, StaticHandler redo, std::function<bool()> next) {
 		_undo->attach(undo);
 		_redo->attach(redo);
+		_next->validate(next);
 	};
 
 	/// Updates move counter.

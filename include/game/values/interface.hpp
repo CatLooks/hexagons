@@ -9,6 +9,8 @@ namespace Values {
 	extern const sf::IntRect undo_icon;
 	/// Move redo button icon.
 	extern const sf::IntRect redo_icon;
+	/// Turn finish button icon.
+	extern const sf::IntRect next_icon;
 
 	/// Troop buying action texture.
 	extern const sf::IntRect buy_build;

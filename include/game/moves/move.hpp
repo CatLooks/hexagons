@@ -58,6 +58,11 @@ namespace Moves {
 	/// Entity state description type.
 	using EntState = std::variant<std::monostate, Troop, Build, Plant>;
 
+	/// Returns entity state's position.
+	/// 
+	/// @param entity Entity state.
+	std::optional<sf::Vector2i> entity_pos(const EntState* entity);
+
 	/// Returns string representation of an entity.
 	/// 
 	/// @param entity Entity variant pointer.

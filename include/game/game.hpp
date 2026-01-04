@@ -10,6 +10,7 @@
 #include "ui/hex_preview.hpp"
 #include "map.hpp"
 #include "dev/dev_game.hpp"
+#include "sync/state.hpp"
 #include <delegate>
 
 /// Game controller object.
@@ -23,6 +24,7 @@ public:
 	static const sf::Vector2i unselected;
 
 private:
+	GameState                    _state; /// Current game state.
 	std::optional<sf::Vector2i> _select; /// Selected tile.
 	sf::Vector2i                  _last; /// Last clicked tile.
 	ui::Layer*                   _layer; /// Render layer.
@@ -49,7 +51,8 @@ public:
 	///
 	/// @param game_layer Game rendering layer.
 	/// @param ui_layer Game interface layer.
-	Game(ui::Layer* game_layer, ui::Layer* ui_layer);
+	/// @param adapter Communication adapter.
+	Game(ui::Layer* game_layer, ui::Layer* ui_layer, Adapter* adapter);
 
 	/// Undoes last move.
 	void undoMove();

@@ -1,7 +1,6 @@
 #include "ui.hpp"
 #include "game.hpp"
 #include "assets.hpp"
-#include "dev/dev_panel.hpp"
 
 /// Testing phase.
 /// 
@@ -56,7 +55,7 @@ int main() {
 		auto layer_map = itf.layer();
 		auto layer_gui = itf.layer();
 
-		Game* game = new Game(layer_map, layer_gui);
+		Game* game = new Game(layer_map, layer_gui, new TestAdapter);
 		{
 			Map& map = game->map;
 
@@ -287,10 +286,10 @@ int main() {
 	while (ui::window.active()) {
 		for (const auto& event : ui::window.events()) {
 			if (auto data = event.getIf<sf::Event::KeyPressed>()) {
-				if (data->code == sf::Keyboard::Key::F1) {
+				if (data->code == sf::Keyboard::Key::F1 && !data->control) {
 					itf.switchContext(game_ctx);
 				};
-				if (data->code == sf::Keyboard::Key::F2) {
+				if (data->code == sf::Keyboard::Key::F2 && !data->control) {
 					itf.switchContext(test_ctx);
 				};
 			};

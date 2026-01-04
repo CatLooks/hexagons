@@ -54,10 +54,12 @@
     <ClCompile Include="src\game\logic\plant_logic.cpp" />
     <ClCompile Include="src\game\logic\skill_helper.cpp" />
     <ClCompile Include="src\game\logic\troop_logic.cpp" />
+    <ClCompile Include="src\game\logic\turn_logic.cpp" />
     <ClCompile Include="src\game\map.cpp" />
     <ClCompile Include="src\game\moves\entity_effect.cpp" />
     <ClCompile Include="src\game\moves\entity_place.cpp" />
     <ClCompile Include="src\game\moves\entity_withdraw.cpp" />
+    <ClCompile Include="src\game\moves\game_turn.cpp" />
     <ClCompile Include="src\game\moves\move.cpp" />
     <ClCompile Include="src\game\moves\plant_modify.cpp" />
     <ClCompile Include="src\game\moves\plant_cut.cpp" />
@@ -69,6 +71,10 @@
     <ClCompile Include="src\game\region.cpp" />
     <ClCompile Include="src\game\skill.cpp" />
     <ClCompile Include="src\game\spread.cpp" />
+    <ClCompile Include="src\game\sync\ai.cpp" />
+    <ClCompile Include="src\game\sync\net.cpp" />
+    <ClCompile Include="src\game\sync\state.cpp" />
+    <ClCompile Include="src\game\sync\test.cpp" />
     <ClCompile Include="src\game\troop.cpp" />
     <ClCompile Include="src\game\ui\action_button.cpp" />
     <ClCompile Include="src\game\ui\game_panel.cpp" />
@@ -133,6 +139,7 @@
     <ClInclude Include="include\dev\dev_panel.hpp" />
     <ClInclude Include="include\flags.hpp" />
     <ClInclude Include="include\game.hpp" />
+    <ClInclude Include="include\game\adapter.hpp" />
     <ClInclude Include="include\game\array.hpp" />
     <ClInclude Include="include\game\build.hpp" />
     <ClInclude Include="include\game\draw.hpp" />
@@ -152,11 +159,13 @@
     <ClInclude Include="include\game\logic\skill_list.hpp" />
     <ClInclude Include="include\game\logic\skill_types.hpp" />
     <ClInclude Include="include\game\logic\troop_logic.hpp" />
+    <ClInclude Include="include\game\logic\turn_logic.hpp" />
     <ClInclude Include="include\game\map.hpp" />
     <ClInclude Include="include\game\moves.hpp" />
     <ClInclude Include="include\game\moves\entity_effect.hpp" />
     <ClInclude Include="include\game\moves\entity_place.hpp" />
     <ClInclude Include="include\game\moves\entity_withdraw.hpp" />
+    <ClInclude Include="include\game\moves\game_turn.hpp" />
     <ClInclude Include="include\game\moves\move.hpp" />
     <ClInclude Include="include\game\moves\plant_modify.hpp" />
     <ClInclude Include="include\game\moves\plant_cut.hpp" />
@@ -168,6 +177,11 @@
     <ClInclude Include="include\game\region.hpp" />
     <ClInclude Include="include\game\skill.hpp" />
     <ClInclude Include="include\game\spread.hpp" />
+    <ClInclude Include="include\game\sync\adapter.hpp" />
+    <ClInclude Include="include\game\sync\ai.hpp" />
+    <ClInclude Include="include\game\sync\net.hpp" />
+    <ClInclude Include="include\game\sync\state.hpp" />
+    <ClInclude Include="include\game\sync\test.hpp" />
     <ClInclude Include="include\game\troop.hpp" />
     <ClInclude Include="include\game\ui\action_button.hpp" />
     <ClInclude Include="include\game\ui\game_panel.hpp" />

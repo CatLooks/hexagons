@@ -42,6 +42,11 @@ std::optional<sf::Vector2i> History::redo() {
 	return move->applyCursor();
 };
 
+/// Returns a list of applied moves.
+History::RList History::list() const {
+	return RList(_list.begin(), _list.begin() + _cursor);
+};
+
 /// Returns amount of moves done & reverted. 
 std::pair<size_t, size_t> History::count() const {
 	return std::make_pair(_cursor, _list.size() - _cursor);
