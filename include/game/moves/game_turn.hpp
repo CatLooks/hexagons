@@ -6,8 +6,8 @@
 namespace Moves {
 	/// Game turn move.
 	struct GameTurn : Move {
-		std::vector<EntState> states; /// List of all changed entity states.
-		std::vector<EntState> a_prev; /// List of all previous entity states.
+		EntState state; /// New entity state.
+		EntState a_prev; /// Previous entity state.
 
 		/// Applies the move.
 		void onApply(Map* map) override;

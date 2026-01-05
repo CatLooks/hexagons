@@ -5,9 +5,16 @@
 
 /// Game tester adapter.
 struct TestAdapter : Adapter {
-	/// Sends the move list.
-	void send(const History::RList& value) override;
+	/// Next player index response to generate.
+	std::optional<size_t> next;
 
-	/// Receives the move list.
-	void recv(const History::TList& value) override;
+	/// Sends a move list.
+	void send_list(Packet<History::RList> list) override;
+	/// Receives a move list.
+	OptPacket<History::TList> recv_list() override;
+
+	/// Sends an event.
+	void send(Packet<Event> evt) override;
+	/// Receives an event.
+	OptPacket<Event> recv() override;
 };

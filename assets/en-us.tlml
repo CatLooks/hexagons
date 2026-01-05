@@ -344,8 +344,8 @@ dp {
 
 		# game turn
 		game_turn {
-			forward: "Forward changes: {forward}"
-			backward: "Backward changes: {backward}"
+			forward: "Forward: {forward}"
+			backward: "Backward: {backward}"
 		}
 	}
 }

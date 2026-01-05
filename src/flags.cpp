@@ -2,9 +2,9 @@
 
 namespace flags {
 	// flags
-	bool debug = false;
-	bool any_region = true;
-	bool spread = false;
+	bool debug      = false;
+	bool any_region = false;
+	bool spread     = false;
 
 	/// Processes a keyboard event.
 	void proc(const sf::Event::KeyPressed& evt) {

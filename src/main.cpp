@@ -49,13 +49,21 @@ int main() {
 		target.draw(drawStats);
 	});
 
+	GameState state(GameState::Host, new TestAdapter);
+
 	// game test
 	auto game_ctx = itf.newContext();
 	{
 		auto layer_map = itf.layer();
 		auto layer_gui = itf.layer();
 
-		Game* game = new Game(layer_map, layer_gui, new TestAdapter);
+
+		Game* game = new Game(layer_map, layer_gui, &state);
+		state.setMap(&game->map);
+		state.addPlayer({ .team = Region::Red });
+		state.addPlayer({ .team = Region::Blue });
+		state.init();
+
 		{
 			Map& map = game->map;
 

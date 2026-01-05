@@ -13,8 +13,8 @@ void Game::queueCall(Delegate<void()>::Action call) {
 };
 
 /// Constructs a game object.
-Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, Adapter* adapter):
-	_state(map, adapter),
+Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, GameState* state):
+	_state(*state),
 	_layer(game_layer), _camera(game_layer, 17.f / 16),
 	_panel(new gameui::Panel(map.history)), _bar(new gameui::Bar())
 {
@@ -63,6 +63,22 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, Adapter* adapter):
 		[=]() { redoMove(); },
 		[=]() { return _state.finish(); }
 	);
+
+	// add player update callback
+	_state.updateCallback([=](bool enabled) {
+		_move = enabled;
+
+		if (!enabled) {
+			// deselect player
+			deselectMenu();
+			closeMenu();
+			deselectTile();
+			deselectRegion();
+		};
+	});
+
+	// add game state update handler
+	onUpdate([=](const sf::Time&) { _state.tick(); });
 
 	// add tile selection handler
 	game_layer->onEvent([=](const ui::Event& evt) {
@@ -301,7 +317,8 @@ void Game::click(sf::Vector2i pos) {
 		};
 
 		// select the region
-		if (hex->region() && (hex->region()->team == _state.team || flags::any_region))
+		Region::Team team = _state.team();
+		if (_move && hex->region() && (team && hex->region()->team == team || flags::any_region))
 			selectRegion({ hex, pos });
 	};
 };

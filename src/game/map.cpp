@@ -5,6 +5,13 @@
 /// Constructs an empty game map.
 Map::Map() : history(this) {};
 
+/// Returns troop iterator.
+Pool<Troop>::It Map::troopList() { return _troops.iter(); };
+/// Returns troop iterator.
+Pool<Build>::It Map::buildList() { return _builds.iter(); };
+/// Returns troop iterator.
+Pool<Plant>::It Map::plantList() { return _plants.iter(); };
+
 /// Generates a new selection index.
 size_t Map::newSelectionIndex() {
 	_selection = true;

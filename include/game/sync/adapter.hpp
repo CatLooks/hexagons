@@ -2,25 +2,51 @@
 
 // include dependencies
 #include "game/history.hpp"
-
-/// I/O adapter for a single type.
-/// 
-/// @tparam S Sent struct type.
-/// @tparam R Received struct type.
-template <typename S, typename R = S> struct TypeAdapter {
-	/// Sends the value.
-	/// 
-	/// @param value Sent struct value.
-	virtual void send(const S& value) = 0;
-
-	/// Receives the value.
-	/// 
-	/// @param value Received struct value.
-	virtual void recv(const R& value) = 0;
-};
+#include <variant>
 
 /// Game communication adapter.
-struct Adapter :
-	// move sync
-	TypeAdapter<History::RList, History::TList>
-{};
+struct Adapter {
+	/// Player event ignore.
+	struct Ignore {
+		size_t id; /// Player index.
+	};
+
+	/// Player selection.
+	struct Select {
+		size_t id; /// Player index.
+	};
+
+	/// Variant of all adapter events.
+	using Event = std::variant<Ignore, Select>;
+
+	/// Packet type.
+	/// @tparam T Packet content type.
+	template <typename T> struct Packet {
+		T   value; /// Packed value.
+		size_t id; /// Player index.
+	};
+
+	/// Optional packet type.
+	/// @tparam T Packet content type.
+	template <typename T> using OptPacket = std::optional<Packet<T>>;
+
+	/// Sends a move list.
+	virtual void send_list(Packet<History::RList> list) = 0;
+	/// Sends a move list from this adapter.
+	void send_list(History::RList list);
+
+	/// Receives a move list.
+	virtual OptPacket<History::TList> recv_list() = 0;
+
+	/// Sends an event.
+	/// @param evt 
+	virtual void send(Packet<Event> evt) = 0;
+	/// Sends an event from this adapter.
+	void send(const Event& evt);
+
+	/// Receives an event.
+	virtual OptPacket<Event> recv() = 0;
+
+	/// Adapter index.
+	size_t id {};
+};

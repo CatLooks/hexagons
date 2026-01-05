@@ -363,6 +363,9 @@
     <ClCompile Include="src\game\logic\turn_logic.cpp">
       <Filter>Source Files\game\logic</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\sync\adapter.cpp">
+      <Filter>Source Files\game\sync</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

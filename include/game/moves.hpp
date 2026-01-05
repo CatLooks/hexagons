@@ -11,3 +11,4 @@
 #include "moves/plant_cut.hpp"
 #include "moves/plant_modify.hpp"
 #include "moves/radius_effect.hpp"
+#include "moves/game_turn.hpp"

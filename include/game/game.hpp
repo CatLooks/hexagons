@@ -24,7 +24,7 @@ public:
 	static const sf::Vector2i unselected;
 
 private:
-	GameState                    _state; /// Current game state.
+	GameState&                   _state; /// Current game state.
 	std::optional<sf::Vector2i> _select; /// Selected tile.
 	sf::Vector2i                  _last; /// Last clicked tile.
 	ui::Layer*                   _layer; /// Render layer.
@@ -35,6 +35,7 @@ private:
 	float _pulse = 0.f;      /// Map tile pulse.
 	ui::Anim* _pulse_anim;   /// Pulse animation object.
 	Delegate<void()> _queue; /// Update call queue.
+	bool _move = false;      /// Whether the player is currenly making a move.
 
 public:
 	/// Queues a call for the next frame.
@@ -42,8 +43,8 @@ public:
 	/// @param call Callback function.
 	void queueCall(Delegate<void()>::Action call);
 
+	uint8_t  skill_idx{}; /// Skill index (for skill timers).
 	const Skill* skill {}; /// Current skill.
-	uint8_t  skill_idx {}; /// Skill index (for skill timers).
 	SkillState   state {}; /// Skill state.
 
 public:
@@ -51,8 +52,8 @@ public:
 	///
 	/// @param game_layer Game rendering layer.
 	/// @param ui_layer Game interface layer.
-	/// @param adapter Communication adapter.
-	Game(ui::Layer* game_layer, ui::Layer* ui_layer, Adapter* adapter);
+	/// @param state Game controller.
+	Game(ui::Layer* game_layer, ui::Layer* ui_layer, GameState* state);
 
 	/// Undoes last move.
 	void undoMove();

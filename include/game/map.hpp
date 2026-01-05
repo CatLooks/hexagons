@@ -56,6 +56,13 @@ private:
 	bool _selection = false; /// Whether a selection is happening.
 
 public:
+	/// Returns troop iterator.
+	Pool<Troop>::It troopList();
+	/// Returns troop iterator.
+	Pool<Build>::It buildList();
+	/// Returns troop iterator.
+	Pool<Plant>::It plantList();
+
 	/// Move history.
 	History history;
 	/// Region manager.
