@@ -62,9 +62,6 @@ void GameState::next() {
 			_idx = 0;
 
 			// tick the map
-			//std::unique_ptr<Move> move(new Moves::GameTurn);
-			//printf("@todo\n");
-			//move->apply(_map);
 			auto history = logic::turn(_map);
 
 			// transmit changes

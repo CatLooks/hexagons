@@ -44,6 +44,11 @@ void Region::tick() {
 	money += income;
 };
 
+/// Returns a region iterator.
+RefPool<Region>::It Regions::iter() {
+	return _pool.iter();
+};
+
 /// Creates a new region.
 Regions::Ref Regions::create(const Region& region) {
 	return _pool.add(region);

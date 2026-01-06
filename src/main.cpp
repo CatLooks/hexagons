@@ -238,7 +238,7 @@ int main() {
 				};
 			};
 
-			map.at({ 3, 3 })->region()->money = 11;
+			map.at({ 3, 3 })->region()->money = 111;
 			map.at({ 3, 3 })->region()->peach = 11;
 			map.at({ 5, 3 })->region()->money = 20;
 

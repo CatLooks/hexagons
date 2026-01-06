@@ -1,13 +1,7 @@
 #include "game/entity.hpp"
 
 /// Ticks entity state.
-void Entity::tick() {
-	// tick timers
-	for (int i = 0; i < 4; i++) {
-		if (timers[i] > 0)
-			timers[i]--;
-	};
-};
+void Entity::tick() {};
 
 /// Adds cooldown to entity skill if present.
 void Entity::add_cooldown(Skills::Type skill, uint8_t time) {
@@ -89,4 +83,21 @@ void Entity::setEffects(const Effects& list) {
 /// Returns applied effect list.
 const Entity::Effects& Entity::effectList() const {
 	return _effects;
+};
+
+/// Ticks entity state.
+void Entity::tickState() {
+	// tick timers
+	for (int i = 0; i < 4; i++) {
+		if (timers[i] > 0)
+			timers[i]--;
+	};
+
+	// proc debuffs
+	if (removeEffect(EffectType::Poisoned))
+		hp--;
+	removeEffect(EffectType::Stunned);
+
+	// special tick
+	tick();
 };

@@ -83,6 +83,9 @@ private:
 	RefPool<Region> _pool; /// Region pool.
 
 public:
+	/// Returns a region iterator.
+	RefPool<Region>::It iter();
+
 	/// Creates a new region.
 	///
 	/// @param region Initial region state.

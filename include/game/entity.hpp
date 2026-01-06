@@ -37,10 +37,12 @@ struct Entity {
 		int pow = 0; /// Damage power level.
 	};
 
-public:
+protected:
 	/// Ticks entity state.
-	void tick();
+	/// Specific to the entity.
+	virtual void tick();
 
+public:
 	/// Entity position on map.
 	sf::Vector2i pos;
 
@@ -140,4 +142,7 @@ public:
 
 	/// Returns applied effect list.
 	const Effects& effectList() const;
+
+	/// Ticks entity state.
+	void tickState();
 };
