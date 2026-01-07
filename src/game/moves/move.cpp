@@ -43,18 +43,41 @@ void Move::revert(Map* map) {
 };
 
 namespace Moves {
+	/// Returns entity state of a hex.
+	EntState store_entity(const Hex* hex, sf::Vector2i pos) {
+		if (hex) {
+			if (hex->troop) return *hex->troop;
+			if (hex->build) return *hex->build;
+			if (hex->plant) return *hex->plant;
+		};
+		return Empty{ .pos = pos };
+	};
+
+	/// Places an entity on a map.
+	void place_entity(const EntState* entity, Map* map) {
+		// place empty space
+		if (auto* data = std::get_if<Empty>(entity))
+			map->removeEntity(map->at(data->pos));
+
+		// place entities
+		if (auto* data = std::get_if<Troop>(entity)) map->setTroop(*data);
+		if (auto* data = std::get_if<Build>(entity)) map->setBuild(*data);
+		if (auto* data = std::get_if<Plant>(entity)) map->setPlant(*data);
+	};
+
 	/// Returns entity state's position.
-	std::optional<sf::Vector2i> entity_pos(const EntState* entity) {
+	sf::Vector2i entity_pos(const EntState* entity) {
+		if (auto* data = std::get_if<Empty>(entity)) return data->pos;
 		if (auto* data = std::get_if<Troop>(entity)) return data->pos;
 		if (auto* data = std::get_if<Build>(entity)) return data->pos;
 		if (auto* data = std::get_if<Plant>(entity)) return data->pos;
-		return std::nullopt;
+		return {}; // fallback
 	};
 
 	/// Returns string representation of an entity.
 	std::string str_ent(const EntState* entity) {
 		// no entity
-		if (auto* data = std::get_if<std::monostate>(entity))
+		if (auto* data = std::get_if<Empty>(entity))
 			return "@!dp.entity_state.none";
 		const Entity* ent = nullptr;
 

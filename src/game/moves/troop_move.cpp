@@ -5,7 +5,7 @@
 namespace Moves {
 	/// Constructs troop movement move.
 	TroopMove::TroopMove(sf::Vector2i dest)
-		: dest(dest), a_state{ Region::Unclaimed, {}, {}, {}, Skills::Empty } {};
+		: dest(dest), a_state{ Region::Unclaimed, {}, Empty{}, {}, Skills::Empty } {};
 
 	/// Applies the move.
 	void TroopMove::onApply(Map* map) {
@@ -20,9 +20,7 @@ namespace Moves {
 		a_state.resources = to.hex->region()->res();
 
 		// store entity state
-		if (to.hex->troop) a_state.entity = *to.hex->troop;
-		else if (to.hex->build) a_state.entity = *to.hex->build;
-		else if (to.hex->plant) a_state.entity = *to.hex->plant;
+		a_state.entity = store_entity(to.hex, to.pos);
 
 		// apply cooldown based on erased entity
 		a_state.oth_skill = from.hex->troop->skill_into(to.hex->entity());
@@ -92,12 +90,7 @@ namespace Moves {
 		to.hex->troop->sub_cooldown(a_state.oth_skill, 1);
 
 		// place back previous entity
-		if (auto* troop = std::get_if<Troop>(&a_state.entity))
-			map->setTroop(*troop);
-		if (auto* build = std::get_if<Build>(&a_state.entity))
-			map->setBuild(*build);
-		if (auto* plant = std::get_if<Plant>(&a_state.entity))
-			map->setPlant(*plant);
+		place_entity(&a_state.entity, map);
 	};
 
 	/// Returns tile to select after moving.

@@ -5,9 +5,16 @@
 
 namespace Moves {
 	/// Game turn move.
+	///
+	/// Stores a state change for a single entity.
 	struct GameTurn : Move {
-		EntState state; /// New entity state.
+		EntState  state; /// New entity state.
 		EntState a_prev; /// Previous entity state.
+
+		/// Constructs a game turn move.
+		///
+		/// @param prev Previous entity state.
+		GameTurn(EntState prev);
 
 		/// Applies the move.
 		void onApply(Map* map) override;

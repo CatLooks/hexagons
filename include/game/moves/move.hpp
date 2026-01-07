@@ -11,6 +11,7 @@
 #include "game/troop.hpp"
 #include "game/build.hpp"
 #include "game/plant.hpp"
+#include "game/hex.hpp"
 
 #include "dev/dev_move.hpp"
 #include <format>
@@ -55,13 +56,32 @@ struct Move : dev::Move {
 
 /// Specific moves namespace.
 namespace Moves {
+	/// Empty entity state.
+	struct Empty {
+		sf::Vector2i pos; /// "Entity" position.
+	};
+
 	/// Entity state description type.
-	using EntState = std::variant<std::monostate, Troop, Build, Plant>;
+	using EntState = std::variant<Empty, Troop, Build, Plant>;
+
+	/// Returns entity state of a hex.
+	///
+	/// @param hex Hex reference.
+	/// @param pos Hex position.
+	///
+	/// @return Hex entity state.
+	EntState store_entity(const Hex* hex, sf::Vector2i pos);
+
+	/// Places an entity on a map.
+	///
+	/// @param entity Entity state.
+	/// @param map Map reference.
+	void place_entity(const EntState* entity, Map* map);
 
 	/// Returns entity state's position.
 	/// 
 	/// @param entity Entity state.
-	std::optional<sf::Vector2i> entity_pos(const EntState* entity);
+	sf::Vector2i entity_pos(const EntState* entity);
 
 	/// Returns string representation of an entity.
 	/// 

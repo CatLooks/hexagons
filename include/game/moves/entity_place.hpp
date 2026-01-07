@@ -14,15 +14,13 @@ namespace Moves {
 	/// Entity placement move.
 	struct EntityPlace : Move {
 		EntState  entity; /// Placed entity.
-		sf::Vector2i pos; /// Entity placement position.
 		SkillState state; /// Skill state.
 
 		/// Constructs an entity placement move.
 		/// 
 		/// @param entity Placed entity.
-		/// @param pos Entity position.
 		/// @param state Current skill selection state.
-		EntityPlace(EntState entity, sf::Vector2i pos, SkillState state);
+		EntityPlace(EntState entity, SkillState state);
 
 		/// Applies the move.
 		void onApply(Map* map) override;

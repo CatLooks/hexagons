@@ -2,44 +2,34 @@
 #include "game/map.hpp"
 
 namespace Moves {
+	/// Constructs a game turn move.
+	///
+	/// @param prev Previous entity state.
+	GameTurn::GameTurn(EntState prev):
+		state(Empty{ .pos = entity_pos(&prev) }), a_prev(prev) {};
+
 	/// Applies the move.
 	void GameTurn::onApply(Map* map) {
-		// get position
-		auto pos = entity_pos(&state);
-		if (!pos) return;
-
 		// get tile
-		Hex* hex = map->at(*pos);
+		sf::Vector2i pos = entity_pos(&state);
+		Hex* hex = map->at(pos);
 		if (!hex) return;
 
 		// store previous state
-		if (hex->troop) a_prev = *hex->troop;
-		else if (hex->build) a_prev = *hex->build;
-		else if (hex->plant) a_prev = *hex->plant;
-		else a_prev = std::monostate();
+		a_prev = store_entity(hex, pos);
 
 		// override entity
-		if (auto* data = std::get_if<Troop>(&state)) map->setTroop(*data);
-		else if (auto* data = std::get_if<Build>(&state)) map->setBuild(*data);
-		else if (auto* data = std::get_if<Plant>(&state)) map->setPlant(*data);
-		else map->removeEntity(hex);
+		place_entity(&state, map);
 	};
 
 	/// Reverts the move.
 	void GameTurn::onRevert(Map* map) {
-		// get position
-		auto pos = entity_pos(&state);
-		if (!pos) return;
-
 		// get tile
-		Hex* hex = map->at(*pos);
+		Hex* hex = map->at(entity_pos(&state));
 		if (!hex) return;
 
 		// restore entity
-		if (auto* data = std::get_if<Troop>(&a_prev)) map->setTroop(*data);
-		else if (auto* data = std::get_if<Build>(&a_prev)) map->setBuild(*data);
-		else if (auto* data = std::get_if<Plant>(&a_prev)) map->setPlant(*data);
-		else map->removeEntity(hex);
+		place_entity(&a_prev, map);
 	};
 
 	/// Emits move section info.
@@ -52,5 +42,6 @@ namespace Moves {
 		list["forward"] = str_ent(&state);
 		list["backward"] = str_ent(&a_prev);
 		list["skill_name"] = "@!dp.move.name.game_turn";
+		list["skill_pos"] = ext::str_vec(entity_pos(&state));
 	};
 };

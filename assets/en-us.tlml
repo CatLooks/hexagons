@@ -151,8 +151,8 @@ dp {
 			v: "Local Player: {local}"
 		}
 		player {
-			k: "Player: {plr_now}"
-			v: "Count: {plr_count}"
+			k: "Player: {plr_now} / {plr_count}"
+			v: "Team: {plr_team}"
 		}
 	}
 

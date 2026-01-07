@@ -81,10 +81,11 @@ namespace SkillList {
 			Build build;
 			build.type = Build::Tent;
 			build.hp = build.max_hp();
+			build.pos = next.pos;
 			build.add_cooldown(Skills::Withdraw, 1);
 
 			// create tent setup move
-			return new Moves::EntityPlace(build, next.pos, state);
+			return new Moves::EntityPlace(build, state);
 		},
 		.format = Skill::SingleAim,
 		.cooldown = 2,

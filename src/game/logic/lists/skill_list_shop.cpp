@@ -40,10 +40,11 @@ namespace SkillList {
 		Troop troop;
 		troop.type = Values::troop_shop[state.troop];
 		troop.hp = troop.max_hp();
+		troop.pos = tile.pos;
 		troop.add_cooldown(Skills::Withdraw, 1);
 
 		// create placement move
-		return new Moves::EntityPlace(troop, tile.pos, state);
+		return new Moves::EntityPlace(troop, state);
 	};
 
 	/// Places a new building.
@@ -57,10 +58,11 @@ namespace SkillList {
 		Build build;
 		build.type = Values::build_shop[state.build];
 		build.hp = build.max_hp();
+		build.pos = tile.pos;
 		build.add_cooldown(Skills::Withdraw, 1);
 
 		// create placement move
-		return new Moves::EntityPlace(build, tile.pos, state);
+		return new Moves::EntityPlace(build, state);
 	};
 
 	/// ======== BUY TROOP IN-PLACE ======== ///

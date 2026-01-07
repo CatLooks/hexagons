@@ -4,7 +4,7 @@
 namespace Moves {
 	/// Constructs a troop attack move.
 	TroopAttack::TroopAttack(sf::Vector2i dest)
-		: dest(dest), a_dmg(0), a_state({}), a_eff({}) {};
+		: dest(dest), a_dmg(0), a_state(Empty{}), a_eff({}) {};
 
 	/// Applies the move.
 	void TroopAttack::onApply(Map* map) {

@@ -16,24 +16,23 @@ namespace Moves {
 	};
 
 	/// Constructs an entity placement move.
-	EntityPlace::EntityPlace(EntState entity, sf::Vector2i pos, SkillState state)
-		: entity(entity), pos(pos), state(state) {};
+	EntityPlace::EntityPlace(EntState entity, SkillState state)
+		: entity(entity), state(state) {};
 
 	/// Applies the move.
 	void EntityPlace::onApply(Map* map) {
+		// get entity position
+		sf::Vector2i pos = entity_pos(&entity);
+
 		// get target tile
 		Hex* hex = map->at(pos);
 		if (!hex) return;
 
 		// place entity
-		if (auto* data = std::get_if<Troop>(&entity)) {
-			data->pos = pos;
+		if (auto* data = std::get_if<Troop>(&entity))
 			map->setTroop(*data);
-		};
-		if (auto* data = std::get_if<Build>(&entity)) {
-			data->pos = pos;
+		if (auto* data = std::get_if<Build>(&entity))
 			map->setBuild(*data);
-		};
 
 		// subtract entity cost
 		if (hex->region())
@@ -42,6 +41,9 @@ namespace Moves {
 
 	/// Reverts the move.
 	void EntityPlace::onRevert(Map* map) {
+		// get entity position
+		sf::Vector2i pos = entity_pos(&entity);
+
 		// get target tile
 		Hex* hex = map->at(pos);
 		if (!hex) return;
@@ -60,7 +62,7 @@ namespace Moves {
 		section->line("dp.move.entity_place.what");
 
 		// add arguments
-		list["pos"] = ext::str_vec(pos);
+		list["pos"] = ext::str_vec(entity_pos(&entity));
 		list["entity"] = str_ent(&entity);
 		list["skill_name"] = "@!dp.move.name.entity_place";
 	};

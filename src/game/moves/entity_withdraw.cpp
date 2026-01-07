@@ -4,7 +4,7 @@
 namespace Moves {
 	/// Constructs entity withdraw move.
 	EntityWithdraw::EntityWithdraw(sf::Vector2i pos)
-		: pos(pos), a_state{} {};
+		: pos(pos), a_state(Empty{}) {};
 
 	/// Applies the move.
 	void EntityWithdraw::onApply(Map* map) {
