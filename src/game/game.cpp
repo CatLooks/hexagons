@@ -318,7 +318,7 @@ void Game::click(sf::Vector2i pos) {
 
 		// select the region
 		Region::Team team = _state.team();
-		if (_move && hex->region() && (team && hex->region()->team == team || flags::any_region))
+		if (hex->region() && (team && hex->region()->team == team || flags::any_region))
 			selectRegion({ hex, pos });
 	};
 };
@@ -333,6 +333,33 @@ void Game::cycleBuild() {
 void Game::cycleTroop() {
 	state.troop = (state.troop + 1) % (int)Values::troop_shop.size();
 	updateTroop();
+};
+
+/// Disables a skill button.
+///
+/// @param button Target button.
+/// @param move Whether local player is currently making a move.
+/// @param region Selected region.
+/// @param diff Region resources minus entity cost.
+static void _disable_button(
+	gameui::Action* button,
+	bool move,
+	Region* region,
+	int diff
+) {
+	// disable if other player's turn
+	if (!move)
+		button->disable();
+
+	// disable if region is dead
+	else if (!region || region->dead())
+		button->disable(Values::dead_digit);
+
+	// disable buy button if not enough resources
+	else if (diff < 0)
+		button->disable(Values::insufficient_digit);
+	else
+		button->enable();
 };
 
 /// Updates the building buying interface.
@@ -367,11 +394,8 @@ void Game::updateBuild() const {
 	if (diff < 0) color = 2;
 	sub->setColor(Values::income_color[color]);
 
-	// disable buy button if not enough resources
-	if (diff < 0)
-		_panel->actions()[2]->disable(Values::insufficient_digit);
-	else
-		_panel->actions()[2]->enable();
+	// disable button if needed
+	_disable_button(_panel->actions()[2], _move, state.region, diff);
 };
 
 /// Updates the troop buying interface.
@@ -406,11 +430,8 @@ void Game::updateTroop() const {
 	if (diff < 0) color = 2;
 	sub->setColor(Values::income_color[color]);
 
-	// disable buy button if not enough resources
-	if (diff < 0)
-		_panel->actions()[3]->disable(Values::insufficient_digit);
-	else
-		_panel->actions()[3]->enable();
+	// disable button if needed
+	_disable_button(_panel->actions()[3], _move, state.region, diff);
 };
 
 /// Deselect action buttons and cancels map selection.
@@ -552,7 +573,11 @@ static void _construct_menu(
 
 		// attach skill logic
 		_attach_action(button, idx, game, data.skills[idx]);
-		if (tile.hex) {
+
+		// disable if other player's turn
+		if (!game->move())
+			button->disable();
+		else if (tile.hex) {
 			// disable if the region is dead
 			if (tile.hex->region() && tile.hex->region()->dead())
 				button->disable(Values::dead_digit);
@@ -720,6 +745,11 @@ void Game::updateMenu() {
 /// Returns last click position.
 sf::Vector2i Game::last() const {
 	return _last;
+};
+
+/// Whether local player is currently making a move.
+bool Game::move() const {
+	return _move;
 };
 
 /// Resets pulse animation.

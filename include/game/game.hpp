@@ -123,6 +123,9 @@ public:
 	/// Returns last click position.
 	sf::Vector2i last() const;
 
+	/// Whether local player is currently making a move.
+	bool move() const;
+
 	/// Resets pulse animation.
 	void resetPulse() const;
 

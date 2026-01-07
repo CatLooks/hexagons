@@ -7,9 +7,9 @@ void TestAdapter::send_list(Packet<History::RList> list) {};
 Adapter::OptPacket<History::TList> TestAdapter::recv_list() {
 	if (next) {
 		size_t idx = *next;
+		next = {};
 
 		// respond with empty move list
-		next = {};
 		return Packet<History::TList> { {}, idx };
 	};
 	return {};
