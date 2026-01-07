@@ -433,3 +433,5 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+/EOS_SDK
+/include/eos/Config.hpp
