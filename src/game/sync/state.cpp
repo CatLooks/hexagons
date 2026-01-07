@@ -60,6 +60,7 @@ void GameState::next() {
 		if (_idx >= _plr.size()) {
 			// reset player counter
 			_idx = 0;
+			_turn++;
 
 			// tick the map
 			auto history = logic::turn(_map);
@@ -131,4 +132,9 @@ const GameState::Player* GameState::player() const {
 /// Returns local player team.
 Region::Team GameState::team() const {
 	return _plr.empty() ? Region::Unclaimed : _plr[_adapter->id].team;
+};
+
+/// Returns current turn number.
+size_t GameState::turn() const {
+	return _turn;
 };

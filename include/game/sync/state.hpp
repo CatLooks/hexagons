@@ -4,9 +4,12 @@
 #include "adapter.hpp"
 #include "game/map.hpp"
 #include "game/logic/turn_logic.hpp"
+#include "dev/dev_game.hpp"
 
 /// Game state controller.
 class GameState {
+	friend dev::Factory;
+
 public:
 	/// Player description.
 	struct Player {
@@ -35,8 +38,9 @@ private:
 	State _state; /// Current game state.
 	Mode   _mode; /// Game controller mode.
 
-	std::vector<Player> _plr {}; /// Player list.
-	size_t              _idx {}; /// Current player index.
+	std::vector<Player> _plr;     /// Player list.
+	size_t              _idx = 0; /// Current player index.
+	size_t             _turn = 1; /// Current turn number.
 
 	/// Player update callback.
 	std::function<void(bool enable)> _call;
@@ -84,4 +88,7 @@ public:
 
 	/// Returns local player team.
 	Region::Team team() const;
+
+	/// Returns current turn number.
+	size_t turn() const;
 };

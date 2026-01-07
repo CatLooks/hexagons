@@ -18,11 +18,45 @@ namespace dev {
 		});
 		
 		// instantiate all sections
+		attach_state(panel, game);
 		attach_map(panel, game);
 		attach_moves(panel, game);
 
 		// return panel
 		return panel;
+	};
+
+	/// Creates sections for game state.
+	void Factory::attach_state(Panel* panel, Game* game) {
+		// turn
+		// player
+		// team
+		static const SectionLayout layout = {
+			.title = "dp.state.title",
+			.kv = {
+				"dp.state.turn",
+				"dp.state.player"
+			}
+		};
+		auto* sec = panel->push();
+		layout.construct(sec);
+
+		// attach info update
+		sec->attach([=]() {
+			sec->args = {
+				// general
+				{ "turn", ext::str_int(game->_state.turn()) },
+				{ "local", ext::str_int(game->_state._adapter->id) },
+
+				// current player info
+				{ "plr_now", ext::str_int(game->_state._idx) },
+				{ "plr_count", ext::str_int(game->_state._plr.size()) },
+				{ "plr_team", game->_state.player()
+					? Values::hex_names[game->_state.player()->team]
+					: "@!dp.null"
+				}
+			};
+		});
 	};
 
 	/// Creates sections for map related stuff.

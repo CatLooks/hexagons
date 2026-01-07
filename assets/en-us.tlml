@@ -143,6 +143,19 @@ dp {
 	# empty list
 	empty: "(empty)"
 
+	# game state
+	state {
+		title: "[ Game State ]"
+		turn {
+			k: "Turn: {turn}"
+			v: "Local Player: {local}"
+		}
+		player {
+			k: "Player: {plr_now}"
+			v: "Count: {plr_count}"
+		}
+	}
+
 	# entity state
 	entity_state {
 		# no entity

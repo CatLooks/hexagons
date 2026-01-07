@@ -18,6 +18,12 @@ namespace dev {
 		/// @return Panel element.
 		static Panel* game_panel(Game* game);
 
+		/// Creates sections for game state.
+		/// 
+		/// @param panel Panel element.
+		/// @param game Game element.
+		static void attach_state(Panel* panel, Game* game);
+
 		/// Creates sections for map related stuff.
 		/// 
 		/// @param panel Panel element.
