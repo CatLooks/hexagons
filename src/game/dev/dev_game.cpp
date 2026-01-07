@@ -113,7 +113,9 @@ namespace dev {
 			// attach info update
 			sec->attach([=]() {
 				// convert mouse to coords
-				sf::Vector2i coords = game->mouseToHex(ui::window.mouse());
+				sf::Vector2i coords = game->mouseToHex(game->_layer->map(
+					ui::window.mouse(), { {}, ui::window.size() }
+				));
 
 				// set arguments
 				sec->args = {
