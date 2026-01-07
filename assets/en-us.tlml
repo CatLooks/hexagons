@@ -302,7 +302,6 @@ dp {
 			plant_modify: "Plant Modify"
 
 			aoe_effect: "AoE Effect"
-			game_turn: "Game Turn"
 		}
 
 		# entity override
@@ -353,12 +352,6 @@ dp {
 		plant_modify {
 			res: "Resources: {res} from {count} plants"
 			spread: "Spread: {radius}Ω @ {pos}"
-		}
-
-		# game turn
-		game_turn {
-			forward: "Forward: {forward}"
-			backward: "Backward: {backward}"
 		}
 	}
 }

@@ -9,9 +9,9 @@ struct TestAdapter : Adapter {
 	std::optional<size_t> next;
 
 	/// Sends a move list.
-	void send_list(Packet<History::RList> list) override;
+	void send_list(Packet<History::SpanList> list) override;
 	/// Receives a move list.
-	OptPacket<History::TList> recv_list() override;
+	OptPacket<History::UniqList> recv_list() override;
 
 	/// Sends an event.
 	void send(Packet<Event> evt) override;

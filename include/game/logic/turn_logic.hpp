@@ -8,5 +8,5 @@ namespace logic {
 	/// Executes turn transition logic.
 	/// 
 	/// @param map Map reference.
-	History turn(Map* map);
+	History::UniqList turn(Map* map);
 };

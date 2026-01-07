@@ -1,7 +1,7 @@
 #include "game/sync/adapter.hpp"
 
 /// Sends a move list from this adapter.
-void Adapter::send_list(History::RList list) {
+void Adapter::send_list(History::SpanList list) {
 	send_list({ list, id });
 };
 

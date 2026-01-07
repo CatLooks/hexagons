@@ -63,10 +63,10 @@ void GameState::next() {
 			_turn++;
 
 			// tick the map
-			auto history = logic::turn(_map);
+			auto list = logic::turn(_map);
 
 			// transmit changes
-			_adapter->send_list(history.list());
+			_adapter->send_list(list);
 		};
 
 		// select next player

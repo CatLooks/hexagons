@@ -31,12 +31,12 @@ struct Adapter {
 	template <typename T> using OptPacket = std::optional<Packet<T>>;
 
 	/// Sends a move list.
-	virtual void send_list(Packet<History::RList> list) = 0;
+	virtual void send_list(Packet<History::SpanList> list) = 0;
 	/// Sends a move list from this adapter.
-	void send_list(History::RList list);
+	void send_list(History::SpanList list);
 
 	/// Receives a move list.
-	virtual OptPacket<History::TList> recv_list() = 0;
+	virtual OptPacket<History::UniqList> recv_list() = 0;
 
 	/// Sends an event.
 	/// @param evt 

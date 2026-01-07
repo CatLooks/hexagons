@@ -46,12 +46,20 @@ public:
 	std::optional<sf::Vector2i> redo();
 
 	/// Reference move list type.
-	using RList = std::span<const std::unique_ptr<Move>>;
+	/// 
+	/// Does not own the pointed memory.
+	///
+	/// Can be instantiated from a `UniqList`.
+	using SpanList = std::span<const std::unique_ptr<Move>>;
 	/// Transfer move list type.
-	using TList = std::vector<std::unique_ptr<Move>>;
+	///
+	/// Owns the pointed memory.
+	/// 
+	/// Can be casted to `SpanList`.
+	using UniqList = std::vector<std::unique_ptr<Move>>;
 
 	/// Returns a list of applied moves.
-	RList list() const;
+	SpanList list() const;
 	/// Returns amount of moves done & reverted. 
 	std::pair<size_t, size_t> count() const;
 

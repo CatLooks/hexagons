@@ -43,8 +43,8 @@ std::optional<sf::Vector2i> History::redo() {
 };
 
 /// Returns a list of applied moves.
-History::RList History::list() const {
-	return RList(_list.begin(), _list.begin() + _cursor);
+History::SpanList History::list() const {
+	return SpanList(_list.begin(), _list.begin() + _cursor);
 };
 
 /// Returns amount of moves done & reverted. 

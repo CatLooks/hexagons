@@ -64,7 +64,7 @@ void Regions::enumerate(Map* map) {
 	// enumerate region pointers
 	for (int y = 0; y < map->size().y; y++) {
 		for (int x = 0; x < map->size().x; x++) {
-			Hex& hex = map->ats({x, y});
+			Hex& hex = map->ats({ x, y });
 
 			// ignore tile if already has a region
 			// or the tile does not need a region
