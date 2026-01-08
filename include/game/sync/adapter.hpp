@@ -20,6 +20,9 @@ struct Adapter {
 	using Event = std::variant<Ignore, Select>;
 
 	/// Packet type.
+	/// 
+	/// Stores packet data and sender adapter index.
+	/// 
 	/// @tparam T Packet content type.
 	template <typename T> struct Packet {
 		T   value; /// Packed value.

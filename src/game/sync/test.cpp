@@ -17,7 +17,7 @@ Adapter::OptPacket<History::UniqList> TestAdapter::recv_list() {
 
 /// Sends an event.
 void TestAdapter::send(Packet<Event> evt) {
-	// update player index
+	// update player update
 	if (auto* data = std::get_if<Adapter::Select>(&evt.value))
 		if (data->id > 0)
 			next = data->id;

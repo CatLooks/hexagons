@@ -130,6 +130,7 @@
     <None Include="include\refpool" />
     <None Include="README.md" />
     <None Include="TLML.sublime-syntax" />
+    <None Include="todo.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\assetload.hpp" />

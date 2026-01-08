@@ -405,6 +405,9 @@
     <None Include="include\refpool">
       <Filter>Header Files\templated</Filter>
     </None>
+    <None Include="todo.md">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\assetload.hpp">
