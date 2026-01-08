@@ -15,12 +15,16 @@ void Game::queueCall(Delegate<void()>::Action call) {
 /// Constructs a game object.
 Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, GameState* state):
 	_state(*state),
-	_layer(game_layer), _camera(game_layer, 17.f / 16),
-	_panel(new gameui::Panel(map.history)), _bar(new gameui::Bar())
+	_layer(game_layer),
+	_camera(game_layer, 17.f / 16),
+	_panel(new gameui::Panel(map.history)),
+	_bar(new gameui::Bar()),
+	_view(new gameui::State(state))
 {
 	// register interface elements
 	ui_layer->add(_panel);
 	ui_layer->add(_bar);
+	ui_layer->add(_view);
 
 	// setup camera
 	_camera.minZoom = 0.5f;
@@ -63,6 +67,11 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, GameState* state):
 		[=]() { redoMove(); },
 		[=]() { return _state.finish(); }
 	);
+
+	// attach game state viewer under resource bar
+	_view->onRecalculate([=](const sf::Time&) {
+		_view->position().y = _bar->position().y + _bar->size().y;
+	});
 
 	// add player update callback
 	_state.updateCallback([=](bool enabled) {

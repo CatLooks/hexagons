@@ -5,12 +5,14 @@
 #include "ui/camera.hpp"
 #include "ui/window.hpp"
 #include "ui/anim/linear.hpp"
+
 #include "ui/game_panel.hpp"
 #include "ui/resource_bar.hpp"
 #include "ui/hex_preview.hpp"
+#include "ui/state_viewer.hpp"
+
 #include "map.hpp"
 #include "dev/dev_game.hpp"
-#include "sync/state.hpp"
 #include <delegate>
 
 /// Game controller object.
@@ -31,6 +33,7 @@ private:
 	ui::Camera                  _camera; /// Map camera.
 	gameui::Panel*               _panel; /// UI control panel.
 	gameui::Bar*                   _bar; /// UI resource bar.
+	gameui::State*                _view; /// UI game state viewer.
 
 	float _pulse = 0.f;      /// Map tile pulse.
 	ui::Anim* _pulse_anim;   /// Pulse animation object.

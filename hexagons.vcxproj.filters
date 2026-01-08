@@ -366,6 +366,9 @@
     <ClCompile Include="src\game\sync\adapter.cpp">
       <Filter>Source Files\game\sync</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\ui\state_viewer.cpp">
+      <Filter>Source Files\game\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -691,6 +694,9 @@
     </ClInclude>
     <ClInclude Include="include\game\logic\turn_logic.hpp">
       <Filter>Header Files\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\ui\state_viewer.hpp">
+      <Filter>Header Files\game\ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
