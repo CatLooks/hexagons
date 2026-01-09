@@ -1,6 +1,7 @@
 #include "ui.hpp"
 #include "game.hpp"
 #include "assets.hpp"
+#include "flags.hpp"
 
 /// Testing phase.
 /// 
@@ -37,6 +38,10 @@ int main() {
 	sf::Text drawStats = sf::Text(assets::font, "", 20);
 	drawStats.setOutlineThickness(2);
 	itf.statDraw([&](sf::RenderTarget& target, const ui::RenderStats& stats) {
+		// ignore if not needed
+		if (!flags::stats) return;
+
+		// draw stat string
 		std::string format = std::format(
 			"{}Q {}T {}B {}R",
 			stats.quads,
@@ -57,11 +62,15 @@ int main() {
 		auto layer_map = itf.layer();
 		auto layer_gui = itf.layer();
 
-
 		Game* game = new Game(layer_map, layer_gui, &state);
 		state.setMap(&game->map);
 		state.addPlayer({ .name = "Sus", .team = Region::Red });
-		state.addPlayer({ .name = "Amog", .team = Region::Blue });
+		state.addPlayer({ .team = Region::Orange });
+		state.addPlayer({ .team = Region::Yellow });
+		state.addPlayer({ .team = Region::Green });
+		state.addPlayer({ .team = Region::Aqua });
+		state.addPlayer({ .team = Region::Blue });
+		state.addPlayer({ .team = Region::Purple });
 		state.init();
 
 		{

@@ -5,6 +5,9 @@
 
 /// Global flags namespace.
 namespace flags {
+	/// Whether to draw render stats.
+	extern bool stats;
+
 	/// Whether the debug mode is enabled.
 	extern bool debug;
 
