@@ -1,6 +1,7 @@
 #include "mathext.hpp"
 #include <sstream>
 #include <iomanip>
+#include "assets.hpp"
 
 namespace ext {
 	/// Returns absolute value of an integer.
@@ -103,6 +104,41 @@ namespace ext {
 	std::string str_percent(size_t count, size_t total) {
 		if (!count && !total) return "0%";
 		return std::format("{:.1f}%", (float)count / total * 100.f);
+	};
+
+	/// Returns a string representation of a time.
+	std::string str_time(float time) {
+		// get each unit amount
+		int s = (int)time % 60;
+		int m = (int)time / 60 % 60;
+		int h = (int)time / 60 / 60;
+
+		// generate resulting string
+		std::string res;
+		if (h) {
+			// get unit label
+			auto th = assets::lang::locale.req("time.h").get({});
+
+			// insert string
+			res.append(std::format("{}{}", h, th));
+		};
+		if (m) {
+			// get unit label
+			auto tm = assets::lang::locale.req("time.m").get({});
+
+			// insert string
+			if (!res.empty()) res.append(" ");
+			res.append(std::format("{}{}", m, tm));
+		};
+		if (s || res.empty()) {
+			// get unit label
+			auto ts = assets::lang::locale.req("time.s").get({});
+
+			// insert string
+			if (!res.empty()) res.append(" ");
+			res.append(std::format("{}{}", s, ts));
+		};
+		return res;
 	};
 };
 

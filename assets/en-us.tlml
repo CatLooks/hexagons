@@ -6,6 +6,13 @@ param: "{value}"
 yes: "Yes"
 no: "No"
 
+# time units
+time {
+	h: 'h' # hour
+	m: 'm' # minute
+	s: 's' # second
+}
+
 # team names
 team {
 	v: Unclaimed
@@ -123,6 +130,13 @@ gp {
 	buy_build: "Buy Building"
 	# buy a troop
 	buy_troop: "Buy Troop"
+
+	# turn number
+	turn: "Turn {turn}"
+	# player info
+	player: "{name}"
+	# next team info
+	next: "Next: {team}"
 }
 
 # debug info

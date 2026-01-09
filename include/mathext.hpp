@@ -103,6 +103,11 @@ namespace ext {
 	/// 
 	/// @return Percentage string.
 	std::string str_percent(size_t count, size_t total);
+
+	/// Returns a string representation of a time.
+	///
+	/// @param time Time in seconds.
+	std::string str_time(float time);
 };
 
 /// Shifts a rectangle by a vector.

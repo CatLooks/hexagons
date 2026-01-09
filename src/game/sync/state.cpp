@@ -57,6 +57,7 @@ bool GameState::finish() {
 void GameState::next() {
 	if (_mode == Host) {
 		_idx++;
+		_clock.restart();
 		if (_idx >= _plr.size()) {
 			// reset player counter
 			_idx = 0;
@@ -107,6 +108,10 @@ void GameState::tick() {
 
 	// incoming events
 	while (auto data = _adapter->recv()) {
+		// reset timer on player selection
+		if (std::holds_alternative<Adapter::Select>(data->value))
+			_clock.restart();
+
 		// ignore own packets
 		if (data->id == _adapter->id) continue;
 
@@ -127,6 +132,19 @@ void GameState::proc(const Adapter::Packet<Adapter::Event>& event) {
 /// Returns current player info.
 const GameState::Player* GameState::player() const {
 	return _plr.empty() ? nullptr : &_plr[_idx];
+};
+
+/// Returns next player info.
+const GameState::Player* GameState::nextPlayer() const {
+	if (_plr.empty())
+		return nullptr;
+	return _idx + 1 >= _plr.size()
+		? &_plr[0] : &_plr[_idx + 1];
+};
+
+/// Returns current turn time.
+sf::Time GameState::turnTime() const {
+	return _clock.getElapsedTime();
 };
 
 /// Returns local player team.

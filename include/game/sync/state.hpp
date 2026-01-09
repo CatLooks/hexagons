@@ -5,6 +5,7 @@
 #include "game/map.hpp"
 #include "game/logic/turn_logic.hpp"
 #include "dev/dev_game.hpp"
+#include <SFML/System/Clock.hpp>
 
 /// Game state controller.
 class GameState {
@@ -13,6 +14,7 @@ class GameState {
 public:
 	/// Player description.
 	struct Player {
+		std::string  name; /// Player name.
 		Region::Team team; /// Player team.
 	};
 
@@ -41,6 +43,7 @@ private:
 	std::vector<Player> _plr;     /// Player list.
 	size_t              _idx = 0; /// Current player index.
 	size_t             _turn = 1; /// Current turn number.
+	sf::Clock         _clock;     /// Current turn time.
 
 	/// Player update callback.
 	std::function<void(bool enable)> _call;
@@ -85,6 +88,10 @@ public:
 
 	/// Returns current player info.
 	const Player* player() const;
+	/// Returns next player info.
+	const Player* nextPlayer() const;
+	/// Returns current turn time.
+	sf::Time turnTime() const;
 
 	/// Returns local player team.
 	Region::Team team() const;

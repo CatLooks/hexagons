@@ -60,8 +60,8 @@ int main() {
 
 		Game* game = new Game(layer_map, layer_gui, &state);
 		state.setMap(&game->map);
-		state.addPlayer({ .team = Region::Red });
-		state.addPlayer({ .team = Region::Blue });
+		state.addPlayer({ .name = "Sus", .team = Region::Red });
+		state.addPlayer({ .name = "Amog", .team = Region::Blue });
 		state.init();
 
 		{

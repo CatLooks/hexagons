@@ -68,4 +68,10 @@ namespace Values {
 		assets::font, 32, sf::Color::White,
 		sf::Color::Black, 4
 	};
+
+	/// Game state viewer text settings.
+	const ui::TextSettings state_text = {
+		assets::font, 30, sf::Color::White,
+		sf::Color::Black, 3
+	};
 };
