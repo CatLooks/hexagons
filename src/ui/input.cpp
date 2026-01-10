@@ -78,6 +78,16 @@ namespace ui {
 		};
 	};
 
+	/// Clears the text input.
+	void TextInput::clear() {
+		_string.clear();
+		_cursor = 0;
+
+		// invoke update callbacks
+		_f_draw(_string);
+		_f_seek(_cursor);
+	};
+
 	/// Emits display callbacks.
 	void TextInput::display() const {
 		_f_draw(_string);
@@ -136,6 +146,12 @@ namespace ui {
 		// delete backwards
 		if (evt.key == sf::Keyboard::Key::Backspace) {
 			erase(Back);
+			return true;
+		};
+
+		// enter
+		if (evt.key == sf::Keyboard::Key::Enter) {
+			if (_f_enter) _f_enter(_string);
 			return true;
 		};
 

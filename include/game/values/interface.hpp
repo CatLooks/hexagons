@@ -47,4 +47,6 @@ namespace Values {
 	extern const ui::TextSettings resource_text;
 	/// Game state viewer text settings.
 	extern const ui::TextSettings state_text;
+	/// Game chat text settings.
+	extern const ui::TextSettings chat_text;
 };

@@ -31,6 +31,9 @@ namespace ui {
 		/// @param enabled Whether the field is focused.
 		void focus(bool enabled);
 
+		/// Checks whether the text field is currently focused.
+		bool focused() const;
+
 	protected:
 		/// Automatically unfocuses field on deactivation.
 		void onDeactivate() override;

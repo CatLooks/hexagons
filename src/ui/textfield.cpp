@@ -37,10 +37,12 @@ namespace ui {
 		input.attachTextDisplay([=](const sf::String& string) {
 			// update displayed text
 			_label->setRaw(string);
+			_label->recalculate();
 		});
 		input.attachCursorFocus([=](unsigned int position) {
 			// update cursor position
 			_cursor->position().x = _label->position().x + _label->charpos(position).x;
+			_cursor->recalculate();
 		});
 
 		// attach event pipes
@@ -69,6 +71,11 @@ namespace ui {
 	void TextField::focus(bool enabled) {
 		_focused = enabled;
 		ui::window.setKeyRepeat(enabled);
+	};
+
+	/// Checks whether the text field is currently focused.
+	bool TextField::focused() const {
+		return _focused;
 	};
 
 	/// Automatically unfocuses field on deactivation.

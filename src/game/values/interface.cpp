@@ -74,4 +74,10 @@ namespace Values {
 		assets::font, 30, sf::Color::White,
 		sf::Color::Black, 3
 	};
+
+	/// Game chat text settings.
+	const ui::TextSettings chat_text = {
+		assets::font, 20, sf::Color::White,
+		sf::Color::Black, 2
+	};
 };
