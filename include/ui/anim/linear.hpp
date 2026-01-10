@@ -25,6 +25,16 @@ namespace ui {
 		void onTick(float t) override { *_target = lerp(_beg, _end, t); };
 
 	public:
+		/// Returns animation state at the start.
+		const T& start_state() const {
+			return _beg;
+		};
+
+		/// Returns animation state at the start.
+		const T& end_state() const {
+			return _end;
+		};
+
 		/// Constructs the linear animator object.
 		/// 
 		/// @param target Animation target.

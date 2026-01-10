@@ -15,6 +15,11 @@ namespace ui {
 		_active = true;
 	};
 
+	/// Cancels the animation.
+	void Anim::cancel() {
+		_active = false;
+	};
+
 	/// Instantly ends the animation.
 	void Anim::end() {
 		onTick(prog(1.f));
@@ -25,7 +30,7 @@ namespace ui {
 	/// Ticks the animation.
 	void Anim::update(const sf::Time& time) {
 		// ignore if inactive
-		if (!_active) return;
+		if (!_active || freeze) return;
 
 		// update timer
 		_time += time.asSeconds();
