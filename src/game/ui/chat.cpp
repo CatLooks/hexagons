@@ -2,7 +2,9 @@
 
 namespace gameui {
 	/// Constructs the game chat.
-	Chat::Chat(ui::Dim input, ui::Dim msg, size_t len, size_t max) : _line(msg), _max(max) {
+	Chat::Chat(ui::Dim input, ui::Dim msg, size_t len, size_t max):
+		_line(msg), _max(max), _active(false)
+	{
 		infinite = true;
 
 		// create message container
@@ -46,12 +48,20 @@ namespace gameui {
 		_field->onEvent([=](const ui::Event& evt) {
 			if (auto data = evt.get<ui::Event::KeyPress>()) {
 				if (data->key == sf::Keyboard::Key::Escape) {
+					// inhibit unfocus autohide
+					_active = false;
+
 					// unfocus the text input
 					hide();
 					return true;
 				};
 			};
 			return false;
+		});
+		_field->onFocus([=](bool focused) {
+			// hide chat if unfocusing an active chat
+			if (!focused && _active)
+				hide();
 		});
 
 		// auto message clean-up routine
@@ -152,6 +162,8 @@ namespace gameui {
 
 	/// Shows the chat input field.
 	void Chat::show() {
+		_active = true;
+
 		// create animation
 		auto* anim = ui::AnimDim::to(&_field->position().y, 1as, sf::seconds(0.16f));
 		anim->ease = ui::Easings::quadOut;
@@ -163,6 +175,8 @@ namespace gameui {
 
 	/// Hides the chat input field.
 	void Chat::hide() {
+		_active = false;
+
 		// create animation
 		auto* anim = ui::AnimDim::to(&_field->position().y, 1ps, sf::seconds(0.16f));
 		anim->ease = ui::Easings::quadIn;

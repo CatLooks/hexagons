@@ -67,10 +67,16 @@ namespace ui {
 		});
 	};
 
+	/// Attaches a focus / unfocus event callback.
+	void TextField::onFocus(std::function<void(bool focused)> call) {
+		_call.add(call);
+	};
+
 	/// Updates text field focus.
 	void TextField::focus(bool enabled) {
 		_focused = enabled;
 		ui::window.setKeyRepeat(enabled);
+		_call.invoke(enabled);
 	};
 
 	/// Checks whether the text field is currently focused.

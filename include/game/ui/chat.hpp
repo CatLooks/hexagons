@@ -41,6 +41,7 @@ namespace gameui {
 		ui::Element*    _list; /// Message container.
 		ui::TextField* _field; /// Input field.
 		ui::Dim         _line; /// Message line height.
+		bool          _active; /// Whether the chat is active.
 
 		/// Message list.
 		std::deque<Message*> _msg;
