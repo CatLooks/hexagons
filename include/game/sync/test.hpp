@@ -7,6 +7,8 @@
 struct TestAdapter : Adapter {
 	/// Next player index response to generate.
 	std::optional<size_t> next;
+	/// Whether the player has sent a chat message.
+	size_t chat = 0;
 
 	/// Sends a move list.
 	void send_list(Packet<History::SpanList> list) override;

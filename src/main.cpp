@@ -61,16 +61,16 @@ int main() {
 	{
 		auto layer_map = itf.layer();
 		auto layer_gui = itf.layer();
+		auto layer_msg = itf.layer();
 
-		Game* game = new Game(layer_map, layer_gui, &state);
-		state.setMap(&game->map);
+		Game* game = new Game(layer_map, layer_gui, layer_msg, &state);
 		state.addPlayer({ .name = "Sus", .team = Region::Red });
-		state.addPlayer({ .team = Region::Orange });
-		state.addPlayer({ .team = Region::Yellow });
-		state.addPlayer({ .team = Region::Green });
-		state.addPlayer({ .team = Region::Aqua });
-		state.addPlayer({ .team = Region::Blue });
-		state.addPlayer({ .team = Region::Purple });
+		state.addPlayer({ .name = "Bot 1", .team = Region::Orange });
+		state.addPlayer({ .name = "Bot 2", .team = Region::Yellow });
+		state.addPlayer({ .name = "Bot 3", .team = Region::Green });
+		state.addPlayer({ .name = "Bot 4", .team = Region::Aqua });
+		state.addPlayer({ .name = "Bot 5", .team = Region::Blue });
+		state.addPlayer({ .name = "Bot 6", .team = Region::Purple });
 		state.init();
 
 		{

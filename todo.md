@@ -1,12 +1,13 @@
-## WIP list
+## WIP List
 
-- player turn ui
+- chat commands
+- move serializations
 
-## To Do list
+## To Do List
 
 (i have dementia sorry)
 
-- move serializations
+- host initialization broadcast
 - network adapter
 - ai adapter
 - fix game state controller (for mp)
@@ -19,3 +20,8 @@
 - translation
 - campaign levels
 - balancing?
+
+
+## Maybe To Do List
+
+- message line break up

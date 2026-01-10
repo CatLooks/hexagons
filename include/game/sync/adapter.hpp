@@ -16,8 +16,13 @@ struct Adapter {
 		size_t id; /// Player index.
 	};
 
+	/// Chat message.
+	struct Chat {
+		std::string text; /// Message text.
+	};
+
 	/// Variant of all adapter events.
-	using Event = std::variant<Ignore, Select>;
+	using Event = std::variant<Ignore, Select, Chat>;
 
 	/// Packet type.
 	/// 

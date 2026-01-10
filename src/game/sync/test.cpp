@@ -21,10 +21,22 @@ void TestAdapter::send(Packet<Event> evt) {
 	if (auto* data = std::get_if<Adapter::Select>(&evt.value))
 		if (data->id > 0)
 			next = data->id;
+
+	// chat message
+	if (auto* data = std::get_if<Adapter::Chat>(&evt.value))
+		if (evt.id == 0)
+			chat = 1;
 };
 
 /// Receives an event.
-TestAdapter::OptPacket<TestAdapter::Event> TestAdapter::recv() {
+Adapter::OptPacket<Adapter::Event> TestAdapter::recv() {
+	// create a response to chat message
+	if (chat) {
+		auto pack = Packet<Adapter::Event> { Adapter::Chat{ .text = "stfu" }, chat };
+		chat = (chat + 1) % 7;
+		return pack;
+	};
+
 	// no incoming events
 	return {};
 };

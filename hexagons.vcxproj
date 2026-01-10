@@ -78,6 +78,7 @@
     <ClCompile Include="src\game\sync\test.cpp" />
     <ClCompile Include="src\game\troop.cpp" />
     <ClCompile Include="src\game\ui\action_button.cpp" />
+    <ClCompile Include="src\game\ui\chat.cpp" />
     <ClCompile Include="src\game\ui\game_panel.cpp" />
     <ClCompile Include="src\game\ui\hex_preview.cpp" />
     <ClCompile Include="src\game\ui\move_selector.cpp" />
@@ -142,7 +143,6 @@
     <ClInclude Include="include\dev\dev_panel.hpp" />
     <ClInclude Include="include\flags.hpp" />
     <ClInclude Include="include\game.hpp" />
-    <ClInclude Include="include\game\adapter.hpp" />
     <ClInclude Include="include\game\array.hpp" />
     <ClInclude Include="include\game\build.hpp" />
     <ClInclude Include="include\game\draw.hpp" />
@@ -187,6 +187,7 @@
     <ClInclude Include="include\game\sync\test.hpp" />
     <ClInclude Include="include\game\troop.hpp" />
     <ClInclude Include="include\game\ui\action_button.hpp" />
+    <ClInclude Include="include\game\ui\chat.hpp" />
     <ClInclude Include="include\game\ui\game_panel.hpp" />
     <ClInclude Include="include\game\ui\hex_preview.hpp" />
     <ClInclude Include="include\game\ui\move_selector.hpp" />

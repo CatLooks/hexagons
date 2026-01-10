@@ -15,14 +15,14 @@ namespace gameui {
 		// create turn button
 		_next = new ui::Button(texture, { width, width });
 		_next->setIcon(&assets::interface, Values::next_icon);
-		{
+		/*{
 			_next_t = _next->setLabel(Values::panel_text);
 			_next_t->pos = ui::Text::ShrinkY;
 			_next_t->position() = { -4px - 1es, 0.5as };
 			_next_t->autosize = true;
 			_next_t->setPath("param");
 			_next_t->param("value", "0");
-		};
+		};*/
 		add(_next);
 
 		// create redo button

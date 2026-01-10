@@ -139,6 +139,15 @@ gp {
 	next: "Next: {team}"
 }
 
+# chat text
+chat {
+	# author name
+	author: "[{auth}]: "
+
+	# "you" name
+	you: "You"
+}
+
 # debug info
 debug {
 	fps: "{fps} FPS"

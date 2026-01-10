@@ -30,7 +30,7 @@ namespace ui {
 
 		// configure window
 		_win.setVerticalSyncEnabled(true);
-		//_win.setFramerateLimit(60);
+		//_win.setFramerateLimit(2);
 		_win.setKeyRepeatEnabled(false);
 	};
 

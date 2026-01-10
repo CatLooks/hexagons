@@ -13,18 +13,39 @@ void Game::queueCall(Delegate<void()>::Action call) {
 };
 
 /// Constructs a game object.
-Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, GameState* state):
+Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, GameState* state):
 	_state(*state),
 	_layer(game_layer),
 	_camera(game_layer, 17.f / 16),
 	_panel(new gameui::Panel(map.history)),
 	_bar(new gameui::Bar()),
-	_view(new gameui::State(state))
+	_view(new gameui::State(state)),
+	_chat(new gameui::Chat(48px, 28px, 128, 20))
 {
+	// attach reference to game state
+	_state.setRefs(&map, _chat);
+
 	// register interface elements
 	ui_layer->add(_panel);
 	ui_layer->add(_bar);
 	ui_layer->add(_view);
+	chat_layer->add(_chat);
+
+	// add chat callback
+	_chat->attach([=](const std::string& text) {
+		// ignore if whitespace
+		bool white = true;
+		for (char c : text) {
+			if (!(c == ' ' || c == '\t')) {
+				white = false;
+				break;
+			};
+		};
+		if (white) return;
+
+		// send message to chat
+		_state.message(text);
+	});
 
 	// setup camera
 	_camera.minZoom = 0.5f;
@@ -47,14 +68,19 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, GameState* state):
 	// add game move control
 	ui_layer->onEvent([=](const ui::Event& evt) {
 		if (auto data = evt.get<ui::Event::KeyPress>()) {
-			if (data->key == sf::Keyboard::Key::Z) {
+			if (data->key == sf::Keyboard::Key::Q) {
 				// undo a move
 				undoMove();
 				return true;
 			};
-			if (data->key == sf::Keyboard::Key::X) {
+			if (data->key == sf::Keyboard::Key::E) {
 				// redo a move
 				redoMove();
+				return true;
+			};
+			if (data->key == sf::Keyboard::Key::Slash) {
+				// show the chat
+				queueCall([=]() { _chat->show(); });
 				return true;
 			};
 		};
@@ -142,7 +168,7 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, GameState* state):
 		game_layer->setArea(ui::DimVector(1es, 1es) * _camera.zoom(), { 0px, 0px, 1ps, 1ps });
 
 		// keyboard camera pan
-		if (ui::window.focused()) {
+		if (ui::window.focused() && !_chat->active()) {
 			sf::Vector2i offset;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) offset.y--;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) offset.y++;

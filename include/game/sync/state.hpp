@@ -4,6 +4,7 @@
 #include "adapter.hpp"
 #include "game/map.hpp"
 #include "game/logic/turn_logic.hpp"
+#include "game/ui/chat.hpp"
 #include "dev/dev_game.hpp"
 #include <SFML/System/Clock.hpp>
 
@@ -40,6 +41,9 @@ private:
 	State _state; /// Current game state.
 	Mode   _mode; /// Game controller mode.
 
+	/// Chat element reference.
+	gameui::Chat* _chat;
+
 	std::vector<Player> _plr;     /// Player list.
 	size_t              _idx = 0; /// Current player index.
 	size_t             _turn = 1; /// Current turn number.
@@ -65,10 +69,16 @@ public:
 	/// @param player Player info.
 	void addPlayer(const Player& player);
 
-	/// Updates map object reference.
+	/// Updates object references.
 	/// 
 	/// @param map Map object reference.
-	void setMap(Map* map);
+	/// @param chat Chat element reference.
+	void setRefs(Map* map, gameui::Chat* chat);
+
+	/// Sends a message to chat.
+	/// 
+	/// @param text Message text.
+	void message(const std::string& text);
 
 	/// Initializes the game.
 	void init();

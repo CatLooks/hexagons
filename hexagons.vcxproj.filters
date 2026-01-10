@@ -369,6 +369,9 @@
     <ClCompile Include="src\game\ui\state_viewer.cpp">
       <Filter>Source Files\game\ui</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\ui\chat.cpp">
+      <Filter>Source Files\game\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -408,9 +411,7 @@
     <None Include="include\refpool">
       <Filter>Header Files\templated</Filter>
     </None>
-    <None Include="todo.md">
-      <Filter>Resource Files</Filter>
-    </None>
+    <None Include="todo.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\assetload.hpp">
@@ -674,9 +675,6 @@
     <ClInclude Include="include\game\moves\game_turn.hpp">
       <Filter>Header Files\game\moves</Filter>
     </ClInclude>
-    <ClInclude Include="include\game\adapter.hpp">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
     <ClInclude Include="include\game\sync\adapter.hpp">
       <Filter>Header Files\game\sync</Filter>
     </ClInclude>
@@ -696,6 +694,9 @@
       <Filter>Header Files\game\logic</Filter>
     </ClInclude>
     <ClInclude Include="include\game\ui\state_viewer.hpp">
+      <Filter>Header Files\game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\ui\chat.hpp">
       <Filter>Header Files\game\ui</Filter>
     </ClInclude>
   </ItemGroup>

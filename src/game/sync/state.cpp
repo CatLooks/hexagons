@@ -1,8 +1,10 @@
 #include "game/sync/state.hpp"
+#include "game/values/hex_values.hpp"
 
 /// Constructs a game state object.
 GameState::GameState(Mode mode, Adapter* adapter):
-	_adapter(adapter), _map(nullptr), _mode(mode), _state(Init)
+	_adapter(adapter), _mode(mode), _state(Init),
+	_map(nullptr), _chat(nullptr)
 {
 	
 };
@@ -17,9 +19,22 @@ void GameState::addPlayer(const Player& player) {
 	_plr.push_back(player);
 };
 
-/// Updates map object reference.
-void GameState::setMap(Map* map) {
+/// Updates object references.
+void GameState::setRefs(Map* map, gameui::Chat* chat) {
 	_map = map;
+	_chat = chat;
+};
+
+/// Sends a message to chat.
+void GameState::message(const std::string& text) {
+	// get "you" name
+	std::string you = assets::lang::locale.req("chat.you").get({});
+
+	// display message in chat
+	_chat->print(you, Values::hex_colors[team()], text);
+
+	// broadcast the message
+	_adapter->send(Adapter::Chat{ .text = text });
 };
 
 /// Initializes the game.
@@ -117,7 +132,7 @@ void GameState::tick() {
 
 		// retransmit to others
 		if (_mode == Host)
-			_adapter->send(data->value);
+			_adapter->send(*data);
 
 		// process the event
 		proc(*data);
@@ -126,6 +141,20 @@ void GameState::tick() {
 
 /// Processes a single event.
 void GameState::proc(const Adapter::Packet<Adapter::Event>& event) {
+	// display chat message
+	if (auto* data = std::get_if<Adapter::Chat>(&event.value)) {
+		// get author info
+		const Player* player = event.id >= _plr.size() ? nullptr : &_plr[event.id];
+
+		// create chat message
+		_chat->print(
+			player ? player->name : "???",
+			player ? Values::hex_colors[player->team] : sf::Color::White,
+			data->text
+		);
+		return;
+	};
+
 	printf("event proc\n");
 };
 
