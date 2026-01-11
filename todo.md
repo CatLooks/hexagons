@@ -1,5 +1,6 @@
 ## WIP List
 
+- host initialization broadcast
 - chat commands
 - move serializations
 
@@ -7,7 +8,6 @@
 
 (i have dementia sorry)
 
-- host initialization broadcast
 - network adapter
 - ai adapter
 - fix game state controller (for mp)

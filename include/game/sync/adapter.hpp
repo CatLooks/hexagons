@@ -2,28 +2,10 @@
 
 // include dependencies
 #include "game/history.hpp"
-#include <variant>
+#include "messages.hpp"
 
 /// Game communication adapter.
 struct Adapter {
-	/// Player event ignore.
-	struct Ignore {
-		size_t id; /// Player index.
-	};
-
-	/// Player selection.
-	struct Select {
-		size_t id; /// Player index.
-	};
-
-	/// Chat message.
-	struct Chat {
-		std::string text; /// Message text.
-	};
-
-	/// Variant of all adapter events.
-	using Event = std::variant<Ignore, Select, Chat>;
-
 	/// Packet type.
 	/// 
 	/// Stores packet data and sender adapter index.
@@ -48,12 +30,12 @@ struct Adapter {
 
 	/// Sends an event.
 	/// @param evt 
-	virtual void send(Packet<Event> evt) = 0;
+	virtual void send(Packet<Messages::Event> evt) = 0;
 	/// Sends an event from this adapter.
-	void send(const Event& evt);
+	void send(const Messages::Event& evt);
 
 	/// Receives an event.
-	virtual OptPacket<Event> recv() = 0;
+	virtual OptPacket<Messages::Event> recv() = 0;
 
 	/// Adapter index.
 	size_t id {};

@@ -372,6 +372,9 @@
     <ClCompile Include="src\game\ui\chat.cpp">
       <Filter>Source Files\game\ui</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\sync\messages.cpp">
+      <Filter>Source Files\game\sync</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -698,6 +701,9 @@
     </ClInclude>
     <ClInclude Include="include\game\ui\chat.hpp">
       <Filter>Header Files\game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\sync\messages.hpp">
+      <Filter>Header Files\game\sync</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

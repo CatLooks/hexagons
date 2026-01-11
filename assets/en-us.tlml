@@ -146,6 +146,9 @@ chat {
 
 	# "you" name
 	you: "You"
+
+	# unknown player name
+	unknown: "@"
 }
 
 # debug info

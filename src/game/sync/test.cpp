@@ -16,24 +16,24 @@ Adapter::OptPacket<History::UniqList> TestAdapter::recv_list() {
 };
 
 /// Sends an event.
-void TestAdapter::send(Packet<Event> evt) {
+void TestAdapter::send(Packet<Messages::Event> evt) {
 	// update player update
-	if (auto* data = std::get_if<Adapter::Select>(&evt.value))
+	if (auto* data = std::get_if<Messages::Select>(&evt.value))
 		if (data->id > 0)
 			next = data->id;
 
 	// chat message
-	if (auto* data = std::get_if<Adapter::Chat>(&evt.value))
+	if (auto* data = std::get_if<Messages::Chat>(&evt.value))
 		if (evt.id == 0)
 			chat = 1;
 };
 
 /// Receives an event.
-Adapter::OptPacket<Adapter::Event> TestAdapter::recv() {
+Adapter::OptPacket<Messages::Event> TestAdapter::recv() {
 	// create a response to chat message
 	if (chat) {
-		auto pack = Packet<Adapter::Event> { Adapter::Chat{ .text = "stfu" }, chat };
-		chat = (chat + 1) % 7;
+		auto pack = Packet<Messages::Event> { Messages::Chat{ .text = "stfu" }, chat };
+		chat = (chat + 1) % 8;
 		return pack;
 	};
 

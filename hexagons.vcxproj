@@ -73,6 +73,7 @@
     <ClCompile Include="src\game\spread.cpp" />
     <ClCompile Include="src\game\sync\adapter.cpp" />
     <ClCompile Include="src\game\sync\ai.cpp" />
+    <ClCompile Include="src\game\sync\messages.cpp" />
     <ClCompile Include="src\game\sync\net.cpp" />
     <ClCompile Include="src\game\sync\state.cpp" />
     <ClCompile Include="src\game\sync\test.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="include\game\spread.hpp" />
     <ClInclude Include="include\game\sync\adapter.hpp" />
     <ClInclude Include="include\game\sync\ai.hpp" />
+    <ClInclude Include="include\game\sync\messages.hpp" />
     <ClInclude Include="include\game\sync\net.hpp" />
     <ClInclude Include="include\game\sync\state.hpp" />
     <ClInclude Include="include\game\sync\test.hpp" />

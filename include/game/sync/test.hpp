@@ -16,7 +16,7 @@ struct TestAdapter : Adapter {
 	OptPacket<History::UniqList> recv_list() override;
 
 	/// Sends an event.
-	void send(Packet<Event> evt) override;
+	void send(Packet<Messages::Event> evt) override;
 	/// Receives an event.
-	OptPacket<Event> recv() override;
+	OptPacket<Messages::Event> recv() override;
 };

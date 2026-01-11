@@ -75,6 +75,13 @@ public:
 	/// @param chat Chat element reference.
 	void setRefs(Map* map, gameui::Chat* chat);
 
+protected:
+	/// Updates gameplay state.
+	void update();
+	/// Locks gameplay state.
+	void lock();
+
+public:
 	/// Sends a message to chat.
 	/// 
 	/// @param text Message text.
@@ -94,7 +101,7 @@ public:
 	/// Processes a single event.
 	///
 	/// @param event Event data.
-	void proc(const Adapter::Packet<Adapter::Event>& event);
+	void proc(const Adapter::Packet<Messages::Event>& event);
 
 	/// Returns current player info.
 	const Player* player() const;

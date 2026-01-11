@@ -6,6 +6,6 @@ void Adapter::send_list(History::SpanList list) {
 };
 
 /// Sends an event from this adapter.
-void Adapter::send(const Event& evt) {
+void Adapter::send(const Messages::Event& evt) {
 	send({ evt, id });
 };

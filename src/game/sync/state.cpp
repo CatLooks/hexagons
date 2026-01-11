@@ -34,7 +34,19 @@ void GameState::message(const std::string& text) {
 	_chat->print(you, Values::hex_colors[team()], text);
 
 	// broadcast the message
-	_adapter->send(Adapter::Chat{ .text = text });
+	_adapter->send(Messages::Chat{ .text = text });
+};
+
+/// Updates gameplay state.
+void GameState::update() {
+	_state = _idx == _adapter->id ? Play : Wait;
+	_call(_idx == _adapter->id);
+};
+
+/// Locks gameplay state.
+void GameState::lock() {
+	_state = Wait;
+	_call(false);
 };
 
 /// Initializes the game.
@@ -47,8 +59,7 @@ void GameState::init() {
 
 	// reset player index
 	_idx = 0;
-	_state = _idx == _adapter->id ? Play : Wait;
-	_call(_idx == _adapter->id);
+	update();
 };
 
 /// Attempts to finish a move.
@@ -70,12 +81,17 @@ bool GameState::finish() {
 
 /// Advances the game to the next player.
 void GameState::next() {
+	// increment player index
+	if (++_idx >= _plr.size()) _idx = 0;
+	_clock.restart();
+
+	// lock game until a selection is received
+	lock();
+
+	// next player logic
 	if (_mode == Host) {
-		_idx++;
-		_clock.restart();
-		if (_idx >= _plr.size()) {
-			// reset player counter
-			_idx = 0;
+		if (_idx == 0) {
+			// increment turn number
 			_turn++;
 
 			// tick the map
@@ -84,13 +100,10 @@ void GameState::next() {
 			// transmit changes
 			_adapter->send_list(list);
 		};
+		update();
 
 		// select next player
-		_adapter->send(Adapter::Select{ .id = _idx });
-
-		// update player state
-		_state = _idx == _adapter->id ? Play : Wait;
-		if (_call) _call(_idx == _adapter->id);
+		_adapter->send(Messages::Select{ .id = _idx });
 	};
 };
 
@@ -101,15 +114,15 @@ void GameState::tick() {
 		// ignore own packets
 		if (data->id == _adapter->id) continue;
 
-		// retransmit packets if needed
+		// retransmit packets if host
 		if (_mode == Host) {
 			// ignore if inactive player
 			if (data->id != _idx) {
-				_adapter->send(Adapter::Ignore{ .id = data->id });
+				_adapter->send(Messages::Ignore{ .id = data->id });
 				continue;
 			};
 
-			// retransmit to others
+			// retransmit move list to others
 			_adapter->send_list({ data->value, data->id });
 		};
 
@@ -124,7 +137,7 @@ void GameState::tick() {
 	// incoming events
 	while (auto data = _adapter->recv()) {
 		// reset timer on player selection
-		if (std::holds_alternative<Adapter::Select>(data->value))
+		if (std::holds_alternative<Messages::Select>(data->value))
 			_clock.restart();
 
 		// ignore own packets
@@ -140,16 +153,16 @@ void GameState::tick() {
 };
 
 /// Processes a single event.
-void GameState::proc(const Adapter::Packet<Adapter::Event>& event) {
+void GameState::proc(const Adapter::Packet<Messages::Event>& event) {
 	// display chat message
-	if (auto* data = std::get_if<Adapter::Chat>(&event.value)) {
+	if (auto* data = std::get_if<Messages::Chat>(&event.value)) {
 		// get author info
 		const Player* player = event.id >= _plr.size() ? nullptr : &_plr[event.id];
 
 		// create chat message
 		_chat->print(
-			player ? player->name : "???",
-			player ? Values::hex_colors[player->team] : sf::Color::White,
+			player ? player->name : assets::lang::locale.req("chat.unknown").get({}),
+			player ? Values::hex_colors[player->team] : sf::Color(32, 32, 32),
 			data->text
 		);
 		return;
