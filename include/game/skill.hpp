@@ -33,6 +33,9 @@ struct SkillState {
 	///
 	/// @return Amount of the resource stored in state.
 	int with(Skills::Resource resource) const;
+
+	/// Returns region variable counters.
+	RegionVar var() const;
 };
 
 /// Skill description object.

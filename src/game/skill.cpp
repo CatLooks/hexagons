@@ -21,3 +21,8 @@ int SkillState::with(Skills::Resource resource) const {
 		default: return 0;
 	};
 };
+
+/// Returns region variable counters.
+RegionVar SkillState::var() const {
+	return region ? *region : RegionVar();
+};

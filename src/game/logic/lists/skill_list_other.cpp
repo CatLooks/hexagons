@@ -63,7 +63,7 @@ namespace SkillList {
 		.annotation = Skill::Aim,
 		.resource = Skills::Money,
 		.cost = [](const SkillState& state) {
-			return logic::build_cost(Build::Tent, state);
+			return logic::build_cost(Build::Tent, state.var());
 		},
 		.select = [](const SkillState&, const HexRef& tile, size_t idx) {
 			return Spread {
@@ -85,7 +85,7 @@ namespace SkillList {
 			build.add_cooldown(Skills::Withdraw, 1);
 
 			// create tent setup move
-			return new Moves::EntityPlace(build, state);
+			return new Moves::EntityPlace(build, state.var());
 		},
 		.format = Skill::SingleAim,
 		.cooldown = 2,

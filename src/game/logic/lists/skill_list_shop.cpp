@@ -26,7 +26,7 @@ namespace SkillList {
 	static const Skill::Cost cost_build =
 		[](const SkillState& state)
 	{
-		return logic::build_cost(Values::build_shop[state.build], state);
+		return logic::build_cost(Values::build_shop[state.build], state.var());
 	};
 
 	/// Places a new troop.
@@ -44,7 +44,7 @@ namespace SkillList {
 		troop.add_cooldown(Skills::Withdraw, 1);
 
 		// create placement move
-		return new Moves::EntityPlace(troop, state);
+		return new Moves::EntityPlace(troop, state.var());
 	};
 
 	/// Places a new building.
@@ -62,7 +62,7 @@ namespace SkillList {
 		build.add_cooldown(Skills::Withdraw, 1);
 
 		// create placement move
-		return new Moves::EntityPlace(build, state);
+		return new Moves::EntityPlace(build, state.var());
 	};
 
 	/// ======== BUY TROOP IN-PLACE ======== ///

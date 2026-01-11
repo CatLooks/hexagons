@@ -17,10 +17,10 @@ namespace logic {
 	/// Building buying cost.
 	/// 
 	/// @param type Building type.
-	/// @param state Current skill selection state.
+	/// @param var Region variable counters.
 	/// 
 	/// @return True building cost.
-	int build_cost(Build::Type type, const SkillState& state);
+	int build_cost(Build::Type type, const RegionVar& var);
 
 	/// Extra farm cost per farm built.
 	extern const int farm_cost_inc;

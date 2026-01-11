@@ -69,6 +69,10 @@
     <ClCompile Include="src\game\moves\troop_move.cpp" />
     <ClCompile Include="src\game\plant.cpp" />
     <ClCompile Include="src\game\region.cpp" />
+    <ClCompile Include="src\game\serialize\s_entities.cpp" />
+    <ClCompile Include="src\game\serialize\s_general.cpp" />
+    <ClCompile Include="src\game\serialize\s_messages.cpp" />
+    <ClCompile Include="src\game\serialize\s_moves.cpp" />
     <ClCompile Include="src\game\skill.cpp" />
     <ClCompile Include="src\game\spread.cpp" />
     <ClCompile Include="src\game\sync\adapter.cpp" />
@@ -179,6 +183,10 @@
     <ClInclude Include="include\game\moves\troop_move.hpp" />
     <ClInclude Include="include\game\plant.hpp" />
     <ClInclude Include="include\game\region.hpp" />
+    <ClInclude Include="include\game\serialize\entities.hpp" />
+    <ClInclude Include="include\game\serialize\general.hpp" />
+    <ClInclude Include="include\game\serialize\messages.hpp" />
+    <ClInclude Include="include\game\serialize\moves.hpp" />
     <ClInclude Include="include\game\skill.hpp" />
     <ClInclude Include="include\game\spread.hpp" />
     <ClInclude Include="include\game\sync\adapter.hpp" />

@@ -9,16 +9,16 @@ namespace logic {
 	const int build_cost_base[Build::Count] = { 0, 4, 80, 15, 35, 95, 10 };
 
 	/// Building buying cost.
-	int build_cost(Build::Type type, const SkillState& state) {
+	int build_cost(Build::Type type, const RegionVar& var) {
 		int cost = build_cost_base[type];
 
 		// increase farm cost
-		if (type == Build::Farm && state.region)
-			cost += farm_cost_inc * state.region->farms;
+		if (type == Build::Farm)
+			cost += farm_cost_inc * var.farms;
 
 		// increase tent cost
-		if (type == Build::Tent && state.region)
-			cost += tent_cost_inc * state.region->tents;
+		if (type == Build::Tent)
+			cost += tent_cost_inc * var.tents;
 		return cost;
 	};
 

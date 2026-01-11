@@ -8,7 +8,7 @@ namespace Moves {
 	///
 	/// Stores a state change for a single entity.
 	struct EntityChange : Move {
-		EntState  state; /// New entity state.
+		EntState  state; /// New entity state (manually set).
 		EntState a_prev; /// Previous entity state.
 
 		/// Constructs an entity change move.
@@ -27,8 +27,8 @@ namespace Moves {
 	///
 	/// Stores a state change for a single region.
 	struct RegionChange : Move {
-		Region     state; /// New region state.
-		Region    a_prev; /// Previous region state.
+		Region  state; /// New region state (manually set).
+		Region a_prev; /// Previous region state.
 
 		/// Constructs a region change move.
 		/// 

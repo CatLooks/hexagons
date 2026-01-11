@@ -100,6 +100,12 @@
     <Filter Include="Source Files\game\sync">
       <UniqueIdentifier>{4f36068f-ea4c-4a37-acf5-70654160b8f5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\game\serialize">
+      <UniqueIdentifier>{2eedbdea-e76d-46a3-b202-7bc61c26e087}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\serialize">
+      <UniqueIdentifier>{bf0c3e1d-363a-4272-bde2-0c65c7cc45d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -374,6 +380,18 @@
     </ClCompile>
     <ClCompile Include="src\game\sync\messages.cpp">
       <Filter>Source Files\game\sync</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\serialize\s_entities.cpp">
+      <Filter>Source Files\game\serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\serialize\s_general.cpp">
+      <Filter>Source Files\game\serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\serialize\s_messages.cpp">
+      <Filter>Source Files\game\serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\serialize\s_moves.cpp">
+      <Filter>Source Files\game\serialize</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -704,6 +722,18 @@
     </ClInclude>
     <ClInclude Include="include\game\sync\messages.hpp">
       <Filter>Header Files\game\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\serialize\entities.hpp">
+      <Filter>Header Files\game\serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\serialize\messages.hpp">
+      <Filter>Header Files\game\serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\serialize\moves.hpp">
+      <Filter>Header Files\game\serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\serialize\general.hpp">
+      <Filter>Header Files\game\serialize</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

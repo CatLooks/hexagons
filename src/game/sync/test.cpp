@@ -1,4 +1,5 @@
 #include "game/sync/test.hpp"
+#include "game/serialize/moves.hpp"
 
 /// Sends a move list.
 void TestAdapter::send_list(Packet<History::SpanList> list) {};

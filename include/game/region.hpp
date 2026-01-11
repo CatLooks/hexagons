@@ -25,8 +25,14 @@ struct RegionRes {
 	RegionRes div(int count) const;
 };
 
+/// Region variable counters.
+struct RegionVar {
+	int farms; /// Farm count.
+	int tents; /// Tent count.
+};
+
 /// Region statistics object.
-struct Region : RegionRes {
+struct Region : RegionRes, RegionVar {
 	/// Returns region resources.
 	RegionRes res() const;
 
@@ -50,8 +56,6 @@ struct Region : RegionRes {
 
 	int income = 0; /// Income during next turn.
 	int tiles  = 0; /// Amount of tiles captured.
-	int farms  = 0; /// Amount of farms built.
-	int tents  = 0; /// Amount of tents built.
 
 	/// Checks whether the region is dead.
 	bool dead() const;
