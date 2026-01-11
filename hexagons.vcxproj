@@ -77,7 +77,6 @@
     <ClCompile Include="src\game\spread.cpp" />
     <ClCompile Include="src\game\sync\adapter.cpp" />
     <ClCompile Include="src\game\sync\ai.cpp" />
-    <ClCompile Include="src\game\sync\messages.cpp" />
     <ClCompile Include="src\game\sync\net.cpp" />
     <ClCompile Include="src\game\sync\state.cpp" />
     <ClCompile Include="src\game\sync\test.cpp" />

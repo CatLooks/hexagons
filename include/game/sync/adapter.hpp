@@ -12,8 +12,8 @@ struct Adapter {
 	/// 
 	/// @tparam T Packet content type.
 	template <typename T> struct Packet {
-		T   value; /// Packed value.
-		size_t id; /// Player index.
+		T     value; /// Packed value.
+		uint32_t id; /// Player index.
 	};
 
 	/// Optional packet type.
@@ -38,5 +38,5 @@ struct Adapter {
 	virtual OptPacket<Messages::Event> recv() = 0;
 
 	/// Adapter index.
-	size_t id {};
+	uint32_t id {};
 };

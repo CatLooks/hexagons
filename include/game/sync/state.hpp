@@ -41,8 +41,8 @@ private:
 	gameui::Chat* _chat;
 
 	std::vector<Player> _plr;     /// Player list.
-	size_t              _idx = 0; /// Current player index.
-	size_t             _turn = 1; /// Current turn number.
+	uint32_t            _idx = 0; /// Current player index.
+	uint32_t           _turn = 1; /// Current turn number.
 	sf::Clock         _clock;     /// Current turn time.
 
 	/// Player update callback.
@@ -110,5 +110,5 @@ public:
 	Region::Team team() const;
 
 	/// Returns current turn number.
-	size_t turn() const;
+	uint32_t turn() const;
 };

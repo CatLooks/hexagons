@@ -88,6 +88,11 @@ namespace ext {
 	/// Returns a string representation of an unsigned integer.
 	/// 
 	/// @param vec Source integer.
+	std::string str_int(uint32_t n);
+
+	/// Returns a string representation of an unsigned integer.
+	/// 
+	/// @param vec Source integer.
 	std::string str_int(size_t n);
 
 	/// Returns a string representation of a float.

@@ -6,11 +6,11 @@
 /// Game tester adapter.
 struct TestAdapter : Adapter {
 	/// Next player index response to generate.
-	std::optional<size_t> next;
+	std::optional<uint32_t> next;
 	/// Player count.
-	size_t count = 0;
+	uint32_t count = 0;
 	/// Whether the player has sent a chat message.
-	size_t chat = 0;
+	uint32_t chat = 0;
 
 	/// Sends a move list.
 	void send_list(Packet<History::SpanList> list) override;

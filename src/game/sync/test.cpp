@@ -1,5 +1,5 @@
 #include "game/sync/test.hpp"
-#include "game/serialize/moves.hpp"
+#include "game/serialize/messages.hpp"
 
 /// Sends a move list.
 void TestAdapter::send_list(Packet<History::SpanList> list) {};
@@ -7,7 +7,7 @@ void TestAdapter::send_list(Packet<History::SpanList> list) {};
 /// Receives a move list.
 Adapter::OptPacket<History::UniqList> TestAdapter::recv_list() {
 	if (next) {
-		size_t idx = *next;
+		uint32_t idx = *next;
 		next = {};
 
 		// respond with empty move list
@@ -20,7 +20,7 @@ Adapter::OptPacket<History::UniqList> TestAdapter::recv_list() {
 void TestAdapter::send(Packet<Messages::Event> evt) {
 	// game initialization
 	if (auto* data = std::get_if<Messages::Init>(&evt.value))
-		count = data->players.size();
+		count = (uint32_t)data->players.size();
 
 	// player selection
 	if (auto* data = std::get_if<Messages::Select>(&evt.value))

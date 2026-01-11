@@ -378,9 +378,6 @@
     <ClCompile Include="src\game\ui\chat.cpp">
       <Filter>Source Files\game\ui</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\sync\messages.cpp">
-      <Filter>Source Files\game\sync</Filter>
-    </ClCompile>
     <ClCompile Include="src\game\serialize\s_entities.cpp">
       <Filter>Source Files\game\serialize</Filter>
     </ClCompile>

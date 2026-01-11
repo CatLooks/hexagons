@@ -24,13 +24,13 @@ namespace Messages {
 
 	/// Player move list ignore.
 	struct Ignore {
-		size_t id = 0; /// Player index.
+		uint32_t id = 0; /// Player index.
 	};
 
 	/// Player selection.
 	struct Select {
-		size_t id = 0; /// Player index.
-		bool turn = 0; /// Whether next turn began.
+		uint32_t id = 0; /// Player index.
+		bool   turn = 0; /// Whether next turn began.
 	};
 
 	/// Chat message.

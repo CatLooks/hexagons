@@ -211,8 +211,8 @@ const GameState::Player* GameState::player() const {
 const GameState::Player* GameState::nextPlayer() const {
 	if (_plr.empty())
 		return nullptr;
-	return _idx + 1 >= _plr.size()
-		? &_plr[0] : &_plr[_idx + 1];
+	return _idx + 1ull >= _plr.size()
+		? &_plr[0] : &_plr[_idx + 1ull];
 };
 
 /// Returns current turn time.
@@ -226,6 +226,6 @@ Region::Team GameState::team() const {
 };
 
 /// Returns current turn number.
-size_t GameState::turn() const {
+uint32_t GameState::turn() const {
 	return _turn;
 };

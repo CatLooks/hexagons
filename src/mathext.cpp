@@ -89,6 +89,11 @@ namespace ext {
 	};
 
 	/// Returns a string representation of an unsigned integer.
+	std::string str_int(uint32_t n) {
+		return std::format("{}", n);
+	};
+
+	/// Returns a string representation of an unsigned integer.
 	std::string str_int(size_t n) {
 		return std::format("{}", n);
 	};
