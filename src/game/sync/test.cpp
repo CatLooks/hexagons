@@ -17,7 +17,11 @@ Adapter::OptPacket<History::UniqList> TestAdapter::recv_list() {
 
 /// Sends an event.
 void TestAdapter::send(Packet<Messages::Event> evt) {
-	// update player update
+	// game initialization
+	if (auto* data = std::get_if<Messages::Init>(&evt.value))
+		count = data->players.size();
+
+	// player selection
 	if (auto* data = std::get_if<Messages::Select>(&evt.value))
 		if (data->id > 0)
 			next = data->id;
@@ -33,7 +37,7 @@ Adapter::OptPacket<Messages::Event> TestAdapter::recv() {
 	// create a response to chat message
 	if (chat) {
 		auto pack = Packet<Messages::Event> { Messages::Chat{ .text = "stfu" }, chat };
-		chat = (chat + 1) % 8;
+		chat = (chat + 1) % count;
 		return pack;
 	};
 

@@ -7,6 +7,8 @@
 struct TestAdapter : Adapter {
 	/// Next player index response to generate.
 	std::optional<size_t> next;
+	/// Player count.
+	size_t count = 0;
 	/// Whether the player has sent a chat message.
 	size_t chat = 0;
 

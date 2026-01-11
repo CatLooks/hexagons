@@ -15,7 +15,7 @@ void GameState::updateCallback(std::function<void(bool enabled)> callback) {
 };
 
 /// Adds a new player to the game.
-void GameState::addPlayer(const Player& player) {
+void GameState::addPlayer(const Messages::Player& player) {
 	_plr.push_back(player);
 };
 
@@ -57,8 +57,14 @@ void GameState::init() {
 		return;
 	};
 
-	// reset player index
+	// send initialization packet
+	_adapter->send(Messages::Init{
+		.players = _plr
+	});
+
+	// select first player
 	_idx = 0;
+	_adapter->send(Messages::Select{ .id = _idx });
 	update();
 };
 
@@ -81,17 +87,17 @@ bool GameState::finish() {
 
 /// Advances the game to the next player.
 void GameState::next() {
-	// increment player index
-	if (++_idx >= _plr.size()) _idx = 0;
-	_clock.restart();
-
 	// lock game until a selection is received
 	lock();
 
 	// next player logic
 	if (_mode == Host) {
-		if (_idx == 0) {
+		bool turn = false;
+
+		// increment player index
+		if (++_idx >= _plr.size()) {
 			// increment turn number
+			_idx = 0;
 			_turn++;
 
 			// tick the map
@@ -99,11 +105,13 @@ void GameState::next() {
 
 			// transmit changes
 			_adapter->send_list(list);
+			turn = true;
 		};
+		_clock.restart();
 		update();
 
 		// select next player
-		_adapter->send(Messages::Select{ .id = _idx });
+		_adapter->send(Messages::Select{ .id = _idx, .turn = turn });
 	};
 };
 
@@ -136,10 +144,6 @@ void GameState::tick() {
 
 	// incoming events
 	while (auto data = _adapter->recv()) {
-		// reset timer on player selection
-		if (std::holds_alternative<Messages::Select>(data->value))
-			_clock.restart();
-
 		// ignore own packets
 		if (data->id == _adapter->id) continue;
 
@@ -154,6 +158,33 @@ void GameState::tick() {
 
 /// Processes a single event.
 void GameState::proc(const Adapter::Packet<Messages::Event>& event) {
+	// game initialization
+	if (auto* data = std::get_if<Messages::Init>(&event.value)) {
+		// store player list
+		_plr = data->players;
+		_turn = 0;
+		_idx = 0;
+
+		// get adapter index
+		// @todo
+
+		// wait for player selection
+		lock();
+		return;
+	};
+
+	// player selections
+	if (auto* data = std::get_if<Messages::Select>(&event.value)) {
+		// update player index
+		_idx = data->id;
+		if (data->turn) _turn++;
+		update();
+
+		// reset turn time
+		_clock.restart();
+		return;
+	};
+
 	// display chat message
 	if (auto* data = std::get_if<Messages::Chat>(&event.value)) {
 		// get author info
@@ -168,7 +199,7 @@ void GameState::proc(const Adapter::Packet<Messages::Event>& event) {
 		return;
 	};
 
-	printf("event proc\n");
+	printf("unknown event\n");
 };
 
 /// Returns current player info.

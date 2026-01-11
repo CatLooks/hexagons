@@ -13,11 +13,7 @@ class GameState {
 	friend dev::Factory;
 
 public:
-	/// Player description.
-	struct Player {
-		std::string  name; /// Player name.
-		Region::Team team; /// Player team.
-	};
+	using Player = Messages::Player;
 
 	/// Game controller mode.
 	enum Mode {
@@ -67,7 +63,7 @@ public:
 	/// Adds a new player to the game.
 	/// 
 	/// @param player Player info.
-	void addPlayer(const Player& player);
+	void addPlayer(const Messages::Player& player);
 
 	/// Updates object references.
 	/// 

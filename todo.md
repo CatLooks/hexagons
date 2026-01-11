@@ -1,13 +1,13 @@
 ## WIP List
 
 - host initialization broadcast
-- chat commands
 - move serializations
 
 ## To Do List
 
 (i have dementia sorry)
 
+- chat commands
 - network adapter
 - ai adapter
 - fix game state controller (for mp)
