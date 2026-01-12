@@ -21,13 +21,24 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
     startMenu = new GameStartMenu();
     joinMenu = new GameJoinMenu();
 
+	// add menus pages to container
     pages->add(mainMenu);
     pages->add(optionsMenu);
     pages->add(startMenu);
     pages->add(joinMenu);
 
+
     // show initial page
     pages->show(mainMenu);
+
+	// bind login toggle page actions
+    mainMenu->bindLogin([=]() {
+        mainMenu->setLoggedIn(true);
+        });
+
+    mainMenu->bindLogout([=]() {
+           mainMenu->setLoggedIn(false);
+        });
 
     // main -> game start (Host/Singleplayer)
     mainMenu->bindStart([=]() {

@@ -34,6 +34,10 @@ MainMenu::MainMenu() {
     _title->pos    = ui::Text::Static;
     _container->add(_title);
 
+    login_toggle = new ui::Pages();
+    login_toggle->bounds = { 1ps-100px, 0, 100px, 100px }; 
+
+
     /// Wide button factory.
     auto makeWideButton = [&](ui::Dim y_offset, std::string text) -> menuui::Button* {
         auto* btn = new menuui::Button();
@@ -42,6 +46,30 @@ MainMenu::MainMenu() {
         btn->setLabel()->setRaw(text);
         return btn;
     };
+
+    auto  makeLoginButton = [&](std::string text) -> menuui::Button* {
+        auto* btn = new menuui::Button();
+		btn->bounds = {0, 0, 1ps, 1ps };
+        btn->setSize({ 1ps, 1ps });
+        btn->setLabel()->setRaw(text);
+        return btn;
+		};
+
+    /// Login button.
+    _loginBtn = makeLoginButton("Login");
+    _loginBtn->setCall([this]() { if (_onLogin) _onLogin(); }, nullptr, menuui::Button::Click);
+    login_toggle->add(_loginBtn); // located in top right corner, not on the options list
+
+    /// Logout button.
+    _logoutBtn = makeLoginButton("Logout");
+    _logoutBtn->setCall([this]() { if (_onLogout) _onLogout(); }, nullptr, menuui::Button::Click);
+    login_toggle->add(_logoutBtn);
+
+    this->add(login_toggle);
+	login_toggle->show(_loginBtn); // show login button by default
+
+
+
 
     /// Start button.
     _startBtn = makeWideButton(-100px, "START GAME");
@@ -72,8 +100,22 @@ void MainMenu::bindJoin(Action action)    { _onJoin = action; }
 void MainMenu::bindExit(Action action)    { _onExit    = action; }
 /// Binds options button callback.
 void MainMenu::bindOptions(Action action) { _onOptions = action; }
+/// Binds login button callback.
+void MainMenu::bindLogin(Action action) { _onLogin = action; }
+/// Binds logout button callback.
+void MainMenu::bindLogout(Action action) { _onLogout = action; }
+
+
 
 /// Draws the main menu.
 void MainMenu::drawSelf(ui::RenderBuffer& target, sf::IntRect self) const {
     ui::Element::drawSelf(target, self);
 }
+/// Sets login state.
+void MainMenu::setLoggedIn(bool loggedIn) {
+        if (loggedIn) {
+            login_toggle->show(_logoutBtn);
+        } else {
+            login_toggle->show(_loginBtn);
+        }
+    }
