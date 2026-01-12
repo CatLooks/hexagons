@@ -58,7 +58,7 @@ MainMenu::MainMenu() {
     /// Login button.
     _loginBtn = makeLoginButton("Login");
     _loginBtn->setCall([this]() { if (_onLogin) _onLogin(); }, nullptr, menuui::Button::Click);
-    login_toggle->add(_loginBtn); // located in top right corner, not on the options list
+    login_toggle->add(_loginBtn); /// top-right toggle, not in options list
 
     /// Logout button.
     _logoutBtn = makeLoginButton("Logout");
@@ -66,10 +66,7 @@ MainMenu::MainMenu() {
     login_toggle->add(_logoutBtn);
 
     this->add(login_toggle);
-	login_toggle->show(_loginBtn); // show login button by default
-
-
-
+    login_toggle->show(_loginBtn); /// show login button by default
 
     /// Start button.
     _startBtn = makeWideButton(-100px, "START GAME");

@@ -3,6 +3,7 @@
 // Include the new header
 #include "menu/gameJoinMenu.hpp" 
 
+/// Menu system constructor.
 MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game* gameInstance)
     : context(itf.newContext())
 {
@@ -21,7 +22,7 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
     startMenu = new GameStartMenu();
     joinMenu = new GameJoinMenu();
 
-	// add menus pages to container
+    // add menu pages to container
     pages->add(mainMenu);
     pages->add(optionsMenu);
     pages->add(startMenu);
@@ -31,7 +32,7 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
     // show initial page
     pages->show(mainMenu);
 
-	// bind login toggle page actions
+    // bind login toggle actions
     mainMenu->bindLogin([=]() {
         mainMenu->setLoggedIn(true);
         });
@@ -88,7 +89,7 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
     joinMenu->bindJoin([=](const std::string& code) {
         startMenu->enterAsJoiner(code);
 
-        // 2. Show the start menu (it will now be on the STEP_WAITING page)
+        // Show the start menu (it will now be on the STEP_WAITING page)
         pages->show(startMenu);
         });
 }
