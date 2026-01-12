@@ -85,12 +85,10 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
         });
 
     // join menu -> join action
-    joinMenu->bindJoin([&itf, gameCtx, gameInstance](const std::string& code) {
-        // 1. Pass the code to the game instance to initiate connection
-        // gameInstance->connect(code); or smth like that?
+    joinMenu->bindJoin([=](const std::string& code) {
+        startMenu->enterAsJoiner(code);
 
-		// 2. Switch to the game context - temp while no multiplayer implemented here
-        gameInstance->activate();
-        itf.switchContext(*gameCtx);
+        // 2. Show the start menu (it will now be on the STEP_WAITING page)
+        pages->show(startMenu);
         });
 }
