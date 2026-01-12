@@ -1,9 +1,8 @@
 #include "menu.hpp"
 #include "game.hpp"
-// Include the new header
-#include "menu/gameJoinMenu.hpp" 
+#include "menu/gameJoinMenu.hpp"
 
-MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game* gameInstance)
+MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game* gameInstance, Net& net)
     : context(itf.newContext())
 {
     // switch to menu UI context
@@ -21,6 +20,7 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
     startMenu = new GameStartMenu();
     joinMenu = new GameJoinMenu();
 
+    // add menus pages to container
     pages->add(mainMenu);
     pages->add(optionsMenu);
     pages->add(startMenu);
@@ -28,6 +28,18 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
 
     // show initial page
     pages->show(mainMenu);
+
+
+    // bind login toggle page actions
+    mainMenu->bindLogin([=, &net]() {
+        net.login();
+        mainMenu->setLoggedIn(true);
+        });
+
+    mainMenu->bindLogout([=, &net]() {
+        mainMenu->setLoggedIn(false);
+        net.logout();
+    });
 
     // main -> game start (Host/Singleplayer)
     mainMenu->bindStart([=]() {
@@ -74,12 +86,10 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
         });
 
     // join menu -> join action
-    joinMenu->bindJoin([&itf, gameCtx, gameInstance](const std::string& code) {
-        // 1. Pass the code to the game instance to initiate connection
-        // gameInstance->connect(code); or smth like that?
+    joinMenu->bindJoin([=](const std::string& code) {
+        startMenu->enterAsJoiner(code);
 
-		// 2. Switch to the game context - temp while no multiplayer implemented here
-        gameInstance->activate();
-        itf.switchContext(*gameCtx);
+        // 2. Show the start menu (it will now be on the STEP_WAITING page)
+        pages->show(startMenu);
         });
 }

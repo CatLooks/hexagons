@@ -11,6 +11,14 @@ public:
     /// Main menu callback type.
     using Action = std::function<void()>;
 
+    ui::Pages* login_toggle = nullptr; /// Login page container.
+    menuui::Button* _loginBtn = nullptr; /// "Login" button.
+    menuui::Button* _logoutBtn = nullptr; /// "Logout" button.
+
+    /// Sets which login or logout button is visible.
+    /// @param loggedIn Whether the user is logged in.
+    void setLoggedIn(bool loggedIn);
+
 private:
     ui::Solid* _bg        = nullptr; /// Optional background panel.
     ui::Text*  _title     = nullptr; /// Menu title label.
@@ -27,6 +35,8 @@ private:
     Action _onJoin;    /// Join callback.
     Action _onExit;    /// Exit callback.
     Action _onOptions; /// Options callback.
+    Action _onLogin;   /// Login callback.
+    Action _onLogout;  /// Logout callback.
 
 public:
     /// Constructs a main menu.
@@ -44,7 +54,12 @@ public:
     /// Binds options button callback.
     /// @param action Callback invoked when the options button is pressed.
     void bindOptions(Action action);
-
+    /// Binds options button callback.
+    /// @param action Callback invoked when the login button is pressed.
+    void bindLogin(Action action);
+    /// Binds options button callback.
+    /// @param action Callback invoked when the login button is pressed.
+    void bindLogout(Action action);
 protected:
     /// Draws the main menu.
     /// @param target Render buffer.

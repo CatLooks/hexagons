@@ -40,22 +40,33 @@ static void applySettings(ui::Text* text, const ui::TextSettings& settings) {
 GameStartMenu::GameStartMenu() {
     bounds = { 0, 0, 1ps, 1ps };
 
-    // defaults
-    _selectedMode = Mode_None;
-    _selectedDiff = Diff_None;
-    _selectedMap = Map_None;
-    _currentStep = STEP_MODE;
-    _maxPlayers = 2;
-    generateGameCode();
+    // 1. Najpierw zainicjalizuj g³ówne kontenery (szkielet)
+    _mainSwitcher = new ui::Pages();
+    _mainSwitcher->bounds = { 0, 0, 1ps, 1ps };
+    add(_mainSwitcher);
 
+    _setupContainer = new ui::Element();
+    _setupContainer->bounds = { 0, 0, 1ps, 1ps };
+    _mainSwitcher->add(_setupContainer);
+
+    // 2. Zainicjalizuj paski (Sidebar i Nawigacja) - musz¹ istnieæ przed stronami!
     buildSidebar();
+    // UWAGA: Wewn¹trz buildSidebar usuñ liniê 'add(_sidebarBg);' 
+    // bo dodajemy go poni¿ej do w³aœciwego kontenera
+    _setupContainer->add(_sidebarBg);
 
-    /// Content page container.
+    buildNavigation();
+    _setupContainer->add(_navArea);
+
+    // 3. Zainicjalizuj kontener na strony
     _contentPages = new ui::Pages();
     _contentPages->bounds = { 0.25ps, 0, 0.75ps, 0.85ps };
-    add(_contentPages);
+    _setupContainer->add(_contentPages);
 
-    /// Build pages.
+    // 4. Dopiero teraz twórz strony i Lobby (mog¹ one teraz bezpiecznie wywo³aæ updateUI)
+    _pageWaitingLobby = new LobbyMenu();
+    _mainSwitcher->add(_pageWaitingLobby);
+
     _pageMode = createModePage();
     _pageDiff = createDiffPage();
     _pageMap = createMapPage();
@@ -66,9 +77,29 @@ GameStartMenu::GameStartMenu() {
     _contentPages->add(_pageMap);
     _contentPages->add(_pageLobby);
 
-    buildNavigation();
+    // 5. Ustawienia domyœlne
+    _selectedMode = Mode_None;
+    _selectedDiff = Diff_None;
+    _selectedMap = Map_None;
+    _currentStep = STEP_MODE;
+    _maxPlayers = 2;
 
+    // 6. Binduj callbacki Lobby
+    _pageWaitingLobby->bindStart([this]() { if (_onStartGame) _onStartGame(); });
+    _pageWaitingLobby->bindLeave([this]() {
+        if (_selectedMode == Mode_Host && _currentStep == STEP_WAITING) {
+            _currentStep = STEP_LOBBY;
+            updateUI();
+        }
+        else {
+            if (_onBack) _onBack();
+        }
+        });
+
+    // 7. Na samym koñcu zaktualizuj UI
     updateUI();
+    generateGameCode();
+
 }
 
 /// Generates a new room code.
@@ -76,6 +107,10 @@ void GameStartMenu::generateGameCode() {
     static std::mt19937 rng(std::random_device{}());
     std::uniform_int_distribution<int> dist(100000, 999999);
     _gameCode = std::to_string(dist(rng));
+
+    if (_pageWaitingLobby) {
+        _pageWaitingLobby->setRoomCode(_gameCode);
+    }
 }
 
 /// Builds sidebar UI elements.
@@ -83,7 +118,6 @@ void GameStartMenu::buildSidebar() {
     _sidebarBg = new ui::Solid();
     _sidebarBg->color = sf::Color(15, 15, 25, 255);
     _sidebarBg->bounds = { 0, 0, 0.25ps, 1ps };
-    add(_sidebarBg);
 
     auto addLabel = [this](ui::Dim yPos) -> ui::Text* {
         auto* lbl = ui::Text::raw(k_SidebarFont, "");
@@ -113,9 +147,8 @@ void GameStartMenu::buildSidebar() {
 
 /// Builds navigation controls.
 void GameStartMenu::buildNavigation() {
-    auto* navArea = makeContainer();
-    navArea->bounds = { 0.25ps, 0.85ps, 0.75ps, 0.15ps };
-    add(navArea);
+    _navArea = makeContainer();
+    _navArea->bounds = { 0.25ps, 0.85ps, 0.75ps, 0.15ps };
 
     /// Previous button.
     _prevBtn = new menuui::Button();
@@ -123,7 +156,7 @@ void GameStartMenu::buildNavigation() {
     _prevBtn->position() = { 0.2as, 0.5as };
     _prevBtn->setLabel()->setRaw("< PREV");
     _prevBtn->setCall([this]() { prevStep(); }, nullptr, menuui::Button::Click);
-    navArea->add(_prevBtn);
+    _navArea->add(_prevBtn);
 
     /// Next/start button.
     _nextBtn = new menuui::Button();
@@ -131,7 +164,7 @@ void GameStartMenu::buildNavigation() {
     _nextBtn->position() = { 0.8as, 0.5as };
     _nextBtn->setLabel()->setRaw("NEXT >");
     _nextBtn->setCall([this]() { nextStep(); }, nullptr, menuui::Button::Click);
-    navArea->add(_nextBtn);
+    _navArea->add(_nextBtn);
 }
 
 /// Creates game mode selection page.
@@ -266,6 +299,8 @@ ui::Element* GameStartMenu::createLobbyPage() {
     makeCountBtn(120px, 4);
 
     /// Room code section.
+    generateGameCode();
+
     auto* lblCodeDesc = ui::Text::raw(k_SidebarFont, "Room Code (Share this!):");
     lblCodeDesc->bounds = { 0, 450px, 1ps, 0 };
     lblCodeDesc->align = ui::Text::Center;
@@ -276,7 +311,7 @@ ui::Element* GameStartMenu::createLobbyPage() {
     lblCode->bounds = { 0, 520px, 1ps, 0 };
     lblCode->align = ui::Text::Center;
     lblCode->pos = ui::Text::Static;
-    lblCode->hook([=]() { lblCode->setRaw(_gameCode); });
+    lblCode->hook([=]() { lblCode->setRaw("#" + _gameCode); });
     page->add(lblCode);
 
     return page;
@@ -324,6 +359,7 @@ bool GameStartMenu::canProceed() const {
     case STEP_DIFF:  return _selectedDiff != Diff_None;
     case STEP_MAP:   return _selectedMap != Map_None;
     case STEP_LOBBY: return true;
+    case STEP_WAITING: return true;
     default: return false;
     }
 }
@@ -332,105 +368,137 @@ bool GameStartMenu::canProceed() const {
 void GameStartMenu::nextStep() {
     if (!canProceed()) return;
 
-    int next = _currentStep + 1;
-    bool isHost = (_selectedMode == Mode_Host);
+    // Logika przejœcia z etapu MAPY
+    if (_currentStep == STEP_MAP) {
+        if (_selectedMode == Mode_Single) {
+            // Jeœli Singleplayer -> KONIEC, startujemy grê
+            if (_onStartGame) _onStartGame();
+            return;
+        }
+        else {
+            // Jeœli Host -> idziemy do ustawieñ Lobby
+            _currentStep = STEP_LOBBY;
+            updateUI();
+            return;
+        }
+    }
 
-    // flow control
-    if (next == STEP_LOBBY && !isHost) {
-        // If singleplayer, trying to go to Lobby -> Start Game
+    // Logika przejœcia z ustawieñ LOBBY do POCZEKALNI (tylko dla Hosta)
+    if (_currentStep == STEP_LOBBY) {
+        _currentStep = STEP_WAITING;
+
+        _pageWaitingLobby->setRoomCode(_gameCode);
+        _pageWaitingLobby->setAsHost(true);
+        _pageWaitingLobby->updateList({ { "Host (You)", sf::Color::Cyan, true, true } });
+
+        updateUI();
+        return;
+    }
+
+    // Jeœli jesteœmy w POCZEKALNI i klikamy Start Game
+    if (_currentStep == STEP_WAITING) {
         if (_onStartGame) _onStartGame();
         return;
     }
 
-    if (next > STEP_LOBBY) {
-        // End of Host flow -> Start Game
-        if (_onStartGame) _onStartGame();
-        return;
-    }
-
-    _currentStep = next;
+    // Standardowe przejœcie dla kroków MODE i DIFF
+    _currentStep++;
     updateUI();
 }
 
 /// Goes to previous step.
 void GameStartMenu::prevStep() {
-    int prev = _currentStep - 1;
-    if (prev >= STEP_MODE) {
-        _currentStep = prev;
+    if (_currentStep > STEP_MODE) {
+        _currentStep--;
         updateUI();
     }
 }
 
 /// Updates menu UI.
 void GameStartMenu::updateUI() {
-    /// Show correct page.
-    ui::Element* page = nullptr;
-    switch (_currentStep) {
-    case STEP_MODE:  page = _pageMode;  break;
-    case STEP_DIFF:  page = _pageDiff;  break;
-    case STEP_MAP:   page = _pageMap;   break;
-    case STEP_LOBBY: page = _pageLobby; break;
+    if (_currentStep == STEP_WAITING) {
+        // POKAZUJEMY TYLKO LOBBY - Sidebar i NavArea znikaj¹ fizycznie, 
+        // bo s¹ w innym dziecku ui::Pages
+        _mainSwitcher->show(_pageWaitingLobby);
     }
-    _contentPages->show(page);
+    else {
+        // POKAZUJEMY CA£Y SETUP
+        _mainSwitcher->show(_setupContainer);
 
-    /// Update sidebar labels.
+        // Wewn¹trz setupu pokazujemy odpowiedni¹ pod-stronê
+        ui::Element* subPage = nullptr;
+        switch (_currentStep) {
+        case STEP_MODE:  subPage = _pageMode;  break;
+        case STEP_DIFF:  subPage = _pageDiff;  break;
+        case STEP_MAP:   subPage = _pageMap;   break;
+        case STEP_LOBBY: subPage = _pageLobby; break;
+        }
+        _contentPages->show(subPage);
+    }
+
     updateSidebarLabels();
-
-    /// Update navigation buttons.
     updateNavigationButtons();
 }
 
 /// Updates sidebar labels.
 void GameStartMenu::updateSidebarLabels() {
-    bool isMP = (_selectedMode == Mode_Host);
+    if (!_lblMode || !_lblDiff || !_lblMap || !_lblLobby) return;
 
-    /// 1. Mode.
     _lblMode->setRaw("1. Mode");
     _lblMode->activate();
     applySettings(_lblMode, (_currentStep == STEP_MODE) ? k_SidebarFontActive : k_SidebarFont);
-
-    /// 2. Difficulty.
-    _lblDiff->setRaw("2. Difficulty");
-    _lblDiff->activate();
+    
+	_lblDiff->setRaw("2. Difficulty");
+	_lblDiff->activate();
     applySettings(_lblDiff, (_currentStep == STEP_DIFF) ? k_SidebarFontActive : k_SidebarFont);
+    
 
-    /// 3. Map.
     _lblMap->setRaw("3. Map");
     _lblMap->activate();
     applySettings(_lblMap, (_currentStep == STEP_MAP) ? k_SidebarFontActive : k_SidebarFont);
 
-    /// 4. Lobby (conditional).
-    if (isMP) {
-        _lblLobby->setRaw("4. Lobby");
+
+    if (_selectedMode == Mode_Host) {
         _lblLobby->activate();
-        applySettings(_lblLobby, (_currentStep == STEP_LOBBY) ? k_SidebarFontActive : k_SidebarFont);
+        _lblLobby->setRaw("4. Lobby");
+        bool isLobbyActive = (_currentStep == STEP_LOBBY || _currentStep == STEP_WAITING);
+        applySettings(_lblLobby, isLobbyActive ? k_SidebarFontActive : k_SidebarFont);
     }
     else {
+        // W Singleplayer punkt 4 w ogóle nie istnieje w UI
         _lblLobby->deactivate();
     }
 }
 
 /// Updates navigation buttons.
 void GameStartMenu::updateNavigationButtons() {
-    bool canContinue = canProceed();
-    bool isMP = (_selectedMode == Mode_Host);
+    if (!_navArea || !_prevBtn || !_nextBtn) return;
 
+    if (_currentStep == STEP_WAITING) {
+        _navArea->deactivate();
+        return;
+    }
+
+    _navArea->activate();
     _prevBtn->display = (_currentStep > STEP_MODE);
 
-    bool isLastStep = false;
-    if (isMP) {
-        isLastStep = (_currentStep == STEP_LOBBY);
+    // Sprawdzamy, czy obecny krok jest ostatnim dla danego trybu
+    bool isLastStepForMode = false;
+    if (_selectedMode == Mode_Single) {
+        isLastStepForMode = (_currentStep == STEP_MAP);
     }
     else {
-        isLastStep = (_currentStep == STEP_MAP);
+        // Dla hosta ostatnim krokiem przed wejœciem do poczekalni jest STEP_LOBBY
+        isLastStepForMode = (_currentStep == STEP_LOBBY);
     }
 
-    if (isLastStep)
+    if (isLastStepForMode)
         _nextBtn->setLabel()->setRaw("START GAME");
     else
         _nextBtn->setLabel()->setRaw("NEXT >");
 
-    if (canContinue) {
+    // Aktywacja przycisku NEXT tylko jeœli dokonano wyboru
+    if (canProceed()) {
         _nextBtn->setLabel()->setColor(sf::Color::White);
         _nextBtn->setCall([this]() { nextStep(); }, nullptr, menuui::Button::Click);
     }
@@ -439,6 +507,7 @@ void GameStartMenu::updateNavigationButtons() {
         _nextBtn->setCall(nullptr, nullptr, menuui::Button::Click);
     }
 }
+
 
 /// Binds back callback.
 void GameStartMenu::bindBack(Action action) {
@@ -453,4 +522,17 @@ void GameStartMenu::bindStart(Action action) {
 /// Draws the menu.
 void GameStartMenu::drawSelf(ui::RenderBuffer& target, sf::IntRect self) const {
     ui::Element::drawSelf(target, self);
+}
+
+void GameStartMenu::enterAsJoiner(const std::string& code) {
+    _selectedMode = Mode_None;
+    _gameCode = code;
+    _currentStep = STEP_WAITING;
+    updateNavigationButtons();
+    updateSidebarLabels();
+    _pageWaitingLobby->setRoomCode(_gameCode);
+    _pageWaitingLobby->setAsHost(false);
+    _pageWaitingLobby->updateList({ {"Connecting...", sf::Color::White, false, false} });
+
+    updateUI();
 }

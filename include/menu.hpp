@@ -5,6 +5,7 @@
 #include "menu/optionsMenu.hpp"
 #include "menu/gameStartMenu.hpp"
 #include "menu/gameJoinMenu.hpp"
+#include "networking/Net.hpp"
 #include <iostream>
 
 class Game;
@@ -29,5 +30,6 @@ public:
     /// @param itf          UI interface.
     /// @param gameCtx      Game context id.
     /// @param gameInstance Game controller instance.
-    MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game* gameInstance);
+    /// @param net          Networking facade instance from main().
+    MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game* gameInstance, Net& net);
 };

@@ -2,6 +2,7 @@
 #include "game.hpp"
 #include "assets.hpp"
 #include "menu.hpp"
+#include "networking/Net.hpp"
 
 #include <iostream>
 /// Program entry.
@@ -17,6 +18,11 @@ int main() {
 	assets::loadAssets();
 	if (assets::error)
 		return 1;
+
+	// initialize networking
+	EOSManager* eos = &EOSManager::GetInstance();
+	Net net;
+	//net.login();
 
 	// create window
 	ui::window.create({ 1600, 900 }, false);
@@ -126,13 +132,14 @@ int main() {
 	}
 
 
-	MenuSystem menuSystem(itf, &game_ctx, game);
+	MenuSystem menuSystem(itf, &game_ctx, game, net);
 	itf.switchContext(menuSystem.context);
 
 
 
 	// window main loop
 	while (ui::window.active()) {
+		net.fetch();
 		ui::window.events();
 		ui::window.frame();
 	};

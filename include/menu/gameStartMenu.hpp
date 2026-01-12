@@ -8,6 +8,7 @@
 #include <functional>
 #include <vector>
 #include <string>
+#include "menu/lobbyMenu.hpp"
 
 /// Game start configuration menu.
 class GameStartMenu : public ui::Element {
@@ -22,11 +23,17 @@ public:
     /// Map identifier.
     enum MapID { Map_None = -1, Map_1, Map_2, Map_3 };
 
-    // Step constants
-    static constexpr int STEP_MODE = 0;
-    static constexpr int STEP_DIFF = 1;
-    static constexpr int STEP_MAP = 2;
-    static constexpr int STEP_LOBBY = 3; // Only for Multiplayer
+    // Steps
+    enum Step {
+        STEP_MODE,
+        STEP_DIFF,
+        STEP_MAP,
+        STEP_LOBBY,
+        STEP_WAITING 
+    };
+
+    ui::Pages* _mainSwitcher;    // G³ówny prze³¹cznik widoków
+    ui::Element* _setupContainer; // Kontener na: Sidebar + Setup Pages + NavArea
 
 private:
     ui::Solid* _bg = nullptr; /// Background panel.
@@ -39,6 +46,8 @@ private:
     ui::Text* _lblMap = nullptr;
     ui::Text* _lblLobby = nullptr; // New: Multiplayer settings
 
+    ui::Element* _navArea = nullptr;
+
     menuui::Button* _backBtn = nullptr; /// Back navigation button.
     menuui::Button* _prevBtn = nullptr; /// Previous step button.
     menuui::Button* _nextBtn = nullptr; /// Next / start button.
@@ -47,6 +56,7 @@ private:
     ui::Element* _pageDiff = nullptr; /// Difficulty selection page root.
     ui::Element* _pageMap = nullptr; /// Map selection page root.
     ui::Element* _pageLobby = nullptr; /// Lobby settings page root.
+	LobbyMenu* _pageWaitingLobby;      /// Waiting lobby page root.
 
     int _currentStep = 0; /// Currently active configuration step.
 
@@ -64,7 +74,7 @@ private:
     std::vector<menuui::Button*> _playerCountButtons;
     std::vector<menuui::Button*> _diffButtons;
     std::vector<menuui::Button*> _mapButtons;
-
+  
     Action _onBack;      /// Back callback.
     Action _onStartGame; /// Start game callback.
 
@@ -85,6 +95,7 @@ public:
     int getMaxPlayers() const { return (_selectedMode == Mode_Host) ? _maxPlayers : 1; }
     /// @return The generated game code.
     std::string getGameCode() const { return _gameCode; }
+    void enterAsJoiner(const std::string& code);
 
 protected:
     void drawSelf(ui::RenderBuffer& target, sf::IntRect self) const override;

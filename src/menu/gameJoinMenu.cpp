@@ -123,7 +123,7 @@ void GameJoinMenu::onInputUpdate(const sf::String& string) {
 void GameJoinMenu::attemptJoin() {
     setStatusMessage("Connecting...", false);
     if (_onJoin) {
-        _onJoin("");
+        _onJoin("213742");
     }
 }
 
