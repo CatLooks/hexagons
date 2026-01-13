@@ -27,14 +27,14 @@ namespace Moves {
 	///
 	/// Stores a state change for a single region.
 	struct RegionChange : Move {
-		Region  state; /// New region state (manually set).
-		Region a_prev; /// Previous region state.
+		RegionData  state; /// New region state (manually set).
+		RegionData a_prev; /// Previous region state.
 
 		/// Constructs a region change move.
 		/// 
 		/// @param pos Region access state.
 		/// @param prev Previous region state.
-		RegionChange(sf::Vector2i pos, Region prev);
+		RegionChange(sf::Vector2i pos, RegionData prev);
 
 		/// Applies the move.
 		void onApply(Map* map) override;

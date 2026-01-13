@@ -77,7 +77,8 @@ namespace Serialize {
 		// region change
 		IF(Moves::RegionChange) {
 			packet << (uint8_t)M_RegionChange;
-			packet << data->state;
+			packet << data->state.res();
+			packet << data->state.var();
 		};
 	};
 
@@ -151,7 +152,10 @@ namespace Serialize {
 			}; break;
 			case M_RegionChange: {
 				auto* move = new Moves::RegionChange(pos, {});
-				move->state = from<Region>(packet);
+				move->state = {
+					from<RegionRes>(packet),
+					from<RegionVar>(packet)
+				};
 				res = move;
 			}; break;
 		};

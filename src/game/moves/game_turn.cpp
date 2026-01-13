@@ -31,18 +31,20 @@ namespace Moves {
 	};
 
 	/// Constructs a region change move.
-	RegionChange::RegionChange(sf::Vector2i pos, Region prev) :
+	RegionChange::RegionChange(sf::Vector2i pos, RegionData prev) :
 		state{}, a_prev(prev) { skill_pos = pos; };
 
 	/// Applies the move.
 	void RegionChange::onApply(Map* map) {
 		// get tile
 		Hex* hex = map->at(skill_pos);
-		if (!hex) return;
+		if (!hex || !hex->region()) return;
+
+		// store previous region state
+		a_prev = hex->region()->data();
 
 		// override region state
-		if (hex->region())
-			*hex->region() = state;
+		hex->region()->setData(state);
 	};
 
 	/// Reverts the move.
@@ -52,7 +54,6 @@ namespace Moves {
 		if (!hex) return;
 
 		// override region state
-		if (hex->region())
-			*hex->region() = a_prev;
+		hex->region()->setData(a_prev);
 	};
 };

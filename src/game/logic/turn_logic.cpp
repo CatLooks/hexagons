@@ -12,9 +12,9 @@ namespace logic {
 		// update all regions
 		Regions::foreach(map, [&list](Region& reg, sf::Vector2i pos) {
 			// record region state change
-			auto* move = new Moves::RegionChange(pos, reg);
+			auto* move = new Moves::RegionChange(pos, reg.data());
 			reg.tick();
-			move->state = reg;
+			move->state = reg.data();
 
 			// register region change move
 			list.push_back(std::unique_ptr<Move>(move));

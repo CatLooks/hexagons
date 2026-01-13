@@ -20,6 +20,9 @@ struct HexBase {
 
 	/// Tile team.
 	Region::Team team = Region::Unclaimed;
+
+	/// Returns hex base.
+	HexBase base() const;
 };
 
 /// References to entities on the hex.
