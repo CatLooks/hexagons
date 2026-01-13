@@ -73,11 +73,11 @@ void Net::host(uint32_t maxPlayers, const char* lobbyCode) {
 }
 
 /// Find and join a lobby as a client.
-void Net::connect() {
+void Net::connect(std::string& roomCode) {
     ResetHandshakeState();
     m_role = Role::Client;
 
-    login();
+    //login();
     EOS_ProductUserId localId = m_eosManager.GetAuthManager()->GetLocalUserId();
 
     while (!localId) {
@@ -88,7 +88,7 @@ void Net::connect() {
     m_eosManager.CreateLobbyManager(localId);
     if (auto lobby = m_eosManager.GetLobbyManager()) {
         AttachToLobby(lobby);
-        lobby->FindLobby();
+        lobby->FindLobby(roomCode);
         std::cout << "[Net] Searching for lobby..." << std::endl;
     }
     else {

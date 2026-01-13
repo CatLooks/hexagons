@@ -1,4 +1,5 @@
 #include "game/spread.hpp"
+#include <list>
 
 /// Default spread check.
 bool Spread::default_check(const Tile&) { return true; };

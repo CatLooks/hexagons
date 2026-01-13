@@ -62,7 +62,7 @@ void GameConnectionManager::OnLoginCompleted(EOS_ProductUserId newLocalUserId) {
     }
     else {
         std::cout << "[Connection] Issuing command: FindLobby" << std::endl;
-        lobby->FindLobby();
+        //lobby->FindLobby();
     }
 }
 

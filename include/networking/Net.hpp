@@ -47,7 +47,7 @@ public:
     void host(uint32_t maxPlayers, const char* lobbyName);
 
     /// Finds and joins the first available lobby as a client.
-    void connect();
+    void connect(std::string& roomCode);
 
     /// Closes connections and releases resources.
     void close();

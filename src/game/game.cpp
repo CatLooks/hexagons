@@ -72,7 +72,7 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 	// add camera pan handler
 	game_layer->onUpdate([=](const sf::Time& delta) {
 		// set layer scale
-		game_layer->setArea(ui::DimVector(1es, 1es) * _camera.zoom(), { 0px, 0px, 1ps, 1ps });
+		game_layer->setArea(ui::DimVector(1.0es, 1.0es) * _camera.zoom(), { 0px, 0px, 1ps, 1ps });
 
 		// keyboard camera pan
 		if (ui::window.focused()) {

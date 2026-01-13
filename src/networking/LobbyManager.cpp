@@ -37,7 +37,7 @@ void EOS_CALL LobbyManager::OnCreateLobbyComplete(const EOS_Lobby_CreateLobbyCal
 	}
 }
 
-void LobbyManager::FindLobby() {
+void LobbyManager::FindLobby(std::string& roomCode) {
 	isBusy = true;
 
 	if (LobbySearchHandle) {
@@ -61,7 +61,7 @@ void LobbyManager::FindLobby() {
 	SearchParameter.ApiVersion = EOS_LOBBY_ATTRIBUTEDATA_API_LATEST;
 	SearchParameter.Key = EOS_LOBBY_SEARCH_BUCKET_ID;
 	SearchParameter.ValueType = EOS_ELobbyAttributeType::EOS_AT_STRING;
-	SearchParameter.Value.AsUtf8 = "default";
+	SearchParameter.Value.AsUtf8 = roomCode.c_str();
 
 	EOS_LobbySearch_SetParameterOptions SetParamOptions = {};
 	SetParamOptions.ApiVersion = EOS_LOBBYSEARCH_SETPARAMETER_API_LATEST;

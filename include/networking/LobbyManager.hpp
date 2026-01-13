@@ -19,7 +19,7 @@ public:
 	LobbyManager(EOS_HLobby handle, EOS_ProductUserId id, EOS_HP2P p2p);
 
 	void CreateLobby(uint32_t maxPlayers, const char* lobbyCode);
-	void FindLobby();
+	void FindLobby(std::string& roomCode);
 
 	std::vector<std::shared_ptr<P2PManager>> GetAllP2PConnections() const { return P2PConnections; }
 	std::shared_ptr<P2PManager> GetP2PConnection(EOS_ProductUserId peerId);

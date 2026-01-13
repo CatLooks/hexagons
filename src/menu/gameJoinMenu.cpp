@@ -135,6 +135,8 @@ void GameJoinMenu::attemptJoin() {
         }
     }
 
+	_net->connect(code);
+
     _onJoin(code);
 }
 

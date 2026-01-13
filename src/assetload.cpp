@@ -1,4 +1,5 @@
 #include "assetload.hpp"
+#include <cstring>
 
 namespace assets {
 	/// Returns asset path.
