@@ -1,4 +1,5 @@
 #include "game/serialize/messages.hpp"
+#include "game/serialize/map.hpp"
 
 namespace Serialize {
 	/// Writes player description to the packet.
@@ -20,6 +21,7 @@ namespace Serialize {
 		// game initialization
 		if (auto* data = std::get_if<Messages::Init>(&evt)) {
 			packet << (uint8_t)E_Init;
+			packet << data->temp;
 			encodeVec<Messages::Player>(packet, data->players);
 		};
 		// player select
@@ -51,6 +53,7 @@ namespace Serialize {
 			// game initialization
 			case E_Init: return Messages::Init
 			{
+				.temp = from<Template>(packet),
 				.players = decodeVec<Messages::Player>(packet)
 			};
 			// player select

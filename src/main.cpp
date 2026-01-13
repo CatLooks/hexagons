@@ -68,15 +68,6 @@ int main() {
 
 		game = new Game(layer_map, layer_gui, layer_msg, &state);
 
-		state.addPlayer({ .name = "Sus", .team = Region::Red });
-		state.addPlayer({ .name = "Bot 1", .team = Region::Orange });
-		state.addPlayer({ .name = "Bot 2", .team = Region::Yellow });
-		state.addPlayer({ .name = "Bot 3", .team = Region::Green });
-		state.addPlayer({ .name = "Bot 4", .team = Region::Aqua });
-		state.addPlayer({ .name = "Bot 5", .team = Region::Blue });
-		state.addPlayer({ .name = "Bot 6", .team = Region::Purple });
-		state.init();
-
 		{
 			Map& map = game->map;
 
@@ -265,6 +256,16 @@ int main() {
 			map.at({ 20, 0 })->region()->money = 50;
 			map.at({ 20, 6 })->region()->money = 50;
 		};
+
+		state.addPlayer({ .name = "Sus", .team = Region::Red });
+		state.addPlayer({ .name = "Bot 1", .team = Region::Orange });
+		state.addPlayer({ .name = "Bot 2", .team = Region::Yellow });
+		state.addPlayer({ .name = "Bot 3", .team = Region::Green });
+		state.addPlayer({ .name = "Bot 4", .team = Region::Aqua });
+		state.addPlayer({ .name = "Bot 5", .team = Region::Blue });
+		state.addPlayer({ .name = "Bot 6", .team = Region::Purple });
+		state.init();
+
 		layer_map->add(game);
 
 		// developer panel
@@ -305,6 +306,7 @@ int main() {
 
 	// window main loop
 	while (ui::window.active()) {
+		// custom events
 		for (const auto& event : ui::window.events()) {
 			if (auto data = event.getIf<sf::Event::KeyPressed>()) {
 				if (data->code == sf::Keyboard::Key::F1 && !data->control) {
@@ -313,28 +315,15 @@ int main() {
 				if (data->code == sf::Keyboard::Key::F2 && !data->control) {
 					itf.switchContext(test_ctx);
 				};
-				if (data->code == sf::Keyboard::Key::F3) {
-					using namespace Serialize;
-
-					auto temp = Template::generate(&game->map);
-
-					sf::Packet pack;
-					pack << temp;
-
-					auto data = reinterpret_cast<const uint8_t*>(pack.getData());
-
-					Template t;
-					pack >> t;
-
-					t.construct(&game->map);
-				};
-
+				
 				// reload translation file
-				if (data->code == sf::Keyboard::Key::Insert && data->control) {
+				if (flags::debug && data->code == sf::Keyboard::Key::Insert) {
 					assets::loadLanguage("en-us.tlml");
 				};
 			};
 		};
+
+		// generate new frame
 		ui::window.frame();
 	};
 	return 0;
