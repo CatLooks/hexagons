@@ -41,10 +41,11 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 				break;
 			};
 		};
-		if (white) return;
 
 		// send message to chat
-		_state.message(text);
+		if (!white)
+			_state.message(text);
+		_chat->hide();
 	});
 
 	// setup camera
