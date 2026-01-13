@@ -1,5 +1,7 @@
 #include "menu/gameJoinMenu.hpp"
 #include "assets.hpp"
+#include <SFML/System/String.hpp>
+#include <string>
 
 /// Title text settings.
 static const ui::TextSettings k_TitleFont = {
@@ -24,7 +26,7 @@ static ui::Panel::Map makeInputPanelMap() {
 }
 
 /// Constructs a game join menu.
-GameJoinMenu::GameJoinMenu() {
+GameJoinMenu::GameJoinMenu(Net* net) : _net(net) {
     bounds = { 0, 0, 1ps, 1ps };
 
     /// Background.
@@ -101,6 +103,7 @@ void GameJoinMenu::buildForm() {
         attemptJoin();
     });
 
+
     _codeField->focus(true);
     add(_codeField);
 
@@ -123,7 +126,7 @@ void GameJoinMenu::onInputUpdate(const sf::String& string) {
 void GameJoinMenu::attemptJoin() {
     setStatusMessage("Connecting...", false);
     if (_onJoin) {
-        _onJoin("213742");
+        _onJoin("213769");
     }
 }
 

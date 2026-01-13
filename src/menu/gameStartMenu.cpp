@@ -37,7 +37,7 @@ static void applySettings(ui::Text* text, const ui::TextSettings& settings) {
 }
 
 /// Constructs a game start menu.
-GameStartMenu::GameStartMenu() {
+GameStartMenu::GameStartMenu(Net* net) : _net(net) {
     bounds = { 0, 0, 1ps, 1ps };
 
     // 1. Najpierw zainicjalizuj g³ówne kontenery (szkielet)
@@ -385,6 +385,7 @@ void GameStartMenu::nextStep() {
 
     // Logika przejœcia z ustawieñ LOBBY do POCZEKALNI (tylko dla Hosta)
     if (_currentStep == STEP_LOBBY) {
+        _net->host(_maxPlayers, _gameCode.c_str());
         _currentStep = STEP_WAITING;
 
         _pageWaitingLobby->setRoomCode(_gameCode);

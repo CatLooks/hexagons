@@ -13,14 +13,14 @@ LobbyManager::~LobbyManager() {
 	//shared ptrs will auto clean up
 }
 
-void LobbyManager::CreateLobby() {
+void LobbyManager::CreateLobby(uint32_t maxPlayers, const char* lobbyCode) {
 	isBusy = true;
 	EOS_Lobby_CreateLobbyOptions options{};
 	options.ApiVersion = EOS_LOBBY_CREATELOBBY_API_LATEST;
 	options.LocalUserId = LocalUserId;
-	options.MaxLobbyMembers = 4;
+	options.MaxLobbyMembers = maxPlayers;
 	options.PermissionLevel = EOS_ELobbyPermissionLevel::EOS_LPL_PUBLICADVERTISED;
-	options.BucketId = "default";
+	options.BucketId = lobbyCode;
 	options.bPresenceEnabled = EOS_TRUE;
 	options.bAllowInvites = EOS_TRUE;
 	options.bDisableHostMigration = EOS_FALSE;

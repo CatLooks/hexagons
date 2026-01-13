@@ -44,7 +44,7 @@ public:
 	void logout();
 
     /// Starts hosting a lobby.
-    void host();
+    void host(uint32_t maxPlayers, const char* lobbyName);
 
     /// Finds and joins the first available lobby as a client.
     void connect();

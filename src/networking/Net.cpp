@@ -33,7 +33,7 @@ void Net::logout() {
 }
 
 /// Start hosting a lobby.
-void Net::host() {
+void Net::host(uint32_t maxPlayers, const char* lobbyCode) {
     //login();
     EOS_ProductUserId localId = m_eosManager.GetAuthManager()->GetLocalUserId();
 
@@ -48,7 +48,7 @@ void Net::host() {
     m_eosManager.CreateLobbyManager(localId);
     if (auto lobby = m_eosManager.GetLobbyManager()) {
         AttachToLobby(lobby);
-        lobby->CreateLobby();
+        lobby->CreateLobby(maxPlayers, lobbyCode);
         std::cout << "[Net] Hosting initiated..." << std::endl;
     }
     else {

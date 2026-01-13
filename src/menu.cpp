@@ -17,8 +17,8 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
     // construct pages
     mainMenu = new MainMenu();
     optionsMenu = new OptionsMenu();
-    startMenu = new GameStartMenu();
-    joinMenu = new GameJoinMenu();
+    startMenu = new GameStartMenu(&net);
+    joinMenu = new GameJoinMenu(&net);
 
     // add menus pages to container
     pages->add(mainMenu);

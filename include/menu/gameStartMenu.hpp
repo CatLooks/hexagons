@@ -5,10 +5,13 @@
 #include "ui/solid.hpp"
 #include "ui/pages.hpp" 
 #include "menu/ui/menuButton.hpp"
+#include "networking/Net.hpp"
 #include <functional>
 #include <vector>
 #include <string>
 #include "menu/lobbyMenu.hpp"
+
+class Net;
 
 /// Game start configuration menu.
 class GameStartMenu : public ui::Element {
@@ -36,6 +39,8 @@ public:
     ui::Element* _setupContainer; // Kontener na: Sidebar + Setup Pages + NavArea
 
 private:
+    Net* _net = nullptr;
+
     ui::Solid* _bg = nullptr; /// Background panel.
     ui::Solid* _sidebarBg = nullptr; /// Sidebar background panel.
     ui::Pages* _contentPages = nullptr; /// Content page container.
@@ -80,7 +85,7 @@ private:
 
 public:
     /// Constructs a game start menu.
-    GameStartMenu();
+    GameStartMenu(Net* net);
 
     /// Binds back button callback.
     void bindBack(Action action);

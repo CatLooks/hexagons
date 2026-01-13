@@ -18,7 +18,7 @@ public:
 	bool isBusy = false;
 	LobbyManager(EOS_HLobby handle, EOS_ProductUserId id, EOS_HP2P p2p);
 
-	void CreateLobby();
+	void CreateLobby(uint32_t maxPlayers, const char* lobbyCode);
 	void FindLobby();
 
 	std::vector<std::shared_ptr<P2PManager>> GetAllP2PConnections() const { return P2PConnections; }

@@ -55,7 +55,7 @@ void GameConnectionManager::OnLoginCompleted(EOS_ProductUserId newLocalUserId) {
 
     if (m_IsHost) {
         std::cout << "[Connection] Issuing command: CreateLobby" << std::endl;
-        lobby->CreateLobby();
+        //lobby->CreateLobby();
         lobby->OnMemberJoined.add([this](EOS_ProductUserId memberId) {
             this->OnMemberJoined(memberId);
             });
