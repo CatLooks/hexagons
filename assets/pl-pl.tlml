@@ -97,62 +97,64 @@ debug {
 menu {
     title: "HEXAGONS"
 
-	login: "LOGIN"
-	logout: "LOGOUT"
+	login: "Zaloguj"
+	logout: "Wyloguj"
 
-    start: "START GAME"
-    join: "JOIN GAME"
-    options: "OPTIONS"
-    exit: "EXIT"
-    back: "BACK"
-    prev: "< PREV"
-    next: "NEXT >"
-    start_game: "START GAME"
-    sound: "Sound: {v}"
-    lang: "Language: {v}"
+    start: "ZACZNIJ GR "
+    join: "DO£•CZ DO GRY"
+    options: "OPCJE"
+    exit: "WYJDè"
+    back: "POWR”T"
+    prev: "WR”∆"
+    next: "DALEJ"
+    start_game: "ZACZNIJ GR "
+    sound: "DüwiÍk: {v}"
+    lang: "JÍzyk: {v}"
     on: "ON"
     off: "OFF"
-    max_players: "Max Players"
+    max_players: "Maks. Graczy"
     player_count: "{value}"
-	
-	select_mode: "Select Mode"
-	singleplayer: "Singleplayer"
-	multiplayer_host: "Multiplayer (Host)"
-	
-	select_difficulty: "Select Difficulty"
 
-	select_map: "Select Map"
+	select_mode: "Wybierz Tryb"
+	singleplayer: "Jednoosobowy"
+	multiplayer_host: "Wieloosobowy (Gospodarz)"
+	
+	select_difficulty: "Wybierz Poziom Trudnoúci"
 
-	lobby_settings: "Lobby Settings"
-	room_code_desc: "Share this code!"
+	select_map: "Wybeirz MapÍ"
+
+	lobby_settings: "Ustawienia Lobby"
+	room_code_desc: "UdostÍpnij ten kod!"
+
+
 }
 
 join {
-    title: "Join Game"
-    instruction: "Enter 6-digit Room Code:"
+    title: "Do≥πcz do gry"
+    instruction: "Wprowadü 6-cyfrowy kod pokoju:"
 }
 
 start {
-    step1: "1. Mode"
-    step2: "2. Difficulty"
-    step3: "3. Map"
+    step1: "1. Tryb"
+    step2: "2. TrudnoúÊ"
+    step3: "3. Mapa"
     step4: "4. Lobby"
 
-	map1: "map 1"
-	map2: "map 2"
-	map3: "map 3"
+	map1: "mapa 1"
+	map2: "mapa 2"
+	map3: "mapa 3"
 
-	easy  : "Easy"
-	medium: "Medium"
-	hard  : "Hard"
+	easy  : "£atwy"
+	medium: "åredni"
+	hard  : "Trudny"
 }
 
 lobby {
-    title: "GAME LOBBY"
-    leave: "LEAVE"
-    room_id: "Room: #{id}"
+    title: "LOBBY GRY"
+    leave: "WYJDè"
+    room_id: "PokÛj: #{id}"
     player_name: "{name}"
-    player_name_host: "{name} (Host)"
-    host_you: "Host (You)"
-    connecting: "Connecting..."
+    player_name_host: "{name} (Gospodarz)"
+    host_you: "Gospodarz (Ty)"
+    connecting: "£πczenie..."
 }

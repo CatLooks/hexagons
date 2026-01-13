@@ -17,6 +17,10 @@ private:
 
     menuui::Button* _soundBtn = nullptr; /// Sound toggle button.
     menuui::Button* _backBtn  = nullptr; /// Back navigation button.
+	menuui::Button* _langBtn = nullptr; /// Language selection button.
+
+    std::vector<std::string> _langKeys; 
+    size_t _currentLangIdx = 0;
 
     bool   _soundEnabled = true; /// Current sound enabled state.
     Action _onBack;              /// Back button callback.
@@ -37,4 +41,11 @@ protected:
 
     /// Updates sound button label text.
     void updateSoundLabel();
+
+
+	/// Updates language button label text.
+    void updateLanguageLabel();
+
+	/// Updates all labels after language change.
+    void refreshAllText(); 
 };

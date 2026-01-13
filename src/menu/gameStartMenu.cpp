@@ -96,6 +96,10 @@ GameStartMenu::GameStartMenu() {
         }
         });
 
+    // register localization refresh listener and initialize text
+    assets::lang::refresh_listeners.push_back([this]() { refreshAllText(); });
+    refreshAllText();
+
     // 7. Final UI update
     updateUI();
     generateGameCode();
@@ -134,11 +138,17 @@ void GameStartMenu::buildSidebar() {
     _lblMap = addLabel(0.45ps);
     _lblLobby = addLabel(0.55ps);
 
+    // set localization paths immediately so labels are visible at creation
+    if (_lblMode) _lblMode->setPath("start.step1");
+    if (_lblDiff) _lblDiff->setPath("start.step2");
+    if (_lblMap) _lblMap->setPath("start.step3");
+    if (_lblLobby) _lblLobby->setPath("start.step4");
+
     /// Back button.
     _backBtn = new menuui::Button();
     _backBtn->setSize({ 180px, 80px });
     _backBtn->position() = { 0.5as, 1as - 25px };
-    _backBtn->setLabel()->setRaw("BACK");
+    _backBtn->setLabel()->setPath("menu.back");
     _backBtn->setCall([this]() {
         if (_onBack) _onBack();
     }, nullptr, menuui::Button::Click);
@@ -154,7 +164,7 @@ void GameStartMenu::buildNavigation() {
     _prevBtn = new menuui::Button();
     _prevBtn->setSize({ 180px, 80px });
     _prevBtn->position() = { 0.2as, 0.5as };
-    _prevBtn->setLabel()->setRaw("< PREV");
+    _prevBtn->setLabel()->setPath("menu.prev");
     _prevBtn->setCall([this]() { prevStep(); }, nullptr, menuui::Button::Click);
     _navArea->add(_prevBtn);
 
@@ -162,7 +172,7 @@ void GameStartMenu::buildNavigation() {
     _nextBtn = new menuui::Button();
     _nextBtn->setSize({ 180px, 80px });
     _nextBtn->position() = { 0.8as, 0.5as };
-    _nextBtn->setLabel()->setRaw("NEXT >");
+    _nextBtn->setLabel()->setPath("menu.next");
     _nextBtn->setCall([this]() { nextStep(); }, nullptr, menuui::Button::Click);
     _navArea->add(_nextBtn);
 }
@@ -171,24 +181,29 @@ void GameStartMenu::buildNavigation() {
 ui::Element* GameStartMenu::createModePage() {
     auto* page = makeContainer();
 
-    auto* title = ui::Text::raw(k_HeaderFont, "Select Mode");
+    auto* title = ui::Text::raw(k_HeaderFont, "");
+    title->setPath("menu.select_mode");
     title->bounds = { 0, 100px, 1ps, 0 };
     title->align = ui::Text::Center;
     title->pos = ui::Text::Static;
     page->add(title);
+    _pageModeTitle = title;
 
     auto makeBtn = [this, page](ui::Dim xOff, const std::string& txt, GameMode val) {
         auto* btn = new menuui::Button();
         btn->setSize({ 320px, 200px });
         btn->position() = { 0.5as + xOff, 0.5as };
-        btn->setLabel()->setRaw(txt);
+        btn->setLabel()->setRaw(txt); // temporary, replaced below per-button
         btn->setCall([this, btn, val]() { selectMode(val, btn); }, nullptr, menuui::Button::Click);
         page->add(btn);
         _modeButtons.push_back(btn);
     };
 
-    makeBtn(-250px, "Singleplayer", Mode_Single);
-    makeBtn(250px, "Multiplayer\n(Host)", Mode_Host);
+    // set labels via localization
+    makeBtn(-250px, "", Mode_Single);
+    _modeButtons.back()->setLabel()->setPath("menu.singleplayer");
+    makeBtn(250px, "", Mode_Host);
+    _modeButtons.back()->setLabel()->setPath("menu.multiplayer_host");
 
     return page;
 }
@@ -197,25 +212,30 @@ ui::Element* GameStartMenu::createModePage() {
 ui::Element* GameStartMenu::createDiffPage() {
     auto* page = makeContainer();
 
-    auto* title = ui::Text::raw(k_HeaderFont, "Select Difficulty");
+    auto* title = ui::Text::raw(k_HeaderFont, "");
+    title->setPath("menu.select_difficulty");
     title->bounds = { 0, 100px, 1ps, 0 };
     title->align = ui::Text::Center;
     title->pos = ui::Text::Static;
     page->add(title);
+    _pageDiffTitle = title;
 
     auto makeBtn = [this, page](ui::Dim xOff, const std::string& txt, Difficulty val) {
         auto* btn = new menuui::Button();
         btn->setSize({ 240px, 160px });
         btn->position() = { 0.5as + xOff, 0.5as };
-        btn->setLabel()->setRaw(txt);
+        btn->setLabel()->setRaw(txt); // temporary, replaced below per-button
         btn->setCall([this, btn, val]() { selectDifficulty(val, btn); }, nullptr, menuui::Button::Click);
         page->add(btn);
         _diffButtons.push_back(btn);
     };
 
-    makeBtn(-300px, "EASY", Diff_Easy);
-    makeBtn(0px, "MEDIUM", Diff_Medium);
-    makeBtn(300px, "HARD", Diff_Hard);
+    makeBtn(-300px, "", Diff_Easy);
+    _diffButtons.back()->setLabel()->setPath("start.easy");
+    makeBtn(0px, "", Diff_Medium);
+    _diffButtons.back()->setLabel()->setPath("start.medium");
+    makeBtn(300px, "", Diff_Hard);
+    _diffButtons.back()->setLabel()->setPath("start.hard");
 
     return page;
 }
@@ -224,11 +244,13 @@ ui::Element* GameStartMenu::createDiffPage() {
 ui::Element* GameStartMenu::createMapPage() {
     auto* page = makeContainer();
 
-    auto* title = ui::Text::raw(k_HeaderFont, "Select Map");
+    auto* title = ui::Text::raw(k_HeaderFont, "");
+    title->setPath("menu.select_map");
     title->bounds = { 0, 80px, 1ps, 0 };
     title->align = ui::Text::Center;
     title->pos = ui::Text::Static;
     page->add(title);
+    _pageMapTitle = title;
 
     auto makeBtn = [this, page](ui::Dim xOff, const std::string& txt, MapID val) {
         auto* btn = new menuui::Button();
@@ -252,16 +274,19 @@ ui::Element* GameStartMenu::createMapPage() {
             btn->add(img);
         }
 
-        btn->setLabel()->setRaw(txt);
+        btn->setLabel()->setRaw(txt); // temporary, replaced below per-button
         btn->setCall([this, btn, val]() { selectMap(val, btn); }, nullptr, menuui::Button::Click);
 
         page->add(btn);
         _mapButtons.push_back(btn);
     };
 
-    makeBtn(-300px, "Map 1", Map_1);
-    makeBtn(0px, "Map 2", Map_2);
-    makeBtn(300px, "Map 3", Map_3);
+    makeBtn(-300px, "", Map_1);
+    _mapButtons.back()->setLabel()->setPath("start.map1");
+    makeBtn(0px, "", Map_2);
+    _mapButtons.back()->setLabel()->setPath("start.map2");
+    makeBtn(300px, "", Map_3);
+    _mapButtons.back()->setLabel()->setPath("start.map3");
 
     return page;
 }
@@ -270,14 +295,17 @@ ui::Element* GameStartMenu::createMapPage() {
 ui::Element* GameStartMenu::createLobbyPage() {
     auto* page = makeContainer();
 
-    auto* title = ui::Text::raw(k_HeaderFont, "Lobby Settings");
+    auto* title = ui::Text::raw(k_HeaderFont, "");
+    title->setPath("menu.lobby_settings");
     title->bounds = { 0, 80px, 1ps, 0 };
     title->align = ui::Text::Center;
     title->pos = ui::Text::Static;
     page->add(title);
+    _pageLobbyTitle = title;
 
     /// Max players section.
-    auto* lblPlayers = ui::Text::raw(k_SidebarFont, "Max Players:");
+    auto* lblPlayers = ui::Text::raw(k_SidebarFont, "");
+    lblPlayers->setPath("menu.max_players");
     lblPlayers->bounds = { 0, 200px, 1ps, 0 };
     lblPlayers->align = ui::Text::Center;
     lblPlayers->pos = ui::Text::Static;
@@ -287,7 +315,9 @@ ui::Element* GameStartMenu::createLobbyPage() {
         auto* btn = new menuui::Button();
         btn->setSize({ 100px, 100px });
         btn->position() = { 0.5as + xOff, 280px };
-        btn->setLabel()->setRaw(std::to_string(count));
+        // use localization for the player count label
+        btn->setLabel()->setPath("menu.player_count");
+        btn->setLabel()->param("value", std::to_string(count));
         btn->setCall([this, btn, count]() { selectMaxPlayers(count, btn); }, nullptr, menuui::Button::Click);
         page->add(btn);
         _playerCountButtons.push_back(btn);
@@ -301,17 +331,20 @@ ui::Element* GameStartMenu::createLobbyPage() {
     /// Room code section.
     generateGameCode();
 
-    auto* lblCodeDesc = ui::Text::raw(k_SidebarFont, "Room Code (Share this!):");
+    auto* lblCodeDesc = ui::Text::raw(k_SidebarFont, "");
+    lblCodeDesc->setPath("menu.room_code_desc");
     lblCodeDesc->bounds = { 0, 450px, 1ps, 0 };
     lblCodeDesc->align = ui::Text::Center;
     lblCodeDesc->pos = ui::Text::Static;
     page->add(lblCodeDesc);
 
-    auto* lblCode = ui::Text::raw(k_CodeFont, _gameCode);
+    auto* lblCode = ui::Text::raw(k_CodeFont, "");
+    lblCode->setPath("lobby.room_id");
     lblCode->bounds = { 0, 520px, 1ps, 0 };
     lblCode->align = ui::Text::Center;
     lblCode->pos = ui::Text::Static;
-    lblCode->hook([=]() { lblCode->setRaw("#" + _gameCode); });
+    lblCode->param("id", _gameCode);
+    lblCode->hook([=]() mutable { lblCode->param("id", _gameCode); });
     page->add(lblCode);
 
     return page;
@@ -389,7 +422,7 @@ void GameStartMenu::nextStep() {
 
         _pageWaitingLobby->setRoomCode(_gameCode);
         _pageWaitingLobby->setAsHost(true);
-        _pageWaitingLobby->updateList({ { "Host (You)", sf::Color::Cyan, true, true } });
+        _pageWaitingLobby->updateList({ { assets::lang::locale.req(localization::Path("lobby.host_you")).get({}), sf::Color::Cyan, true, true } });
 
         updateUI();
         return;
@@ -443,23 +476,20 @@ void GameStartMenu::updateUI() {
 void GameStartMenu::updateSidebarLabels() {
     if (!_lblMode || !_lblDiff || !_lblMap || !_lblLobby) return;
 
-    _lblMode->setRaw("1. Mode");
+    // ensure sidebar labels are active/inactive and styled, text is provided via localization paths
     _lblMode->activate();
     applySettings(_lblMode, (_currentStep == STEP_MODE) ? k_SidebarFontActive : k_SidebarFont);
     
-	_lblDiff->setRaw("2. Difficulty");
-	_lblDiff->activate();
+    _lblDiff->activate();
     applySettings(_lblDiff, (_currentStep == STEP_DIFF) ? k_SidebarFontActive : k_SidebarFont);
     
 
-    _lblMap->setRaw("3. Map");
     _lblMap->activate();
     applySettings(_lblMap, (_currentStep == STEP_MAP) ? k_SidebarFontActive : k_SidebarFont);
 
 
     if (_selectedMode == Mode_Host) {
         _lblLobby->activate();
-        _lblLobby->setRaw("4. Lobby");
         bool isLobbyActive = (_currentStep == STEP_LOBBY || _currentStep == STEP_WAITING);
         applySettings(_lblLobby, isLobbyActive ? k_SidebarFontActive : k_SidebarFont);
     }
@@ -492,10 +522,10 @@ void GameStartMenu::updateNavigationButtons() {
     }
 
     if (isLastStepForMode)
-        _nextBtn->setLabel()->setRaw("START GAME");
+        _nextBtn->setLabel()->setPath("menu.start_game");
     else
-        _nextBtn->setLabel()->setRaw("NEXT >");
-
+        _nextBtn->setLabel()->setPath("menu.next");
+   
     // Activate NEXT only if selection is made
     if (canProceed()) {
         _nextBtn->setLabel()->setColor(sf::Color::White);
@@ -531,7 +561,73 @@ void GameStartMenu::enterAsJoiner(const std::string& code) {
     updateSidebarLabels();
     _pageWaitingLobby->setRoomCode(_gameCode);
     _pageWaitingLobby->setAsHost(false);
-    _pageWaitingLobby->updateList({ {"Connecting...", sf::Color::White, false, false} });
+    _pageWaitingLobby->updateList({ { assets::lang::locale.req(localization::Path("lobby.connecting")).get({}), sf::Color::White, false, false} });
 
     updateUI();
+}
+
+void GameStartMenu::refreshAllText() {
+    _lblMode->setPath("start.step1"); 
+    _lblDiff->setPath("start.step2");
+    _lblMap->setPath("start.step3");
+    _lblLobby->setPath("start.step4");
+
+    if (_pageModeTitle) _pageModeTitle->setPath("menu.select_mode");
+    if (_pageDiffTitle) _pageDiffTitle->setPath("menu.select_difficulty");
+    if (_pageMapTitle) _pageMapTitle->setPath("menu.select_map");
+    if (_pageLobbyTitle) _pageLobbyTitle->setPath("menu.lobby_settings");
+
+    if (_lblMaxPlayers) _lblMaxPlayers->setPath("menu.max_players");
+    if (_lblRoomCodeDesc) _lblRoomCodeDesc->setPath("menu.room_code_desc");
+    if (_lblRoomCode) {
+        _lblRoomCode->setPath("lobby.room_id");
+        _lblRoomCode->param("id", _gameCode);
+    }
+
+    // Update mode buttons labels
+    for (size_t i = 0; i < _modeButtons.size(); ++i) {
+        if (!_modeButtons[i]) continue;
+        ui::Text* lbl = _modeButtons[i]->setLabel();
+        if (!lbl) continue;
+        if (i == 0) lbl->setPath("menu.singleplayer");
+        else if (i == 1) lbl->setPath("menu.multiplayer_host");
+    }
+
+    // Update difficulty buttons labels
+    for (size_t i = 0; i < _diffButtons.size(); ++i) {
+        if (!_diffButtons[i]) continue;
+        ui::Text* lbl = _diffButtons[i]->setLabel();
+        if (!lbl) continue;
+        if (i == 0) lbl->setPath("start.easy");
+        else if (i == 1) lbl->setPath("start.medium");
+        else if (i == 2) lbl->setPath("start.hard");
+    }
+
+    // Update map buttons labels
+    for (size_t i = 0; i < _mapButtons.size(); ++i) {
+        if (!_mapButtons[i]) continue;
+        ui::Text* lbl = _mapButtons[i]->setLabel();
+        if (!lbl) continue;
+        if (i == 0) lbl->setPath("start.map1");
+        else if (i == 1) lbl->setPath("start.map2");
+        else if (i == 2) lbl->setPath("start.map3");
+    }
+
+    // Update player count buttons
+    for (size_t i = 0; i < _playerCountButtons.size(); ++i) {
+        if (!_playerCountButtons[i]) continue;
+        ui::Text* lbl = _playerCountButtons[i]->setLabel();
+        if (!lbl) continue;
+        lbl->setPath("menu.player_count");
+        // set parameter value to the button's numeric label
+        int val = 2 + (int)i; // assuming buttons were added as 2,3,4 in order
+        lbl->param("value", std::to_string(val));
+    }
+
+    // navigation and sidebar buttons
+    _backBtn->setLabel()->setPath("menu.back");
+    _prevBtn->setLabel()->setPath("menu.prev");
+    _nextBtn->setLabel()->setPath("menu.next");
+
+    updateNavigationButtons();
 }

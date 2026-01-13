@@ -13,6 +13,8 @@ int main() {
 	if (assets::loadLanguage("en-us.tlml"))
 		return 1;
 
+	assets::lang::init();
+
 	// load assets
 	assets::loadAssets();
 	if (assets::error)

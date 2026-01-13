@@ -87,6 +87,10 @@ MainMenu::MainMenu() {
     _exitBtn = makeWideButton(260px, "EXIT");
     _exitBtn->setCall([this]() { if (_onExit) _onExit(); }, nullptr, menuui::Button::Click);
     _container->add(_exitBtn);
+
+   assets::lang::refresh_listeners.push_back([this]() { refreshAllText(); });
+
+    refreshAllText();
 }
 
 /// Binds start button callback.
@@ -110,9 +114,19 @@ void MainMenu::drawSelf(ui::RenderBuffer& target, sf::IntRect self) const {
 }
 /// Sets login state.
 void MainMenu::setLoggedIn(bool loggedIn) {
-        if (loggedIn) {
-            login_toggle->show(_logoutBtn);
-        } else {
-            login_toggle->show(_loginBtn);
-        }
+    if (loggedIn) {
+        login_toggle->show(_logoutBtn);
+    } else {
+        login_toggle->show(_loginBtn);
     }
+}
+
+void MainMenu::refreshAllText() {
+    _title->setPath("menu.title");
+    _startBtn->setLabel()->setPath("menu.start");
+    _joinBtn->setLabel()->setPath("menu.join");
+    _optionsBtn->setLabel()->setPath("menu.options");
+    _exitBtn->setLabel()->setPath("menu.exit");
+    _loginBtn->setLabel()->setPath("menu.login");
+    _logoutBtn->setLabel()->setPath("menu.logout");
+}

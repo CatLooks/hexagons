@@ -10,15 +10,18 @@ static const ui::TextSettings k_PlayerNameFont = { assets::font, 30, sf::Color::
 LobbyMenu::LobbyMenu() {
     bounds = { 0, 0, 1ps, 1ps };
 
-    _title = ui::Text::raw(k_LobbyHeader, "GAME LOBBY");
+    _title = ui::Text::raw(k_LobbyHeader, "");
+    _title->setPath("lobby.title");
     _title->bounds = { 0, 40px, 1ps, 0 };
     _title->align = ui::Text::Center;
     add(_title);
 
-    _roomCodeLbl = ui::Text::raw(k_PlayerNameFont, "Room: #------");
+    _roomCodeLbl = ui::Text::raw(k_PlayerNameFont, "");
     _roomCodeLbl->bounds = { 0, 100px, 1ps, 0 };
     _roomCodeLbl->align = ui::Text::Center;
     _roomCodeLbl->setColor(sf::Color::Yellow);
+    _roomCodeLbl->setPath("lobby.room_id");
+    _roomCodeLbl->param("id", "------");
     add(_roomCodeLbl);
 
     // List container sized to avoid covering buttons
@@ -30,7 +33,7 @@ LobbyMenu::LobbyMenu() {
     _leaveBtn = new menuui::Button();
     _leaveBtn->setSize({ 200px, 80px });
     _leaveBtn->position() = { 0.25as, 0.9ps };
-    _leaveBtn->setLabel()->setRaw("LEAVE");
+    _leaveBtn->setLabel()->setPath("lobby.leave");
     _leaveBtn->setCall([this]() { if (_onLeave) _onLeave(); }, nullptr, menuui::Button::Click);
     add(_leaveBtn);
 
@@ -38,7 +41,7 @@ LobbyMenu::LobbyMenu() {
     _startBtn = new menuui::Button();
     _startBtn->setSize({ 250px, 80px });
     _startBtn->position() = { 0.75as, 0.9ps };
-    _startBtn->setLabel()->setRaw("START GAME");
+    _startBtn->setLabel()->setPath("menu.start_game");
     _startBtn->setCall([this]() { if (_onStart) _onStart(); }, nullptr, menuui::Button::Click);
     add(_startBtn);
 }
@@ -65,8 +68,16 @@ ui::Element* LobbyMenu::createPlayerSlot(const PlayerData& p) {
     colorBox->bounds = { 10px, 10px, 40px, 40px };
     slot->add(colorBox);
 
-    auto* name = ui::Text::raw(k_PlayerNameFont, p.name + (p.isHost ? " (HOST)" : ""));
+    auto* name = ui::Text::raw(k_PlayerNameFont, "");
     name->bounds = { 70px, 10px, 0, 0 };
+    if (p.isHost) {
+        // show host annotation via localized param
+        name->setPath("lobby.player_name_host");
+        name->param("name", p.name);
+    } else {
+        name->setPath("lobby.player_name");
+        name->param("name", p.name);
+    }
     slot->add(name);
 
     return slot;
@@ -74,7 +85,7 @@ ui::Element* LobbyMenu::createPlayerSlot(const PlayerData& p) {
 
 /// Sets the room code label.
 void LobbyMenu::setRoomCode(const std::string& code) {
-    if (_roomCodeLbl) _roomCodeLbl->setRaw("Room: #" + code);
+    if (_roomCodeLbl) _roomCodeLbl->param("id", code);
 }
 
 /// Sets host state (enables start button for host).

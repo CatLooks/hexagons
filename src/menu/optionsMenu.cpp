@@ -5,9 +5,28 @@ static const ui::TextSettings title_settings = {
     assets::font, 80, sf::Color::White, sf::Color::Black, 4
 };
 
+static const ui::DimVector BUTTON_SIZE = { 400px, 80px };
+
 /// Constructs an options menu.
 OptionsMenu::OptionsMenu() {
     bounds = { 0, 0, 1ps, 1ps };
+
+    // 1. Load Language List and find English index
+    assets::loadLanguageList(); 
+    _currentLangIdx = 0; // Default fallback
+    
+    for (auto const& [key, val] : assets::lang::index) {
+        _langKeys.push_back(key);
+        // Check if this is the standard language (e.g., "en")
+        if (key == assets::lang::standard || key == "en") {
+            _currentLangIdx = _langKeys.size() - 1;
+        }
+    }
+
+    // Load the default language file immediately
+    if (!_langKeys.empty()) {
+        assets::loadLanguage(assets::lang::index[_langKeys[_currentLangIdx]].file);
+    }
 
     /// Background panel.
     _bg = new ui::Solid();
@@ -16,46 +35,78 @@ OptionsMenu::OptionsMenu() {
     add(_bg);
 
     /// Title label.
-    _title = ui::Text::raw(title_settings, "OPTIONS");
+    _title = new ui::Text(title_settings, "menu.options");
     _title->bounds = { 0, 100px, 1ps, 0 };
     _title->align  = ui::Text::Center;
-    _title->pos    = ui::Text::Static;
     add(_title);
 
     /// Sound toggle button.
     _soundBtn = new menuui::Button();
-    _soundBtn->setSize({ 175px, 125px });
-    _soundBtn->position() = { 0.5as, 0.5as };
+    _soundBtn->setSize(BUTTON_SIZE);
+    _soundBtn->position() = { 0.5as, 0.5as - 100px }; // Adjusted Y to stack nicely
     _soundBtn->setLabel();
-    updateSoundLabel();
     _soundBtn->setCall([this]() {
         _soundEnabled = !_soundEnabled;
         updateSoundLabel();
     }, nullptr, menuui::Button::Click);
     add(_soundBtn);
+  
+    /// Language selection button.
+    _langBtn = new menuui::Button();
+    _langBtn->setSize(BUTTON_SIZE);
+    _langBtn->position() = { 0.5as, 0.5as };
+    _langBtn->setLabel();
+    _langBtn->setCall([this]() {
+        assets::lang::next();
+        refreshAllText();
+    }, nullptr, menuui::Button::Click);
+    add(_langBtn);
 
     /// Back button.
-    auto makeWideButton = [&](ui::Dim y_offset, std::string text) -> menuui::Button* {
-        auto* btn = new menuui::Button();
-        btn->setSize({ 400px, 100px });
-        btn->position() = { 0.5as, 0.5as + y_offset };
-        btn->setLabel()->setRaw(text);
-        return btn;
-    };
-
-    _backBtn = makeWideButton(140px, "BACK");
-    _backBtn->setCall([this]() {
-        if (_onBack) _onBack();
-    }, nullptr, menuui::Button::Click);
+    _backBtn = new menuui::Button();
+    _backBtn->setSize(BUTTON_SIZE);
+    _backBtn->position() = { 0.5as, 0.5as + 100px };
+    _backBtn->setLabel()->setPath("menu.back");
+    _backBtn->setCall([this]() { if (_onBack) _onBack(); }, nullptr, menuui::Button::Click);
     add(_backBtn);
+
+    // Initial fill of all text
+    refreshAllText();
 }
+
 
 /// Updates sound button label text.
 void OptionsMenu::updateSoundLabel() {
     if (_soundBtn && _soundBtn->setLabel()) {
-        _soundBtn->setLabel()->setRaw(_soundEnabled ? "SOUND: ON" : "SOUND: OFF");
+        // We use parameters as defined in localization.md
+        ui::Text* lbl = _soundBtn->setLabel();
+        lbl->setPath("menu.sound");
+        // Import "ON" or "OFF" strings from the locale
+        lbl->param("v", _soundEnabled ? "@!menu.on" : "@!menu.off");
     }
 }
+
+
+/// Updates language button label text.
+void OptionsMenu::updateLanguageLabel() {
+    if (_langBtn && _langBtn->setLabel()) {
+        ui::Text* lbl = _langBtn->setLabel();
+        lbl->setPath("menu.lang");
+        // Get the name directly from the global assets
+        lbl->param("v", assets::lang::current_name()); 
+    }
+}
+
+
+/// Updates all labels after language change.
+void OptionsMenu::refreshAllText() {
+    updateSoundLabel();
+    updateLanguageLabel();
+    
+    _title->setPath("menu.options");
+    _backBtn->setLabel()->setPath("menu.back");
+}
+
 
 /// Binds back button callback.
 void OptionsMenu::bindBack(Action action) {

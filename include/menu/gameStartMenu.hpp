@@ -60,6 +60,17 @@ private:
     ui::Element* _pageLobby = nullptr; /// Lobby settings page root.
     LobbyMenu* _pageWaitingLobby;      /// Waiting lobby page root.
 
+    // Page title labels (stored to update localization on language change)
+    ui::Text* _pageModeTitle = nullptr;
+    ui::Text* _pageDiffTitle = nullptr;
+    ui::Text* _pageMapTitle = nullptr;
+    ui::Text* _pageLobbyTitle = nullptr;
+
+    // Lobby page labels
+    ui::Text* _lblMaxPlayers = nullptr;
+    ui::Text* _lblRoomCodeDesc = nullptr;
+    ui::Text* _lblRoomCode = nullptr;
+
     int _currentStep = 0; /// Currently active configuration step.
 
     // Selection State
@@ -125,4 +136,6 @@ private:
     void updateUI();
     void updateNavigationButtons();
     void updateSidebarLabels(); /// Helper for dynamic sidebar
+
+	void refreshAllText();
 };

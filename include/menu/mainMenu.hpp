@@ -69,4 +69,7 @@ protected:
     /// @param target Render buffer.
     /// @param self   Element drawing area.
     void drawSelf(ui::RenderBuffer& target, sf::IntRect self) const override;
+    
+	/// Updates all labels after language change.
+	void refreshAllText();
 };
