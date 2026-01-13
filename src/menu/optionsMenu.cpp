@@ -43,7 +43,7 @@ OptionsMenu::OptionsMenu() {
     /// Sound toggle button.
     _soundBtn = new menuui::Button();
     _soundBtn->setSize(BUTTON_SIZE);
-    _soundBtn->position() = { 0.5as, 0.5as - 100px }; // Adjusted Y to stack nicely
+    _soundBtn->position() = { 0.5as, 0.5as - 100px };
     _soundBtn->setLabel();
     _soundBtn->setCall([this]() {
         _soundEnabled = !_soundEnabled;

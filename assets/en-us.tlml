@@ -219,7 +219,7 @@ lobby {
     host_you: "Host (You)"
     connecting: "Connecting..."
 }
-}
+
 
 ## ALL FURTHER TEXT IS DEBUG MODE ONLY
 ## DO NOT TRANSLATE FURTHER

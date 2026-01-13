@@ -151,6 +151,7 @@ void GameJoinMenu::drawSelf(ui::RenderBuffer& target, sf::IntRect self) const {
     ui::Element::drawSelf(target, self);
 }
 
+/// Refreshes all text labels.
 void GameJoinMenu::refreshAllText() {
     _title->setPath("join.title");
     _lblInstruction->setPath("join.instruction");

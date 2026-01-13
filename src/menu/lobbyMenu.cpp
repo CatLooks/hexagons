@@ -44,13 +44,18 @@ LobbyMenu::LobbyMenu() {
     _startBtn->setLabel()->setPath("menu.start_game");
     _startBtn->setCall([this]() { if (_onStart) _onStart(); }, nullptr, menuui::Button::Click);
     add(_startBtn);
+
+    // register localization refresh listener and initialize localized text
+    assets::lang::refresh_listeners.push_back([this]() { refreshText(); });
+    refreshText();
 }
 
 /// Updates the player list.
 void LobbyMenu::updateList(const std::vector<PlayerData>& players) {
+    _players = players;
     _listContainer->clear();
     ui::Dim y = 0;
-    for (const auto& p : players) {
+    for (const auto& p : _players) {
         auto* slot = createPlayerSlot(p);
         slot->bounds = { 0, y, 1ps, 60px };
         _listContainer->add(slot);
@@ -85,7 +90,8 @@ ui::Element* LobbyMenu::createPlayerSlot(const PlayerData& p) {
 
 /// Sets the room code label.
 void LobbyMenu::setRoomCode(const std::string& code) {
-    if (_roomCodeLbl) _roomCodeLbl->param("id", code);
+    _roomCode = code;
+    if (_roomCodeLbl) _roomCodeLbl->param("id", _roomCode);
 }
 
 /// Sets host state (enables start button for host).
@@ -95,5 +101,21 @@ void LobbyMenu::setAsHost(bool isHost) {
 
 /// Bind start callback.
 void LobbyMenu::bindStart(Action action) { _onStart = action; }
+
 /// Bind leave callback.
 void LobbyMenu::bindLeave(Action action) { _onLeave = action; }
+
+/// Refreshes all localized text elements.
+void LobbyMenu::refreshText() {
+    // refresh static labels
+    if (_title) _title->setPath("lobby.title");
+    if (_roomCodeLbl) {
+        _roomCodeLbl->setPath("lobby.room_id");
+        _roomCodeLbl->param("id", _roomCode.empty() ? std::string("------") : _roomCode);
+    }
+    if (_leaveBtn) _leaveBtn->setLabel()->setPath("lobby.leave");
+    if (_startBtn) _startBtn->setLabel()->setPath("menu.start_game");
+
+    // refresh player slots
+    if (!_players.empty()) updateList(_players);
+}

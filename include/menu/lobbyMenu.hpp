@@ -38,6 +38,9 @@ public:
     /// Sets host state (enables start button if host).
     void setAsHost(bool isHost);
 
+    /// Refreshes all localized text (called on language change).
+    void refreshText();
+
 private:
     /// Creates a UI element representing a single player slot.
     ui::Element* createPlayerSlot(const PlayerData& p);
@@ -50,4 +53,8 @@ private:
 
     Action _onStart;            /// Start callback.
     Action _onLeave;            /// Leave callback.
+
+    // Stored state for localization refresh
+    std::vector<PlayerData> _players; /// Last known player list.
+    std::string _roomCode;            /// Last known room code.
 };

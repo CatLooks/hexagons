@@ -121,6 +121,8 @@ void MainMenu::setLoggedIn(bool loggedIn) {
     }
 }
 
+
+/// Updates all labels after language change.
 void MainMenu::refreshAllText() {
     _title->setPath("menu.title");
     _startBtn->setLabel()->setPath("menu.start");

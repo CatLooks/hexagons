@@ -40,7 +40,7 @@ static void applySettings(ui::Text* text, const ui::TextSettings& settings) {
 GameStartMenu::GameStartMenu() {
     bounds = { 0, 0, 1ps, 1ps };
 
-    // 1. Initialize main containers (layout skeleton)
+    // Initialize main containers
     _mainSwitcher = new ui::Pages();
     _mainSwitcher->bounds = { 0, 0, 1ps, 1ps };
     add(_mainSwitcher);
@@ -49,21 +49,18 @@ GameStartMenu::GameStartMenu() {
     _setupContainer->bounds = { 0, 0, 1ps, 1ps };
     _mainSwitcher->add(_setupContainer);
 
-    // 2. Initialize sidebar and navigation (must exist before pages)
-    buildSidebar();
-    // NOTE: inside buildSidebar we avoid adding '_sidebarBg' directly to root
-    // because it should be added to the setup container below.
+     buildSidebar();
     _setupContainer->add(_sidebarBg);
 
     buildNavigation();
     _setupContainer->add(_navArea);
 
-    // 3. Initialize content pages container
+    // Initialize content pages container
     _contentPages = new ui::Pages();
     _contentPages->bounds = { 0.25ps, 0, 0.75ps, 0.85ps };
     _setupContainer->add(_contentPages);
 
-    // 4. Create pages and lobby (safe to call updateUI afterwards)
+    // Create pages and lobby
     _pageWaitingLobby = new LobbyMenu();
     _mainSwitcher->add(_pageWaitingLobby);
 
@@ -77,14 +74,14 @@ GameStartMenu::GameStartMenu() {
     _contentPages->add(_pageMap);
     _contentPages->add(_pageLobby);
 
-    // 5. Default settings
+    // Default settings
     _selectedMode = Mode_None;
     _selectedDiff = Diff_None;
     _selectedMap = Map_None;
     _currentStep = STEP_MODE;
     _maxPlayers = 2;
 
-    // 6. Bind lobby callbacks
+    // Bind lobby callbacks
     _pageWaitingLobby->bindStart([this]() { if (_onStartGame) _onStartGame(); });
     _pageWaitingLobby->bindLeave([this]() {
         if (_selectedMode == Mode_Host && _currentStep == STEP_WAITING) {
@@ -100,7 +97,6 @@ GameStartMenu::GameStartMenu() {
     assets::lang::refresh_listeners.push_back([this]() { refreshAllText(); });
     refreshAllText();
 
-    // 7. Final UI update
     updateUI();
     generateGameCode();
 
@@ -193,7 +189,7 @@ ui::Element* GameStartMenu::createModePage() {
         auto* btn = new menuui::Button();
         btn->setSize({ 320px, 200px });
         btn->position() = { 0.5as + xOff, 0.5as };
-        btn->setLabel()->setRaw(txt); // temporary, replaced below per-button
+        btn->setLabel()->setRaw(txt);
         btn->setCall([this, btn, val]() { selectMode(val, btn); }, nullptr, menuui::Button::Click);
         page->add(btn);
         _modeButtons.push_back(btn);
@@ -224,7 +220,7 @@ ui::Element* GameStartMenu::createDiffPage() {
         auto* btn = new menuui::Button();
         btn->setSize({ 240px, 160px });
         btn->position() = { 0.5as + xOff, 0.5as };
-        btn->setLabel()->setRaw(txt); // temporary, replaced below per-button
+        btn->setLabel()->setRaw(txt); 
         btn->setCall([this, btn, val]() { selectDifficulty(val, btn); }, nullptr, menuui::Button::Click);
         page->add(btn);
         _diffButtons.push_back(btn);
@@ -304,12 +300,12 @@ ui::Element* GameStartMenu::createLobbyPage() {
     _pageLobbyTitle = title;
 
     /// Max players section.
-    auto* lblPlayers = ui::Text::raw(k_SidebarFont, "");
-    lblPlayers->setPath("menu.max_players");
-    lblPlayers->bounds = { 0, 200px, 1ps, 0 };
-    lblPlayers->align = ui::Text::Center;
-    lblPlayers->pos = ui::Text::Static;
-    page->add(lblPlayers);
+    _lblMaxPlayers = ui::Text::raw(k_SidebarFont, "");
+    _lblMaxPlayers->setPath("menu.max_players");
+    _lblMaxPlayers->bounds = { 0, 200px, 1ps, 0 };
+    _lblMaxPlayers->align = ui::Text::Center;
+    _lblMaxPlayers->pos = ui::Text::Static;
+    page->add(_lblMaxPlayers);
 
     auto makeCountBtn = [this, page](ui::Dim xOff, int count) {
         auto* btn = new menuui::Button();
@@ -331,21 +327,21 @@ ui::Element* GameStartMenu::createLobbyPage() {
     /// Room code section.
     generateGameCode();
 
-    auto* lblCodeDesc = ui::Text::raw(k_SidebarFont, "");
-    lblCodeDesc->setPath("menu.room_code_desc");
-    lblCodeDesc->bounds = { 0, 450px, 1ps, 0 };
-    lblCodeDesc->align = ui::Text::Center;
-    lblCodeDesc->pos = ui::Text::Static;
-    page->add(lblCodeDesc);
+    _lblRoomCodeDesc = ui::Text::raw(k_SidebarFont, "");
+    _lblRoomCodeDesc->setPath("menu.room_code_desc");
+    _lblRoomCodeDesc->bounds = { 0, 450px, 1ps, 0 };
+    _lblRoomCodeDesc->align = ui::Text::Center;
+    _lblRoomCodeDesc->pos = ui::Text::Static;
+    page->add(_lblRoomCodeDesc);
 
-    auto* lblCode = ui::Text::raw(k_CodeFont, "");
-    lblCode->setPath("lobby.room_id");
-    lblCode->bounds = { 0, 520px, 1ps, 0 };
-    lblCode->align = ui::Text::Center;
-    lblCode->pos = ui::Text::Static;
-    lblCode->param("id", _gameCode);
-    lblCode->hook([=]() mutable { lblCode->param("id", _gameCode); });
-    page->add(lblCode);
+    _lblRoomCode = ui::Text::raw(k_CodeFont, "");
+    _lblRoomCode->setPath("lobby.room_id");
+    _lblRoomCode->bounds = { 0, 520px, 1ps, 0 };
+    _lblRoomCode->align = ui::Text::Center;
+    _lblRoomCode->pos = ui::Text::Static;
+    _lblRoomCode->param("id", _gameCode);
+    _lblRoomCode->hook([=]() mutable { _lblRoomCode->param("id", _gameCode); });
+    page->add(_lblRoomCode);
 
     return page;
 }
@@ -454,7 +450,6 @@ void GameStartMenu::updateUI() {
         _mainSwitcher->show(_pageWaitingLobby);
     }
     else {
-        // Show full setup
         _mainSwitcher->show(_setupContainer);
 
         // Show subpage inside setup
@@ -553,6 +548,7 @@ void GameStartMenu::drawSelf(ui::RenderBuffer& target, sf::IntRect self) const {
     ui::Element::drawSelf(target, self);
 }
 
+/// Enters the menu as a joiner with the given game code.
 void GameStartMenu::enterAsJoiner(const std::string& code) {
     _selectedMode = Mode_None;
     _gameCode = code;
@@ -566,6 +562,7 @@ void GameStartMenu::enterAsJoiner(const std::string& code) {
     updateUI();
 }
 
+/// Refreshes all text elements for localization.
 void GameStartMenu::refreshAllText() {
     _lblMode->setPath("start.step1"); 
     _lblDiff->setPath("start.step2");
@@ -620,7 +617,7 @@ void GameStartMenu::refreshAllText() {
         if (!lbl) continue;
         lbl->setPath("menu.player_count");
         // set parameter value to the button's numeric label
-        int val = 2 + (int)i; // assuming buttons were added as 2,3,4 in order
+        int val = 2 + (int)i;
         lbl->param("value", std::to_string(val));
     }
 
