@@ -3,6 +3,8 @@
 #include "assets.hpp"
 #include "flags.hpp"
 
+#include "game/serialize/map.hpp"
+
 /// Testing phase.
 /// 
 /// @return Whether to exit the app after testing.
@@ -55,6 +57,7 @@ int main() {
 	});
 
 	GameState state(GameState::Host, new TestAdapter);
+	Game* game;
 
 	// game test
 	auto game_ctx = itf.newContext();
@@ -63,7 +66,8 @@ int main() {
 		auto layer_gui = itf.layer();
 		auto layer_msg = itf.layer();
 
-		Game* game = new Game(layer_map, layer_gui, layer_msg, &state);
+		game = new Game(layer_map, layer_gui, layer_msg, &state);
+
 		state.addPlayer({ .name = "Sus", .team = Region::Red });
 		state.addPlayer({ .name = "Bot 1", .team = Region::Orange });
 		state.addPlayer({ .name = "Bot 2", .team = Region::Yellow });
@@ -308,6 +312,26 @@ int main() {
 				};
 				if (data->code == sf::Keyboard::Key::F2 && !data->control) {
 					itf.switchContext(test_ctx);
+				};
+				if (data->code == sf::Keyboard::Key::F3) {
+					using namespace Serialize;
+
+					auto temp = Template::generate(&game->map);
+
+					sf::Packet pack;
+					pack << temp;
+
+					auto data = reinterpret_cast<const uint8_t*>(pack.getData());
+
+					Template t;
+					pack >> t;
+
+					t.construct(&game->map);
+				};
+
+				// reload translation file
+				if (data->code == sf::Keyboard::Key::Insert && data->control) {
+					assets::loadLanguage("en-us.tlml");
 				};
 			};
 		};

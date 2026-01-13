@@ -25,14 +25,10 @@ namespace Serialize {
 	/// 
 	/// @param packet Target packet.
 	/// @param vec Target vector.
-	/// 
-	/// @return Packet reference.
-	template <typename T>
-	sf::Packet& operator<<(sf::Packet& packet, const std::vector<T>& vec) {
+	template <typename T> void encodeVec(sf::Packet& packet, const std::vector<T>& vec) {
 		packet << (int)vec.size();
-		for (const auto& item : vec)
+		for (const T& item : vec)
 			packet << item;
-		return packet;
 	};
 
 	/// Reads a vector list from the packet.
@@ -40,15 +36,17 @@ namespace Serialize {
 	/// @tparam T Vector item type.
 	/// 
 	/// @param packet Target packet.
-	/// @param vec Target vector.
 	/// 
-	/// @return Packet reference.
-	template <typename T>
-	sf::Packet& operator>>(sf::Packet& packet, std::vector<T>& vec) {
+	/// @return Read vector.
+	template <typename T> std::vector<T> decodeVec(sf::Packet& packet) {
 		int count = from<int>(packet);
-		for (int i = 0; i < count; i++)
-			vec.push_back(from<T>(packet));
-		return packet;
+		std::vector<T> vec;
+		{
+			vec.reserve(count);
+			for (int i = 0; i < count; i++)
+				vec.push_back(from<T>(packet));
+		};
+		return vec;
 	};
 
 	/// Writes a 2d vector to the packet.

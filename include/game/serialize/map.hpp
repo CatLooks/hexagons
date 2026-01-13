@@ -3,12 +3,13 @@
 // include dependencies
 #include "general.hpp"
 #include "game/hex.hpp"
+#include "game/template.hpp"
 
 namespace Serialize {
-	/// Serializes a hex object.
-	sf::Packet& operator<<(sf::Packet& packet, const Hex& hex);
-	/// Deserializes a hex object.
-	sf::Packet& operator>>(sf::Packet& packet, Hex& hex);
+	/// Serializes a hex base object.
+	sf::Packet& operator<<(sf::Packet& packet, const HexBase& hex);
+	/// Deserializes a hex base object.
+	sf::Packet& operator>>(sf::Packet& packet, HexBase& hex);
 
 	/// Serializes region resources object.
 	sf::Packet& operator<<(sf::Packet& packet, const RegionRes& res);
@@ -20,8 +21,8 @@ namespace Serialize {
 	/// Deserializes region variable counters object.
 	sf::Packet& operator>>(sf::Packet& packet, RegionVar& var);
 
-	/// Serializes a region object.
-	sf::Packet& operator<<(sf::Packet& packet, const Region& reg);
-	/// Deserializes a region object.
-	sf::Packet& operator>>(sf::Packet& packet, Region& reg);
+	/// Serializes a map template object.
+	sf::Packet& operator<<(sf::Packet& packet, const Template& temp);
+	/// Deserializes a map template object.
+	sf::Packet& operator>>(sf::Packet& packet, Template& temp);
 };

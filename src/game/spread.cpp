@@ -7,10 +7,17 @@ void Spread::default_effect(const Tile&) {};
 /// Default radius override.
 std::optional<size_t> Spread::default_radius(const Tile&) { return {}; };
 
+/// Default last spread index.
+size_t Spread::_last_idx = 0;
+
+/// Resets spread index.
+void Spread::reset() {
+	_last_idx = 0;
+};
+
 /// Generates a unique spread index.
 size_t Spread::index() {
-	static size_t next = 0;
-	return ++next;
+	return ++_last_idx;
 };
 
 /// Adds neighboring tiles to spread queue.

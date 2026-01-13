@@ -10,6 +10,14 @@ const std::vector<HexBase>& Template::tiles() const {
 	return _tiles;
 };
 
+/// Returns hex data at position.
+HexBase& Template::at(int x, int y) {
+	return _tiles[y * (size_t)_size.x + x];
+};
+const HexBase& Template::at(int x, int y) const {
+	return _tiles[y * (size_t)_size.x + x];
+};;
+
 /// Clears and creates a new empty map.
 void Template::clear(sf::Vector2i size) {
 	_size = size;
@@ -26,7 +34,7 @@ Template Template::generate(const Map* map) {
 	temp.clear(size);
 	for (int y = 0; y < size.y; y++)
 		for (int x = 0; x < size.x; x++)
-			temp._tiles[y * size.x + x] = map->ats({ x, y });
+			temp.at(x, y) = map->ats({x, y}).base();
 
 	// copy entity data
 	{
@@ -56,5 +64,29 @@ Template Template::generate(const Map* map) {
 
 /// Constructs the map based on the template.
 void Template::construct(Map* map) const {
-	printf("not implemented\n");
+	// clear the map
+	map->clear();
+	map->resize({ {}, _size });
+
+	// copy tile data
+	for (int y = 0; y < _size.y; y++) {
+		for (int x = 0; x < _size.x; x++) {
+			(HexBase&)map->ats({ x, y }) = at(x, y);
+		};
+	};
+
+	// instantiate regions
+	map->regions.enumerate(map);
+
+	// construct entities
+	for (const auto& troop : troops) map->setTroop(troop);
+	for (const auto& build : builds) map->setBuild(build);
+	for (const auto& plant : plants) map->setPlant(plant);
+
+	// copy region data
+	for (const auto& rcd : regions) {
+		Hex& hex = map->ats(rcd.pos);
+		if (hex.region())
+			hex.region()->setRes(rcd.res);
+	};
 };
