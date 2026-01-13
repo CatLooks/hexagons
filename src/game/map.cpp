@@ -12,6 +12,13 @@ Pool<Build>::It Map::buildList() { return _builds.iter(); };
 /// Returns troop iterator.
 Pool<Plant>::It Map::plantList() { return _plants.iter(); };
 
+/// Returns troop iterator.
+Pool<Troop>::ConstIt Map::troopList() const { return _troops.iter(); };
+/// Returns troop iterator.
+Pool<Build>::ConstIt Map::buildList() const { return _builds.iter(); };
+/// Returns troop iterator.
+Pool<Plant>::ConstIt Map::plantList() const { return _plants.iter(); };
+
 /// Generates a new selection index.
 size_t Map::newSelectionIndex() {
 	_selection = true;

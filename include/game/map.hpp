@@ -15,6 +15,9 @@
 #include "logic/build_logic.hpp"
 #include "logic/plant_logic.hpp"
 
+// template forward-declaration
+class Template;
+
 /// Game map object.
 /// Stores array of tiles and lists of all dynamic objects on it.
 ///
@@ -22,6 +25,7 @@
 /// Every other row is shifted by half a tile.
 /// Last hex in every shifted row is ignored.
 class Map : public HexArray {
+	friend Template;
 	friend Regions;
 	friend Move;
 	friend dev::Factory;
@@ -62,6 +66,13 @@ public:
 	Pool<Build>::It buildList();
 	/// Returns troop iterator.
 	Pool<Plant>::It plantList();
+
+	/// Returns troop iterator.
+	Pool<Troop>::ConstIt troopList() const;
+	/// Returns troop iterator.
+	Pool<Build>::ConstIt buildList() const;
+	/// Returns troop iterator.
+	Pool<Plant>::ConstIt plantList() const;
 
 	/// Move history.
 	History history;

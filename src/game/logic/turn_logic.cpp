@@ -8,36 +8,17 @@ namespace logic {
 	History::UniqList turn(Map* map) {
 		// map change list
 		History::UniqList list;
-		
-		// visited regions indices
-		std::set<size_t> visited;
 
 		// update all regions
-		for (int y = 0; y < map->size().y; y++) {
-			for (int x = 0; x < map->size().x; x++) {
-				// get tile
-				Hex* hex = map->at({ x, y });
+		Regions::foreach(map, [&list](Region& reg, sf::Vector2i pos) {
+			// record region state change
+			auto* move = new Moves::RegionChange(pos, reg);
+			reg.tick();
+			move->state = reg;
 
-				// ignore if empty or not solid
-				// or no attached region
-				if (!hex || !hex->solid() || !hex->region()) continue;
-				Region& reg = *hex->region();
-
-				// ignore tile if already got processed
-				// or tile does not have a region attached
-				size_t idx = hex->region().index();
-				if (visited.find(idx) != visited.cend())
-					continue;
-
-				// update region
-				auto* move = new Moves::RegionChange({ x, y }, reg);
-				reg.tick();
-				move->state = reg;
-
-				// mark region as processed
-				visited.insert(idx);
-			};
-		};
+			// register region change move
+			list.push_back(std::unique_ptr<Move>(move));
+		});
 
 		// entity state change
 		auto change_state = [&](Entity* entity, bool grave) {

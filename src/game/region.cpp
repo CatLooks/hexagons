@@ -1,6 +1,7 @@
 #include "game/region.hpp"
 #include "game/map.hpp"
 #include "game/logic/skill_helper.hpp"
+#include <set>
 
 /// Adds another region resources.
 void RegionRes::add(const RegionRes& oth) {
@@ -82,6 +83,37 @@ void Regions::enumerate(Map* map) {
 				.imm = true
 			};
 			spread.apply(*map, { x, y });
+		};
+	};
+};
+
+/// Executes the function for each region in a map.
+void Regions::foreach(const Map* map, std::function<void(Region&, sf::Vector2i)> call) {
+	// visited regions indices
+	std::set<size_t> visited;
+
+	// for all regions
+	for (int y = 0; y < map->size().y; y++) {
+		for (int x = 0; x < map->size().x; x++) {
+			// get tile
+			Hex& hex = map->ats({ x, y });
+
+			// ignore if empty or not solid
+			// or no attached region
+			if (!hex.solid() || !hex.region()) continue;
+			Region& reg = *hex.region();
+
+			// ignore tile if already got visited
+			// or tile does not have a region attached
+			size_t idx = hex.region().index();
+			if (visited.find(idx) != visited.cend())
+				continue;
+
+			// execute callback for the region
+			call(reg, { x, y });
+
+			// mark region as visited
+			visited.insert(idx);
 		};
 	};
 };

@@ -8,6 +8,20 @@
 #include <pool>
 #include <refpool>
 
+/// Base hex state.
+struct HexBase {
+	/// Tile type.
+	enum Type {
+		Void,   /// Void tile.
+		Water,  /// Water tile, can be turned into a bridge.
+		Ground, /// Ground tile, can be captured.
+		Bridge, /// Bridge tile, combo of `Water` and `Ground` properties.
+	} type = Void;
+
+	/// Tile team.
+	Region::Team team = Region::Unclaimed;
+};
+
 /// References to entities on the hex.
 struct HexEnt {
 	Pool<Troop>::Item troop; /// Troop reference, `null` if no troop.
@@ -23,17 +37,8 @@ struct HexEnt {
 
 /// Hex tile.
 /// Contains tile status and reference to objects placed on it.
-struct Hex : HexEnt {
-	/// Tile type.
-	enum Type {
-		Void,   /// Void tile.
-		Water,  /// Water tile, can be turned into a bridge.
-		Ground, /// Ground tile, can be captured.
-		Bridge, /// Bridge tile, combo of `Water` and `Ground` properties.
-	} type = Void;
-
-	/// Tile team.
-	Region::Team team = Region::Unclaimed;
+struct Hex : HexBase, HexEnt {
+	using HexBase::Type;
 
 	float elevation = 0; /// Tile elevation.
 	size_t selected = 0; /// Selection index.

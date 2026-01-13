@@ -102,6 +102,12 @@ public:
 	/// @param map Map reference.
 	void enumerate(Map* map);
 
+	/// Executes the function for each region in a map.
+	///
+	/// @param map Map reference.
+	/// @param call Callback function.
+	static void foreach(const Map* map, std::function<void(Region& reg, sf::Vector2i pos)> call);
+
 	/// Merges regions into a singular region.
 	///
 	/// @param map Map reference.
