@@ -28,7 +28,7 @@ namespace ui {
 	/// Constructs a dimension with a parent size scalar.
 	Dim Dim::from_ps(float ps) { return Dim(0, ps, 0.f); };
 	/// Constructs a dimension with an element size scalar.
-	Dim Dim::from_es(float es) { return Dim(0, 0.f, es); };
+	Dim Dim::from_me(float me) { return Dim(0, 0.f, me); };
 
 	/// Adds 2 dimensions.
 	Dim Dim::operator+(const Dim& oth) const { return { px + oth.px, ps + oth.ps, es + oth.es }; };
@@ -154,7 +154,7 @@ ui::Dim operator""px(unsigned long long i) { return ui::Dim::from_px((float)i); 
 /// Converts a parent size scalar into a dimension.
 ui::Dim operator""ps(unsigned long long i) { return ui::Dim::from_ps((float)i); };
 /// Converts an element size scalar into a dimension.
-ui::Dim operator""es(unsigned long long i) { return ui::Dim::from_es((float)i); };
+ui::Dim operator""me(unsigned long long i) { return ui::Dim::from_me((float)i); };
 /// Converts a alignment scalar into a dimension.
 ui::Dim operator""as(unsigned long long i) { return ui::Dim(0, (float)i, -(float)i); };
 
@@ -163,6 +163,6 @@ ui::Dim operator""px(long double i) { return ui::Dim::from_px((float)i); };
 /// Converts a parent size scalar into a dimension.
 ui::Dim operator""ps(long double f) { return ui::Dim::from_ps((float)f); };
 /// Converts an element size scalar into a dimension.
-ui::Dim operator""es(long double f) { return ui::Dim::from_es((float)f); };
+ui::Dim operator""me(long double f) { return ui::Dim::from_me((float)f); };
 /// Converts a alignment scalar into a dimension.
 ui::Dim operator""as(long double f) { return ui::Dim(0, (float)f, -(float)f); };

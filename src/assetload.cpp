@@ -61,7 +61,7 @@ namespace assets {
 
 		// print errors
 		for (const auto& err : state.list) {
-			fprintf(stderr, "error at line %llu column %llu: ", err->line, err->column);
+			fprintf(stderr, "error at line %zu column %zu: ", err->line, err->column);
 			err->print(stderr);
 			fprintf(stderr, "\n");
 		};
@@ -112,7 +112,7 @@ namespace assets {
 
 		// print errors
 		for (const auto& err : state.list) {
-			fprintf(stderr, "error at line %llu column %llu: ", err->line, err->column);
+			fprintf(stderr, "error at line %zu column %zu: ", err->line, err->column);
 			err->print(stderr);
 			fprintf(stderr, "\n");
 		};

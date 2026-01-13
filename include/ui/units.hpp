@@ -63,7 +63,7 @@ namespace ui {
 		/// Constructs a dimension with a parent size scalar.
 		static Dim from_ps(float ps);
 		/// Constructs a dimension with an element size scalar.
-		static Dim from_es(float es);
+		static Dim from_me(float me);
 
 		/// Adds 2 dimensions.
 		Dim operator+(const Dim& oth) const;
@@ -224,7 +224,7 @@ ui::Dim operator""px(unsigned long long i);
 /// Converts a parent size scalar into a dimension.
 ui::Dim operator""ps(unsigned long long i);
 /// Converts an element size scalar into a dimension.
-ui::Dim operator""es(unsigned long long i);
+ui::Dim operator""me(unsigned long long i);
 /// Converts a alignment scalar into a dimension.
 ui::Dim operator""as(unsigned long long i);
 
@@ -233,6 +233,6 @@ ui::Dim operator""px(long double i);
 /// Converts a parent size scalar into a dimension.
 ui::Dim operator""ps(long double f);
 /// Converts an element size scalar into a dimension.
-ui::Dim operator""es(long double f);
+ui::Dim operator""me(long double f);
 /// Converts a alignment scalar into a dimension.
 ui::Dim operator""as(long double f);

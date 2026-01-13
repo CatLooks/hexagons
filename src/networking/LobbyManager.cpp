@@ -13,14 +13,15 @@ LobbyManager::~LobbyManager() {
 	//shared ptrs will auto clean up
 }
 
-void LobbyManager::CreateLobby(uint32_t maxPlayers, const char* lobbyCode) {
+void LobbyManager::CreateLobby(uint32_t maxPlayers, std::string& lobbyCode) {
 	isBusy = true;
 	EOS_Lobby_CreateLobbyOptions options{};
 	options.ApiVersion = EOS_LOBBY_CREATELOBBY_API_LATEST;
 	options.LocalUserId = LocalUserId;
 	options.MaxLobbyMembers = maxPlayers;
 	options.PermissionLevel = EOS_ELobbyPermissionLevel::EOS_LPL_PUBLICADVERTISED;
-	options.BucketId = lobbyCode;
+	std::cout << "[LobbyManager] Creating lobby with room code: " << lobbyCode.c_str() << std::endl;
+	options.BucketId = lobbyCode.c_str(); 
 	options.bPresenceEnabled = EOS_TRUE;
 	options.bAllowInvites = EOS_TRUE;
 	options.bDisableHostMigration = EOS_FALSE;
@@ -55,12 +56,11 @@ void LobbyManager::FindLobby(std::string& roomCode) {
 		return;
 	}
 
-	
-
 	EOS_Lobby_AttributeData SearchParameter{};
 	SearchParameter.ApiVersion = EOS_LOBBY_ATTRIBUTEDATA_API_LATEST;
 	SearchParameter.Key = EOS_LOBBY_SEARCH_BUCKET_ID;
 	SearchParameter.ValueType = EOS_ELobbyAttributeType::EOS_AT_STRING;
+	std::cout << "[LobbyManager] Searching for room code: " << roomCode.c_str() << std::endl;
 	SearchParameter.Value.AsUtf8 = roomCode.c_str();
 
 	EOS_LobbySearch_SetParameterOptions SetParamOptions = {};

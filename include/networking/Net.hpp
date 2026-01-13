@@ -44,7 +44,7 @@ public:
 	void logout();
 
     /// Starts hosting a lobby.
-    void host(uint32_t maxPlayers, const char* lobbyName);
+    void host(uint32_t maxPlayers, std::string& lobbyName);
 
     /// Finds and joins the first available lobby as a client.
     void connect(std::string& roomCode);

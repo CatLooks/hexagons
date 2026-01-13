@@ -33,7 +33,7 @@ void Net::logout() {
 }
 
 /// Start hosting a lobby.
-void Net::host(uint32_t maxPlayers, const char* lobbyCode) {
+void Net::host(uint32_t maxPlayers, std::string& lobbyCode) {
     //login();
     EOS_ProductUserId localId = m_eosManager.GetAuthManager()->GetLocalUserId();
 

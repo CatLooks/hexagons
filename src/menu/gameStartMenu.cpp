@@ -98,7 +98,7 @@ GameStartMenu::GameStartMenu(Net* net) : _net(net) {
 
     // 7. Na samym koñcu zaktualizuj UI
     updateUI();
-    generateGameCode();
+    //generateGameCode();
 
 }
 
@@ -324,7 +324,7 @@ void GameStartMenu::selectMode(GameMode mode, menuui::Button* btn) {
     _selectedMode = mode;
     btn->select();
     if (modeChanged) {
-        generateGameCode();
+        //generateGameCode();
         updateUI();
     }
 }
@@ -385,7 +385,7 @@ void GameStartMenu::nextStep() {
 
     // Logika przejœcia z ustawieñ LOBBY do POCZEKALNI (tylko dla Hosta)
     if (_currentStep == STEP_LOBBY) {
-        _net->host(_maxPlayers, _gameCode.c_str());
+        _net->host(_maxPlayers, _gameCode);
         _currentStep = STEP_WAITING;
 
         _pageWaitingLobby->setRoomCode(_gameCode);
