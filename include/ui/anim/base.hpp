@@ -19,6 +19,7 @@ namespace ui {
 		Easing ease   = Easings::linear; /// Animation easing function.
 		Looping mode  = None;            /// Animation looping mode.
 		bool reversed = false;           /// Whether the animation runs in reverse.
+		bool freeze   = false;           /// Whether the animation is frozen.
 
 	protected:
 		bool _active  = false;           /// Whether the animation is active.
@@ -29,6 +30,10 @@ namespace ui {
 	public:
 		/// Restarts the animation.
 		void restart();
+		/// Cancels the animation.
+		void cancel();
+		/// Instantly ends the animation.
+		void end();
 
 		/// Ticks the animation.
 		/// @param time Time elapsed since last frame.

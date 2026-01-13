@@ -85,6 +85,8 @@ namespace ui {
 
 		/// Automatic argument generator return type.
 		using Hook = std::optional<std::string>;
+		/// Argument list type.
+		using List = std::unordered_map<std::string, std::string>;
 
 	protected:
 		/// Text localization path.
@@ -95,8 +97,11 @@ namespace ui {
 		bool _raw;
 		/// Text rendering object.
 		mutable sf::Text _text;
+
 		/// Format arguments.
-		std::unordered_map<std::string, std::string> _args;
+		List _args;
+		/// Shared argument list.
+		List* _shargs;
 		/// Automatic argument setters.
 		std::unordered_map<std::string, std::function<Hook()>> _autoargs;
 		/// Automatic multi-argument setters.
@@ -143,6 +148,13 @@ namespace ui {
 		/// 
 		/// @param idx Character index.
 		sf::Vector2f charpos(size_t idx) const;
+
+		/// Uses an external argument list.
+		/// 
+		/// If a pointer is `null`, uses own argument list.
+		/// 
+		/// @param list Argument list pointer.
+		void use(List* list = nullptr);
 
 		/// Clears text arguments.
 		void paramClear();

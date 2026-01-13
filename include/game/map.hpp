@@ -3,15 +3,20 @@
 // include dependencies
 #include <SFML/System/Vector2.hpp>
 #include "ui/buffer.hpp"
+#include "dev/dev_game.hpp"
 
 #include "assets.hpp"
 #include "mathext.hpp"
 #include "array.hpp"
 #include "spread.hpp"
+#include "history.hpp"
 
 #include "logic/troop_logic.hpp"
 #include "logic/build_logic.hpp"
 #include "logic/plant_logic.hpp"
+
+// template forward-declaration
+class Template;
 
 /// Game map object.
 /// Stores array of tiles and lists of all dynamic objects on it.
@@ -20,10 +25,16 @@
 /// Every other row is shifted by half a tile.
 /// Last hex in every shifted row is ignored.
 class Map : public HexArray {
+	friend Template;
 	friend Regions;
+	friend Move;
+	friend dev::Factory;
 
 public:
-	sf::Vector2i camera; /// Map camera.
+	/// Constructs an empty game map.
+	Map();
+
+	sf::IntRect camera; /// Map camera.
 
 	/// Generates a new selection index.
 	/// 
@@ -49,6 +60,22 @@ private:
 	bool _selection = false; /// Whether a selection is happening.
 
 public:
+	/// Returns troop iterator.
+	Pool<Troop>::It troopList();
+	/// Returns troop iterator.
+	Pool<Build>::It buildList();
+	/// Returns troop iterator.
+	Pool<Plant>::It plantList();
+
+	/// Returns troop iterator.
+	Pool<Troop>::ConstIt troopList() const;
+	/// Returns troop iterator.
+	Pool<Build>::ConstIt buildList() const;
+	/// Returns troop iterator.
+	Pool<Plant>::ConstIt plantList() const;
+
+	/// Move history.
+	History history;
 	/// Region manager.
 	Regions regions;
 	/// Tile pulse annotation.
@@ -64,22 +91,10 @@ public:
 	const Regions::Ref& selectedRegion() const;
 
 public:
-	/// Changes the team color of a hex.
-	///
-	/// @param origin Repaint source tile.
-	/// @param tile Target hex reference.
-	void repaintHex(const HexRef& origin, const HexRef& tile);
-	/// Moves a troop to another tile.
-	///
-	/// @param from Source tile.
-	/// @param to Destination tile.
-	void moveTroop(const HexRef& from, const HexRef& to);
-
 	/// Removes any entities from the hex.
 	///
 	/// @param hex Hex reference.
 	void removeEntity(Hex* hex);
-
 	/// Adds a troop to the map.
 	///
 	/// @param troop Troop object.
@@ -93,11 +108,26 @@ public:
 	/// @param plant Plant object.
 	void setPlant(const Plant& plant);
 
-	/// Applies an effect on a troop.
+public:
+	/// Checks for region splits / joins.
 	/// 
-	/// @param tile Troop tile.
-	/// @param effect Effect type.
-	void effectTroop(const HexRef& tile, EffectType effect);
+	/// @param tile Checked tile.
+	/// @param prev Previous tile region.
+	/// @param split Region resource split distribution for splitting.
+	/// 
+	/// @return Resource distribution from merging.
+	Regions::Split updateRegions(
+		const HexRef& tile,
+		const Regions::Ref& prev,
+		const Regions::Split& split
+	);
+
+	/// Executes a skill.
+	/// 
+	/// @param move Move object.
+	/// @param pos Skill origin position.
+	/// @param skill Skill description.
+	void executeSkill(Move* move, sf::Vector2i pos, const Skill* skill);
 
 public:
 	/// Returns backplane rectangle.

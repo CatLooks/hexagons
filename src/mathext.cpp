@@ -1,6 +1,14 @@
 #include "mathext.hpp"
+#include <sstream>
+#include <iomanip>
+#include "assets.hpp"
 
 namespace ext {
+	/// Returns absolute value of an integer.
+	int iabs(int x) {
+		return x >= 0 ? x : -x;
+	};
+
 	/// Returns `a / d` rounded down.
 	int idiv(int a, int d) {
 		return (int)floorf((float)a / d);
@@ -14,7 +22,7 @@ namespace ext {
 	};
 
 	/// Calculates quotient and remainder rounded down.
-	Pair<int, int> idivmod(int a, int d) {
+	std::pair<int, int> idivmod(int a, int d) {
 		return { idiv(a, d), imod(a, d) };
 	};
 
@@ -44,18 +52,98 @@ namespace ext {
 		return fmin(fmax(x, lower), upper);
 	};
 
+	// power for unsigned integer powers
+	static float _pow(float x, int p) {
+		float a = 1.f;
+		while (p > 0) {
+			if (p & 1) a *= x;
+			x *= x; p >>= 1;
+		};
+		return a;
+	};
+
 	/// Raises a float to an integer power.
 	float fpown(float base, int index) {
-		float scale = 1.f;
-		if (index > 0) {
-			do scale *= base;
-			while (index-- > 0);
-		}
-		else if (index < 0) {
-			do scale /= base;
-			while (index++ < 0);
+		return index >= 0
+			? _pow(base, index)
+			: 1.f / _pow(base, -index);
+	};
+
+	/// Returns a string representation of a vector.
+	std::string str_vec(sf::Vector2i vec, const char* sep) {
+		return std::format("{}{}{}", vec.x, sep, vec.y);
+	};
+
+	/// Returns a string representation of a rectangle.
+	std::string str_rect(sf::IntRect rect) {
+		return std::format(
+			"{}, {} ({} x {})",
+			rect.position.x, rect.position.y,
+			rect.size.x, rect.size.y
+		);
+	};
+
+	/// Returns a string representation of a signed integer.
+	std::string str_int(int n) {
+		return std::format("{}", n);
+	};
+
+	/// Returns a string representation of an unsigned integer.
+	std::string str_int(uint32_t n) {
+		return std::format("{}", n);
+	};
+
+	/// Returns a string representation of an unsigned integer.
+	std::string str_int(size_t n) {
+		return std::format("{}", n);
+	};
+
+	/// Returns a string representation of a float.
+	std::string str_float(float f, unsigned int digits) {
+		std::stringstream ss;
+		ss << std::fixed << std::setprecision(digits) << f;
+		return ss.str();
+	};
+
+	/// Returns percentage of `count` in `total`.
+	std::string str_percent(size_t count, size_t total) {
+		if (!count && !total) return "0%";
+		return std::format("{:.1f}%", (float)count / total * 100.f);
+	};
+
+	/// Returns a string representation of a time.
+	std::string str_time(float time) {
+		// get each unit amount
+		int s = (int)time % 60;
+		int m = (int)time / 60 % 60;
+		int h = (int)time / 60 / 60;
+
+		// generate resulting string
+		std::string res;
+		if (h) {
+			// get unit label
+			auto th = assets::lang::locale.req("time.h").get({});
+
+			// insert string
+			res.append(std::format("{}{}", h, th));
 		};
-		return scale;
+		if (m) {
+			// get unit label
+			auto tm = assets::lang::locale.req("time.m").get({});
+
+			// insert string
+			if (!res.empty()) res.append(" ");
+			res.append(std::format("{}{}", m, tm));
+		};
+		if (s || res.empty()) {
+			// get unit label
+			auto ts = assets::lang::locale.req("time.s").get({});
+
+			// insert string
+			if (!res.empty()) res.append(" ");
+			res.append(std::format("{}{}", s, ts));
+		};
+		return res;
 	};
 };
 

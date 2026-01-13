@@ -12,7 +12,7 @@ namespace gameui {
 	const ui::Dim Panel::spacing = Action::side * 1.6f;
 
 	/// Box spacing table.
-	static const std::vector<float> spacing_table[Values::SkillArray::Count] = {
+	static const std::vector<float> spacing_table[logic::SkillArray::Count] = {
 		/* --- */ {},
 		/* L00 */ {},
 		/* L10 */ { -1.5f },
@@ -24,12 +24,12 @@ namespace gameui {
 	};
 
 	/// Amount of actions in layout.
-	static const int box_count[Values::SkillArray::Count] = {
+	static const int box_count[logic::SkillArray::Count] = {
 		0, 0, 1, 1, 2, 3, 3, 4
 	};
 
 	/// Constructs the game panel.
-	Panel::Panel(): ui::Panel(texture), _layout(Values::SkillArray::None) {
+	Panel::Panel(const History& history): ui::Panel(texture), _layout(logic::SkillArray::None) {
 		// set panel bounds
 		bounds = { 0px, 1ps + Action::side, 1ps, height };
 		event_scissor = false;
@@ -44,6 +44,16 @@ namespace gameui {
 			_preview->deactivate();
 		};
 		adds(_preview);
+
+		// create move selector
+		_select = new Selector();
+		_select->position().x = 1as + Selector::width * 2;
+		adds(_select);
+
+		// add move selector update
+		onRecalculate([this, &history](const sf::Time&) {
+			_select->update(history.count());
+		});
 
 		// absorb all events
 		onEvent([=](const ui::Event& evt) {
@@ -67,20 +77,30 @@ namespace gameui {
 	};
 
 	/// Reconstructs panel actions.
-	void Panel::construct(Values::SkillArray::Layout layout) {
+	void Panel::construct(logic::SkillArray::Layout layout) {
 		// show / hide animations
-		if ((_layout == Values::SkillArray::None) != (layout == Values::SkillArray::None)) {
-			if (layout != Values::SkillArray::None) {
+		if ((_layout == logic::SkillArray::None) != (layout == logic::SkillArray::None)) {
+			if (layout != logic::SkillArray::None) {
 				// show panel
-				ui::Anim* anim = ui::AnimDim::to(&position().y, 1as, sf::seconds(0.2f));
-				anim->ease = ui::Easings::quadOut;
-				push(anim);
+				ui::Anim* anim0 = ui::AnimDim::to(&position().y, 1as, sf::seconds(0.2f));
+				anim0->ease = ui::Easings::quadOut;
+				push(anim0);
+
+				// show selectors
+				ui::Anim* anim1 = ui::AnimDim::to(&_select->position().x, 1as, sf::seconds(0.2f));
+				anim1->ease = ui::Easings::quadOut;
+				push(anim1);
 			}
 			else {
 				// hide panel
-				ui::Anim* anim = ui::AnimDim::to(&position().y, 1ps + Action::side, sf::seconds(0.2f));
-				anim->ease = ui::Easings::quadIn;
-				push(anim);
+				ui::Anim* anim0 = ui::AnimDim::to(&position().y, 1ps + Action::side, sf::seconds(0.2f));
+				anim0->ease = ui::Easings::quadIn;
+				push(anim0);
+
+				// hide selectors
+				ui::Anim* anim1 = ui::AnimDim::to(&_select->position().x, 1as + Selector::width * 2, sf::seconds(0.2f));
+				anim1->ease = ui::Easings::quadOut;
+				push(anim1);
 			};
 		};
 
@@ -102,7 +122,7 @@ namespace gameui {
 
 		// update preview visibility
 		_preview->clear();
-		if (layout != Values::SkillArray::None)
+		if (layout != logic::SkillArray::None)
 			_preview->activate();
 		else
 			_preview->deactivate();
@@ -127,5 +147,10 @@ namespace gameui {
 	/// Returns a reference to action panels.
 	const std::vector<Action*>& Panel::actions() const {
 		return _boxes;
+	};
+
+	/// Returns move selector container element.
+	Selector* Panel::selector() const {
+		return _select;
 	};
 };

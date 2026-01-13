@@ -1,6 +1,7 @@
 #pragma once
 
 // include dependencies
+#include "skill_array.hpp"
 #include "game/troop.hpp"
 
 namespace logic {
@@ -10,7 +11,11 @@ namespace logic {
 
 	/// Base troop damage.
 	/// @param id Troop type.
-	extern const int troop_dmg_base[Troop::Count];
+	extern const int troop_dmg[Troop::Count];
+
+	/// Troop power level.
+	/// @param id Troop type.
+	extern const int troop_pow[Troop::Count];
 
 	/// Troop buying cost.
 	/// @param id Troop type.
@@ -20,18 +25,9 @@ namespace logic {
 	/// @param id Troop type.
 	extern const int troop_upkeep[Troop::Count];
 
-	/// Returns troop damage.
-	///
-	/// @param troop Troop object.
-	int troop_dmg(const Troop& troop);
+	/// Troop skills.
+	extern const SkillArray troop_skills[Troop::Count];
 
-	/// Returns troop defense.
-	///
-	/// @param troop Troop object.
-	int troop_def(const Troop& troop);
-
-	/// Returns troop range.
-	///
-	/// @param troop Troop object.
-	int troop_rng(const Troop& troop);
+	/// Cost to execute troop's special skill (in peaches).
+	extern const int troop_effect_cost[Troop::Count];
 };

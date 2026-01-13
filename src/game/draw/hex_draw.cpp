@@ -96,7 +96,7 @@ namespace Draw {
 			else if (hex->type == Hex::Water) {
 				// draw water sides
 				sf::IntRect area = {origin + Values::tileLevel(size) * 2, size};
-				target.quad(area, Values::sides, sf::Color(0, 157, 251));
+				target.quad(area, Values::sides, Values::waterSide);
 			};
 			target.forward(&assets::tilemap);
 		};
@@ -114,14 +114,27 @@ namespace Draw {
 	/// Draws debug stuff.
 	void Tile::drawDebug(ui::RenderBuffer& target) const {
 		// region index text
-		std::string label = hex->region ? std::format("{}", hex->region.index()) : "x";
-		sf::Text text(assets::font, label, 20);
-		text.setPosition((sf::Vector2f)origin + sf::Vector2f(size.x * 3.f / 4, size.y / 2.f));
-		text.setOutlineThickness(2);
+		{
+			std::string label = hex->region() ? std::format("{}", hex->region().index()) : "x";
+			sf::Text text(assets::font, label, 20);
+			text.setPosition((sf::Vector2f)origin + sf::Vector2f(size.x * 3.f / 4, size.y / 2.f));
+			text.setOutlineThickness(2);
 
-		// draw index
-		target.text(text);
-		target.forward(nullptr);
+			// draw index
+			target.text(text);
+			target.forward(nullptr);
+		};
+		// spread index text
+		if (flags::spread) {
+			std::string label = std::format("{}", hex->spread);
+			sf::Text text(assets::font, label, 20);
+			text.setPosition((sf::Vector2f)origin + sf::Vector2f(size.x * 3.f / 4, size.y / 2.f + 22));
+			text.setOutlineThickness(2);
+
+			// draw index
+			target.text(text);
+			target.forward(nullptr);
+		};
 	};
 
 	/// Draws all tile contents.

@@ -54,7 +54,7 @@ namespace gameui {
 
 			// update labels
 			_labels[Money ]->param("value", std::format("{}", _region->money));
-			_labels[Income]->param("value", std::format("{}", _region->income * (_region->income >= 0 ? 1 : -1)));
+			_labels[Income]->param("value", std::format("{}", _region->income));
 			_labels[Berry ]->param("value", std::format("{}", _region->berry));
 			_labels[Peach ]->param("value", std::format("{}", _region->peach));
 

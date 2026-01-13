@@ -40,8 +40,28 @@ namespace Values {
 			+ (poison ? poison_offset : sf::Vector2i());
 	};
 
+	/// Status effect names.
+	const char* effect_names[static_cast<int>(EffectType::Count)] = {
+		"@!effect.shield",
+		"@!effect.range",
+		"@!effect.defense",
+		"@!effect.offense",
+		"@!effect.poison",
+		"@!effect.stun"
+	};
+
+	/// Shortened status effect names.
+	const char* effect_names_short[static_cast<int>(EffectType::Count)] = {
+		"effect.short.shield",
+		"effect.short.range",
+		"effect.short.defense",
+		"effect.short.offense",
+		"effect.short.poison",
+		"effect.short.stun"
+	};
+
 	/// Status effect textures.
-	const sf::IntRect effects[static_cast<int>(EffectType::Count)] = {
+	const sf::IntRect effect_textures[static_cast<int>(EffectType::Count)] = {
 		coords(8, 3, 0, 0), // shield
 		coords(8, 3, 1, 0), // range
 		coords(8, 3, 2, 0), // defense

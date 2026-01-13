@@ -1,6 +1,13 @@
 #include "game/values/interface.hpp"
 
 namespace Values {
+	/// Move undo button icon.
+	const sf::IntRect undo_icon = coords(7, 2);
+	/// Move redo button icon.
+	const sf::IntRect redo_icon = coords(8, 2);
+	/// Turn finish button icon.
+	const sf::IntRect next_icon = coords(9, 2);
+
 	/// Troop buying action texture.
 	const sf::IntRect buy_build = coords(6, 3);
 	/// Building buying action texture.
@@ -43,6 +50,12 @@ namespace Values {
 		coords(9, 3, 1, 2),
 		coords(9, 3, 2, 2),
 	};
+	/// Stunned skill digit replacement.
+	const sf::IntRect stun_digit = coords(9, 3, 3, 2);
+	/// Dead region skill digit replacement.
+	const sf::IntRect dead_digit = coords(9, 3, 0, 3);
+	/// Insufficient resources digit replacement.
+	const sf::IntRect insufficient_digit = coords(9, 3, 1, 3);
 
 	/// Game panel text settings.
 	const ui::TextSettings panel_text = {
@@ -54,5 +67,17 @@ namespace Values {
 	const ui::TextSettings resource_text = {
 		assets::font, 32, sf::Color::White,
 		sf::Color::Black, 4
+	};
+
+	/// Game state viewer text settings.
+	const ui::TextSettings state_text = {
+		assets::font, 30, sf::Color::White,
+		sf::Color::Black, 3
+	};
+
+	/// Game chat text settings.
+	const ui::TextSettings chat_text = {
+		assets::font, 20, sf::Color::White,
+		sf::Color::Black, 2
 	};
 };

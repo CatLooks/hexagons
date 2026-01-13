@@ -79,6 +79,33 @@
     <Filter Include="Source Files\game\logic">
       <UniqueIdentifier>{493a83c8-4463-495d-8c18-f18af3205a96}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\game\moves">
+      <UniqueIdentifier>{2fb5033c-d53b-4124-ab1f-7be35720d2b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\moves">
+      <UniqueIdentifier>{bb4ca6bf-60f3-4a66-8837-a53b8752d5ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\logic\lists">
+      <UniqueIdentifier>{89910916-689a-4584-825c-3d7ee1577437}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\game\dev">
+      <UniqueIdentifier>{077bee16-d0b9-4636-8992-d67997f9445c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\dev">
+      <UniqueIdentifier>{2758b7f7-ffc1-4937-a00a-c6efca7f30bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\game\sync">
+      <UniqueIdentifier>{6ce7c79f-af31-4c48-97fc-5ec9bb0b0d47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\sync">
+      <UniqueIdentifier>{4f36068f-ea4c-4a37-acf5-70654160b8f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\game\serialize">
+      <UniqueIdentifier>{2eedbdea-e76d-46a3-b202-7bc61c26e087}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\serialize">
+      <UniqueIdentifier>{bf0c3e1d-363a-4272-bde2-0c65c7cc45d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -231,9 +258,6 @@
     <ClCompile Include="src\game\values\skill_values.cpp">
       <Filter>Source Files\game\values</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\logic\skill_list.cpp">
-      <Filter>Source Files\game\logic</Filter>
-    </ClCompile>
     <ClCompile Include="src\game\logic\build_logic.cpp">
       <Filter>Source Files\game\logic</Filter>
     </ClCompile>
@@ -263,6 +287,108 @@
     </ClCompile>
     <ClCompile Include="src\ui\anim\setter.cpp">
       <Filter>Source Files\anim</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\history.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\troop_move.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\logic\lists\skill_list_attack.cpp">
+      <Filter>Source Files\game\logic\lists</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\logic\lists\skill_list_effect.cpp">
+      <Filter>Source Files\game\logic\lists</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\logic\lists\skill_list_other.cpp">
+      <Filter>Source Files\game\logic\lists</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\logic\lists\skill_list_shop.cpp">
+      <Filter>Source Files\game\logic\lists</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\entity_effect.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\move.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\ui\move_selector.cpp">
+      <Filter>Source Files\game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\button.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\entity_withdraw.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\dev\dev_panel.cpp">
+      <Filter>Source Files\game\dev</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\dev\dev_game.cpp">
+      <Filter>Source Files\game\dev</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\dev\dev_move.cpp">
+      <Filter>Source Files\game\dev</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\entity_place.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\troop_attack.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\radius_effect.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\troop_heal.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\plant_modify.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\plant_cut.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\logic\lists\skill_list_generic.cpp">
+      <Filter>Source Files\game\logic\lists</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\game_turn.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\sync\state.cpp">
+      <Filter>Source Files\game\sync</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\sync\ai.cpp">
+      <Filter>Source Files\game\sync</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\sync\net.cpp">
+      <Filter>Source Files\game\sync</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\sync\test.cpp">
+      <Filter>Source Files\game\sync</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\logic\turn_logic.cpp">
+      <Filter>Source Files\game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\sync\adapter.cpp">
+      <Filter>Source Files\game\sync</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\ui\state_viewer.cpp">
+      <Filter>Source Files\game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\ui\chat.cpp">
+      <Filter>Source Files\game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\serialize\s_entities.cpp">
+      <Filter>Source Files\game\serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\serialize\s_general.cpp">
+      <Filter>Source Files\game\serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\serialize\s_messages.cpp">
+      <Filter>Source Files\game\serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\serialize\s_moves.cpp">
+      <Filter>Source Files\game\serialize</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -303,6 +429,7 @@
     <None Include="include\refpool">
       <Filter>Header Files\templated</Filter>
     </None>
+    <None Include="todo.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\assetload.hpp">
@@ -505,6 +632,105 @@
     </ClInclude>
     <ClInclude Include="include\ui\anim\setter.hpp">
       <Filter>Header Files\anim</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\troop_move.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\history.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\move.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\entity_effect.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\logic\skill_array.hpp">
+      <Filter>Header Files\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\logic\skill_types.hpp">
+      <Filter>Header Files\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\ui\move_selector.hpp">
+      <Filter>Header Files\game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\button.hpp">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\entity_withdraw.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\dev\dev_panel.hpp">
+      <Filter>Header Files\game\dev</Filter>
+    </ClInclude>
+    <ClInclude Include="include\dev\dev_game.hpp">
+      <Filter>Header Files\game\dev</Filter>
+    </ClInclude>
+    <ClInclude Include="include\dev\dev_move.hpp">
+      <Filter>Header Files\game\dev</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\troop_attack.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\entity_place.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\radius_effect.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\troop_heal.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\plant_cut.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\plant_modify.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\game_turn.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\sync\adapter.hpp">
+      <Filter>Header Files\game\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\sync\state.hpp">
+      <Filter>Header Files\game\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\sync\ai.hpp">
+      <Filter>Header Files\game\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\sync\net.hpp">
+      <Filter>Header Files\game\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\sync\test.hpp">
+      <Filter>Header Files\game\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\logic\turn_logic.hpp">
+      <Filter>Header Files\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\ui\state_viewer.hpp">
+      <Filter>Header Files\game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\ui\chat.hpp">
+      <Filter>Header Files\game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\sync\messages.hpp">
+      <Filter>Header Files\game\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\serialize\entities.hpp">
+      <Filter>Header Files\game\serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\serialize\messages.hpp">
+      <Filter>Header Files\game\serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\serialize\moves.hpp">
+      <Filter>Header Files\game\serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\serialize\general.hpp">
+      <Filter>Header Files\game\serialize</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

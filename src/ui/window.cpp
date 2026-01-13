@@ -30,7 +30,7 @@ namespace ui {
 
 		// configure window
 		_win.setVerticalSyncEnabled(true);
-		//_win.setFramerateLimit(60);
+		//_win.setFramerateLimit(2);
 		_win.setKeyRepeatEnabled(false);
 	};
 
@@ -64,7 +64,7 @@ namespace ui {
 				continue;
 			};
 
-			// check system toggles
+			// check flag toggles
 			if (auto* data = event->getIf<sf::Event::KeyPressed>()) {
 				// fullscreen toggle
 				if (data->code == sf::Keyboard::Key::F11) {
@@ -72,11 +72,8 @@ namespace ui {
 					continue;
 				};
 
-				// debug toggle
-				if (data->code == sf::Keyboard::Key::F12) {
-					flags::debug = !flags::debug;
-					continue;
-				};
+				// flag toggles
+				flags::proc(*data);
 			};
 
 			// pass event to queue

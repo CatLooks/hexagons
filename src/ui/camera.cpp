@@ -2,37 +2,59 @@
 #include "mathext.hpp"
 
 namespace ui {
+	/// Starts camera position drag event.
+	void Camera::start(sf::Vector2i mouse) {
+		_drag.start(mouse);
+	};
+
+	/// Stops camera position drag event.
+	void Camera::stop() {
+		_drag.stop();
+	};
+
+	/// Moves the camera by an offset.
+	void Camera::move(sf::Vector2f offset) {
+		_cam += offset;
+	};
+
+	/// Sets new camera position.
+	void Camera::setPosition(sf::Vector2f pos) {
+		_cam = pos;
+	};
+
+	/// Updates the camera position.
+	void Camera::update(sf::Vector2i mouse, bool pressed) {
+		_drag.update(mouse, pressed);
+	};
+
 	/// Constructs a camera object.
-	Camera::Camera(Layer* layer, sf::Vector2i* camera, float scroll)
-		: _layer(layer), _drag(camera), scrollPower(scroll)
+	Camera::Camera(Layer* layer, float scroll)
+		: _drag([=](sf::Vector2f diff) { _cam += diff; }), _layer(layer), scrollPower(scroll)
 	{
 		_drag.invert = true;
 	};
 
-	/// Controls camera panning.
-	void Camera::pan(bool pressed, sf::Vector2i mouse, sf::Vector2i window) {
-		_drag.update(mouse, window, pressed);
+	/// Controls camera zoom.
+	void Camera::scroll(int wheel, sf::Vector2i mouse) {
+		setZoom(ext::fclamp(
+			ext::fpown(scrollPower, wheel) * _drag._scale,
+			minZoom, maxZoom
+		));
 	};
 
-	/// Controls camera zoom.
-	void Camera::scroll(int wheel, sf::Vector2i mouse, sf::Vector2i window) {
-		// get new zoom value
-		float zoom = ext::fclamp(
-			ext::fpown(scrollPower, wheel) * _zoom,
-			minZoom, maxZoom
-		);
-
-		// recalculate camera
-		sf::Vector2i& camera = *_drag._ref;
-		//camera = window / 2 - sf::Vector2i(sf::Vector2f(window / 2 - camera) * zoom / _zoom);
-
-		// set new zoom
-		_zoom = zoom;
-		_drag._scale = zoom;
+	/// Sets a new zoom value.
+	void Camera::setZoom(float zoom) {
+		_drag.scaling(zoom);
 	};
 
 	/// @return Current zoom.
 	float Camera::zoom() const {
-		return _zoom;
+		return _drag._scale;
+	};
+
+	/// Returns camera view rectangle.
+	sf::FloatRect Camera::view(sf::Vector2i window) const {
+		auto size = (sf::Vector2f)window * _drag._scale;
+		return { _cam - size * 0.5f, size };
 	};
 };

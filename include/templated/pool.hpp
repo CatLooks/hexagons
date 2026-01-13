@@ -14,8 +14,10 @@
 template <typename T> class Pool {
 public:
 	// forward declarations
-	class Ref;  friend Ref;
-	class Item; friend Item;
+	class Ref;     friend Ref;
+	class Item;    friend Item;
+	class It;      friend It;
+	class ConstIt; friend ConstIt;
 
 private:
 	std::vector<T>   _storage; /// Pool storage.
@@ -42,9 +44,8 @@ public:
 		};
 		/// Move assignment.
 		Ref& operator=(Ref&& ref) noexcept {
-			_pool = ref._pool;
-			_idx = ref._idx;
-			ref._pool = nullptr;
+			std::swap(_pool, ref._pool);
+			std::swap(_idx, ref._idx);
 			return *this;
 		};
 
@@ -201,4 +202,104 @@ protected:
 		// mark index as deleted
 		_deleted.insert(idx);
 	};
+
+public:
+	/// Pool iterator object.
+	class It {
+		friend Pool;
+
+	private:
+		/// Pool storage vector.
+		std::vector<T>* _storage;
+		/// Current index.
+		size_t _idx;
+		/// Deleted index set.
+		const std::set<size_t>* _deleted;
+		/// Deleted index set iterator.
+		std::set<size_t>::const_iterator _it;
+
+		/// Hidden iterator constructor.
+		/// 
+		/// @param pool Pool reference.
+		It(Pool* pool) :
+			_storage(&pool->_storage), _idx(0),
+			_deleted(&pool->_deleted), _it(pool->_deleted.cbegin())
+		{
+			forward();
+		};
+
+		/// Increases index until an item is found.
+		void forward() {
+			while (_idx < _storage->size()) {
+				if (_it == _deleted->cend() || *_it != _idx)
+					break;
+				_idx++;
+				_it++;
+			};
+		};
+
+	public:
+		/// Returns next pool object.
+		T* next() {
+			// return null if reached end
+			if (_idx >= _storage->size()) return nullptr;
+
+			// store pointer
+			T* ptr = &_storage->at(_idx++);
+			forward();
+			return ptr;
+		};
+	};
+
+	/// Pool constant iterator object.
+	class ConstIt {
+		friend Pool;
+
+	private:
+		/// Pool storage vector.
+		const std::vector<T>* _storage;
+		/// Current index.
+		size_t _idx;
+		/// Deleted index set.
+		const std::set<size_t>* _deleted;
+		/// Deleted index set iterator.
+		std::set<size_t>::const_iterator _it;
+
+		/// Hidden iterator constructor.
+		/// 
+		/// @param pool Pool reference.
+		ConstIt(const Pool* pool) :
+			_storage(&pool->_storage), _idx(0),
+			_deleted(&pool->_deleted), _it(pool->_deleted.cbegin())
+		{
+			forward();
+		};
+
+		/// Increases index until an item is found.
+		void forward() {
+			while (_idx < _storage->size()) {
+				if (_it == _deleted->cend() || *_it != _idx)
+					break;
+				_idx++;
+				_it++;
+			};
+		};
+
+	public:
+		/// Returns next pool object.
+		const T* next() {
+			// return null if reached end
+			if (_idx >= _storage->size()) return nullptr;
+
+			// store pointer
+			const T* ptr = &_storage->at(_idx++);
+			forward();
+			return ptr;
+		};
+	};
+
+	/// Returns a pool iterator object.
+	ConstIt iter() const { return ConstIt(this); };
+	/// Returns a pool iterator object.
+	It iter() { return It(this); };
 };

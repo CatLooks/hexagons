@@ -1,20 +1,53 @@
 #include "game/region.hpp"
 #include "game/map.hpp"
 #include "game/logic/skill_helper.hpp"
+#include <set>
 
-/// Adds a tile to region.
-void Region::addTile() {
-	tiles++;
-	income++;
+/// Adds another region resources.
+void RegionRes::add(const RegionRes& oth) {
+	money += oth.money;
+	berry += oth.berry;
+	peach += oth.peach;
 };
-/// Removes a tile from region.
-void Region::removeTile() {
-	tiles--;
-	income--;
+
+/// Subtracts another region resources.
+void RegionRes::sub(const RegionRes& oth) {
+	money -= oth.money;
+	berry -= oth.berry;
+	peach -= oth.peach;
 };
+
+/// Divides region resources rounded down.
+RegionRes RegionRes::div(int count) const {
+	return {
+		.money = (int)roundf((float)money / count),
+		.berry = (int)roundf((float)berry / count),
+		.peach = (int)roundf((float)peach / count)
+	};
+};
+
+/// Returns region resources.
+RegionRes Region::res() const {
+	return {
+		.money = money,
+		.berry = berry,
+		.peach = peach
+	};
+};
+
+/// Checks whether the region is dead.
+bool Region::dead() const {
+	return money <= 0 && income < 0;
+};
+
 /// Updates money based on income.
 void Region::tick() {
 	money += income;
+};
+
+/// Returns a region iterator.
+RefPool<Region>::It Regions::iter() {
+	return _pool.iter();
 };
 
 /// Creates a new region.
@@ -27,16 +60,16 @@ void Regions::enumerate(Map* map) {
 	// clear region pointers
 	for (int y = 0; y < map->size().y; y++)
 		for (int x = 0; x < map->size().x; x++)
-			map->ats({ x, y }).region = {};
+			map->ats({ x, y }).leave();
 
 	// enumerate region pointers
 	for (int y = 0; y < map->size().y; y++) {
 		for (int x = 0; x < map->size().x; x++) {
-			Hex& hex = map->ats({x, y});
+			Hex& hex = map->ats({ x, y });
 
 			// ignore tile if already has a region
 			// or the tile does not need a region
-			if (hex.region || !hex.solid()) continue;
+			if (hex.region() || !hex.solid()) continue;
 
 			// create and spread new region
 			auto region = create({ .team = hex.team });
@@ -46,10 +79,41 @@ void Regions::enumerate(Map* map) {
 					return tile.hex->team == team
 						&& tile.hex->solid();
 				},
-				.effect = skillf::regionAuditEffect(region),
+				.effect = skillf::regionJoin(region),
 				.imm = true
 			};
 			spread.apply(*map, { x, y });
+		};
+	};
+};
+
+/// Executes the function for each region in a map.
+void Regions::foreach(const Map* map, std::function<void(Region&, sf::Vector2i)> call) {
+	// visited regions indices
+	std::set<size_t> visited;
+
+	// for all regions
+	for (int y = 0; y < map->size().y; y++) {
+		for (int x = 0; x < map->size().x; x++) {
+			// get tile
+			Hex& hex = map->ats({ x, y });
+
+			// ignore if empty or not solid
+			// or no attached region
+			if (!hex.solid() || !hex.region()) continue;
+			Region& reg = *hex.region();
+
+			// ignore tile if already got visited
+			// or tile does not have a region attached
+			size_t idx = hex.region().index();
+			if (visited.find(idx) != visited.cend())
+				continue;
+
+			// execute callback for the region
+			call(reg, { x, y });
+
+			// mark region as visited
+			visited.insert(idx);
 		};
 	};
 };
@@ -62,43 +126,87 @@ static Spread _region_overwrite(const Regions::Ref& prev, const Regions::Ref& ne
 	return Spread {
 		.hop = [&](const Spread::Tile& tile) {
 			// hop if same region
-			return tile.hex->region == prev;
+			return tile.hex->region() == prev;
 		},
-		.effect = [&](Spread::Tile& tile) {
+		.effect = [&](const Spread::Tile& tile) {
 			// overwrite tile region
-			tile.hex->region = next;
+			tile.hex->join(next);
 		},
 		.imm = true
 	};
 };
 
 /// Merges regions into a singular region.
-void Regions::merge(Map* map, Ref& target, const std::vector<AccessPoint>& aps) {
+Regions::Split Regions::merge(
+	Map* map,
+	const Ref& target,
+	const std::vector<AccessPoint>& aps,
+	int origin
+) {
+	// previous resource distribution
+	Split dist;
+
+	// store target resources
+	auto res = target->res();
+
 	// overwrite merged regions
+	int idx = 0;
 	for (const auto& ap : aps) {
 		const Ref& apr = *ap.region;
 
-		// merge resources to the target region
-		// @todo
+		// ignore if origin
+		if (idx++ == origin) {
+			dist.push_back(res);
+			continue;
+		};
+
+		// store & merge resources
+		dist.push_back(*apr);
+		target->add(*apr);
 
 		// overwrite region for all hexes
 		Ref copy = apr;
 		_region_overwrite(copy, target).apply(*map, ap.pos);
 	};
+	return dist;
 };
 
 /// Splits a separated region into proper regions.
-void Regions::split(Map* map, const std::vector<AccessPoint>& aps) {
+void Regions::split(Map* map, const std::vector<AccessPoint>& aps, const Split& dist) {
+	// ignore if no regions to split
+	if (aps.size() < 2) return;
+
+	// resource split per region
+	RegionRes split;
+
+	// generate split amount for empty distribution
+	if (dist.empty())
+		split = (*aps[0].region)->div((int)aps.size());
+
 	// overwrite region parts
 	for (size_t i = 1; i < aps.size(); i++) {
 		const auto& ap = aps[i];
+		const auto& main = *aps[0].region;
 
 		// generate new region
 		Ref apr = *ap.region;
-		Ref region = create(*apr);
+		Ref region = create({ .team = apr->team });
 
-		// split resources to a new region
-		// @todo
+		// transfer resource split
+		if (i < dist.size()) {
+			// follow previous distribution
+			region->add(dist[i]);
+			main->sub(dist[i]);
+		}
+		else {
+			// generate split amount
+			if (i == dist.size())
+				split = main->div((int)(aps.size() - i));
+
+			// split an equal amount from main region
+			region->add(split);
+			main->sub(split);
+		};
 
 		// overwrite region for all hexes
 		_region_overwrite(apr, region).apply(*map, ap.pos);

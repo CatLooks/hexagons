@@ -1,9 +1,16 @@
 #include "game/logic/skill_helper.hpp"
 
 namespace skillf {
+	/// Generates static skill cost generator.
+	Skill::Cost cost(int pts) {
+		return [=](const SkillState&) {
+			return pts;
+		};
+	};
+
 	/// Generates tile selector spreader effect function.
 	Spread::Effect selectTile(size_t idx) {
-		return [=](Spread::Tile& tile) {
+		return [=](const Spread::Tile& tile) {
 			tile.hex->selected = idx;
 		};
 	};
@@ -11,7 +18,7 @@ namespace skillf {
 	/// Allows spreading only to tiles of a region.
 	Spread::Check sameRegionHop(const Regions::Ref& region) {
 		return [&region](const Spread::Tile& tile) {
-			return tile.hex->region == region;
+			return tile.hex->region() == region;
 		};
 	};
 
@@ -26,14 +33,16 @@ namespace skillf {
 	};
 
 	/// Generates region audit spreader effect function.
-	Spread::Effect regionAuditEffect(const Regions::Ref& ref) {
-		return [&ref](Spread::Tile& tile) {
-			// tile statistics
-			ref->tiles++;
-			ref->income++;
+	Spread::Effect regionJoin(const Regions::Ref& ref) {
+		return [&ref](const Spread::Tile& tile) {
+			tile.hex->join(ref);
+		};
+	};
 
-			// attach region to tile
-			tile.hex->region = ref;
+	/// Generates a same region spreader for empty tiles.
+	Spread::Check sameRegionEmptyHop(const Regions::Ref& region) {
+		return [&region](const Spread::Tile& tile) {
+			return tile.hex->region() == region && !tile.hex->entity();
 		};
 	};
 };

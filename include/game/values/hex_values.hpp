@@ -14,6 +14,9 @@ namespace Values {
 	/// Hex pulse.
 	extern const sf::IntRect pulse;
 
+	/// Water side color.
+	extern const sf::Color waterSide;
+
 	/// Texture maps for teams.
 	/// @param id Team ID.
 	extern const sf::IntRect hex_textures[Region::Count];

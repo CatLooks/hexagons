@@ -4,43 +4,21 @@
 #include <variant>
 #include "spread.hpp"
 #include "region.hpp"
+#include "moves/move.hpp"
+#include "logic/skill_types.hpp"
 
 /// Skill enumeration container.
 namespace Skills {
-	/// Skill enumeration.
-	enum Type {
-		Empty = 0,    /// Empty skill.
-
-		Withdraw,     /// Withdraw.
-		Move,         /// Move.
-
-		AttackLumber, /// Lumberjack attack.
-		AttackSpear,  /// Spearman attack.
-		AttackArcher, /// Archer attack.
-		AttackBaron,  /// Baron attack.
-		AttackKnight, /// Knight attack.
-
-		Harvest,      /// (Farmer) Fruit harvest.
-		TreeCut,      /// (Lumberjack) Plant cut down.
-		Shield,       /// (Spearman) Spearman shield.
-		RangeBoost,   /// (Archer) Range boost.
-		DefenseBoost, /// (Baron) Defense boost.
-		OffenseBoost, /// (Knight) Attack boost.
-
-		Heal,         /// (Castle) Heal troops.
-		Stun,         /// (Beacon) Stun troops.
-		Count
-	};
-
 	/// Skill used resource type.
 	enum Resource {
 		None,  /// Free skill.
+		Money, /// Skill requires money.
 		Berry, /// Skill requires berries.
 		Peach, /// Skill requires peaches.
 	};
 
 	/// Skill resource label text path.
-	extern const char* withLabel[3];
+	extern const char* withLabel[4];
 };
 
 /// Data required for skill calculations.
@@ -55,6 +33,9 @@ struct SkillState {
 	///
 	/// @return Amount of the resource stored in state.
 	int with(Skills::Resource resource) const;
+
+	/// Returns region variable counters.
+	RegionVar var() const;
 };
 
 /// Skill description object.
@@ -68,7 +49,7 @@ struct Skill {
 		Peach,  /// Action costs peaches.
 		Berry,  /// Action costs berries.
 		Aim,    /// Action needs to be aimed.
-		Swap,   /// Action is an cyclic choice.
+		Swap,   /// Action is a cyclic choice.
 		Manage, /// Action manages other entity.
 		Count
 	};
@@ -78,33 +59,47 @@ struct Skill {
 
 	/// Resource required for skill.
 	Skills::Resource resource = Skills::None;
+
+	/// Skill cost generator.
+	///
+	/// @param state Skill state.
+	using Cost = std::function<int(const SkillState& state)>;
+
 	/// Skill cost.
-	int cost = 0;
+	Cost cost = [](const SkillState&) { return 0; };
 
 	/// Skill action condition check type.
 	///
 	/// @param state Skill state.
+	/// @param map Map reference.
 	/// @param tile Skill target tile.
-	using Condition = std::function<bool(const SkillState& state, const HexRef& tile)>;
+	using Condition = std::function<bool
+		(const SkillState& state, Map& map, const HexRef& tile)>;
 
 	/// Skill execution condition.
 	///
 	/// By default, uses built-in skill cost fields.
-	Condition condition = [this](const SkillState& state, const HexRef&) {
-		return state.with(resource) >= cost;
-	};
+	Condition condition = [this](const SkillState& state, Map&, const HexRef&)
+		{ return state.with(resource) >= cost(state); };
 
 	/// Selection tile spreader generator.
 	///
 	/// @param state Skill state.
 	/// @param tile Map selection origin.
 	/// @param idx Map selection index.
-	using Selection = std::function<Spread(const SkillState& state, const HexRef& tile, size_t idx)>;
+	using Selection = std::function<Spread
+		(const SkillState& state, const HexRef& tile, size_t idx)>;
 
 	/// Selection tile spreader generator.
 	///
 	/// By default, does not select any tiles.
-	Selection select = [](const SkillState&, const HexRef&, size_t) { return Spread(); };
+	Selection select = [](const SkillState&, const HexRef&, size_t idx)
+	{
+		return Spread {
+			.effect = [=](const Spread::Tile& tile)
+				{ tile.hex->selected = idx; }
+		};
+	};
 
 	/// Selection tile spreader radius.
 	size_t radius = 0;
@@ -115,12 +110,16 @@ struct Skill {
 	/// @param map Map reference.
 	/// @param prev Action origin.
 	/// @param next Action destination.
-	using Action = std::function<void(const SkillState& state, Map& map, const HexRef& prev, const HexRef& next)>;
+	/// 
+	/// @return Action as a reversible move object (no action if `null`).
+	using Action = std::function<Move*
+		(const SkillState& state, Map& map, const HexRef& prev, const HexRef& next)>;
 
 	/// Skill action.
 	///
 	/// By default, does nothing.
-	Action action = [](const SkillState&, Map&, const HexRef&, const HexRef&) {};
+	Action action = [](const SkillState&, Map&, const HexRef&, const HexRef&)
+		{ return nullptr; };
 
 	/// Skill format type.
 	enum Format {
@@ -131,6 +130,9 @@ struct Skill {
 
 	/// Skill interaction format.
 	Format format = SingleAim;
+
+	/// Skill cooldown (in turns).
+	uint8_t cooldown = 1;
 
 	/// Whether to select target tile after skill action.
 	///
