@@ -30,7 +30,12 @@ namespace logic {
 
 			// tick entity
 			entity->tickState();
-			if (entity->dead()) {
+
+			// check if entity is dead
+			if (entity->dead() || (
+				// kill troops in dead region
+				tile.hex->region() && tile.hex->region()->dead() && dynamic_cast<Troop*>(entity)
+			)) {
 				if (grave) {
 					Plant plant;
 					plant.type = Plant::Grave;
@@ -38,6 +43,45 @@ namespace logic {
 					map->setPlant(plant);
 				}
 				else map->removeEntity(tile.hex);
+			};
+
+			// update plants
+			if (auto* plant = dynamic_cast<Plant*>(entity)) {
+				// grow plants
+				if (rand() % 5 == 0) switch (plant->type) {
+					case Plant::Sapling: plant->type = Plant::Tree; break;
+					case Plant::Tree: plant->type = Plant::Peach; break;
+					case Plant::Bush: plant->type = Plant::Berry; break;
+				};
+
+				// spread plants
+				if ((plant->type == Plant::Bush || plant->type == Plant::Berry) && (rand() % 5 == 0)) {
+					// select solid tiles without any entities
+					Spread spread = {
+						.hop = skillf::solidHop,
+						.pass = [=](const Spread::Tile& tile)
+							{ return !tile.hex->entity(); }
+					};
+
+					// get tile list
+					auto tlist = spread.applylist(*map, plant->pos, 1);
+					if (!tlist.empty()) {
+						// select random tile from list
+						sf::Vector2i pos = tlist[rand() % tlist.size()];
+
+						// bush creation move
+						auto* move = new Moves::EntityChange(Moves::Empty { .pos = pos });
+						{
+							Plant plant;
+							plant.type = Plant::Bush;
+							plant.pos = pos;
+
+							map->setPlant(plant);
+							move->state = plant;
+						};
+						list.push_back(std::unique_ptr<Move>(move));
+					};
+				};
 			};
 
 			// store new state

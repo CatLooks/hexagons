@@ -16,7 +16,7 @@ static void print_packet(const sf::Packet& packet) {
 
 /// Sends a move list.
 void TestAdapter::send_list(Packet<History::SpanList> list) {
-	printf("Move list from %u:\n", list.id);
+	/*printf("Move list from %u:\n", list.id);
 
 	// serialization test
 	sf::Packet packet;
@@ -25,7 +25,7 @@ void TestAdapter::send_list(Packet<History::SpanList> list) {
 	for (const auto& move : list.value)
 		Serialize::encodeMove(packet, move.get());
 
-	print_packet(packet);
+	print_packet(packet);*/
 };
 
 /// Receives a move list.
@@ -42,7 +42,7 @@ Adapter::OptPacket<History::UniqList> TestAdapter::recv_list() {
 
 /// Sends an event.
 void TestAdapter::send(Packet<Messages::Event> evt) {
-	{
+	/*{
 		printf("Event from %u:\n", evt.id);
 
 		// serialization test
@@ -51,7 +51,7 @@ void TestAdapter::send(Packet<Messages::Event> evt) {
 		Serialize::encodeMessage(packet, evt.value);
 
 		print_packet(packet);
-	};
+	};*/
 
 	// game initialization
 	if (auto* data = std::get_if<Messages::Init>(&evt.value))

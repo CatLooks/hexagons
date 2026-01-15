@@ -79,6 +79,11 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 				redoMove();
 				return true;
 			};
+			if (data->key == sf::Keyboard::Key::Enter && data->control) {
+				// finish the turn
+				_state.finish();
+				return true;
+			};
 			if (data->key == sf::Keyboard::Key::Slash) {
 				// show the chat
 				queueCall([=]() { _chat->show(); });
