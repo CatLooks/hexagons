@@ -22,7 +22,6 @@ int main() {
 	// initialize networking
 	EOSManager* eos = &EOSManager::GetInstance();
 	Net net;
-	//net.login();
 
 	// create window
 	ui::window.create({ 1600, 900 }, false);
