@@ -33,8 +33,10 @@ namespace logic {
 
 			// check if entity is dead
 			if (entity->dead() || (
-				// kill troops in dead region
-				tile.hex->region() && tile.hex->region()->dead() && dynamic_cast<Troop*>(entity)
+				// kill troops in dead region (ignore unclaimed)
+				tile.hex->team != Region::Unclaimed
+					&& tile.hex->region() && tile.hex->region()->dead
+					&& dynamic_cast<Troop*>(entity)
 			)) {
 				if (grave) {
 					Plant plant;

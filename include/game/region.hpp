@@ -49,6 +49,8 @@ struct RegionVar {
 
 /// Independent region data
 struct RegionData : RegionRes, RegionVar {
+	bool dead  = 0; /// Whether the region is dead.
+	
 	/// Returns region data.
 	RegionData data() const;
 
@@ -80,9 +82,6 @@ struct Region : RegionData {
 
 	int income = 0; /// Income during next turn.
 	int tiles  = 0; /// Amount of tiles captured.
-
-	/// Checks whether the region is dead.
-	bool dead() const;
 
 	/// Updates money based on income.
 	void tick();

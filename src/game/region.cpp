@@ -53,14 +53,22 @@ void RegionData::setData(const RegionData& data) {
 	*this = data;
 };
 
-/// Checks whether the region is dead.
-bool Region::dead() const {
-	return money <= 0 && income < 0;
-};
-
 /// Updates money based on income.
 void Region::tick() {
+	// ignore if dead
+	if (dead) return;
+
+	// update money
 	money += income;
+
+	// check if dead
+	if (money < 0 || (money == 0 && income < 0)) {
+		dead = true;
+		
+		// reset resources
+		income = 0;
+		setRes({});
+	};
 };
 
 /// Returns a region iterator.

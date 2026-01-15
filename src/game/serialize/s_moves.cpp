@@ -81,6 +81,7 @@ namespace Serialize {
 			packet << (uint8_t)M_RegionChange;
 			packet << data->state.res();
 			packet << data->state.var();
+			packet << data->state.dead;
 		};
 	};
 
@@ -156,7 +157,8 @@ namespace Serialize {
 				auto* move = new Moves::RegionChange(pos, {});
 				move->state = {
 					from<RegionRes>(packet),
-					from<RegionVar>(packet)
+					from<RegionVar>(packet),
+					from<bool>(packet)
 				};
 				res = move;
 			}; break;
