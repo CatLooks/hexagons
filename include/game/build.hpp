@@ -25,6 +25,6 @@ struct Build : Entity {
 	/// Defends the building against incoming damage.
 	Damage defend(Damage dmg, Access acc) override;
 
-	/// Returns building skill index.
-	int skill_id(Skills::Type skill) const override;
+	/// Returns building skill at index.
+	Skills::Type skill_at(int idx) const override;
 };

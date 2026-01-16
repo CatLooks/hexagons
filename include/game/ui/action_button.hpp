@@ -65,6 +65,8 @@ namespace gameui {
 
 		/// Stunned timer value.
 		static const uint8_t StunTimer;
+		/// Timed-out timer value.
+		static const uint8_t TimeoutTimer;
 
 		/// Whether the button acts as a display.
 		///

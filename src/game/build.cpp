@@ -24,10 +24,6 @@ Entity::Damage Build::defend(Damage dmg, Access acc) {
 };
 
 /// Returns building skill index.
-int Build::skill_id(Skills::Type skill) const {
-	for (size_t i = 0; i < 4; i++) {
-		if (logic::build_skills[type].skills[i]->type == skill)
-			return (int)i;
-	};
-	return -1;
+Skills::Type Build::skill_at(int idx) const {
+	return logic::build_skills[type].skills[idx]->type;
 };

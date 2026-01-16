@@ -39,18 +39,8 @@ Entity::Damage Troop::defend(Damage dmg, Access acc) {
 };
 
 /// Returns troop skill index.
-int Troop::skill_id(Skills::Type skill) const {
-	// ignore empty skill
-	if (skill == Skills::Empty) return -1;
-
-	// check each skill slot
-	for (int i = 0; i < 4; i++) {
-		if (logic::troop_skills[type].skills[i]->type == skill)
-			return i;
-	};
-
-	// not found
-	return -1;
+Skills::Type Troop::skill_at(int idx) const {
+	return logic::troop_skills[type].skills[idx]->type;
 };
 
 /// Returns troop targeted skill index.

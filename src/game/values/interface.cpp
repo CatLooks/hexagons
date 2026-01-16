@@ -56,6 +56,8 @@ namespace Values {
 	const sf::IntRect dead_digit = coords(9, 3, 0, 3);
 	/// Insufficient resources digit replacement.
 	const sf::IntRect insufficient_digit = coords(9, 3, 1, 3);
+	/// Timed-out skill cooldown digit.
+	const sf::IntRect timeout_digit = coords(9, 3, 2, 3);
 
 	/// Game panel text settings.
 	const ui::TextSettings panel_text = {

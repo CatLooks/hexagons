@@ -1,13 +1,12 @@
 ## WIP List
 
+- fix move selectors
+
 ## To Do List
 
 (i have dementia sorry)
 
 - audio
-- effect moves should start cooldown after use
-- fix move selectors
-
 - network adapter
 - ai adapter
 

@@ -40,6 +40,8 @@ namespace Values {
 	extern const sf::IntRect dead_digit;
 	/// Insufficient resources digit replacement.
 	extern const sf::IntRect insufficient_digit;
+	/// Timed-out skill cooldown digit.
+	extern const sf::IntRect timeout_digit;
 
 	/// Game panel text settings.
 	extern const ui::TextSettings panel_text;
