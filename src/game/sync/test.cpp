@@ -21,6 +21,7 @@ void TestAdapter::send_list(Packet<History::SpanList> list) {
 	// serialization test
 	sf::Packet packet;
 	packet << list.id;
+	packet << (uint8_t)0xFE;
 	packet << (int)list.value.size();
 	for (const auto& move : list.value)
 		Serialize::encodeMove(packet, move.get());
@@ -48,6 +49,7 @@ void TestAdapter::send(Packet<Messages::Event> evt) {
 		// serialization test
 		sf::Packet packet;
 		packet << evt.id;
+		packet << (uint8_t)0xFF;
 		Serialize::encodeMessage(packet, evt.value);
 
 		print_packet(packet);

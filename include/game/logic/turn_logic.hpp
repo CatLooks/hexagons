@@ -5,8 +5,14 @@
 #include "game/moves/game_turn.hpp"
 
 namespace logic {
-	/// Executes turn transition logic.
+	/// Executes global turn transition logic.
+	///
+	/// @param map Map reference.
+	History::UniqList global(Map* map);
+
+	/// Executes turn transition logic for a team.
 	/// 
 	/// @param map Map reference.
-	History::UniqList turn(Map* map);
+	/// @param team Player team.
+	History::UniqList turn(Map* map, Region::Team team);
 };

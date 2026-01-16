@@ -95,16 +95,18 @@ void GameState::next() {
 	if (_mode == Host) {
 		bool turn = false;
 
+		// tick & transmit player regions
+		auto list = logic::turn(_map, player()->team);
+		_adapter->send_list(list);
+
 		// increment player index
 		if (++_idx >= _plr.size()) {
 			// increment turn number
 			_idx = 0;
 			_turn++;
 
-			// tick the map
-			auto list = logic::turn(_map);
-
-			// transmit changes
+			// tick & transmit the map
+			auto list = logic::global(_map);
 			_adapter->send_list(list);
 			turn = true;
 		};

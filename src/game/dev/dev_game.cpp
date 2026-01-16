@@ -292,7 +292,9 @@ namespace dev {
 			static const SectionLayout layout = {
 				.title = "dp.plant.title",
 				.kv = {
-					"dp.entity.type"
+					"dp.entity.type",
+					"dp.plant.fresh",
+					"dp.plant.pity"
 				}
 			};
 			auto* sec = panel->push([=]() {
@@ -308,7 +310,11 @@ namespace dev {
 				// set arguments
 				sec->args = {
 					{ "id", ext::str_int((int)plant->type) },
-					{ "type", Values::plant_names[plant->type] }
+					{ "type", Values::plant_names[plant->type] },
+
+					{ "fresh", plant->fresh ? "@!yes" : "@!no" },
+					{ "stage", ext::str_int(plant->stage) },
+					{ "spread", ext::str_int(plant->spread) }
 				};
 			});
 		};

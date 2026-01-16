@@ -301,6 +301,14 @@ dp {
 	# plant info
 	plant {
 		title: "[ Plant Info ]"
+		fresh: {
+			k: "Fresh"
+			v: "{fresh}"
+		}
+		pity {
+			k: "Growth: {stage}"
+			v: "Spread: {spread}"
+		}
 	}
 
 	# move info
