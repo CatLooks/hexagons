@@ -4,7 +4,7 @@
 namespace Random {
 	/// Reset generator and sets a seed.
 	void seed(size_t value) {
-		srand(value);
+		srand((unsigned int)value);
 	};
 
 	/// Returns a random unsigned 8-bit number.

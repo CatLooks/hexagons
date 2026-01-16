@@ -9,6 +9,9 @@ namespace logic {
 		// map change list
 		History::UniqList list;
 
+		// new plant list
+		std::deque<Plant> nplants;
+
 		// tick all plants
 		auto plants = map->plantList();
 		while (auto* plant = plants.next()) {
@@ -33,17 +36,11 @@ namespace logic {
 					// select random tile from list
 					sf::Vector2i pos = tlist[rand() % tlist.size()];
 
-					// plant creation move
-					auto* move = new Moves::EntityChange(Moves::Empty { .pos = pos });
-					{
-						Plant nplant;
-						nplant.type = logic::plant_spread[plant->type];
-						nplant.pos = pos;
-
-						map->setPlant(nplant);
-						move->state = nplant;
-					};
-					list.push_back(std::unique_ptr<Move>(move));
+					// store new plant info
+					Plant nplant;
+					nplant.type = logic::plant_spread[plant->type];
+					nplant.pos = pos;
+					nplants.push_back(nplant);
 				};
 			};
 
@@ -52,6 +49,16 @@ namespace logic {
 
 			// store new state
 			move->state = *plant;
+		};
+
+		// construct new plants
+		for (const auto& plant : nplants) {
+			auto* move = new Moves::EntityChange(Moves::Empty{ .pos = plant.pos });
+			{
+				map->setPlant(plant);
+				move->state = plant;
+			};
+			list.push_back(std::unique_ptr<Move>(move));
 		};
 
 		// return map changes

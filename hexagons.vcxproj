@@ -103,6 +103,7 @@
     <ClCompile Include="src\localization\token.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mathext.cpp" />
+    <ClCompile Include="src\random.cpp" />
     <ClCompile Include="src\ui\align.cpp" />
     <ClCompile Include="src\ui\anim\base.cpp" />
     <ClCompile Include="src\ui\anim\easing.cpp" />
@@ -218,6 +219,7 @@
     <ClInclude Include="include\localization\parser.hpp" />
     <ClInclude Include="include\localization\token.hpp" />
     <ClInclude Include="include\mathext.hpp" />
+    <ClInclude Include="include\random.hpp" />
     <ClInclude Include="include\templated\delegate.hpp" />
     <ClInclude Include="include\templated\pool.hpp" />
     <ClInclude Include="include\templated\refpool.hpp" />
