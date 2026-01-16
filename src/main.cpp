@@ -21,7 +21,7 @@ int main() {
 	// load languages
 	if (assets::loadLanguageList())
 		return 1;
-	if (assets::loadLanguage("en-us.tlml"))
+	if (assets::loadLanguage(assets::lang::list.front()))
 		return 1;
 
 	// load assets
@@ -346,11 +346,6 @@ int main() {
 				};
 				if (data->code == sf::Keyboard::Key::F2 && !data->control) {
 					itf.switchContext(test_ctx);
-				};
-				
-				// reload translation file
-				if (flags::debug && data->code == sf::Keyboard::Key::Insert) {
-					assets::loadLanguage("en-us.tlml");
 				};
 			};
 		};

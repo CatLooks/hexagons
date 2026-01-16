@@ -1,7 +1,5 @@
 ## WIP List
 
-- add proper locale interface
-
 ## To Do List
 
 (i have dementia sorry)

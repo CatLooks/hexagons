@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "localization/parser.hpp"
+#include <vector>
 #include <map>
 
 /// Asset management namespace.
@@ -34,7 +35,10 @@ namespace assets {
 			std::string file; /// Localization file name.
 		};
 
-		/// Language list.
+		/// Languages key list.
+		extern std::vector<std::string> list;
+
+		/// Language config map.
 		extern std::map<std::string, Config> index;
 	};
 
@@ -67,8 +71,8 @@ namespace assets {
 
 	/// Loads language localization file.
 	/// 
-	/// @param filename Localization file name.
+	/// @param key Language key.
 	/// 
 	/// @return Whether the loading failed.
-	bool loadLanguage(std::string filename);
+	bool loadLanguage(std::string key);
 };
