@@ -101,8 +101,8 @@ namespace ui {
 	};
 
 	/// Sets text label to a raw string.
-	void Text::setRaw(const sf::String& string) {
-		_text.setString(string);
+	void Text::setRaw(const sf::String& value) {
+		_text.setString(sf::String::fromUtf8(value.begin(), value.end()));
 		_raw = true;
 	};
 	/// Sets text label to a localization path.

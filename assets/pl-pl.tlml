@@ -100,16 +100,16 @@ menu {
 	login: "Zaloguj"
 	logout: "Wyloguj"
 
-    start: "ZACZNIJ GR "
-    join: "DO£•CZ DO GRY"
+    start: "ZACZNIJ GRƒò"
+    join: "DO≈ÅƒÑCZ DO GRY"
     options: "OPCJE"
-    exit: "WYJDè"
-    back: "POWR”T"
-    prev: "WR”∆"
+    exit: "WYJD≈π"
+    back: "POWR√ìT"
+    prev: "WR√ìƒÜ"
     next: "DALEJ"
-    start_game: "ZACZNIJ GR "
-    sound: "DüwiÍk: {v}"
-    lang: "JÍzyk: {v}"
+    start_game: "ZACZNIJ GRƒò"
+    sound: "D≈∫wiƒôk: {v}"
+    lang: "Jƒôzyk: {v}"
     on: "ON"
     off: "OFF"
     max_players: "Maks. Graczy"
@@ -119,24 +119,24 @@ menu {
 	singleplayer: "Jednoosobowy"
 	multiplayer_host: "Wieloosobowy (Gospodarz)"
 	
-	select_difficulty: "Wybierz Poziom Trudnoúci"
+	select_difficulty: "Wybierz Poziom Trudno≈õci"
 
-	select_map: "Wybeirz MapÍ"
+	select_map: "Wybierz Mapƒô"
 
 	lobby_settings: "Ustawienia Lobby"
-	room_code_desc: "UdostÍpnij ten kod!"
+	room_code_desc: "Udostƒôpnij ten kod!"
 
 
 }
 
 join {
-    title: "Do≥πcz do gry"
-    instruction: "Wprowadü 6-cyfrowy kod pokoju:"
+    title: "Do≈ÇƒÖcz do gry"
+    instruction: "Wprowad≈∫ 6-cyfrowy kod pokoju:"
 }
 
 start {
     step1: "1. Tryb"
-    step2: "2. TrudnoúÊ"
+    step2: "2. Trudno≈õƒá"
     step3: "3. Mapa"
     step4: "4. Lobby"
 
@@ -144,17 +144,17 @@ start {
 	map2: "mapa 2"
 	map3: "mapa 3"
 
-	easy  : "£atwy"
-	medium: "åredni"
+	easy  : "≈Åatwy"
+	medium: "≈öredni"
 	hard  : "Trudny"
 }
 
 lobby {
     title: "LOBBY GRY"
-    leave: "WYJDè"
-    room_id: "PokÛj: #{id}"
+    leave: "WYJD≈π"
+    room_id: "Pok√≥j: #{id}"
     player_name: "{name}"
     player_name_host: "{name} (Gospodarz)"
     host_you: "Gospodarz (Ty)"
-    connecting: "£πczenie..."
+    connecting: "≈ÅƒÖczenie..."
 }
