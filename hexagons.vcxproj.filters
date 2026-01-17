@@ -399,6 +399,9 @@
     <ClCompile Include="src\random.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\moves\troop_merge.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -749,6 +752,9 @@
     </ClInclude>
     <ClInclude Include="include\random.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\troop_merge.hpp">
+      <Filter>Header Files\game\moves</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

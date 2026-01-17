@@ -30,4 +30,11 @@ namespace logic {
 
 	/// Cost to execute troop's special skill (in peaches).
 	extern const int troop_effect_cost[Troop::Count];
+
+	/// Troop merge result.
+	/// 
+	/// No merge is indicated with `Troop::Count`.
+	/// 
+	/// @param ids Merged troop types.
+	extern const Troop::Type troop_merge[Troop::Count][Troop::Count];
 };

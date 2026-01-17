@@ -325,6 +325,7 @@ dp {
 			field: "Name: {skill_name}"
 
 			troop_move: "Troop Move"
+			troop_merge: "Troop Merge"
 			troop_attack: "Troop Attack"
 			troop_heal: "Troop Heal"
 
@@ -353,6 +354,13 @@ dp {
 			to: "To: {pos}"
 			dmg: "Damage: {dmg}"
 			effects: "Before: {effects}"
+		}
+
+		# troop merge
+		troop_merge {
+			to: "To: {pos}"
+			a: "Moved: {a}"
+			b: "Replaced: {b}"
 		}
 
 		# troop heal
