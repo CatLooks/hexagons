@@ -61,4 +61,11 @@ namespace skillf {
 		// return test stats
 		return counter;
 	};
+
+	/// Checks if a tile is near water.
+	bool nearWater(Map* map, sf::Vector2i pos) {
+		return checkAround(map, pos, 1, [=](const Spread::Tile& nb) {
+			return nb.hex->type == Hex::Water;
+		}, Spread::Alt);
+	};
 };

@@ -22,7 +22,7 @@ namespace logic {
 			auto* move = new Moves::EntityChange(*plant);
 
 			// spread the plant
-			if (plant->spread_roll()) {
+			if (plant->spread_roll(map)) {
 				// select solid tiles without any entities
 				Spread spread = {
 					.hop = skillf::solidHop,
@@ -45,7 +45,7 @@ namespace logic {
 			};
 
 			// tick plant state
-			plant->tickState();
+			plant->tickState(map);
 
 			// store new state
 			move->state = *plant;
@@ -93,7 +93,7 @@ namespace logic {
 			auto* move = new Moves::EntityChange(Moves::store_entity(tile.hex, tile.pos));
 
 			// tick entity
-			entity->tickState();
+			entity->tickState(map);
 
 			// check if entity is dead
 			if (entity->dead() || (

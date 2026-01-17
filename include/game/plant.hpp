@@ -30,9 +30,13 @@ struct Plant : Entity {
 	bool fresh = true;
 
 	/// Rolls a stage advancement.
-	bool stage_roll();
+	///
+	/// @param map Map reference.
+	bool stage_roll(Map* map);
 	/// Rolls a plant spread.
-	bool spread_roll();
+	///
+	/// @param map Map reference.
+	bool spread_roll(Map* map);
 
 	/// Checks whether a plant is harvestable.
 	bool harvestable() const;
@@ -42,5 +46,5 @@ struct Plant : Entity {
 	RegionRes harvest();
 
 	/// Ticks entity state.
-	void tick() override;
+	void tick(Map* map) override;
 };

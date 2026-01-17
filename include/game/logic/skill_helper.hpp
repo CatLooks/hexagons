@@ -53,4 +53,10 @@ namespace skillf {
 		Spread::Check check,
 		bool alt
 	);
+
+	/// Checks if a tile is near water.
+	/// 
+	/// @param map Map reference.
+	/// @param pos Tile position.
+	bool nearWater(Map* map, sf::Vector2i pos);
 };

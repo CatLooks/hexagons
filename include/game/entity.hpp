@@ -7,6 +7,8 @@
 #include "logic/skill_types.hpp"
 #include "logic/effect_types.hpp"
 
+class Map;
+
 /// Property access pattern.
 ///
 /// Casting to `bool` will result in whether the access property should be updated.
@@ -31,7 +33,9 @@ struct Entity {
 protected:
 	/// Ticks entity state.
 	/// Specific to the entity.
-	virtual void tick();
+	/// 
+	/// @param map Map reference.
+	virtual void tick(Map* map);
 
 public:
 	/// Entity position on map.
@@ -139,5 +143,7 @@ public:
 	const Effects& effectList() const;
 
 	/// Ticks entity state.
-	void tickState();
+	/// 
+	/// @param map Map reference.
+	void tickState(Map* map);
 };

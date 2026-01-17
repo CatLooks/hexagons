@@ -71,19 +71,19 @@ int main() {
 		{
 			Map& map = game->map;
 
-			const int w = 18;
+			const int w = 21;
 			const int h = 10;
 			const char arr[h][w + 1] = {
-				"vvv  rr     bb  rx",
-				"rrvv   rrr  bbb  r",
-				"vvv  rrbb   bb  rx",
-				"rrvv   bbg       r",
-				"vvv             rx",
-				"rrvv rrr   vv    r",
-				"vvv  ggg  ooo g rx",
-				"rrvv ---   oo     ",
-				"vvv              x",
-				"    rrrrrrgggggggg"
+				"vvv  rr     bb  r r- ",
+				"rrvv   rrr  bbb  r r-",
+				"vvv  rrbb   bb  r r- ",
+				"rrvv   bbg       r r-",
+				"vvv             r r- ",
+				"rrvv rrr   vv    r r-",
+				"vvv  ggg  ooo g r r- ",
+				"rrvv ---   oo        ",
+				"vvv                  ",
+				"    rrrrrrgggggggg   ",
 			};
 
 			map.empty({ w, h });
@@ -286,6 +286,9 @@ int main() {
 				Plant plant;
 				plant.type = Plant::Bush;
 				plant.pos = { 16, 0 };
+				map.setPlant(plant);
+
+				plant.pos = { 18, 0 };
 				map.setPlant(plant);
 			};
 

@@ -66,7 +66,7 @@ Template Template::generate(const Map* map) {
 void Template::construct(Map* map) const {
 	// clear the map
 	map->clear();
-	map->resize({ {}, _size });
+	map->empty(_size);
 
 	// copy tile data
 	for (int y = 0; y < _size.y; y++) {

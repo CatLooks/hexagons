@@ -2,7 +2,7 @@
 #include "game/skill.hpp"
 
 /// Ticks entity state.
-void Entity::tick() {};
+void Entity::tick(Map* map) {};
 
 /// Adds cooldown to entity skill if present.
 void Entity::add_cooldown(Skills::Type skill, uint8_t time) {
@@ -103,7 +103,7 @@ const Entity::Effects& Entity::effectList() const {
 };
 
 /// Ticks entity state.
-void Entity::tickState() {
+void Entity::tickState(Map* map) {
 	// tick timers
 	for (int i = 0; i < 4; i++) {
 		if (timers[i] > 0 && Skills::ticked(skill_at(i), _effects))
@@ -116,5 +116,5 @@ void Entity::tickState() {
 	removeEffect(EffectType::Stunned);
 
 	// special tick
-	tick();
+	tick(map);
 };
