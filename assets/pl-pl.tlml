@@ -157,4 +157,8 @@ lobby {
     player_name_host: "{name} (Gospodarz)"
     host_you: "Gospodarz (Ty)"
     connecting: "Łączenie..."
+
+    # Format: "Map: Green Valley | Difficulty: Easy"
+    details_format: "{map}    |    {diff}    |    Rozmiar lobby: {max} "
+
 }

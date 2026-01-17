@@ -189,8 +189,6 @@ menu {
 	lobby_settings: "Lobby Settings"
 	room_code_desc: "Share this code!"
 
-	next_page: "Next Page"
-    prev_page: "Prev Page"
 }
 
 join {
