@@ -75,7 +75,7 @@ namespace gameui {
 			_next_t->setRaw(states[_prog % 3]);
 			_next_t->recalculate();
 		});
-		_next_t->deactivate();
+		enable(true);
 	};
 
 	/// Attaches callbacks to move selector element.
