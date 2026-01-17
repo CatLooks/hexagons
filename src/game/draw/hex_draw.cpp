@@ -126,7 +126,7 @@ namespace Draw {
 		};
 		// spread index text
 		if (flags::spread) {
-			std::string label = std::format("{}", hex->spread);
+			std::string label = std::format("{}/{}", hex->spread[0], hex->spread[1]);
 			sf::Text text(assets::font, label, 20);
 			text.setPosition((sf::Vector2f)origin + sf::Vector2f(size.x * 3.f / 4, size.y / 2.f + 22));
 			text.setOutlineThickness(2);

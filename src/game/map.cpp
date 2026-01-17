@@ -135,7 +135,7 @@ Regions::Split Map::updateRegions(
 		// ignore if region has been reached
 		bool found = false;
 		for (size_t idx : indices) {
-			if (hex->spread == idx) {
+			if (hex->spread[Spread::Def] == idx) {
 				found = true;
 				break;
 			};

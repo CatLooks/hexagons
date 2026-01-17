@@ -43,9 +43,9 @@ struct HexEnt {
 struct Hex : HexBase, HexEnt {
 	using HexBase::Type;
 
-	float elevation = 0; /// Tile elevation.
-	size_t selected = 0; /// Selection index.
-	size_t spread   = 0; /// Spread buffer index.
+	float elevation  = 0;        /// Tile elevation.
+	size_t selected  = 0;        /// Selection index.
+	size_t spread[2] = { 0, 0 }; /// Spread buffer indices.
 
 private:
 	Regions::Ref _region; /// Tile region reference.

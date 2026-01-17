@@ -265,7 +265,7 @@ dp {
 		}
 		ids {
 			k: "Select: {select_id}"
-			v: "Spread: {spread_id}"
+			v: "Spread: {spread_0}, {spread_1}"
 		}
 	}
 

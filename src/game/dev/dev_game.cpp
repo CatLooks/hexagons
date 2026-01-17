@@ -193,7 +193,8 @@ namespace dev {
 					{ "pos", ext::str_vec(tile.pos) },
 					{ "team", Values::hex_names[tile.hex->team] },
 					{ "select_id", ext::str_int(tile.hex->selected) },
-					{ "spread_id", ext::str_int(tile.hex->spread) }
+					{ "spread_0", ext::str_int(tile.hex->spread[0]) },
+					{ "spread_1", ext::str_int(tile.hex->spread[1]) },
 				};
 			});
 		};

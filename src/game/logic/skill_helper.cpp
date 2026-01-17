@@ -45,4 +45,20 @@ namespace skillf {
 			return tile.hex->region() == region && !tile.hex->entity();
 		};
 	};
+
+	/// Checks for a test success in a neighborhood.
+	size_t checkAround(Map* map, sf::Vector2i pos, size_t radius, Spread::Check check, bool alt) {
+		size_t counter = 0;
+
+		// create & apply spread
+		Spread spread = {
+			.pass = check,
+			.effect = [&](const Spread::Tile&) { counter++; },
+			.alt = alt
+		};
+		spread.apply(*map, pos, radius);
+
+		// return test stats
+		return counter;
+	};
 };

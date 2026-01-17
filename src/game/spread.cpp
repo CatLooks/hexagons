@@ -8,16 +8,17 @@ void Spread::default_effect(const Tile&) {};
 std::optional<size_t> Spread::default_radius(const Tile&) { return {}; };
 
 /// Default last spread index.
-size_t Spread::_last_idx = 0;
+size_t Spread::_last_idx[2] = { 0, 0 };
 
 /// Resets spread index.
 void Spread::reset() {
-	_last_idx = 0;
+	_last_idx[0] = 0;
+	_last_idx[1] = 0;
 };
 
 /// Generates a unique spread index.
-size_t Spread::index() {
-	return ++_last_idx;
+size_t Spread::index(bool alt) {
+	return ++_last_idx[alt];
 };
 
 /// Adds neighboring tiles to spread queue.
@@ -27,12 +28,14 @@ size_t Spread::index() {
 /// @param array Tile array.
 /// @param index Spread index.
 /// @param tile Processed tile.
+/// @param alt Whether to use alternative index.
 static inline void _spread(
 	std::list<Spread::Tile>& queue,
 	const HexArray& array,
 	const Spread::Check& hop,
 	size_t index,
-	const Spread::Tile& tile
+	const Spread::Tile& tile,
+	bool alt
 ) {
 	// ignore if no range left
 	if (tile.left == 0) return;
@@ -51,8 +54,8 @@ static inline void _spread(
 		if (!next.hex) continue;
 
 		// mark as visited
-		if (next.hex->spread != index)
-			next.hex->spread = index;
+		if (next.hex->spread[alt] != index)
+			next.hex->spread[alt] = index;
 		else continue;
 
 		// queue tile if passes blocking check
@@ -64,7 +67,7 @@ static inline void _spread(
 /// Applies the spread.
 size_t Spread::apply(const HexArray& array, sf::Vector2i pos, size_t radius) const {
 	// get new spread index
-	size_t idx = index();
+	size_t idx = index(alt);
 
 	// get origin tile
 	Hex* origin = array.at(pos);
@@ -76,7 +79,7 @@ size_t Spread::apply(const HexArray& array, sf::Vector2i pos, size_t radius) con
 		tile.left = radius = *nr;
 
 	// apply effect to origin if needed
-	origin->spread = idx;
+	origin->spread[alt] = idx;
 	if (imm && pass(tile))
 		effect(tile);
 	if (!radius) return idx;
@@ -85,7 +88,7 @@ size_t Spread::apply(const HexArray& array, sf::Vector2i pos, size_t radius) con
 	std::list<Tile> queue;
 
 	// initial spread from origin
-	_spread(queue, array, hop, idx, tile);
+	_spread(queue, array, hop, idx, tile, alt);
 
 	// spreader loop
 	while (!queue.empty()) {
@@ -97,7 +100,7 @@ size_t Spread::apply(const HexArray& array, sf::Vector2i pos, size_t radius) con
 		if (pass(tile)) effect(tile);
 
 		// spread to neighboring tiles
-		_spread(queue, array, hop, idx, tile);
+		_spread(queue, array, hop, idx, tile, alt);
 	};
 
 	// return spread index
@@ -110,7 +113,7 @@ Spread::List Spread::applylist(const HexArray& array, sf::Vector2i pos, size_t r
 	List affected;
 
 	// get new spread index
-	size_t idx = index();
+	size_t idx = index(alt);
 
 	// get origin tile
 	Hex* origin = array.at(pos);
@@ -122,7 +125,7 @@ Spread::List Spread::applylist(const HexArray& array, sf::Vector2i pos, size_t r
 		tile.left = radius = *nr;
 
 	// apply effect to origin if needed
-	origin->spread = idx;
+	origin->spread[alt] = idx;
 	if (imm && pass(tile)) {
 		effect(tile);
 		affected.push_back(tile.pos);
@@ -133,7 +136,7 @@ Spread::List Spread::applylist(const HexArray& array, sf::Vector2i pos, size_t r
 	std::list<Tile> queue;
 
 	// initial spread from origin
-	_spread(queue, array, hop, idx, { { origin, pos }, radius });
+	_spread(queue, array, hop, idx, { { origin, pos }, radius }, alt);
 
 	// spreader loop
 	while (!queue.empty()) {
@@ -148,7 +151,7 @@ Spread::List Spread::applylist(const HexArray& array, sf::Vector2i pos, size_t r
 		};
 
 		// spread to neighboring tiles
-		_spread(queue, array, hop, idx, tile);
+		_spread(queue, array, hop, idx, tile, alt);
 	};
 	return affected;
 };

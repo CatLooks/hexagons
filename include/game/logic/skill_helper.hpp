@@ -36,4 +36,21 @@ namespace skillf {
 	/// 
 	/// @param region Target region.
 	Spread::Check sameRegionEmptyHop(const Regions::Ref& region);
+
+	/// Checks for a test success in a neighborhood.
+	/// 
+	/// @param map Map reference.
+	/// @param pos Neighborhood center.
+	/// @param radius Neighborhood radius.
+	/// @param check Test function.
+	/// @param alt Whether to use alternative spread index.
+	/// 
+	/// @return Amount of tests passed.
+	size_t checkAround(
+		Map* map,
+		sf::Vector2i pos,
+		size_t radius,
+		Spread::Check check,
+		bool alt
+	);
 };
