@@ -8,6 +8,12 @@ int Build::max_hp() const {
 
 /// Defends the building against incoming damage.
 Entity::Damage Build::defend(Damage dmg, Access acc) {
+	// proc poison
+	if (dmg.psn) {
+		dmg.psn = false;
+		dmg.pts++;
+	};
+
 	// round up
 	if (dmg.pts & 1) dmg.pts++;
 	// half the damage

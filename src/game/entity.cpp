@@ -27,6 +27,7 @@ Entity::Damage Entity::defend(Damage dmg, Access acc) { return dmg; };
 Entity::Damage Entity::damage(Damage dmg) {
 	dmg = defend(dmg, Access::Use);
 	hp -= dmg.pts;
+	if (dmg.psn) addEffect(EffectType::Poisoned);
 	return dmg;
 };
 

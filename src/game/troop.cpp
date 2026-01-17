@@ -18,7 +18,7 @@ Entity::Damage Troop::offense(Access acc) {
 		pts *= 5;
 
 	// return damage
-	return { pts, logic::troop_pow[type] };
+	return { pts, logic::troop_pow[type], type == Archer };
 };
 
 /// Defends the troop against incoming damage.

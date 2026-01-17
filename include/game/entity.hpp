@@ -23,8 +23,9 @@ struct Entity {
 
 	/// Entity damage info.
 	struct Damage {
-		int pts = 0; /// Points of damage dealt.
-		int pow = 0; /// Damage power level.
+		int  pts = 0; /// Points of damage dealt.
+		int  pow = 0; /// Damage power level.
+		bool psn = 0; /// Whether the attack is poisoned.
 	};
 
 protected:
