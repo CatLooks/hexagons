@@ -78,9 +78,6 @@ bool GameState::finish() {
 	auto list = _map->history.list();
 	_adapter->send_list({ list, _adapter->id });
 
-	// reset history
-	_map->history.clear();
-
 	// select next player
 	next();
 	return true;
@@ -94,6 +91,9 @@ void GameState::next() {
 	// next player logic
 	if (_mode == Host) {
 		bool turn = false;
+
+		// reset move history
+		_map->history.clear();
 
 		// tick & transmit player regions
 		auto list = logic::turn(_map, player()->team);
@@ -129,7 +129,10 @@ void GameState::tick() {
 		if (_mode == Host) {
 			// ignore if inactive player
 			if (data->id != _idx) {
-				_adapter->send(Messages::Ignore{ .id = data->id });
+				_adapter->send(Messages::Ignore{
+					.id = data->id,
+					.now = _idx
+				});
 				continue;
 			};
 
@@ -171,9 +174,6 @@ void GameState::proc(const Adapter::Packet<Messages::Event>& event) {
 		_turn = 0;
 		_idx = 0;
 
-		// get adapter index
-		// @todo
-
 		// wait for player selection
 		lock();
 		return;
@@ -186,8 +186,26 @@ void GameState::proc(const Adapter::Packet<Messages::Event>& event) {
 		if (data->turn) _turn++;
 		update();
 
+		// reset history if local player's turn
+		if (_state == Play)
+			_map->history.clear();
+
 		// reset turn time
 		_clock.restart();
+		return;
+	};
+
+	// player ignore
+	if (auto* data = std::get_if<Messages::Ignore>(&event.value)) {
+		// ignore if not the target player
+		if (data->id != _adapter->id) return;
+
+		// display error message
+		_chat->print(
+			assets::lang::locale.req("chat.host").get({}),
+			Values::host_color,
+			assets::lang::locale.req("chat.ignore").get({})
+		);
 		return;
 	};
 
@@ -199,13 +217,20 @@ void GameState::proc(const Adapter::Packet<Messages::Event>& event) {
 		// create chat message
 		_chat->print(
 			player ? player->name : assets::lang::locale.req("chat.unknown").get({}),
-			player ? Values::hex_colors[player->team] : sf::Color(32, 32, 32),
+			player ? Values::hex_colors[player->team] : Values::unknown_color,
 			data->text
 		);
 		return;
 	};
 
-	printf("unknown event\n");
+	// unknown event
+	_chat->print(
+		assets::lang::locale.req("chat.host").get({}),
+		Values::host_color,
+		assets::lang::locale.req("chat.bad_event").get({
+			{ "id", ext::str_int(event.value.index()) }
+		})
+	);
 };
 
 /// Returns current player info.

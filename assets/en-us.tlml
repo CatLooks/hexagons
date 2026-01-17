@@ -148,9 +148,16 @@ chat {
 
 	# "you" name
 	you: "You"
-
+	# "host" name
+	host: "@"
 	# unknown player name
-	unknown: "@"
+	unknown: "???"
+
+	# move list ignore error
+	ignore: "Move list got ignored."
+
+	# unknown event error
+	bad_event: "Unknown event (ID = {id})."
 }
 
 # debug info
@@ -174,6 +181,10 @@ dp {
 	# game state
 	state {
 		title: "[ Game State ]"
+		enums {
+			k: "State: {state}"
+			v: "Mode: {mode}"
+		}
 		turn {
 			k: "Turn: {turn}"
 			v: "Local Player: {local}"
@@ -181,6 +192,18 @@ dp {
 		player {
 			k: "Player: {plr_now} / {plr_count}"
 			v: "Team: {plr_team}"
+		}
+
+		# enums
+		mode {
+			host: "Host"
+			client: "Client"
+		}
+		state {
+			quit: "Quit"
+			init: "Init"
+			play: "Play"
+			wait: "Wait"
 		}
 	}
 

@@ -24,7 +24,8 @@ namespace Messages {
 
 	/// Player move list ignore.
 	struct Ignore {
-		uint32_t id = 0; /// Player index.
+		uint32_t id  = 0; /// Ignore target.
+		uint32_t now = 0; /// Player currently making a move.
 	};
 
 	/// Player selection.

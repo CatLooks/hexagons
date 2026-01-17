@@ -28,12 +28,10 @@ namespace dev {
 
 	/// Creates sections for game state.
 	void Factory::attach_state(Panel* panel, Game* game) {
-		// turn
-		// player
-		// team
 		static const SectionLayout layout = {
 			.title = "dp.state.title",
 			.kv = {
+				"dp.state.enums",
 				"dp.state.turn",
 				"dp.state.player"
 			}
@@ -41,9 +39,25 @@ namespace dev {
 		auto* sec = panel->push();
 		layout.construct(sec);
 
+		// enum -> string tables
+		static const char* enum_mode[] = {
+			"@!dp.state.mode.host",
+			"@!dp.state.mode.client"
+		};
+		static const char* enum_state[] = {
+			"@!dp.state.state.quit",
+			"@!dp.state.state.init",
+			"@!dp.state.state.wait",
+			"@!dp.state.state.play"
+		};
+
 		// attach info update
 		sec->attach([=]() {
 			sec->args = {
+				// enums
+				{ "state", enum_state[game->_state._state] },
+				{ "mode", enum_mode[game->_state._mode] },
+
 				// general
 				{ "turn", ext::str_int(game->_state.turn()) },
 				{ "local", ext::str_int(game->_state._adapter->id) },

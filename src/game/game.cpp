@@ -111,12 +111,18 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 		_move = enabled;
 
 		if (!enabled) {
-			// deselect player
+			// cancel some selections
 			deselectMenu();
-			closeMenu();
 			deselectTile();
-			deselectRegion();
+
+			// reselect the region
+			if (map.selectedRegion())
+				selectRegion(map.atref(_last));
 		};
+		updateMenu();
+
+		// update move selectors
+		_panel->selector()->enable(enabled);
 	});
 
 	// add game state update handler

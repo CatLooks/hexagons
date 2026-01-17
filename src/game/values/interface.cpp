@@ -64,22 +64,24 @@ namespace Values {
 		assets::font, 24, sf::Color::White,
 		sf::Color::Black, 2
 	};
-
 	/// Resource bar text settings.
 	const ui::TextSettings resource_text = {
 		assets::font, 32, sf::Color::White,
 		sf::Color::Black, 4
 	};
-
 	/// Game state viewer text settings.
 	const ui::TextSettings state_text = {
 		assets::font, 30, sf::Color::White,
 		sf::Color::Black, 3
 	};
-
 	/// Game chat text settings.
 	const ui::TextSettings chat_text = {
 		assets::font, 20, sf::Color::White,
 		sf::Color::Black, 2
 	};
+
+	/// Unknown player nametag color.
+	const sf::Color unknown_color = sf::Color(32, 32, 32);
+	/// Host nametag color.
+	const sf::Color host_color = sf::Color(192, 0, 0);
 };
