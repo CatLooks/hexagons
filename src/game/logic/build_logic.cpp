@@ -54,6 +54,17 @@ namespace logic {
 		/* tent   */ Troop::Lumberjack
 	};
 
+	/// Weakest troop that can be in range of the building.
+	extern const Troop::Type build_guard[Build::Count] = {
+		/* castle */ Troop::Farmer,
+		/* farm   */ Troop::Farmer,
+		/* mine   */ Troop::Farmer,
+		/* tower  */ Troop::Archer,
+		/* beacon */ Troop::Baron,
+		/* fort   */ Troop::Knight,
+		/* tent   */ Troop::Farmer
+	};
+
 	// skill array
 	const SkillArray build_skills[Build::Count] = {
 		/* castle */ { SkillArray::L00, {} },

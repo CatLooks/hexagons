@@ -30,6 +30,7 @@ namespace Skills {
 
 /// Data required for skill calculations.
 struct SkillState {
+	Map* map       {}; /// Map reference.
 	int build     = 0; /// Current building index in shop.
 	int troop     = 0; /// Current troop index in shop.
 	Region* region {}; /// Currently selected region.

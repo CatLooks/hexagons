@@ -49,6 +49,10 @@ namespace logic {
 	/// @param id Building type.
 	extern const Troop::Type build_level[Build::Count];
 
+	/// Weakest troop that can be in range of the building.
+	/// @param id Building type.
+	extern const Troop::Type build_guard[Build::Count];
+
 	/// Building skills.
 	extern const SkillArray build_skills[Build::Count];
 };

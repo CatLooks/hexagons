@@ -72,17 +72,18 @@ int main() {
 			Map& map = game->map;
 
 			const int w = 18;
-			const int h = 9;
+			const int h = 10;
 			const char arr[h][w + 1] = {
 				"vvv  rr     bb  rx",
 				"rrvv   rrr  bbb  r",
 				"vvv  rrbb   bb  rx",
 				"rrvv   bbg       r",
 				"vvv             rx",
-				"rrvv rrr   oo    r",
+				"rrvv rrr   vv    r",
 				"vvv  ggg  ooo g rx",
 				"rrvv ---   oo     ",
-				"vvv              x"
+				"vvv              x",
+				"    rrrrrrgggggggg"
 			};
 
 			map.empty({ w, h });
@@ -287,9 +288,32 @@ int main() {
 				plant.pos = { 16, 0 };
 				map.setPlant(plant);
 			};
+
+			// move tests
+			{
+				Troop troop;
+				troop.type = Troop::Spearman;
+				troop.pos = { 9, 9 };
+				troop.hp = troop.max_hp();
+				map.setTroop(troop);
+
+				troop.type = Troop::Knight;
+				troop.pos = { 10, 9 };
+				troop.hp = troop.max_hp();
+				map.setTroop(troop);
+
+				Build build;
+				build.type = Build::Tower;
+				build.pos = { 11, 9 };
+				build.hp = build.max_hp();
+				//map.setBuild(build);
+			};
+
+			map.at({ 9, 9 })->region()->setRes({ 999, 0, 0 });
+			map.at({ 10, 9 })->region()->setRes({ 999, 0, 0 });
 		};
 
-		state.addPlayer({ .name = "Sus", .team = Region::Red });
+		state.addPlayer({ .name = "Koopa", .team = Region::Red });
 		state.addPlayer({ .name = "Bot 1", .team = Region::Orange });
 		state.addPlayer({ .name = "Bot 2", .team = Region::Yellow });
 		state.addPlayer({ .name = "Bot 3", .team = Region::Green });

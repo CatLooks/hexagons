@@ -24,6 +24,7 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 {
 	// attach reference to game state
 	_state.setRefs(&map, _chat);
+	this->state.map = &map;
 
 	// register interface elements
 	ui_layer->add(_panel);
