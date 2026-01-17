@@ -261,7 +261,10 @@ namespace ui {
 		};
 
 		// render stats
-		if (_info) _info(target, stats);
+		if (_info) {
+			target.setView(_view);
+			_info(target, stats);
+		};
 	};
 
 	/// Updates interface language.
