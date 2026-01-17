@@ -37,6 +37,11 @@ namespace Serialize {
 			packet << (uint8_t)M_TroopMove;
 			packet << data->dest;
 		};
+		// troop merge
+		IF(Moves::TroopMerge) {
+			packet << (uint8_t)M_TroopMerge;
+			packet << data->dest;
+		};
 		// troop attack
 		IF(Moves::TroopAttack) {
 			packet << (uint8_t)M_TroopAttack;
@@ -118,6 +123,9 @@ namespace Serialize {
 
 			// troop moves
 			case M_TroopMove: res = new Moves::TroopMove(
+				from<sf::Vector2i>(packet)
+			); break;
+			case M_TroopMerge: res = new Moves::TroopMerge(
 				from<sf::Vector2i>(packet)
 			); break;
 			case M_TroopAttack: res = new Moves::TroopAttack(

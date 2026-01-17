@@ -15,6 +15,7 @@ namespace Serialize {
 
 		// troop moves
 		M_TroopMove,
+		M_TroopMerge,
 		M_TroopAttack,
 		M_TroopHeal,
 
