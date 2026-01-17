@@ -756,6 +756,9 @@
     <ClInclude Include="include\game\moves\troop_merge.hpp">
       <Filter>Header Files\game\moves</Filter>
     </ClInclude>
+    <ClInclude Include="include\game\logic\effect_types.hpp">
+      <Filter>Header Files\game\logic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\tileset.png">

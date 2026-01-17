@@ -34,6 +34,7 @@ effect {
 	offense: Offense Boost
 	poison : Poisoned
 	stun   : Stunned
+	enchant: Enchanted
 
 	# short entity effect names
 	# debug only
@@ -44,6 +45,7 @@ effect {
 		offense: OFF
 		poison : PSN
 		stun   : STN
+		enchant: ENC
 	}
 }
 

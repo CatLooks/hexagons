@@ -164,6 +164,7 @@
     <ClInclude Include="include\game\hex.hpp" />
     <ClInclude Include="include\game\history.hpp" />
     <ClInclude Include="include\game\logic\build_logic.hpp" />
+    <ClInclude Include="include\game\logic\effect_types.hpp" />
     <ClInclude Include="include\game\logic\plant_logic.hpp" />
     <ClInclude Include="include\game\logic\skill_array.hpp" />
     <ClInclude Include="include\game\logic\skill_helper.hpp" />

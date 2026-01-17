@@ -8,5 +8,6 @@ enum class EffectType {
 	OffenseBoost, /// Attack boost for a knight.
 	Poisoned,     /// Poisoned by an archer.
 	Stunned,      /// Stunned by a beacon.
+	Enchant,      /// Next attack is poisoned.
 	Count
 };

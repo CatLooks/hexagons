@@ -17,8 +17,13 @@ Entity::Damage Troop::offense(Access acc) {
 	if (useEffect(EffectType::OffenseBoost, acc))
 		pts *= 5;
 
+	// poison the attack
+	bool poison = useEffect(EffectType::Enchant, acc);
+	if (acc == Access::Use && type == Archer && !poison)
+		addEffect(EffectType::Enchant);
+
 	// return damage
-	return { pts, logic::troop_pow[type], type == Archer };
+	return { pts, logic::troop_pow[type], poison };
 };
 
 /// Defends the troop against incoming damage.
@@ -29,8 +34,10 @@ Entity::Damage Troop::defend(Damage dmg, Access acc) {
 	// apply debuffs
 	if (useEffect(EffectType::Shielded, acc))
 		dmg.pts /= 2;
-	if (useEffect(EffectType::DefenseBoost, acc))
+	if (useEffect(EffectType::DefenseBoost, acc)) {
 		dmg.pts /= 10;
+		dmg.psn = false;
+	};
 	
 	// cap to 1 damage
 	if (dmg.pow >= own && dmg.pts < 1)
