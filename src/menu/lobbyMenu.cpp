@@ -45,6 +45,12 @@ LobbyMenu::LobbyMenu() {
     _startBtn->setCall([this]() { if (_onStart) _onStart(); }, nullptr, menuui::Button::Click);
     add(_startBtn);
 
+    _detailsLbl = ui::Text::raw(k_PlayerNameFont, "");
+    _detailsLbl->bounds = { 0, 140px, 1ps, 0 };
+    _detailsLbl->align = ui::Text::Center;
+    _detailsLbl->setColor(sf::Color(200, 200, 200));
+    add(_detailsLbl);
+
     // register localization refresh listener and initialize localized text
     assets::lang::refresh_listeners.push_back([this]() { refreshText(); });
     refreshText();
@@ -118,4 +124,24 @@ void LobbyMenu::refreshText() {
 
     // refresh player slots
     if (!_players.empty()) updateList(_players);
+
+    if (_detailsLbl) {
+        //"lobby.details_format" -> "Map: {map} | Difficulty: {diff} | Max size: {maxPlayers}"
+        _detailsLbl->setPath("lobby.details_format");
+        
+        std::string mapName = _lastData.selectedMapName;       
+        std::string diffKey = (_lastData.difficulty == GameData::Difficulty::Easy) ? "start.easy" :
+                              (_lastData.difficulty == GameData::Difficulty::Medium) ? "start.medium" : "start.hard";
+
+        _detailsLbl->param("map", mapName);
+        _detailsLbl->param("diff", assets::lang::locale.req(localization::Path(diffKey)).get({}));
+        _detailsLbl->param("max",std::to_string(_lastData.maxPlayers));
+
+    }
+}
+
+/// Sets game details (room code, player list, etc).
+void LobbyMenu::setGameDetails(const GameData& data) {
+    _lastData = data;
+    refreshText();
 }

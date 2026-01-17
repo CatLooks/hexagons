@@ -188,6 +188,9 @@ menu {
 
 	lobby_settings: "Lobby Settings"
 	room_code_desc: "Share this code!"
+
+	next_page: "Next Page"
+    prev_page: "Prev Page"
 }
 
 join {
@@ -214,12 +217,15 @@ lobby {
     title: "GAME LOBBY"
     leave: "LEAVE"
     room_id: "Room: #{id}"
+    
+    # Format: "Map: Green Valley | Difficulty: Easy"
+    details_format: "{map}    |    {diff}    |    Lobby size: {max} "
+    
     player_name: "{name}"
     player_name_host: "{name} (Host)"
     host_you: "Host (You)"
     connecting: "Connecting..."
 }
-
 
 ## ALL FURTHER TEXT IS DEBUG MODE ONLY
 ## DO NOT TRANSLATE FURTHER

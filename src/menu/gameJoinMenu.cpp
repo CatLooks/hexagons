@@ -76,7 +76,7 @@ void GameJoinMenu::buildForm() {
     add(_lblInstruction);
 
     /// Text field.
-    _codeField = new ui::TextField(makeInputPanelMap(), k_InputFont, sf::Color::White);
+    _codeField = new ui::TextFieldOpen(makeInputPanelMap(), k_InputFont, sf::Color::White);
     _codeField->bounds = { 0.5ps - 200px, 0.4ps, 400px, 60px };
     _codeField->padding = { 10, 10, 10, 10 };
 
@@ -125,9 +125,16 @@ void GameJoinMenu::onInputUpdate(const sf::String& string) {
 /// Attempts to join a game.
 void GameJoinMenu::attemptJoin() {
     setStatusMessage("Connecting...", false);
-    if (_onJoin) {
-        _onJoin("213742");
+    if (!_onJoin) return;
+
+    std::string code;
+    if (_codeField) {
+        if (auto open = dynamic_cast<ui::TextFieldOpen*>(_codeField)) {
+            code = open->text().toAnsiString();
+        }
     }
+
+    _onJoin(code);
 }
 
 /// Sets status message.

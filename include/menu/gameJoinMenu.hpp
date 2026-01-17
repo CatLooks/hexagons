@@ -2,7 +2,7 @@
 #include "ui/element.hpp"
 #include "ui/solid.hpp"
 #include "ui/text.hpp"
-#include "ui/textfield.hpp"
+#include "menu/text_field_open.hpp"
 #include "menu/ui/menuButton.hpp"
 #include <functional>
 #include <string>
@@ -20,7 +20,7 @@ private:
     ui::Text* _title = nullptr;        /// Menu title.
     ui::Text* _lblInstruction = nullptr; /// Instruction label.
 
-    ui::TextField* _codeField = nullptr; /// The text input field.
+    ui::TextFieldOpen* _codeField = nullptr; /// The text input field.
     ui::Text* _errorMsg = nullptr;  /// Error/Status message label.
 
     menuui::Button* _joinBtn = nullptr; /// Confirm join button.

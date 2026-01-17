@@ -72,9 +72,8 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
         });
 
     // start menu -> start game
-    startMenu->bindStart([&itf, gameCtx, gameInstance]() {
-        // Configure game based on startMenu selections here
-        // e.g., gameInstance->configure(startMenu->getSelectedMode(), ...);
+    startMenu->bindStart([&itf, gameCtx, gameInstance,this]() {
+		const GameData& gameSettings = startMenu->getGameData(); // can be used to configure the game instance
 
         gameInstance->activate();
         itf.switchContext(*gameCtx);

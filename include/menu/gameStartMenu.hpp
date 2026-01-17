@@ -20,8 +20,6 @@ public:
     enum GameMode { Mode_None = -1, Mode_Single, Mode_Host };
     /// Difficulty value.
     enum Difficulty { Diff_None = -1, Diff_Easy, Diff_Medium, Diff_Hard };
-    /// Map identifier.
-    enum MapID { Map_None = -1, Map_1, Map_2, Map_3 };
 
     // Steps
     enum Step {
@@ -54,11 +52,11 @@ private:
     menuui::Button* _prevBtn = nullptr; /// Previous step button.
     menuui::Button* _nextBtn = nullptr; /// Next / start button.
 
-    ui::Element* _pageMode = nullptr; /// Mode selection page root.
-    ui::Element* _pageDiff = nullptr; /// Difficulty selection page root.
-    ui::Element* _pageMap = nullptr;  /// Map selection page root.
-    ui::Element* _pageLobby = nullptr; /// Lobby settings page root.
-    LobbyMenu* _pageWaitingLobby;      /// Waiting lobby page root.
+    ui::Element* _pageMode = nullptr;   /// Mode selection page root.
+    ui::Element* _pageDiff = nullptr;   /// Difficulty selection page root.
+    ui::Element* _pageMap = nullptr;    /// Map selection page root.
+    ui::Element* _pageLobby = nullptr;  /// Lobby settings page root.
+    LobbyMenu* _pageWaitingLobby;       /// Waiting lobby page root.
 
     // Page title labels (stored to update localization on language change)
     ui::Text* _pageModeTitle = nullptr;
@@ -71,16 +69,12 @@ private:
     ui::Text* _lblRoomCodeDesc = nullptr;
     ui::Text* _lblRoomCode = nullptr;
 
-    int _currentStep = 0; /// Currently active configuration step.
+	std::string _scanDiagnostic;    /// Diagnostic message from map scanning.
+    int _currentStep = 0;           /// Currently active configuration step.
+	bool _hasSelectedMode = false;  /// Whether a mode has been selected.
+	bool _hasSelectedDiff = false;  /// Whether a difficulty has been selected.
 
-    // Selection State
-    GameMode   _selectedMode = Mode_None;   /// Selected game mode.
-    Difficulty _selectedDiff = Diff_None;   /// Selected difficulty.
-    MapID      _selectedMap = Map_None;     /// Selected map id.
-
-    // Multiplayer State
-    int         _maxPlayers = 2; /// Maximum players for host.
-    std::string _gameCode;      /// Generated game code.
+	GameData _currentData; /// Current game data.
 
     // UI Item Containers
     std::vector<menuui::Button*> _modeButtons;         /// Mode buttons.
@@ -90,6 +84,13 @@ private:
   
     Action _onBack;      /// Back callback.
     Action _onStartGame; /// Start game callback.
+    
+    std::vector<MapInfo> _availableMaps;
+    int _mapPageOffset = 0; // Index of the first map shown on the current page
+    
+    menuui::Button* _mapPrevBtn = nullptr;
+    menuui::Button* _mapNextBtn = nullptr;
+    ui::Element* _mapGrid = nullptr;
 
 public:
     /// Constructs a game start menu.
@@ -100,14 +101,11 @@ public:
     /// Binds start button callback.
     void bindStart(Action action);
 
-    GameMode getSelectedMode() const { return _selectedMode; }
-    Difficulty getSelectedDifficulty() const { return _selectedDiff; }
-    MapID getSelectedMap() const { return _selectedMap; }
+	/// @return Current game data.
+    const GameData& getGameData() const { return _currentData; }
+	/// Sets current game data.
+    void setGameData(const GameData& data) { _currentData = data; updateUI(); }
 
-    /// @return The max players (returns 1 if singleplayer).
-    int getMaxPlayers() const { return (_selectedMode == Mode_Host) ? _maxPlayers : 1; }
-    /// @return The generated game code.
-    std::string getGameCode() const { return _gameCode; }
     void enterAsJoiner(const std::string& code);
 
 protected:
@@ -124,7 +122,6 @@ private:
 
     void selectMode(GameMode mode, menuui::Button* btn);
     void selectDifficulty(Difficulty diff, menuui::Button* btn);
-    void selectMap(MapID map, menuui::Button* btn);
     void selectMaxPlayers(int count, menuui::Button* btn);
 
     void generateGameCode();
@@ -138,4 +135,9 @@ private:
     void updateSidebarLabels(); /// Helper for dynamic sidebar
 
 	void refreshAllText();
+
+    void scanMaps();                /// Scans the folder (should probably be moved to assets loading)
+    void updateMapGrid();           /// Refreshes the 3 visible maps
+	void changeMapPage(int delta);  /// Changes the map page by delta
+
 };

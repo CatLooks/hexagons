@@ -1,0 +1,15 @@
+{
+    "metadata": {
+        "name": "Green Valley",
+        "description": "test map for now",
+        "author": "Who cares"
+    },
+    "settings": {
+        "width": 20,
+        "height": 15
+    },
+    "grid": [
+        [0, 1, 0, 2],
+        [1, 1, 0, 0]
+    ]
+}

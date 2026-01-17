@@ -40,7 +40,11 @@ static void applySettings(ui::Text* text, const ui::TextSettings& settings) {
 GameStartMenu::GameStartMenu() {
     bounds = { 0, 0, 1ps, 1ps };
 
-    // Initialize main containers
+    _hasSelectedMode = false;
+    _hasSelectedDiff = false;
+    _currentData.selectedMapPath = ""; 
+    _currentStep = STEP_MODE;
+
     _mainSwitcher = new ui::Pages();
     _mainSwitcher->bounds = { 0, 0, 1ps, 1ps };
     add(_mainSwitcher);
@@ -49,18 +53,16 @@ GameStartMenu::GameStartMenu() {
     _setupContainer->bounds = { 0, 0, 1ps, 1ps };
     _mainSwitcher->add(_setupContainer);
 
-     buildSidebar();
+    buildSidebar();
     _setupContainer->add(_sidebarBg);
 
     buildNavigation();
     _setupContainer->add(_navArea);
 
-    // Initialize content pages container
     _contentPages = new ui::Pages();
     _contentPages->bounds = { 0.25ps, 0, 0.75ps, 0.85ps };
     _setupContainer->add(_contentPages);
 
-    // Create pages and lobby
     _pageWaitingLobby = new LobbyMenu();
     _mainSwitcher->add(_pageWaitingLobby);
 
@@ -74,42 +76,32 @@ GameStartMenu::GameStartMenu() {
     _contentPages->add(_pageMap);
     _contentPages->add(_pageLobby);
 
-    // Default settings
-    _selectedMode = Mode_None;
-    _selectedDiff = Diff_None;
-    _selectedMap = Map_None;
-    _currentStep = STEP_MODE;
-    _maxPlayers = 2;
-
-    // Bind lobby callbacks
     _pageWaitingLobby->bindStart([this]() { if (_onStartGame) _onStartGame(); });
     _pageWaitingLobby->bindLeave([this]() {
-        if (_selectedMode == Mode_Host && _currentStep == STEP_WAITING) {
+        if (_currentData.isMultiplayer && _currentStep == STEP_WAITING) {
             _currentStep = STEP_LOBBY;
             updateUI();
+        } else if (_onBack) {
+            _onBack();
         }
-        else {
-            if (_onBack) _onBack();
-        }
-        });
+    });
 
-    // register localization refresh listener and initialize text
     assets::lang::refresh_listeners.push_back([this]() { refreshAllText(); });
-    refreshAllText();
-
-    updateUI();
+    
     generateGameCode();
-
+    refreshAllText();
+    updateUI();
 }
+
 
 /// Generates a new room code.
 void GameStartMenu::generateGameCode() {
     static std::mt19937 rng(std::random_device{}());
     std::uniform_int_distribution<int> dist(100000, 999999);
-    _gameCode = std::to_string(dist(rng));
+    _currentData.roomCode = std::to_string(dist(rng));
 
     if (_pageWaitingLobby) {
-        _pageWaitingLobby->setRoomCode(_gameCode);
+        _pageWaitingLobby->setRoomCode(_currentData.roomCode);
     }
 }
 
@@ -139,6 +131,8 @@ void GameStartMenu::buildSidebar() {
     if (_lblDiff) _lblDiff->setPath("start.step2");
     if (_lblMap) _lblMap->setPath("start.step3");
     if (_lblLobby) _lblLobby->setPath("start.step4");
+    
+    _lblLobby->deactivate();
 
     /// Back button.
     _backBtn = new menuui::Button();
@@ -236,57 +230,6 @@ ui::Element* GameStartMenu::createDiffPage() {
     return page;
 }
 
-/// Creates map selection page.
-ui::Element* GameStartMenu::createMapPage() {
-    auto* page = makeContainer();
-
-    auto* title = ui::Text::raw(k_HeaderFont, "");
-    title->setPath("menu.select_map");
-    title->bounds = { 0, 80px, 1ps, 0 };
-    title->align = ui::Text::Center;
-    title->pos = ui::Text::Static;
-    page->add(title);
-    _pageMapTitle = title;
-
-    auto makeBtn = [this, page](ui::Dim xOff, const std::string& txt, MapID val) {
-        auto* btn = new menuui::Button();
-        btn->setSize({ 260px, 360px });
-        btn->position() = { 0.5as + xOff, 0.5as };
-
-        // map preview
-        {
-            sf::Vector2u size = assets::map_example.getSize();
-            unsigned texW = size.x;
-            unsigned texH = size.y;
-            int cropSize = texW < texH ? texW : texH;
-            int left = static_cast<int>((texW - cropSize) / 2);
-            int top = static_cast<int>((texH - cropSize) / 2);
-
-            sf::IntRect texRect({ left, top }, { cropSize, cropSize });
-
-            auto* img = new ui::Image(&assets::map_example, texRect);
-            img->bounds = { 0.1ps, 0.1ps, 0.8ps, 0.8ps };
-            img->tint = sf::Color::White;
-            btn->add(img);
-        }
-
-        btn->setLabel()->setRaw(txt); // temporary, replaced below per-button
-        btn->setCall([this, btn, val]() { selectMap(val, btn); }, nullptr, menuui::Button::Click);
-
-        page->add(btn);
-        _mapButtons.push_back(btn);
-    };
-
-    makeBtn(-300px, "", Map_1);
-    _mapButtons.back()->setLabel()->setPath("start.map1");
-    makeBtn(0px, "", Map_2);
-    _mapButtons.back()->setLabel()->setPath("start.map2");
-    makeBtn(300px, "", Map_3);
-    _mapButtons.back()->setLabel()->setPath("start.map3");
-
-    return page;
-}
-
 /// Creates multiplayer lobby page.
 ui::Element* GameStartMenu::createLobbyPage() {
     auto* page = makeContainer();
@@ -339,8 +282,8 @@ ui::Element* GameStartMenu::createLobbyPage() {
     _lblRoomCode->bounds = { 0, 520px, 1ps, 0 };
     _lblRoomCode->align = ui::Text::Center;
     _lblRoomCode->pos = ui::Text::Static;
-    _lblRoomCode->param("id", _gameCode);
-    _lblRoomCode->hook([=]() mutable { _lblRoomCode->param("id", _gameCode); });
+    _lblRoomCode->param("id", _currentData.roomCode);
+    _lblRoomCode->hook([=]() mutable { _lblRoomCode->param("id",  _currentData.roomCode); });
     page->add(_lblRoomCode);
 
     return page;
@@ -348,89 +291,79 @@ ui::Element* GameStartMenu::createLobbyPage() {
 
 /// Selects game mode.
 void GameStartMenu::selectMode(GameMode mode, menuui::Button* btn) {
-    for (auto* b : _modeButtons) if (b != btn) b->deselect();
-    bool modeChanged = (_selectedMode != mode);
-    _selectedMode = mode;
+    for (auto* b : _modeButtons) b->deselect();
     btn->select();
-    if (modeChanged) {
+
+    // Map UI Selection to GameData
+    _currentData.isMultiplayer = (mode == Mode_Host);
+   
+     _hasSelectedMode = true; 
+
+    if (_currentData.isMultiplayer) {
         generateGameCode();
-        updateUI();
     }
+    updateUI();
 }
 
 /// Selects max player count.
 void GameStartMenu::selectMaxPlayers(int count, menuui::Button* btn) {
     for (auto* b : _playerCountButtons) if (b != btn) b->deselect();
-    _maxPlayers = count;
+     _currentData.maxPlayers = static_cast<unsigned int>(count);
     btn->select();
 }
 
 /// Selects difficulty.
 void GameStartMenu::selectDifficulty(Difficulty diff, menuui::Button* btn) {
     for (auto* b : _diffButtons) if (b != btn) b->deselect();
-    _selectedDiff = diff;
+    _currentData.difficulty = static_cast<GameData::Difficulty>(diff);
+   _hasSelectedDiff = true;
     btn->select();
     updateUI();
 }
 
-/// Selects map.
-void GameStartMenu::selectMap(MapID map, menuui::Button* btn) {
-    for (auto* b : _mapButtons) if (b != btn) b->deselect();
-    _selectedMap = map;
-    btn->select();
-    updateUI();
-}
 
 /// Checks if current step can proceed.
 bool GameStartMenu::canProceed() const {
     switch (_currentStep) {
-    case STEP_MODE:  return _selectedMode != Mode_None;
-    case STEP_DIFF:  return _selectedDiff != Diff_None;
-    case STEP_MAP:   return _selectedMap != Map_None;
-    case STEP_LOBBY: return true;
-    case STEP_WAITING: return true;
-    default: return false;
+        case STEP_MODE: return _hasSelectedMode;
+        case STEP_DIFF: return _hasSelectedDiff;
+        case STEP_MAP:  return !_currentData.selectedMapPath.empty();
+        default:        return true;
     }
 }
+
 
 /// Advances to next step.
 void GameStartMenu::nextStep() {
     if (!canProceed()) return;
 
-    // Transition logic from MAP step
     if (_currentStep == STEP_MAP) {
-        if (_selectedMode == Mode_Single) {
-            // If Singleplayer -> start the game
+        if (!_currentData.isMultiplayer) {
             if (_onStartGame) _onStartGame();
             return;
-        }
-        else {
-            // If Host -> go to Lobby settings
+        } else {
             _currentStep = STEP_LOBBY;
             updateUI();
             return;
         }
     }
 
-    // Transition from LOBBY settings to WAITING lobby (host only)
     if (_currentStep == STEP_LOBBY) {
         _currentStep = STEP_WAITING;
-
-        _pageWaitingLobby->setRoomCode(_gameCode);
+        
+        _pageWaitingLobby->setGameDetails(_currentData);
         _pageWaitingLobby->setAsHost(true);
         _pageWaitingLobby->updateList({ { assets::lang::locale.req(localization::Path("lobby.host_you")).get({}), sf::Color::Cyan, true, true } });
-
+        
         updateUI();
         return;
     }
 
-    // If in WAITING and Start Game is clicked
     if (_currentStep == STEP_WAITING) {
         if (_onStartGame) _onStartGame();
         return;
     }
 
-    // Standard step advance for MODE and DIFF
     _currentStep++;
     updateUI();
 }
@@ -446,19 +379,15 @@ void GameStartMenu::prevStep() {
 /// Updates menu UI.
 void GameStartMenu::updateUI() {
     if (_currentStep == STEP_WAITING) {
-        // Show only the waiting lobby: Sidebar and NavArea are hidden
         _mainSwitcher->show(_pageWaitingLobby);
-    }
-    else {
+    } else {
         _mainSwitcher->show(_setupContainer);
-
-        // Show subpage inside setup
         ui::Element* subPage = nullptr;
         switch (_currentStep) {
-        case STEP_MODE:  subPage = _pageMode;  break;
-        case STEP_DIFF:  subPage = _pageDiff;  break;
-        case STEP_MAP:   subPage = _pageMap;   break;
-        case STEP_LOBBY: subPage = _pageLobby; break;
+            case STEP_MODE:  subPage = _pageMode;  break;
+            case STEP_DIFF:  subPage = _pageDiff;  break;
+            case STEP_MAP:   subPage = _pageMap;   break;
+            case STEP_LOBBY: subPage = _pageLobby; break;
         }
         _contentPages->show(subPage);
     }
@@ -478,25 +407,22 @@ void GameStartMenu::updateSidebarLabels() {
     _lblDiff->activate();
     applySettings(_lblDiff, (_currentStep == STEP_DIFF) ? k_SidebarFontActive : k_SidebarFont);
     
-
     _lblMap->activate();
     applySettings(_lblMap, (_currentStep == STEP_MAP) ? k_SidebarFontActive : k_SidebarFont);
 
 
-    if (_selectedMode == Mode_Host) {
+    if (_hasSelectedMode && _currentData.isMultiplayer) {
         _lblLobby->activate();
         bool isLobbyActive = (_currentStep == STEP_LOBBY || _currentStep == STEP_WAITING);
         applySettings(_lblLobby, isLobbyActive ? k_SidebarFontActive : k_SidebarFont);
-    }
-    else {
-        // In singleplayer the lobby point does not exist
+    } else {
         _lblLobby->deactivate();
     }
 }
 
 /// Updates navigation buttons.
 void GameStartMenu::updateNavigationButtons() {
-    if (!_navArea || !_prevBtn || !_nextBtn) return;
+    if (!_navArea || !_nextBtn) return;
 
     if (_currentStep == STEP_WAITING) {
         _navArea->deactivate();
@@ -506,32 +432,17 @@ void GameStartMenu::updateNavigationButtons() {
     _navArea->activate();
     _prevBtn->display = (_currentStep > STEP_MODE);
 
-    // Check if current step is the last for the selected mode
-    bool isLastStepForMode = false;
-    if (_selectedMode == Mode_Single) {
-        isLastStepForMode = (_currentStep == STEP_MAP);
-    }
-    else {
-        // For host the last step before waiting is STEP_LOBBY
-        isLastStepForMode = (_currentStep == STEP_LOBBY);
-    }
+    bool isLastStep = (!_currentData.isMultiplayer && _currentStep == STEP_MAP) || 
+                      (_currentData.isMultiplayer && _currentStep == STEP_LOBBY);
 
-    if (isLastStepForMode)
-        _nextBtn->setLabel()->setPath("menu.start_game");
-    else
-        _nextBtn->setLabel()->setPath("menu.next");
-   
-    // Activate NEXT only if selection is made
-    if (canProceed()) {
+    _nextBtn->setLabel()->setPath(isLastStep ? "menu.start_game" : "menu.next");
+
+     if (canProceed()) {
         _nextBtn->setLabel()->setColor(sf::Color::White);
-        _nextBtn->setCall([this]() { nextStep(); }, nullptr, menuui::Button::Click);
-    }
-    else {
+    } else {
         _nextBtn->setLabel()->setColor(sf::Color(100, 100, 100));
-        _nextBtn->setCall(nullptr, nullptr, menuui::Button::Click);
     }
 }
-
 
 /// Binds back callback.
 void GameStartMenu::bindBack(Action action) {
@@ -550,14 +461,21 @@ void GameStartMenu::drawSelf(ui::RenderBuffer& target, sf::IntRect self) const {
 
 /// Enters the menu as a joiner with the given game code.
 void GameStartMenu::enterAsJoiner(const std::string& code) {
-    _selectedMode = Mode_None;
-    _gameCode = code;
+    _currentData.isMultiplayer = true;
+    _currentData.roomCode = code;
+    
     _currentStep = STEP_WAITING;
-    updateNavigationButtons();
-    updateSidebarLabels();
-    _pageWaitingLobby->setRoomCode(_gameCode);
-    _pageWaitingLobby->setAsHost(false);
-    _pageWaitingLobby->updateList({ { assets::lang::locale.req(localization::Path("lobby.connecting")).get({}), sf::Color::White, false, false} });
+
+    _pageWaitingLobby->setRoomCode(_currentData.roomCode);
+    _pageWaitingLobby->setAsHost(false);     
+    
+    PlayerData connectingMsg;
+    connectingMsg.name = assets::lang::locale.req(localization::Path("lobby.connecting")).get({});
+    connectingMsg.color = sf::Color::White;
+    connectingMsg.isHost = false;
+    connectingMsg.isReady = false;
+
+    _pageWaitingLobby->updateList({ connectingMsg });
 
     updateUI();
 }
@@ -578,7 +496,7 @@ void GameStartMenu::refreshAllText() {
     if (_lblRoomCodeDesc) _lblRoomCodeDesc->setPath("menu.room_code_desc");
     if (_lblRoomCode) {
         _lblRoomCode->setPath("lobby.room_id");
-        _lblRoomCode->param("id", _gameCode);
+        _lblRoomCode->param("id", _currentData.roomCode);
     }
 
     // Update mode buttons labels
@@ -600,15 +518,7 @@ void GameStartMenu::refreshAllText() {
         else if (i == 2) lbl->setPath("start.hard");
     }
 
-    // Update map buttons labels
-    for (size_t i = 0; i < _mapButtons.size(); ++i) {
-        if (!_mapButtons[i]) continue;
-        ui::Text* lbl = _mapButtons[i]->setLabel();
-        if (!lbl) continue;
-        if (i == 0) lbl->setPath("start.map1");
-        else if (i == 1) lbl->setPath("start.map2");
-        else if (i == 2) lbl->setPath("start.map3");
-    }
+    updateMapGrid();
 
     // Update player count buttons
     for (size_t i = 0; i < _playerCountButtons.size(); ++i) {
@@ -627,4 +537,175 @@ void GameStartMenu::refreshAllText() {
     _nextBtn->setLabel()->setPath("menu.next");
 
     updateNavigationButtons();
+    updateSidebarLabels();
+}
+
+/// Scans the maps folder for available maps.
+void GameStartMenu::scanMaps() {
+    _availableMaps.clear();
+    _scanDiagnostic = ""; 
+    
+    namespace fs = std::filesystem;
+    std::vector<std::string> folderAttempts = { "assets/maps/", "assets/map/" };
+    std::string foundPath = "";
+    std::string prefix = "";
+
+    // Find the folder
+    for (int i = 0; i < 3; ++i) {
+        for (auto& folder : folderAttempts) {
+            if (fs::exists(prefix + folder) && fs::is_directory(prefix + folder)) {
+                foundPath = prefix + folder;
+                goto folder_found;
+            }
+        }
+        prefix += "../";
+    }
+
+folder_found:
+    if (foundPath.empty()) {
+        _scanDiagnostic = "assets/maps/ not found.";
+        return;
+    }
+
+    for (const auto& entry : fs::directory_iterator(foundPath)) {
+        // Check for JSON
+        std::string ext = entry.path().extension().string();
+        std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+
+        if (ext == ".json") {
+            MapInfo info;
+            info.filePath = entry.path().string();
+            info.id = entry.path().stem().string();
+
+            // Generate Display Name
+            std::string name = info.id;
+            std::replace(name.begin(), name.end(), '_', ' ');
+            if (!name.empty()) name[0] = std::toupper(name[0]);
+			info.displayName = name; 
+            // TODO: should probably be read from JSON in future
+
+            auto pngPath = entry.path().parent_path() / (info.id + ".png");
+            info.previewPath = pngPath.string();
+            info.texture = std::make_shared<sf::Texture>();
+          
+ 
+            if (info.texture->loadFromFile(info.previewPath)) {
+                //printf("[SUCCESS] Loaded map preview: %s\n", info.previewPath.c_str());
+            } else {
+                printf("[FAILED]  Could not load image: %s\n", info.previewPath.c_str());
+                info.texture = nullptr; 
+            }
+
+            _availableMaps.push_back(info);
+        }
+    }
+}
+
+/// Creates map selection page.
+ui::Element* GameStartMenu::createMapPage() {
+    auto* page = makeContainer();
+
+    _pageMapTitle = ui::Text::raw(k_HeaderFont, "");
+    _pageMapTitle->setPath("menu.select_map");
+    _pageMapTitle->bounds = { 0, 80px, 1ps, 0 };
+    _pageMapTitle->align = ui::Text::Center;
+    page->add(_pageMapTitle);
+
+    _mapGrid = new ui::Element();
+    _mapGrid->bounds = { 0, 0, 1ps, 1ps };
+    page->add(_mapGrid);
+
+    scanMaps();
+
+    _mapPrevBtn = new menuui::Button();
+    _mapPrevBtn->setSize({ 60px, 100px });
+    _mapPrevBtn->position() = { 50px, 0.5as };
+    _mapPrevBtn->setLabel()->setRaw("<");
+    _mapPrevBtn->setCall([this]() { changeMapPage(-1); }, nullptr, menuui::Button::Click);
+    page->add(_mapPrevBtn);
+
+    _mapNextBtn = new menuui::Button();
+    _mapNextBtn->setSize({ 60px, 100px });
+    _mapNextBtn->position() = { 1ps - 100px, 0.5as };
+    _mapNextBtn->setLabel()->setRaw(">");
+    _mapNextBtn->setCall([this]() { changeMapPage(1); }, nullptr, menuui::Button::Click);
+    page->add(_mapNextBtn);
+
+    updateMapGrid();
+    return page;
+}
+
+/// Updates the map grid display.
+void GameStartMenu::updateMapGrid() {
+    _mapGrid->clear();
+    _mapButtons.clear();
+
+    if (_availableMaps.empty()) {
+        auto* lbl = ui::Text::raw(k_SidebarFont, _scanDiagnostic.empty() ? "No maps found." : _scanDiagnostic);
+        lbl->bounds = { 20px, 0.4ps, 1ps - 40px, 0 };
+        lbl->align = ui::Text::Center;
+        _mapGrid->add(lbl);
+        return;
+    }
+
+    int mapsPerPage = 3;
+    float startX = -300.0f;
+
+    for (int i = 0; i < mapsPerPage; ++i) {
+        int idx = _mapPageOffset + i;
+        if (idx >= (int)_availableMaps.size()) break;
+
+        const auto& map = _availableMaps[idx];
+        auto* btn = new menuui::Button();
+        btn->setSize({ 260px, 360px });
+        btn->position() = { 0.5as + (startX + (i * 300.0f)), 0.5as };
+        
+        if (map.texture) {
+            sf::Vector2u size = map.texture->getSize();
+            sf::IntRect fullRect({0, 0}, { (int)size.x, (int)size.y });
+
+            auto* img = new ui::Image(map.texture.get(), fullRect);
+            
+            img->bounds = { 0.1ps, 0.1ps, 0.8ps, 0.6ps };
+            img->tint = sf::Color::White;
+            btn->add(img);
+        } else {
+            auto* placeholder = new ui::Solid();
+            placeholder->color = sf::Color(50, 50, 50);
+            placeholder->bounds = { 0.1ps, 0.1ps, 0.8ps, 0.6ps };
+            btn->add(placeholder);
+        }
+
+        btn->setLabel()->setRaw(map.displayName);
+        btn->setLabel()->bounds = {0, 0.7ps, 1ps, 0.3ps};
+        
+        btn->setCall([this, btn, map]() {
+            for (auto* b : _mapButtons) b->deselect();
+            btn->select();
+            _currentData.selectedMapPath = map.filePath;
+            _currentData.selectedMapName = map.displayName;
+            updateUI();
+        }, nullptr, menuui::Button::Click);
+
+        if (_currentData.selectedMapPath == map.filePath) btn->select();
+        _mapGrid->add(btn);
+        _mapButtons.push_back(btn);
+    }
+
+    _mapPrevBtn->display = (_mapPageOffset > 0);
+    _mapNextBtn->display = (_mapPageOffset + mapsPerPage < (int)_availableMaps.size());
+}
+
+
+/// Changes the map page by delta.
+void GameStartMenu::changeMapPage(int delta) {
+    int mapsPerPage = 3;
+    int newOffset = _mapPageOffset + (delta * mapsPerPage);
+
+    if (newOffset < 0) return;
+
+    if (newOffset >= (int)_availableMaps.size()) return;
+
+    _mapPageOffset = newOffset;
+    updateMapGrid();
 }
