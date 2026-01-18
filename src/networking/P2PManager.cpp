@@ -1,4 +1,5 @@
 #include "networking/P2PManager.hpp"
+#include <vector>
 
 void P2PManager::OnIncomingConnectionRequest(const EOS_P2P_OnIncomingConnectionRequestInfo* Data) {
 	if (auto Manager = static_cast<P2PManager*>(Data->ClientData)) {
@@ -26,20 +27,21 @@ void P2PManager::HandleIncomingConnectionRequest(const EOS_P2P_OnIncomingConnect
 	}
 }
 
-template <typename T> //Temporary template function definition
-void P2PManager::SendPacket(const T* Data, uint32_t DataSize) {
+void P2PManager::SendPacket(const sf::Packet& packet) {
 	if (PeerId == nullptr) {
 		std::cerr << "[P2PManager] Cannot send message, PeerId is not set." << std::endl;
 		return;
 	}
+	uint32_t DataSize = static_cast<uint32_t>(packet.getDataSize()); //Koniecznie uint32_t
+
 	EOS_P2P_SendPacketOptions SendOptions = {};
 	SendOptions.ApiVersion = EOS_P2P_SENDPACKET_API_LATEST;
 	SendOptions.LocalUserId = LocalUserId;
 	SendOptions.RemoteUserId = PeerId;
 	SendOptions.SocketId = SocketId.get();
 	SendOptions.Channel = 0;
-	SendOptions.DataLengthBytes = DataSize;
-	SendOptions.Data = Data;
+	SendOptions.DataLengthBytes = DataSize; 
+	SendOptions.Data = packet.getData(); //tutaj idk jak to siê prawid³owo robi z sf::Packet
 	SendOptions.bAllowDelayedDelivery = EOS_TRUE;
 	SendOptions.Reliability = EOS_EPacketReliability::EOS_PR_ReliableOrdered;
 	SendOptions.bDisableAutoAcceptConnection = EOS_FALSE;
@@ -59,15 +61,23 @@ bool P2PManager::ReceivePacket() {
 	ReceiveOptions.ApiVersion = EOS_P2P_RECEIVEPACKET_API_LATEST;
 	ReceiveOptions.LocalUserId = LocalUserId;
 
-	// TEMPLATE FOR STRING DATA
-	// To be replaced with actual buffer management
-	char buffer[1024] = {};
-	ReceiveOptions.MaxDataSizeBytes = static_cast<uint32_t>(sizeof(buffer));
+	constexpr uint32_t bufferSize = 4096; //random size, to be adjusted
+	std::vector<uint8_t> buffer(bufferSize);
+
+	ReceiveOptions.MaxDataSizeBytes = bufferSize;
 
 	uint8_t channel = 0;
-	uint32_t bytesWritten = static_cast<uint32_t>(sizeof(buffer));
+	uint32_t bytesWritten = bufferSize;
 
-	EOS_EResult receiveResult = EOS_P2P_ReceivePacket(P2PHandle, &ReceiveOptions, &PeerId, SocketId.get(), &channel, static_cast<void*>(buffer), &bytesWritten);
+	EOS_EResult receiveResult = EOS_P2P_ReceivePacket(
+		P2PHandle,
+		&ReceiveOptions,
+		&PeerId,
+		SocketId.get(),
+		&channel,
+		buffer.data(),
+		&bytesWritten
+	);
 
 	if (receiveResult == EOS_EResult::EOS_NotFound) {
 		// Brak pakietów
@@ -81,7 +91,9 @@ bool P2PManager::ReceivePacket() {
 	std::cout << "[P2PManager] ReceivePacket: received " << bytesWritten << " bytes on channel "
 		<< static_cast<int>(channel) << " from peer " << static_cast<const void*>(PeerId) << std::endl;
 
-	const std::string msg(buffer, buffer + bytesWritten);
-	OnMessageReceived.invoke(msg);
+	sf::Packet packet;
+	packet.append(buffer.data(), bytesWritten); //Idk czy to jest dobre - Dane przesy³ane przez EOS to void*, trza to jakoœ przetworzyæ na sf::Packet
+
+	OnMessageReceived.invoke(packet);
 	return true;
 }

@@ -111,34 +111,28 @@ std::optional<NetEvent> Net::next() {
 }
 
 /// Send raw data. Uses LocalConnection when present as a default route.
-void Net::send(const std::vector<char>& data, const std::string& targetId) {
+void Net::send(const sf::Packet& packet) {
     auto lobby = m_eosManager.GetLobbyManager();
     if (!lobby) return;
 
-    // Default routing: client -> host via LocalConnection.
-    if (targetId.empty()) {
-        if (auto local = lobby->GetLocalConnection()) {
-            std::string message(data.begin(), data.end());
-            local->SendPacket(message.data(), static_cast<uint32_t>(message.size()));
+    // If host: broadcast to peers.
+    if (m_role == Role::Host) {
+        const std::vector<std::shared_ptr<P2PManager>> peers = lobby->GetAllP2PConnections();
+        if (!peers.empty()) {
+            for (const auto& peer : peers) {
+                if (peer) {
+                    peer->SendPacket(packet);
+                }
+            }
             return;
         }
-
-        // Host broadcasting is not implemented here; requires LobbyManager to expose peer list.
-		std::vector<std::shared_ptr<P2PManager>> peers = lobby->GetAllP2PConnections();
-        for (const auto& peer : peers) {
-            std::string message(data.begin(), data.end());
-            peer->SendPacket(message.data(), static_cast<uint32_t>(message.size()));
-        }
-		return;
     }
+    // If client: use LocalConnection.
     else {
-        // Targeted send by string id is not supported without id -> EOS_ProductUserId mapping.
-    }
-
-    // Fallback: try sending through local connection if available.
-    if (auto local = lobby->GetLocalConnection()) {
-        std::string message(data.begin(), data.end());
-        local->SendPacket(message.data(), static_cast<uint32_t>(message.size()));
+        if (auto local = lobby->GetLocalConnection()) {
+            local->SendPacket(packet);
+            return;
+        }
     }
 }
 
@@ -178,17 +172,15 @@ void Net::AttachToLobby(std::shared_ptr<LobbyManager> lobby) {
     lobby->OnLobbyJoined.add([this, lobby](EOS_LobbyId id) {
         auto local = lobby->GetLocalConnection();
         if (local) {
-            local->OnMessageReceived.add([this](const std::string& data) {
+            local->OnMessageReceived.add([this](sf::Packet packet) {
                 NetPacket pkt;
-                pkt.data.assign(data.begin(), data.end());
+                pkt.data.assign(
+                    static_cast<const char*>(packet.getData()),
+                    static_cast<const char*>(packet.getData()) + packet.getDataSize()
+                );
                 pkt.senderId = EOSIdToString(nullptr);
                 m_eventQueue.push(pkt);
             });
-
-            if (m_role == Role::Client && !m_clientHelloSent) {
-                local->SendPacket("[Net] ClientHello", static_cast<uint32_t>(strlen("[Net] ClientHello")));
-                m_clientHelloSent = true;
-            }
         }
     });
 
@@ -200,15 +192,14 @@ void Net::AttachToLobby(std::shared_ptr<LobbyManager> lobby) {
         auto p2p = lobby->GetP2PConnection(userId);
         const std::string peerKey = EOSIdToString(userId);
         if (p2p) {
-            p2p->OnMessageReceived.add([this, userId, p2p, peerKey](const std::string& data) {
+            p2p->OnMessageReceived.add([this, userId, p2p, peerKey](sf::Packet packet) {
                 NetPacket pkt;
-                pkt.data.assign(data.begin(), data.end());
-                pkt.senderId = peerKey;
+                pkt.data.assign(
+                    static_cast<const char*>(packet.getData()),
+                    static_cast<const char*>(packet.getData()) + packet.getDataSize()
+                );
+                pkt.senderId = EOSIdToString(nullptr);
                 m_eventQueue.push(pkt);
-
-                if (m_role == Role::Host && m_hostHandshakePeers.insert(peerKey).second) {
-                    p2p->SendPacket("[Net] HostHello", static_cast<uint32_t>(strlen("[Net] HostHello")));
-                }
                 });
         }
         });

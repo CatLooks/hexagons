@@ -52,7 +52,6 @@ void GameConnectionManager::OnLoginCompleted(EOS_ProductUserId newLocalUserId) {
     }
 }
 
-//TODO: actual implementation of further state transitions
 
 void GameConnectionManager::OnLobbyCreationCompleted(const std::string& lobbyId) {
     std::cout << "[Connection] EVENT: Successfully created and joined lobby " << lobbyId << std::endl;
@@ -64,24 +63,20 @@ void GameConnectionManager::OnLobbyJoinCompleted(const std::string& lobbyId) {
     auto lobby = m_EosManager.GetLobbyManager();
     auto local = lobby->GetLocalConnection();
 
-    local->OnMessageReceived.add([this](const std::string& message) {
-        this->OnPacketReceived(const_cast<char*>(message.c_str()));
+    local->OnMessageReceived.add([this](sf::Packet packet) {
+        this->OnPacketReceived(packet);
     });
 
-    // Teraz wyœlij inicjaln¹ wiadomoœæ
-    //local->SendPacket("Message from client: Joined lobby!", static_cast<uint32_t>(strlen("Message from client: Joined lobby!")));
 }
 
 void GameConnectionManager::OnMemberJoined(EOS_ProductUserId memberId) {
     std::cout << "[Connection] EVENT: Member joined: " << memberId << std::endl;
 	auto lobby = m_EosManager.GetLobbyManager();
-    lobby->GetP2PConnection(memberId)->OnMessageReceived.add([this](const std::string& message) {
-        this->OnPacketReceived(const_cast<char*>(message.c_str()));
+    lobby->GetP2PConnection(memberId)->OnMessageReceived.add([this](sf::Packet packet) {
+        this->OnPacketReceived(packet);
         });
 }
 
-void GameConnectionManager::OnPacketReceived(auto* message) { // Placeholder for actual message type
-	std::cout << "[Connection] EVENT: Packet received: " << message << std::endl;
-    auto lobby = m_EosManager.GetLobbyManager();
+void GameConnectionManager::OnPacketReceived(sf::Packet) { 
     //TODO: Actually process the contents
 }

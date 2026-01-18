@@ -5,6 +5,7 @@
 #include <string>
 #include <cstring>
 #include <memory>
+#include <SFML/Network/Packet.hpp>
 #include "templated/delegate.hpp"
 
 class P2PManager {
@@ -19,12 +20,11 @@ public:
 		EOS_P2P_AddNotifyPeerConnectionRequest(P2PHandle, &IncomingConnectionOptions, this, OnIncomingConnectionRequest);
 	}
 
-	Delegate<void(const std::string&)> OnMessageReceived;
+	Delegate<void(sf::Packet)> OnMessageReceived;
 
 	EOS_ProductUserId GetPeerId() const { return PeerId; };
 	
-	template<typename T> //Temporary template function definition
-	void SendPacket(const T* Data, uint32_t DataSize);
+	void SendPacket(const sf::Packet& packet);
 	
 	bool ReceivePacket();
 

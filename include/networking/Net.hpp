@@ -53,16 +53,8 @@ public:
     void close();
 
     /// Sends raw data to a specific user (or host if client).
-    /// @param data Raw bytes to send.
-    /// @param targetId Optional target id string. Empty => default routing (host/client semantics).
-    void send(const std::vector<char>& data, const std::string& targetId = "");
-
-
-    /// Overload for sending a plain string.
-    void send(const std::string& msg) {
-        std::vector<char> data(msg.begin(), msg.end());
-        send(data);
-    }
+    /// @param packet Raw bytes to send.
+    void send(const sf::Packet& packet);
 
     /// Call this every frame to tick EOS and process internal state.
     void fetch();

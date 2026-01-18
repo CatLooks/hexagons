@@ -1,5 +1,6 @@
 #pragma once
 #include "networking/EOSManager.hpp"
+#include <SFML/Network.hpp>
 
 class GameConnectionManager {
 public:
@@ -16,7 +17,7 @@ private:
     void OnLobbyCreationCompleted(const std::string& lobbyId);
     void OnLobbyJoinCompleted(const std::string& lobbyId);
 	void OnMemberJoined(EOS_ProductUserId memberId);
-	void OnPacketReceived(auto* message); // Placeholder for actual message type
+	void OnPacketReceived(sf::Packet); // Placeholder for actual message type
 
     // A reference to the core systems
     EOSManager& m_EosManager;
