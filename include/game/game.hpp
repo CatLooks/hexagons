@@ -134,9 +134,6 @@ public:
 	/// Whether local player is currently making a move.
 	bool move() const;
 
-	/// Resets pulse animation.
-	void resetPulse() const;
-
 	/// Returns hex coordinates at a mouse position.
 	///
 	/// @param mouse Mouse position.

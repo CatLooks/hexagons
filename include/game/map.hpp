@@ -83,6 +83,10 @@ public:
 	Regions regions;
 	/// Tile pulse annotation.
 	std::optional<sf::Vector2i> pulse;
+	/// Defensive building position.
+	///
+	/// Used to display shield icons around the position.
+	std::optional<sf::Vector2i> shield;
 
 	/// Selects a region.
 	/// 

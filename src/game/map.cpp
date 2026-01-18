@@ -330,6 +330,10 @@ void Map::draw(ui::RenderBuffer& target, float t) const {
 	while (auto tile = drawer.next()) {
 		if (tile->hex->elevated()) continue;
 		tile->drawContents(target);
+		
+		// draw shield if close enough
+		if (shield && distance(*shield, tile->coords) <= logic::defense_range)
+			tile->drawShield(target, t);
 	};
 
 	// draw tile shading

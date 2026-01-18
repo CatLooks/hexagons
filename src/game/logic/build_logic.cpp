@@ -37,6 +37,9 @@ namespace logic {
 	/// Beacon stun skill range.
 	const size_t stun_range = 3;
 
+	/// Building defense range.
+	const int defense_range = 2;
+
 	/// Building destruction bonus.
 	const int build_bonus[Build::Count] = { 30, 5, 8, 6, 16, 43, 8 };
 

@@ -523,10 +523,8 @@ static void _attach_action(
 			size_t idx = game->map.newSelectionIndex();
 
 			// create tile pulse for auto skills
-			if (skill->format == Skill::Self) {
+			if (skill->format == Skill::Self)
 				game->map.pulse = game->last();
-				game->resetPulse();
-			};
 
 			// generate tile selection
 			Spread spread = skill->select(game->state, game->map.atref(game->last()), idx);
@@ -750,6 +748,8 @@ void Game::buildMenu(const Build& build) {
 		Values::build_names[build.type],
 		build, build.hp != build.max_hp()
 	);
+	if (logic::build_guard[build.type] >= Troop::Farmer)
+		map.shield = build.pos;
 };
 /// Constructs a plant UI panel.
 void Game::plantMenu(const Plant& plant) {
@@ -782,6 +782,8 @@ void Game::closeMenu() {
 
 /// Updates menu state after a click.
 void Game::updateMenu() {
+	map.shield = {};
+
 	// open hex menu
 	if (_select)
 		hexMenu(*map.at(*_select));
@@ -802,11 +804,6 @@ sf::Vector2i Game::last() const {
 /// Whether local player is currently making a move.
 bool Game::move() const {
 	return _move;
-};
-
-/// Resets pulse animation.
-void Game::resetPulse() const {
-	_pulse_anim->restart();
 };
 
 /// Returns hex coordinates at a mouse position.

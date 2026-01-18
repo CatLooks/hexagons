@@ -37,6 +37,9 @@ namespace logic {
 	/// Beacon stun skill range.
 	extern const size_t stun_range;
 
+	/// Building defense range.
+	extern const int defense_range;
+
 	/// Building destruction bonus.
 	/// @param id Building type.
 	extern const int build_bonus[Build::Count];

@@ -66,5 +66,11 @@ namespace Draw {
 		/// @param target Target render buffer.
 		/// @param t Pulse progression.
 		void drawPulse(ui::RenderBuffer& target, float t) const;
+
+		/// Draws building defensive shield at a tile.
+		/// 
+		/// @param target Target render buffer.
+		/// @param t Opacity animation progression.
+		void drawShield(ui::RenderBuffer& target, float t) const;
 	};
 };

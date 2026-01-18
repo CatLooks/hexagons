@@ -62,7 +62,10 @@ namespace SkillList {
 				},
 				.pass = [=](const Spread::Tile& now) {
 					// check if tile is not guarded by a building
-					return skillf::checkAround(state.map, now.pos, 2, [=](const Spread::Tile& nb) {
+					return skillf::checkAround(
+						state.map, now.pos, (size_t)logic::defense_range,
+						[=](const Spread::Tile& nb)
+					{
 						// ignore if same region or no building
 						if (nb.hex->region() == tile.hex->region() || !nb.hex->build)
 							return false;
