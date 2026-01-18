@@ -23,18 +23,25 @@ namespace ui {
 	/// Recalculates text state.
 	void Text::recalc() {
 		if (!_raw) {
-			// evaluate auto-loading arguments
-			for (const auto& gen : _autoargs) {
-				if (auto value = gen.second())
-					_args[gen.first] = *value;
+			List* list = _shargs;
+
+			// own argument list
+			if (!list) {
+				list = &_args;
+
+				// evaluate auto-loading arguments
+				for (const auto& gen : _autoargs) {
+					if (auto value = gen.second())
+						_args[gen.first] = *value;
+				};
+				for (const auto& gen : _autovargs) gen();
 			};
-			for (const auto& gen : _autovargs) gen();
 
 			// evaluate text parameters
-			std::string value = _format.get(_args, &assets::lang::locale);
+			std::string value = _format.get(*list, &assets::lang::locale);
 
 			// set new value
-			_text.setString(value);
+			_text.setString(sf::String::fromUtf8(value.begin(), value.end()));
 		};
 
 		// set label size
@@ -75,7 +82,7 @@ namespace ui {
 
 	/// Constructs a text element.
 	Text::Text(const TextSettings& settings, const localization::Path& path = {})
-		: _text({ settings.font, "", settings.size }), _path(path), _raw(false)
+		: _text({ settings.font, "", settings.size }), _path(path), _raw(false), _shargs(nullptr)
 	{
 		// adds recalculation update
 		onRecalculate([=](const sf::Time& _) { recalc(); });
@@ -94,8 +101,8 @@ namespace ui {
 	};
 
 	/// Sets text label to a raw string.
-	void Text::setRaw(const sf::String& string) {
-		_text.setString(string);
+	void Text::setRaw(const sf::String& value) {
+		_text.setString(sf::String::fromUtf8(value.begin(), value.end()));
 		_raw = true;
 	};
 	/// Sets text label to a localization path.
@@ -113,6 +120,11 @@ namespace ui {
 	/// Returns character position in current text label.
 	sf::Vector2f Text::charpos(size_t idx) const {
 		return _text.getInverseTransform().transformPoint(_text.findCharacterPos(idx));
+	};
+
+	/// Uses an external argument list.
+	void Text::use(List* list) {
+		_shargs = list;
 	};
 
 	/// Clears text arguments.

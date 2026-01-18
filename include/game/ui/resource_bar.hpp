@@ -2,8 +2,8 @@
 
 // include dependencies
 #include "game/values/interface.hpp"
-#include "ui.hpp"
 #include "game/region.hpp"
+#include "ui.hpp"
 
 namespace gameui {
 	/// Resource bar element.

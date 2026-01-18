@@ -6,6 +6,11 @@
 
 /// Skill implementation helper functions.
 namespace skillf {
+	/// Generates static skill cost generator.
+	/// 
+	/// @param pts Currency amount.
+	Skill::Cost cost(int pts);
+
 	/// Generates tile selector spreader effect function.
 	/// 
 	/// @param idx Selection index.
@@ -22,8 +27,13 @@ namespace skillf {
 	/// Allows selection only if a tile is empty.
 	extern const Spread::Check emptyPass;
 
-	/// Generates region audit spreader effect function.
+	/// Generates region join effect function.
 	///
 	/// @param region Target region.
-	Spread::Effect regionAuditEffect(const Regions::Ref& region);
+	Spread::Effect regionJoin(const Regions::Ref& region);
+
+	/// Generates a same region spreader for empty tiles.
+	/// 
+	/// @param region Target region.
+	Spread::Check sameRegionEmptyHop(const Regions::Ref& region);
 };

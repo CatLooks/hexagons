@@ -1,23 +1,20 @@
 #include "ui.hpp"
 #include "game.hpp"
 #include "assets.hpp"
+#include "flags.hpp"
 #include "menu.hpp"
 #include "networking/Net.hpp"
 
-#include <iostream>
-/// Program entry.
-/// @return Exit code.
-int main() {
-	// load languages
-	if (assets::loadLanguageList())
-		return 1;
-	if (assets::loadLanguage("en-us.tlml"))
-		return 1;
 
-	// load assets
+int main() {
+	// This automatically calls loadLanguageList() and loadLanguage() for the default entry.
+	assets::lang::init();
+
 	assets::loadAssets();
-	if (assets::error)
+	if (assets::error) {
+		fprintf(stderr, "Critical error: Failed to load game assets.\n");
 		return 1;
+	}
 
 	// initialize networking
 	EOSManager* eos = &EOSManager::GetInstance();
@@ -26,14 +23,14 @@ int main() {
 	// create window
 	ui::window.create({ 1600, 900 }, false);
 
-	// create an interface
 	ui::Interface& itf = ui::window.interface();
 	itf.clearColor(sf::Color(29, 31, 37));
 
-	// draw stats
 	sf::Text drawStats = sf::Text(assets::font, "", 20);
 	drawStats.setOutlineThickness(2);
 	itf.statDraw([&](sf::RenderTarget& target, const ui::RenderStats& stats) {
+		if (!flags::stats) return;
+
 		std::string format = std::format(
 			"{}Q {}T {}B {}R",
 			stats.quads,
@@ -44,103 +41,40 @@ int main() {
 		drawStats.setString(format);
 		drawStats.setPosition({ ui::window.size().x - drawStats.getLocalBounds().size.x - 4, 0 });
 		target.draw(drawStats);
-		});
+	});
 
-
-	//creation of game context
+	// Game State and Context Setup
+	GameState state(GameState::Host, new TestAdapter);
 	auto game_ctx = itf.newContext();
-	Game* game;
+	Game* game_instance = nullptr; 
 	{
 		itf.switchContext(game_ctx);
 
-		// game test
 		auto layer_map = itf.layer();
 		auto layer_gui = itf.layer();
-		game = new Game(layer_map, layer_gui);
-		{
-			Map& map = game->map;
+		auto layer_msg = itf.layer();
 
-			const int w = 14;
-			const int h = 7;
-			const char arr[h][w + 1] = {
-				"------------- ",
-				"rrrrrrrwyywrrr",
-				"rrrrrrwyywrrr ",
-				"ggggggwyywgggg",
-				"ggrrgwyywgggg ",
-				"bbrrbwyywbbbbb",
-				"bbbbwyywbbbbb ",
-			};
+		game_instance = new Game(layer_map, layer_gui, layer_msg, &state);
+		
+		state.addPlayer({ .name = "Player", .team = Region::Red });
+		state.addPlayer({ .name = "Bot 1", .team = Region::Orange });
+		state.init();
 
-			map.empty({ w, h });
-			{
-				Troop troop;
-				troop.pos = { 1, 1 };
-				troop.type = Troop::Knight;
-				troop.hp = 5;
-				map.setTroop(troop);
+		game_instance->map.empty({ 24, 7 });
+		game_instance->map.regions.enumerate(&game_instance->map);
 
-				Build build;
-				build.pos = { 3, 1 };
-				build.type = Build::Tower;
-				map.setBuild(build);
-
-				Plant plant;
-				plant.pos = { 5, 1 };
-				plant.type = Plant::Peach;
-				map.setPlant(plant);
-			};
-
-			for (int y = 0; y < h; y++) {
-				for (int x = 0; x < w; x++) {
-					Hex* hex = map.at({ x, y });
-					if (hex == nullptr) continue;
-
-					switch (arr[y][x]) {
-					case '-':
-						hex->type = Hex::Ground;
-						break;
-					case 'r':
-						hex->type = Hex::Ground;
-						hex->team = Region::Red;
-						break;
-					case 'g':
-						hex->type = Hex::Ground;
-						hex->team = Region::Green;
-						break;
-					case 'b':
-						hex->type = Hex::Ground;
-						hex->team = Region::Blue;
-						break;
-					case 'y':
-						hex->type = Hex::Ground;
-						hex->team = Region::Yellow;
-						break;
-					case 'w':
-						hex->type = Hex::Water;
-						break;
-
-					default:
-						break;
-					};
-				};
-			};
-			map.regions.enumerate(&map);
-		};
-		layer_map->add(game);
+		layer_map->add(game_instance);
+		layer_gui->add(dev::Factory::game_panel(game_instance));
 	}
 
-
-	MenuSystem menuSystem(itf, &game_ctx, game, net);
+	MenuSystem menuSystem(itf, &game_ctx, game_instance);
 	itf.switchContext(menuSystem.context);
 
-
-
-	// window main loop
 	while (ui::window.active()) {
 		net.fetch();
 		ui::window.events();
 		ui::window.frame();
-	};
+	}
+
 	return 0;
-};
+}

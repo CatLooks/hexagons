@@ -12,6 +12,10 @@ langs {
 		name: English
 		file: "en-us.tlml"
 	}
+	pl {
+        name: "Polski"
+        file: "pl-pl.tlml"
+    }
 }
 
 # default language

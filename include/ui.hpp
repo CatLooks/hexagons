@@ -9,6 +9,7 @@
 #include "ui/panel.hpp"
 #include "ui/image.hpp"
 #include "ui/text.hpp"
+#include "ui/button.hpp"
 #include "ui/pages.hpp"
 #include "ui/drag.hpp"
 #include "ui/camera.hpp"

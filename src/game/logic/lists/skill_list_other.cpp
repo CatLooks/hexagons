@@ -1,0 +1,179 @@
+#include "game/logic/skill_list.hpp"
+
+namespace SkillList {
+	/// ======== FRUIT HARVEST ======== ///
+	const Skill fruit = {
+		.type = Skills::Harvest,
+		.condition = [](const SkillState&, Map& map, const HexRef& tile) {
+			bool found = false;
+
+			// find at least 1 harvestable plant
+			Spread spread = {
+				.pass = Moves::harvestablePlant,
+				.effect = [&found](const Spread::Tile& tile)
+					{ found = true; }
+			};
+			spread.apply(map, tile.pos, logic::harvest_range);
+			return found;
+		},
+		.select = [](const SkillState&, const HexRef& tile, size_t idx) {
+			return Spread {
+				.hop = skillf::solidHop,
+				.effect = skillf::selectTile(idx)
+			};
+		},
+		.radius = logic::harvest_range,
+		.action = [](const SkillState&, Map& map, const HexRef& prev, const HexRef& next) -> Move* {
+			// ignore if no troop
+			if (!prev.hex->troop) return nullptr;
+
+			// create plant modification move
+			return new Moves::PlantMod(next.pos, logic::harvest_range);
+		},
+		.format = Skill::Self
+	};
+
+	/// ======== PLANT CUT-DOWN ======== ///
+	const Skill cut = {
+		.type = Skills::TreeCut,
+		.annotation = Skill::Aim,
+		.select = [](const SkillState&, const HexRef& tile, size_t idx) {
+			return Spread {
+				.hop = skillf::solidHop,
+				.pass = [](const Spread::Tile& tile) {
+					// select if tile has plant
+					return (bool)tile.hex->plant;
+				},
+				.effect = skillf::selectTile(idx)
+			};
+		},
+		.radius = 1,
+		.action = [](const SkillState&, Map& map, const HexRef& prev, const HexRef& next) -> Move* {
+			// ignore if no troop
+			if (!prev.hex->troop) return nullptr;
+
+			// create plant cut move
+			return new Moves::PlantCut(next.pos);
+		}
+	};
+
+	/// ======== HEAL OTHER TROOPS ======== ///
+	const Skill tent = {
+		.type = Skills::TentSet,
+		.annotation = Skill::Aim,
+		.resource = Skills::Money,
+		.cost = [](const SkillState& state) {
+			return logic::build_cost(Build::Tent, state.var());
+		},
+		.select = [](const SkillState&, const HexRef& tile, size_t idx) {
+			return Spread {
+				.hop = skillf::solidHop,
+				.pass = skillf::sameRegionEmptyHop(tile.hex->region()),
+				.effect = skillf::selectTile(idx)
+			};
+		},
+		.radius = 1,
+		.action = [](const SkillState& state, Map& map, const HexRef& prev, const HexRef& next) -> Move* {
+			// ignore if no troop
+			if (!prev.hex->troop) return nullptr;
+
+			// create tent entity
+			Build build;
+			build.type = Build::Tent;
+			build.hp = build.max_hp();
+			build.pos = next.pos;
+			build.add_cooldown(Skills::Withdraw, 1);
+
+			// create tent setup move
+			return new Moves::EntityPlace(build, state.var());
+		},
+		.format = Skill::SingleAim,
+		.cooldown = 2,
+		.reselect = true
+	};
+
+	/// ======== HEAL OTHER TROOPS ======== ///
+	Skill heal1 = {
+		.type = Skills::Heal_1,
+		.annotation = Skill::Berry,
+		.resource = Skills::Berry,
+		.condition = [](const SkillState& state, Map& map, const HexRef& tile) {
+			// get heal cost
+			int cost = 0;
+			auto spread = Moves::troopHealCost(logic::heal_amount[0], tile.hex->team, &cost);
+			spread.apply(map, tile.pos, logic::heal_range);
+
+			// store new heal cost
+			heal1.cost = [=](const SkillState&) { return cost; };
+
+			// check if enough resources are present
+			// fallback if no troops to heal
+			return cost && state.with(heal1.resource) >= cost;
+		},
+		.radius = logic::heal_range,
+		.action = [](const SkillState&, Map& map, const HexRef& _, const HexRef& tile) -> Move* {
+			// ignore if no building
+			if (!tile.hex->build) return nullptr;
+
+			// create heal move
+			return new Moves::TroopHeal(
+				tile.pos, logic::heal_range,
+				logic::heal_amount[0], tile.hex->team
+			);
+		},
+		.format = Skill::Self,
+		.cooldown = 2
+	};
+	Skill heal2 = {
+		.type = Skills::Heal_2,
+		.annotation = Skill::Berry,
+		.resource = Skills::Berry,
+		.condition = [](const SkillState& state, Map& map, const HexRef& tile) {
+			// get heal cost
+			int cost = 0;
+			auto spread = Moves::troopHealCost(logic::heal_amount[1], tile.hex->team, &cost);
+			spread.apply(map, tile.pos, logic::heal_range);
+
+			// store new heal cost
+			heal2.cost = [=](const SkillState&) { return cost; };
+
+			// check if enough resources are present
+			// fallback if no troops to heal
+			return cost && state.with(heal2.resource) >= cost;
+		},
+		.radius = logic::heal_range,
+		.action = [](const SkillState&, Map& map, const HexRef& _, const HexRef& tile) -> Move* {
+			// ignore if no building
+			if (!tile.hex->build) return nullptr;
+
+			// create heal move
+			return new Moves::TroopHeal(
+				tile.pos, logic::heal_range,
+				logic::heal_amount[1], tile.hex->team
+			);
+		},
+		.format = Skill::Self,
+		.cooldown = 2
+	};
+
+	/// ======== BEACON STUN ======== ///
+	const Skill stun = {
+		.type = Skills::Stun,
+		.annotation = Skill::Peach,
+		.resource = Skills::Peach,
+		.cost = skillf::cost(logic::stun_cost),
+		.radius = logic::stun_range,
+		.action = [](const SkillState&, Map& map, const HexRef& _, const HexRef& tile) -> Move* {
+			// ignore if no building
+			if (!tile.hex->build) return nullptr;
+
+			// create movement move
+			return new Moves::RadiusEffect(
+				tile.pos, stun.radius,
+				EffectType::Stunned, tile.hex->team
+			);
+		},
+		.format = Skill::Self,
+		.cooldown = 3
+	};
+};

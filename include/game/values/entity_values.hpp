@@ -18,6 +18,12 @@ namespace Values {
 	/// @return Health bar texture.
 	sf::IntRect hp_bar(int hp, int max, bool poison);
 
+	/// Status effect names.
+	extern const char* effect_names[static_cast<int>(EffectType::Count)];
+
+	/// Shortened status effect names.
+	extern const char* effect_names_short[static_cast<int>(EffectType::Count)];
+
 	/// Status effect textures.
-	extern const sf::IntRect effects[static_cast<int>(EffectType::Count)];
+	extern const sf::IntRect effect_textures[static_cast<int>(EffectType::Count)];
 };

@@ -59,4 +59,7 @@ private:
     void onInputUpdate(const sf::String& string);
     /// Triggers the join action.
     void attemptJoin();
+
+	/// Refreshes all text labels.
+	void refreshAllText();
 };

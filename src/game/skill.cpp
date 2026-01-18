@@ -1,7 +1,8 @@
 #include "game/skill.hpp"
 
 /// Skill resource label text path.
-const char* Skills::withLabel[3] = {
+const char* Skills::withLabel[4] = {
+	"dp.empty",
 	"gp.cost.coins",
 	"gp.cost.berry",
 	"gp.cost.peach",
@@ -14,8 +15,14 @@ int SkillState::with(Skills::Resource resource) const {
 
 	// select a resource
 	switch (resource) {
+		case Skills::Money: return region->money;
 		case Skills::Berry: return region->berry;
 		case Skills::Peach: return region->peach;
 		default: return 0;
 	};
+};
+
+/// Returns region variable counters.
+RegionVar SkillState::var() const {
+	return region ? *region : RegionVar();
 };

@@ -49,8 +49,6 @@ namespace ui {
 	private:
 		/// Previous string.
 		sf::String _string_p;
-		/// Previous cursor position.
-		unsigned int _cursor_p = 0;
 
 	protected:
 		/// Current string.
@@ -120,6 +118,8 @@ namespace ui {
 		///
 		/// @param dir Erase direction.
 		void erase(Direction dir);
+		/// Clears the text input.
+		void clear();
 
 		/// Emits display callbacks.
 		void display() const;

@@ -5,6 +5,13 @@
 #include "game/troop.hpp"
 
 namespace Values {
+	/// Move undo button icon.
+	extern const sf::IntRect undo_icon;
+	/// Move redo button icon.
+	extern const sf::IntRect redo_icon;
+	/// Turn finish button icon.
+	extern const sf::IntRect next_icon;
+
 	/// Troop buying action texture.
 	extern const sf::IntRect buy_build;
 	/// Building buying action texture.
@@ -27,9 +34,19 @@ namespace Values {
 
 	/// Interface digit textures.
 	extern const sf::IntRect digits[11];
+	/// Stunned skill digit replacement.
+	extern const sf::IntRect stun_digit;
+	/// Dead region skill digit replacement.
+	extern const sf::IntRect dead_digit;
+	/// Insufficient resources digit replacement.
+	extern const sf::IntRect insufficient_digit;
 
 	/// Game panel text settings.
 	extern const ui::TextSettings panel_text;
 	/// Resource bar text settings.
 	extern const ui::TextSettings resource_text;
+	/// Game state viewer text settings.
+	extern const ui::TextSettings state_text;
+	/// Game chat text settings.
+	extern const ui::TextSettings chat_text;
 };

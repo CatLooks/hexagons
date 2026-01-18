@@ -20,6 +20,7 @@ public:
     ui::Interface::Context context;
 
     ui::Pages*     pages       = nullptr; /// Page container.
+
     MainMenu*      mainMenu    = nullptr; /// Main menu page.
     OptionsMenu*   optionsMenu = nullptr; /// Options menu page.
     GameStartMenu* startMenu   = nullptr; /// Game start page.

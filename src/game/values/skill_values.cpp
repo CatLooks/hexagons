@@ -5,6 +5,9 @@ namespace Values {
 	const sf::IntRect skill_textures[Skills::Count] = {
 		{}, // empty
 
+		{}, // buy build
+		{}, // buy troop
+
 		coords(0, 1), // withdraw
 		coords(6, 1), // move
 
@@ -16,18 +19,23 @@ namespace Values {
 
 		coords(0, 2), // harvest
 		coords(1, 2), // cut
+		coords(3, 3), // tent
 		coords(2, 2), // defend
 		coords(3, 2), // range
 		coords(4, 2), // defense
 		coords(5, 2), // offense
 
-		coords(0, 3), // heal
+		coords(4, 3), // heal 1
+		coords(5, 3), // heal 2
 		coords(1, 3), // stun
 	};
 
 	// skill names
 	const char* skill_names[Skills::Count] = {
 		"@!skill.invalid",
+
+		"@!gp.buy_build",
+		"@!gp.buy_troop",
 
 		"@!skill.withdraw",
 		"@!skill.move",
@@ -40,12 +48,14 @@ namespace Values {
 
 		"@!skill.harvest",
 		"@!skill.cut",
+		"@!skill.tent",
 		"@!skill.defend",
 		"@!skill.range",
 		"@!skill.defense",
 		"@!skill.offense",
 
-		"@!skill.heal",
+		"@!skill.heal_1",
+		"@!skill.heal_2",
 		"@!skill.stun",
 	};
 

@@ -4,7 +4,9 @@
 /// Default spread check.
 bool Spread::default_check(const Tile&) { return true; };
 /// Default spread effect.
-void Spread::default_effect(Tile&) {};
+void Spread::default_effect(const Tile&) {};
+/// Default radius override.
+std::optional<size_t> Spread::default_radius(const Tile&) { return {}; };
 
 /// Generates a unique spread index.
 size_t Spread::index() {
@@ -49,7 +51,7 @@ static inline void _spread(
 
 		// queue tile if passes blocking check
 		if (hop(next))
-			queue.push_front(next);
+			queue.push_back(next);
 	};
 };
 
@@ -61,19 +63,23 @@ size_t Spread::apply(const HexArray& array, sf::Vector2i pos, size_t radius) con
 	// get origin tile
 	Hex* origin = array.at(pos);
 	if (!origin) return idx;
+
+	// override radius
+	Tile tile = { { origin, pos }, radius };
+	if (auto nr = this->radius(tile))
+		tile.left = radius = *nr;
+
+	// apply effect to origin if needed
 	origin->spread = idx;
-	if (imm) {
-		// affect the origin tile
-		Tile tile = { { origin, pos }, radius };
-		if (pass(tile)) effect(tile);
-	};
+	if (imm && pass(tile))
+		effect(tile);
 	if (!radius) return idx;
 
 	// tile queue
 	std::list<Tile> queue;
 
 	// initial spread from origin
-	_spread(queue, array, hop, idx, { { origin, pos }, radius });
+	_spread(queue, array, hop, idx, tile);
 
 	// spreader loop
 	while (!queue.empty()) {
@@ -103,14 +109,17 @@ Spread::List Spread::applylist(const HexArray& array, sf::Vector2i pos, size_t r
 	// get origin tile
 	Hex* origin = array.at(pos);
 	if (!origin) return affected;
+
+	// override radius
+	Tile tile = { { origin, pos }, radius };
+	if (auto nr = this->radius(tile))
+		tile.left = radius = *nr;
+
+	// apply effect to origin if needed
 	origin->spread = idx;
-	if (imm) {
-		// affect the origin tile
-		Tile tile = { { origin, pos }, radius };
-		if (pass(tile)) {
-			effect(tile);
-			affected.push_back(tile.pos);
-		};
+	if (imm && pass(tile)) {
+		effect(tile);
+		affected.push_back(tile.pos);
 	};
 	if (!radius) return affected;
 

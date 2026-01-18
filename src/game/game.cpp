@@ -2,6 +2,7 @@
 #include "game/values/shared.hpp"
 #include "game/logic/skill_list.hpp"
 #include "mathext.hpp"
+#include "flags.hpp"
 
 /// Default tile position for deselection click.
 const sf::Vector2i Game::unselected = { -1, -1 };
@@ -12,13 +13,39 @@ void Game::queueCall(Delegate<void()>::Action call) {
 };
 
 /// Constructs a game object.
-Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
-	_layer(game_layer), _camera(game_layer, &map.camera, 17.f / 16),
-	_panel(new gameui::Panel()), _bar(new gameui::Bar())
+Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, GameState* state):
+	_state(*state),
+	_layer(game_layer),
+	_camera(game_layer, 17.f / 16),
+	_panel(new gameui::Panel(map.history)),
+	_bar(new gameui::Bar()),
+	_view(new gameui::State(state)),
+	_chat(new gameui::Chat(48px, 28px, 128, 20))
 {
+	// attach reference to game state
+	_state.setRefs(&map, _chat);
+
 	// register interface elements
 	ui_layer->add(_panel);
 	ui_layer->add(_bar);
+	ui_layer->add(_view);
+	chat_layer->add(_chat);
+
+	// add chat callback
+	_chat->attach([=](const std::string& text) {
+		// ignore if whitespace
+		bool white = true;
+		for (char c : text) {
+			if (!(c == ' ' || c == '\t')) {
+				white = false;
+				break;
+			};
+		};
+		if (white) return;
+
+		// send message to chat
+		_state.message(text);
+	});
 
 	// setup camera
 	_camera.minZoom = 0.5f;
@@ -33,10 +60,60 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 	};
 
 	// add queued call handler
-	game_layer->onRecalculate([=](const sf::Time&) {
+	ui_layer->onRecalculate([=](const sf::Time&) {
 		_queue.invoke();
 		_queue.clear();
 	});
+
+	// add game move control
+	ui_layer->onEvent([=](const ui::Event& evt) {
+		if (auto data = evt.get<ui::Event::KeyPress>()) {
+			if (data->key == sf::Keyboard::Key::Q) {
+				// undo a move
+				undoMove();
+				return true;
+			};
+			if (data->key == sf::Keyboard::Key::E) {
+				// redo a move
+				redoMove();
+				return true;
+			};
+			if (data->key == sf::Keyboard::Key::Slash) {
+				// show the chat
+				queueCall([=]() { _chat->show(); });
+				return true;
+			};
+		};
+		return false;
+	});
+
+	// add move controls to buttons
+	_panel->selector()->attach(
+		[=]() { undoMove(); },
+		[=]() { redoMove(); },
+		[=]() { return _state.finish(); }
+	);
+
+	// attach game state viewer under resource bar
+	_view->onRecalculate([=](const sf::Time&) {
+		_view->position().y = _bar->position().y + _bar->size().y;
+	});
+
+	// add player update callback
+	_state.updateCallback([=](bool enabled) {
+		_move = enabled;
+
+		if (!enabled) {
+			// deselect player
+			deselectMenu();
+			closeMenu();
+			deselectTile();
+			deselectRegion();
+		};
+	});
+
+	// add game state update handler
+	onUpdate([=](const sf::Time&) { _state.tick(); });
 
 	// add tile selection handler
 	game_layer->onEvent([=](const ui::Event& evt) {
@@ -62,9 +139,25 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 
 	// add camera zoom handler
 	game_layer->onEvent([=](const ui::Event& evt) {
+		// zoom scroll
 		if (auto data = evt.get<ui::Event::MouseWheel>()) {
-			_camera.scroll(-data->delta, ui::window.mouse(), ui::window.size());
+			_camera.scroll(-data->delta, data->original);
 			return true;
+		};
+
+		// mouse press
+		if (auto data = evt.get<ui::Event::MousePress>()) {
+			// zoom reset
+			if (data->button == sf::Mouse::Button::Middle) {
+				_camera.setZoom(1.f);
+				return true;
+			};
+
+			// camera pan start
+			if (data->button == sf::Mouse::Button::Right) {
+				_camera.start(data->original);
+				return true;
+			};
 		};
 		return false;
 	});
@@ -75,29 +168,71 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer):
 		game_layer->setArea(ui::DimVector(1me, 1me) * _camera.zoom(), { 0px, 0px, 1ps, 1ps });
 
 		// keyboard camera pan
-		if (ui::window.focused()) {
+		if (ui::window.focused() && !_chat->active()) {
 			sf::Vector2i offset;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) offset.y--;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) offset.y++;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) offset.x--;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) offset.x++;
-			map.camera += sf::Vector2i(sf::Vector2f(offset * Values::k)
+			_camera.move(sf::Vector2f(offset * Values::k)
 				* Values::panSpeed * delta.asSeconds());
 		};
 
 		// mouse camera pan
-		_camera.pan(
-			sf::Mouse::isButtonPressed(sf::Mouse::Button::Right),
-			ui::window.mouse(), ui::window.size()
-		);
+		_camera.update(ui::window.mouse(), sf::Mouse::isButtonPressed(sf::Mouse::Button::Right));
+
+		// set map camera position
+		map.camera = (sf::IntRect)_camera.view(ui::window.size());
 	});
 
 	// deselect when clicking on the panel
 	_panel->onEvent([=](const ui::Event& evt) {
 		if (evt.is<ui::Event::MousePress>())
 			deselectMenu();
-		return true;
+		return false;
 	});
+};
+
+/// Undoes last move.
+void Game::undoMove() {
+	// stop selection
+	if (map.isSelection())
+		deselectMenu();
+
+	// undo the move
+	if (auto cursor = map.history.undo()) {
+		auto tile = map.atref(*cursor);
+
+		// update region
+		if (map.selectedRegion())
+			selectRegion(tile);
+
+		// update cursor
+		if (!_select || *cursor != _select)
+			selectTile(tile.pos);
+	};
+	updateMenu();
+};
+
+/// Redoes last move.
+void Game::redoMove() {
+	// stop selection
+	if (map.isSelection())
+		deselectMenu();
+
+	// redo the move
+	if (auto cursor = map.history.redo()) {
+		auto tile = map.atref(*cursor);
+
+		// update region
+		if (map.selectedRegion())
+			selectRegion(tile);
+
+		// update cursor
+		if (!_select || *cursor != _select)
+			selectTile(tile.pos);
+	};
+	updateMenu();
 };
 
 /// Selects a tile at position.
@@ -118,6 +253,7 @@ void Game::selectTile(sf::Vector2i pos) {
 	_select = pos;
 	_last = pos;
 };
+
 /// Deselects a tile.
 void Game::deselectTile() {
 	if (_select) {
@@ -136,13 +272,12 @@ void Game::deselectTile() {
 
 /// Selects a region attached to a tile.
 void Game::selectRegion(const HexRef& tile) {
-	if (tile.hex->region) {
-		map.selectRegion(tile.hex->region);
-		_bar->attachRegion(tile.hex->region);
-		state.region = &*tile.hex->region;
-		_last = tile.pos;
-	};
+	map.selectRegion(tile.hex->region());
+	_bar->attachRegion(tile.hex->region());
+	state.region = &*tile.hex->region();
+	_last = tile.pos;
 };
+
 /// Deselects the region.
 void Game::deselectRegion() {
 	map.deselectRegion();
@@ -171,7 +306,10 @@ void Game::click(sf::Vector2i pos) {
 		// execute skill action
 		HexRef prev = map.atref(last());
 		HexRef next = { hex, pos };
-		skill->action(state, map, prev, next);
+		map.executeSkill(
+			skill->action(state, map, prev, next),
+			prev.pos, skill
+		);
 
 		// cancel selection
 		bool reselect = skill->reselect;
@@ -202,7 +340,7 @@ void Game::click(sf::Vector2i pos) {
 				deselectTile();
 
 			// check if in the same region
-			else if (hex->region == region)
+			else if (hex->region() == region)
 				selectTile(pos);
 
 			// deselect tile
@@ -214,7 +352,9 @@ void Game::click(sf::Vector2i pos) {
 		};
 
 		// select the region
-		selectRegion({ hex, pos });
+		Region::Team team = _state.team();
+		if (hex->region() && (team && hex->region()->team == team || flags::any_region))
+			selectRegion({ hex, pos });
 	};
 };
 
@@ -223,10 +363,38 @@ void Game::cycleBuild() {
 	state.build = (state.build + 1) % (int)Values::build_shop.size();
 	updateBuild();
 };
+
 /// Cycles the troop buying interface.
 void Game::cycleTroop() {
 	state.troop = (state.troop + 1) % (int)Values::troop_shop.size();
 	updateTroop();
+};
+
+/// Disables a skill button.
+///
+/// @param button Target button.
+/// @param move Whether local player is currently making a move.
+/// @param region Selected region.
+/// @param diff Region resources minus entity cost.
+static void _disable_button(
+	gameui::Action* button,
+	bool move,
+	Region* region,
+	int diff
+) {
+	// disable if other player's turn
+	if (!move)
+		button->disable();
+
+	// disable if region is dead
+	else if (!region || region->dead())
+		button->disable(Values::dead_digit);
+
+	// disable buy button if not enough resources
+	else if (diff < 0)
+		button->disable(Values::insufficient_digit);
+	else
+		button->enable();
 };
 
 /// Updates the building buying interface.
@@ -245,6 +413,24 @@ void Game::updateBuild() const {
 	auto* text = button->setLabel();
 	text->setPath("param");
 	text->param("value", Values::build_names[type]);
+
+	// update cost
+	int cost = SkillList::buy_build.cost(state);
+
+	// set cost text
+	auto* sub = button->setSubtitle();
+	sub->setPath(Skills::withLabel[SkillList::buy_build.resource]);
+	sub->param("cost", ext::str_int(cost));
+
+	// set cost color
+	int diff = state.with(SkillList::buy_build.resource) - cost;
+	int color = 1;
+	if (diff > 0) color = 0;
+	if (diff < 0) color = 2;
+	sub->setColor(Values::income_color[color]);
+
+	// disable button if needed
+	_disable_button(_panel->actions()[2], _move, state.region, diff);
 };
 
 /// Updates the troop buying interface.
@@ -263,6 +449,24 @@ void Game::updateTroop() const {
 	auto* text = button->setLabel();
 	text->setPath("param");
 	text->param("value", Values::troop_names[type]);
+
+	// update cost
+	int cost = SkillList::buy_troop.cost(state);
+
+	// set cost text
+	auto* sub = button->setSubtitle();
+	sub->setPath(Skills::withLabel[SkillList::buy_troop.resource]);
+	sub->param("cost", ext::str_int(cost));
+
+	// set cost color
+	int diff = state.with(SkillList::buy_troop.resource) - cost;
+	int color = 1;
+	if (diff > 0) color = 0;
+	if (diff < 0) color = 2;
+	sub->setColor(Values::income_color[color]);
+
+	// disable button if needed
+	_disable_button(_panel->actions()[3], _move, state.region, diff);
 };
 
 /// Deselect action buttons and cancels map selection.
@@ -282,16 +486,18 @@ void Game::deselectMenu() {
 /// Attaches a callback to a button.
 /// 
 /// @param button Action button.
+/// @param skill_idx Skill index.
 /// @param game Game object.
 /// @param skill Action skill.
 static void _attach_action(
 	gameui::Action* button,
+	uint8_t skill_idx,
 	Game* game,
 	const Skill* skill
 ) {
 	// set button validation logic
 	button->setCheck([=]() {
-		return skill->condition(game->state, game->map.atref(game->last()));
+		return skill->condition(game->state, game->map, game->map.atref(game->last()));
 	});
 
 	// set button press / release logic
@@ -315,6 +521,7 @@ static void _attach_action(
 
 			// store skill description
 			game->skill = skill;
+			game->skill_idx = skill_idx;
 		},
 		[=]() {
 			// aimed skill
@@ -326,24 +533,23 @@ static void _attach_action(
 			HexRef tile = game->map.atref(game->last());
 
 			// execute the skill
-			bool free_before = tile.hex->free();
 			{
-				game->skill->action(game->state, game->map, tile, tile);
+				game->map.executeSkill(
+					game->skill->action(game->state, game->map, tile, tile),
+					tile.pos, game->skill
+				);
 				game->deselectMenu();
 			};
 			bool free_after = tile.hex->free();
 
-			// update game menu
-			if (free_before != free_after) {
-				// queue to next frame since we are still inside
-				// of a button event handler function
-				game->queueCall([=]() {
-					// deselect tile if entity has disappeared
-					if (free_after)
-						game->deselectTile();
-					game->updateMenu();
-				});
-			};
+			// queue to next frame since we are still inside
+			// of a button event handler function
+			game->queueCall([=]() {
+				// deselect tile if entity has disappeared
+				if (free_after)
+					game->deselectTile();
+				game->updateMenu();
+			});
 		},
 		gameui::Action::Select
 	);
@@ -361,7 +567,7 @@ static void _attach_action(
 static void _construct_menu(
 	Game* game,
 	gameui::Panel* panel,
-	const Values::SkillArray& data,
+	const logic::SkillArray& data,
 	sf::IntRect texture,
 	const char* name,
 	const Entity& entity,
@@ -383,6 +589,9 @@ static void _construct_menu(
 		});
 	};
 
+	// entity tile
+	HexRef tile = game->map.atref(entity.pos);
+
 	// construct skill buttons
 	int idx = 0;
 	for (auto* button : panel->actions()) {
@@ -392,6 +601,27 @@ static void _construct_menu(
 		// set skill annotation
 		button->annotate(data.skills[idx]->annotation);
 
+		// set skill cooldown
+		button->forwardOverlay();
+		button->setTimer(entity.hasEffect(EffectType::Stunned)
+			? gameui::Action::StunTimer : entity.timers[idx]);
+
+		// attach skill logic
+		_attach_action(button, idx, game, data.skills[idx]);
+
+		// disable if other player's turn
+		if (!game->move())
+			button->disable();
+		else if (tile.hex) {
+			// disable if the region is dead
+			if (tile.hex->region() && tile.hex->region()->dead())
+				button->disable(Values::dead_digit);
+
+			// disable if skill cannot be executed
+			else if (!data.skills[idx]->condition(game->state, game->map, tile))
+				button->disable();
+		};
+
 		// set skill label
 		auto* text = button->setLabel();
 		text->setPath("param");
@@ -400,7 +630,7 @@ static void _construct_menu(
 		// set cost label
 		if (data.skills[idx]->resource != Skills::None) {
 			auto res = data.skills[idx]->resource;
-			auto cost = data.skills[idx]->cost;
+			auto cost = data.skills[idx]->cost(game->state);
 
 			auto* text = button->setSubtitle();
 			text->setPath(Skills::withLabel[res]);
@@ -417,13 +647,6 @@ static void _construct_menu(
 				text->setColor(Values::income_color[idx]);
 			});
 		};
-
-		// set skill cooldown
-		button->forwardOverlay();
-		button->setTimer(entity.timers[idx]);
-
-		// attach skill logic
-		_attach_action(button, game, data.skills[idx]);
 		idx++;
 	};
 	panel->recalculate();
@@ -431,7 +654,7 @@ static void _construct_menu(
 
 /// Constructs a region UI panel.
 void Game::regionMenu(const Region& region, bool targeted) {
-	_panel->construct(Values::SkillArray::L22);
+	_panel->construct(logic::SkillArray::L22);
 
 	// create region tile preview
 	{
@@ -454,7 +677,7 @@ void Game::regionMenu(const Region& region, bool targeted) {
 		text->setPath("gp.buy_build");
 
 		// attach buy build skill
-		_attach_action(button, this, targeted ? &SkillList::buy_build : &SkillList::buy_build_aim);
+		_attach_action(button, 0, this, targeted ? &SkillList::buy_build : &SkillList::buy_build_aim);
 	};
 	{
 		auto* button = _panel->actions()[3];
@@ -466,7 +689,7 @@ void Game::regionMenu(const Region& region, bool targeted) {
 		text->setPath("gp.buy_troop");
 
 		// attach buy build skill
-		_attach_action(button, this, targeted ? &SkillList::buy_troop : &SkillList::buy_troop_aim);
+		_attach_action(button, 0, this, targeted ? &SkillList::buy_troop : &SkillList::buy_troop_aim);
 	};
 
 	// annotate selection buttons
@@ -481,6 +704,12 @@ void Game::regionMenu(const Region& region, bool targeted) {
 	updateBuild();
 	updateTroop();
 
+	// disable buttons if region is dead
+	if (region.dead()) {
+		_panel->actions()[2]->disable(Values::dead_digit);
+		_panel->actions()[3]->disable(Values::dead_digit);
+	};
+
 	// recalculate panel
 	_panel->recalculate();
 };
@@ -489,7 +718,7 @@ void Game::regionMenu(const Region& region, bool targeted) {
 void Game::troopMenu(const Troop& troop) {
 	_construct_menu(
 		this, _panel,
-		Values::troop_skills[troop.type],
+		logic::troop_skills[troop.type],
 		Values::troop_textures[troop.type],
 		Values::troop_names[troop.type],
 		troop, true
@@ -499,7 +728,7 @@ void Game::troopMenu(const Troop& troop) {
 void Game::buildMenu(const Build& build) {
 	_construct_menu(
 		this, _panel,
-		Values::build_skills[build.type],
+		logic::build_skills[build.type],
 		Values::build_textures[build.type],
 		Values::build_names[build.type],
 		build, build.hp != build.max_hp()
@@ -509,7 +738,7 @@ void Game::buildMenu(const Build& build) {
 void Game::plantMenu(const Plant& plant) {
 	_construct_menu(
 		this, _panel,
-		Values::plant_skill,
+		logic::plant_skill,
 		Values::plant_textures[plant.type],
 		Values::plant_names[plant.type],
 		plant, false
@@ -525,12 +754,12 @@ void Game::hexMenu(const Hex& hex) {
 	// plant ui
 	else if (hex.plant) plantMenu(*hex.plant);
 	// targeted region ui
-	else regionMenu(*hex.region, true);
+	else regionMenu(*hex.region(), true);
 };
 
 /// Closes any open menus.
 void Game::closeMenu() {
-	_panel->construct(Values::SkillArray::None);
+	_panel->construct(logic::SkillArray::None);
 	_panel->recalculate();
 };
 
@@ -553,6 +782,11 @@ sf::Vector2i Game::last() const {
 	return _last;
 };
 
+/// Whether local player is currently making a move.
+bool Game::move() const {
+	return _move;
+};
+
 /// Resets pulse animation.
 void Game::resetPulse() const {
 	_pulse_anim->restart();
@@ -561,18 +795,16 @@ void Game::resetPulse() const {
 /// Returns hex coordinates at a mouse position.
 sf::Vector2i Game::mouseToHex(sf::Vector2i mouse) const {
 	// convert to world coordinates
-	mouse += map.camera;
+	mouse += (sf::Vector2i)_camera.view(ui::window.size()).position;
 
 	// calculate y
-	int y, ymod;
-	ext::idivmod(mouse.y, Values::tileOff.y).into(y, ymod);
+	auto [y, ymod] = ext::idivmod(mouse.y, Values::tileOff.y);
 
 	// shift x if odd row
 	mouse -= Values::rowOffset(y);
 
 	// calculate x
-	int x, xmod;
-	ext::idivmod(mouse.x, Values::tileSize.x).into(x, xmod);
+	auto [x, xmod] = ext::idivmod(mouse.x, Values::tileSize.x);
 
 	// get base tile position
 	sf::Vector2i pos = { x, y };

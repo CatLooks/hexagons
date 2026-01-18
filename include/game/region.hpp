@@ -3,9 +3,39 @@
 // include dependencies
 #include <SFML/System/Vector2.hpp>
 #include <refpool>
+#include "dev/dev_game.hpp"
+
+/// Region resources.
+struct RegionRes {
+	int money = 0; /// Amount of money.
+	int berry = 0; /// Amount of berries.
+	int peach = 0; /// Amount of peaches.
+
+	/// Adds another region resources.
+	void add(const RegionRes& oth);
+
+	/// Subtracts another region resources.
+	void sub(const RegionRes& oth);
+
+	/// Divides region resources rounded down.
+	/// 
+	/// @param count Division count.
+	/// 
+	/// @return New region resource object.
+	RegionRes div(int count) const;
+};
+
+/// Region variable counters.
+struct RegionVar {
+	int farms; /// Farm count.
+	int tents; /// Tent count.
+};
 
 /// Region statistics object.
-struct Region {
+struct Region : RegionRes, RegionVar {
+	/// Returns region resources.
+	RegionRes res() const;
+
 	/// Region team color.
 	enum Team {
 		/// (0) No owner.
@@ -24,17 +54,12 @@ struct Region {
 		Count   /// Team count.
 	} team = Unclaimed;
 
-	int money  = 0; /// Amount of money.
-	int berry  = 0; /// Amount of berries.
-	int peach  = 0; /// Amount of peaches.
 	int income = 0; /// Income during next turn.
 	int tiles  = 0; /// Amount of tiles captured.
-	int farms  = 0; /// Amount of farms built.
 
-	/// Adds a tile to region.
-	void addTile();
-	/// Removes a tile from region.
-	void removeTile();
+	/// Checks whether the region is dead.
+	bool dead() const;
+
 	/// Updates money based on income.
 	void tick();
 };
@@ -44,18 +69,26 @@ class Map;
 
 /// Region manager object.
 class Regions {
+	friend dev::Factory;
+
 public:
 	/// Shared region reference type.
 	using Ref = RefPool<Region>::Share;
+	/// Region split distribution.
+	using Split = std::vector<RegionRes>;
 
 	/// Region access point.
 	struct AccessPoint {
-		Ref* region      {}; /// Region reference.
-		sf::Vector2i pos {}; /// Access position.
+		const Ref* region {}; /// Region reference.
+		sf::Vector2i  pos {}; /// Access position.
 	};
 
 private:
 	RefPool<Region> _pool; /// Region pool.
+
+public:
+	/// Returns a region iterator.
+	RefPool<Region>::It iter();
 
 	/// Creates a new region.
 	///
@@ -64,22 +97,38 @@ private:
 	/// @return Region shared reference.
 	Ref create(const Region& region);
 
-public:
 	/// Enumerates all regions in a map.
 	///
 	/// @param map Map reference.
 	void enumerate(Map* map);
+
+	/// Executes the function for each region in a map.
+	///
+	/// @param map Map reference.
+	/// @param call Callback function.
+	static void foreach(const Map* map, std::function<void(Region& reg, sf::Vector2i pos)> call);
 
 	/// Merges regions into a singular region.
 	///
 	/// @param map Map reference.
 	/// @param target Target region.
 	/// @param aps Merged region access points.
-	void merge(Map* map, Ref& target, const std::vector<AccessPoint>& aps);
+	/// @param origin Merge origin access point index.
+	/// 
+	/// @return Previous resource distribution.
+	Split merge(
+		Map* map,
+		const Ref& target,
+		const std::vector<AccessPoint>& aps,
+		int origin
+	);
 
 	/// Splits a separated region into proper regions.
 	///
+	/// Regions not described by `dist` will have the remaining resources split equally. 
+	/// 
 	/// @param map Map reference.
 	/// @param aps Access points to all separated region parts.
-	void split(Map* map, const std::vector<AccessPoint>& aps);
+	/// @param dist Previous resource distribution.
+	void split(Map* map, const std::vector<AccessPoint>& aps, const Split& dist);
 };

@@ -64,6 +64,9 @@ GameJoinMenu::GameJoinMenu(Net* net) : _net(net) {
     _joinBtn->setCall([this]() { attemptJoin(); }, nullptr, menuui::Button::Click);
     _joinBtn->setLabel()->setColor(sf::Color(100, 100, 100));
     add(_joinBtn);
+
+    assets::lang::refresh_listeners.push_back([this]() { refreshAllText(); });
+    refreshAllText();
 }
 
 /// Builds input form.
@@ -159,4 +162,12 @@ void GameJoinMenu::bindJoin(JoinAction action) {
 /// Draws the menu.
 void GameJoinMenu::drawSelf(ui::RenderBuffer& target, sf::IntRect self) const {
     ui::Element::drawSelf(target, self);
+}
+
+/// Refreshes all text labels.
+void GameJoinMenu::refreshAllText() {
+    _title->setPath("join.title");
+    _lblInstruction->setPath("join.instruction");
+    _backBtn->setLabel()->setPath("menu.back");
+    _joinBtn->setLabel()->setPath("menu.join");
 }

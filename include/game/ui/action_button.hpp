@@ -45,6 +45,7 @@ namespace gameui {
 		Callback _release;         /// Button release callback.
 		bool _state     = false;   /// Button state.
 		bool _shake     = false;   /// Initial shake position.
+		bool _disabled  = false;   /// Whether the button is disabled.
 
 	public:
 		/// Action button texture maps.
@@ -61,6 +62,9 @@ namespace gameui {
 		static const sf::Color red;
 		/// Overlay color for action on cooldown.
 		static const sf::Color dim;
+
+		/// Stunned timer value.
+		static const uint8_t StunTimer;
 
 		/// Whether the button acts as a display.
 		///
@@ -79,6 +83,13 @@ namespace gameui {
 
 		/// Clears the action button.
 		void clear();
+
+		/// Manually disables the button.
+		///
+		/// @param icon Button status icon.
+		void disable(sf::IntRect icon = {});
+		/// Manually enables the button.
+		void enable();
 
 		/// Adds an annotation icon to the action button.
 		///

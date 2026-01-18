@@ -27,7 +27,7 @@ void TileDrawer::reset() {
 Draw::Tile TileDrawer::at(sf::Vector2i pos, float emult) const {
 	// generate tile object
 	sf::Vector2i draw = _org + Values::rowOffset(pos.y)
-		+ sf::Vector2i(pos.x * Values::tileOff.x, pos.y * Values::tileOff.y);
+		+ (pos - _beg).componentWiseMul(Values::tileOff);
 	Draw::Tile tile(_map, pos, draw, _size);
 
 	// apply elevation
@@ -45,7 +45,6 @@ std::optional<Draw::Tile> TileDrawer::next() {
 
 		// store current tile
 		std::optional<Draw::Tile> tile = Draw::Tile(_map, _coords, _draw, _size);
-		tile->origin -= sf::Vector2i(sf::Vector2f(Values::tileLevel(_size)) * tile->hex->elevation);
 
 		// calculate next tile coordinates
 		if (++_coords.x >= _end.x - (_coords.y & 1 ? 0 : 1)) {
@@ -62,6 +61,9 @@ std::optional<Draw::Tile> TileDrawer::next() {
 		};
 
 		// return if current tile is valid
-		if (tile->hex) return tile;
+		if (tile->hex) {
+			tile->origin -= sf::Vector2i(sf::Vector2f(Values::tileLevel(_size)) * tile->hex->elevation);
+			return tile;
+		};
 	};
 };

@@ -1,0 +1,160 @@
+# parameter text
+param: "{value}"
+
+# team names
+team {
+	v: Unclaimed
+	r: Red
+	o: Orange
+	y: Yellow
+	g: Green
+	a: Aqua
+	b: Blue
+	p: Purple
+	m: Magenta
+}
+# troop names
+troop {
+	farmer: Farmer
+	lumber: Lumberjack
+	spear : Spearman
+	archer: Archer
+	baron : Baron
+	knight: Knight
+}
+
+# building names
+build {
+	castle: Town Hall
+	farm  : Farm
+	mine  : Mine
+	tower : Watchtower
+	beacon: Beacontower
+	fort  : Fortress
+}
+
+# plant names
+plant {
+	bush   : Bush
+	berry  : Berry Bush
+	sapling: Sapling
+	tree   : Tree
+	peach  : Peach Tree
+	pine   : Pine
+	grave  : Grave
+}
+
+# skill names
+skill {
+	invalid : "???"
+	withdraw: Withdraw
+	move    : Move
+
+	# troop attack names
+	attack {
+		lumber: Attack
+		spear : Attack
+		archer: Shoot
+		baron : Bash
+		knight: Strike
+	}
+
+	harvest: Harvest
+	cut    : Cut Down
+	defend : Defend
+	range  : Range Boost
+	defense: Reinforce
+	offense: Sharpen
+
+	heal   : Heal
+	stun   : Stun
+}
+
+# gameplay text
+gp {
+	# cost previews
+	cost {
+		coins: "{cost} $"
+		berry: "{cost} B"
+		peach: "{cost} P"
+	}
+
+	# team name preview
+	team: "Team {team}"
+
+	# buy a building
+	buy_build: "Buy Building"
+	# buy a troop
+	buy_troop: "Buy Troop"
+}
+
+# debug info
+debug {
+	fps: "{fps} FPS"
+}
+
+# menu texts
+menu {
+    title: "HEXAGONS"
+
+	login: "Zaloguj"
+	logout: "Wyloguj"
+
+    start: "ZACZNIJ GRĘ"
+    join: "DOŁĄCZ DO GRY"
+    options: "OPCJE"
+    exit: "WYJDŹ"
+    back: "POWRÓT"
+    prev: "WRÓĆ"
+    next: "DALEJ"
+    start_game: "ZACZNIJ GRĘ"
+    sound: "Dźwięk: {v}"
+    lang: "Język: {v}"
+    on: "ON"
+    off: "OFF"
+    max_players: "Maks. Graczy"
+    player_count: "{value}"
+
+	select_mode: "Wybierz Tryb"
+	singleplayer: "Jednoosobowy"
+	multiplayer_host: "Wieloosobowy (Gospodarz)"
+	
+	select_difficulty: "Wybierz Poziom Trudności"
+
+	select_map: "Wybierz Mapę"
+
+	lobby_settings: "Ustawienia Lobby"
+	room_code_desc: "Udostępnij ten kod!"
+
+
+}
+
+join {
+    title: "Dołącz do gry"
+    instruction: "Wprowadź 6-cyfrowy kod pokoju:"
+}
+
+start {
+    step1: "1. Tryb"
+    step2: "2. Trudność"
+    step3: "3. Mapa"
+    step4: "4. Lobby"
+
+	map1: "mapa 1"
+	map2: "mapa 2"
+	map3: "mapa 3"
+
+	easy  : "Łatwy"
+	medium: "Średni"
+	hard  : "Trudny"
+}
+
+lobby {
+    title: "LOBBY GRY"
+    leave: "WYJDŹ"
+    room_id: "Pokój: #{id}"
+    player_name: "{name}"
+    player_name_host: "{name} (Gospodarz)"
+    host_you: "Gospodarz (Ty)"
+    connecting: "Łączenie..."
+}

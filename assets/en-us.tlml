@@ -1,5 +1,17 @@
 # parameter text
+# displays a parameter directly
 param: "{value}"
+
+# boolean values
+yes: "Yes"
+no: "No"
+
+# time units
+time {
+	h: 'h' # hour
+	m: 'm' # minute
+	s: 's' # second
+}
 
 # team names
 team {
@@ -13,6 +25,28 @@ team {
 	p: Purple
 	m: Magenta
 }
+
+# entity effect names
+effect {
+	shield : Shielded
+	range  : Range Boost
+	defense: Defense Boost
+	offense: Offense Boost
+	poison : Poisoned
+	stun   : Stunned
+
+	# short entity effect names
+	# debug only
+	short {
+		shield : SHD
+		range  : RNG
+		defense: DEF
+		offense: OFF
+		poison : PSN
+		stun   : STN
+	}
+}
+
 # troop names
 troop {
 	farmer: Farmer
@@ -27,10 +61,11 @@ troop {
 build {
 	castle: Town Hall
 	farm  : Farm
-	mine  : Mine
+	mine  : Mine # unused
 	tower : Watchtower
-	beacon: Beacontower
+	beacon: Beacon
 	fort  : Fortress
+	tent  : Tent
 }
 
 # plant names
@@ -61,22 +96,31 @@ skill {
 
 	harvest: Harvest
 	cut    : Cut Down
-	defend : Defend
+	defend : Defend # unused
 	range  : Range Boost
 	defense: Reinforce
 	offense: Sharpen
 
-	heal   : Heal
+	tent   : Setup Tent
+	heal_1 : Small Heal
+	heal_2 : Big Heal
 	stun   : Stun
+}
+
+# currency symbols
+currency {
+	coin: "$"
+	berry: "B"
+	peach: "P"
 }
 
 # gameplay text
 gp {
 	# cost previews
 	cost {
-		coins: "{cost} $"
-		berry: "{cost} B"
-		peach: "{cost} P"
+		coins: "{cost} $(currency.coin)"
+		berry: "{cost} $(currency.berry)"
+		peach: "{cost} $(currency.peach)"
 	}
 
 	# team name preview
@@ -86,9 +130,325 @@ gp {
 	buy_build: "Buy Building"
 	# buy a troop
 	buy_troop: "Buy Troop"
+
+	# turn number
+	turn: "Turn {turn}"
+	# player info
+	player: "{name}"
+	# next team info
+	next: "Next: {team}"
+}
+
+# chat text
+chat {
+	# author name
+	author: "[{auth}]: "
+
+	# "you" name
+	you: "You"
+
+	# unknown player name
+	unknown: "@"
 }
 
 # debug info
 debug {
 	fps: "{fps} FPS"
+}
+
+# menu texts
+menu {
+    title: "HEXAGONS"
+
+	login: "LOGIN"
+	logout: "LOGOUT"
+
+    start: "START GAME"
+    join: "JOIN GAME"
+    options: "OPTIONS"
+    exit: "EXIT"
+    back: "BACK"
+    prev: "< PREV"
+    next: "NEXT >"
+    start_game: "START GAME"
+    sound: "Sound: {v}"
+    lang: "Language: {v}"
+    on: "ON"
+    off: "OFF"
+    max_players: "Max Players"
+    player_count: "{value}"
+	
+	select_mode: "Select Mode"
+	singleplayer: "Singleplayer"
+	multiplayer_host: "Multiplayer (Host)"
+	
+	select_difficulty: "Select Difficulty"
+
+	select_map: "Select Map"
+
+	lobby_settings: "Lobby Settings"
+	room_code_desc: "Share this code!"
+
+	next_page: "Next Page"
+    prev_page: "Prev Page"
+}
+
+join {
+    title: "Join Game"
+    instruction: "Enter 6-digit Room Code:"
+}
+
+start {
+    step1: "1. Mode"
+    step2: "2. Difficulty"
+    step3: "3. Map"
+    step4: "4. Lobby"
+
+	map1: "map 1"
+	map2: "map 2"
+	map3: "map 3"
+
+	easy  : "Easy"
+	medium: "Medium"
+	hard  : "Hard"
+}
+
+lobby {
+    title: "GAME LOBBY"
+    leave: "LEAVE"
+    room_id: "Room: #{id}"
+    
+    # Format: "Map: Green Valley | Difficulty: Easy"
+    details_format: "{map}    |    {diff}    |    Lobby size: {max} "
+    
+    player_name: "{name}"
+    player_name_host: "{name} (Host)"
+    host_you: "Host (You)"
+    connecting: "Connecting..."
+}
+
+## ALL FURTHER TEXT IS DEBUG MODE ONLY
+## DO NOT TRANSLATE FURTHER
+
+# dev panel text
+dp {
+	# not selected option
+	null: "Not Selected"
+	# "in pool" text
+	in_pool: "in pool"
+
+	# empty list
+	empty: "(empty)"
+
+	# game state
+	state {
+		title: "[ Game State ]"
+		turn {
+			k: "Turn: {turn}"
+			v: "Local Player: {local}"
+		}
+		player {
+			k: "Player: {plr_now} / {plr_count}"
+			v: "Team: {plr_team}"
+		}
+	}
+
+	# entity state
+	entity_state {
+		# no entity
+		none: "None"
+		# unknown entity
+		unknown: "Unknown"
+		# entity info format
+		format: "{name} [{hp} / {max}]"
+	}
+
+	# counters
+	count {
+		title: "[ Object Count ]"
+		hex {
+			k: "Hex Count"
+			v: "{hex}"
+		}
+		region {
+			k: "Region Count"
+			v: "{region} ({region_pool} $(dp.in_pool))"
+		}
+		troop {
+			k: "Troop Count"
+			v: "{troop} ({troop_pool} $(dp.in_pool))"
+		}
+		build {
+			k: "Build Count"
+			v: "{build} ({build_pool} $(dp.in_pool))"
+		}
+		plant {
+			k: "Plant Count"
+			v: "{plant} ({plant_pool} $(dp.in_pool))"
+		}
+	}
+
+	# map info
+	map {
+		title: "[ Map Info ]"
+		team {
+			k: "Player Team"
+			v: "{team}"
+		}
+		size_cursor {
+			k: "Size: {size}"
+			v: "Cursor: {cursor}"
+		}
+		camera {
+			k: "Camera"
+			v: "{camera} ({zoom}x)"
+		}
+	}
+
+	# region info
+	region {
+		title: "[ Region Info ]"
+		id {
+			k: "ID: {id}"
+			v: "Tiles: {size}"
+		}
+		count {
+			k: "Farms: {farm}"
+			v: "Tents: {tent}"
+		}
+		money {
+			k: "Money"
+			v: "{money}$(currency.coin) {sign}{income}"
+		}
+		fruit {
+			k: "Berry: {berry} $(currency.berry)"
+			v: "Peach: {peach} $(currency.peach)"
+		}
+		count: "Tiles: {size} | Farms: {farm} | Tents: {tent}"
+	}
+
+	# hex info
+	hex {
+		title: "[ Hex Info ]"
+		general {
+			k: "Coords: {pos}"
+			v: "Team: {team}"
+		}
+		ids {
+			k: "Select: {select_id}"
+			v: "Spread: {spread_id}"
+		}
+	}
+
+	# entity info
+	entity {
+		title: "[ Entity Info ]"
+		values {
+			k: "HP: {hp} / {max}"
+			v: "Timers: {t0} {t1} {t2} {t3}"
+		}
+		effects {
+			k: "Effects"
+			v: "{effects}"
+		}
+
+		# generic entity info
+		type {
+			k: "Type"
+			v: "({id}) {type}"
+		}
+	}
+
+	# troop info
+	troop {
+		title: "[ Troop Info ]"
+	}
+
+	# build info
+	build {
+		title: "[ Build Info ]"
+	}
+
+	# plant info
+	plant {
+		title: "[ Plant Info ]"
+	}
+
+	# move info
+	move {
+		# move section titles
+		last: "[ Last Move ]"
+		next: "[ Next Move ]"
+
+		# shared info
+		shared: "\"{skill_type}\" at {skill_pos} (+{skill_time})"
+
+		# move names
+		name {
+			field: "Name: {skill_name}"
+
+			troop_move: "Troop Move"
+			troop_attack: "Troop Attack"
+			troop_heal: "Troop Heal"
+
+			entity_place: "Entity Place"
+			entity_withdraw: "Entity Withdraw"
+			entity_effect: "Entity Effect"
+
+			plant_cut: "Plant Cut"
+			plant_modify: "Plant Modify"
+
+			aoe_effect: "AoE Effect"
+		}
+
+		# entity override
+		override: "Override of {entity}"
+
+		# troop move
+		troop_move {
+			to: "To: {pos}"
+			region: "Tile Info: {team} | {res}"
+			splits: "Merge: {splits}"
+		}
+
+		# troop attack
+		troop_attack {
+			to: "To: {pos}"
+			dmg: "Damage: {dmg}"
+			effects: "Before: {effects}"
+		}
+
+		# troop heal
+		troop_heal {
+			heal: "Heal: {hp} HP for {count} troops"
+			spread: "Info: {team} @ {pos} for {cost} $(currency.berry)"
+		}
+
+		# entity effect
+		entity_effect {
+			effect: "Effect: {effect}"
+			before: "Applied before: {before}"
+		}
+
+		# entity place
+		entity_place {
+			at: "At: {pos}"
+			what: "Entity: {entity}"
+		}
+
+		# aoe effect
+		aoe_effect {
+			effect: "Effect: {effect} for {count} troops"
+			spread: "Info: {team} {radius}Ω @ {pos}"
+		}
+
+		# plant cut
+		plant_cut: "Plant: {plant} at {to} | Bonus: {bonus} $(currency.coin)"
+
+		# plant modify
+		plant_modify {
+			res: "Resources: {res} from {count} plants"
+			spread: "Spread: {radius}Ω @ {pos}"
+		}
+	}
 }

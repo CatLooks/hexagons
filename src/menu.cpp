@@ -20,11 +20,12 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
     startMenu = new GameStartMenu(&net);
     joinMenu = new GameJoinMenu(&net);
 
-    // add menus pages to container
+    // add menu pages to container
     pages->add(mainMenu);
     pages->add(optionsMenu);
     pages->add(startMenu);
     pages->add(joinMenu);
+
 
     // show initial page
     pages->show(mainMenu);
@@ -72,9 +73,8 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
         });
 
     // start menu -> start game
-    startMenu->bindStart([&itf, gameCtx, gameInstance]() {
-        // Configure game based on startMenu selections here
-        // e.g., gameInstance->configure(startMenu->getSelectedMode(), ...);
+    startMenu->bindStart([&itf, gameCtx, gameInstance,this]() {
+		const GameData& gameSettings = startMenu->getGameData(); // can be used to configure the game instance
 
         gameInstance->activate();
         itf.switchContext(*gameCtx);
@@ -89,7 +89,7 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
     joinMenu->bindJoin([=](const std::string& code) {
         startMenu->enterAsJoiner(code);
 
-        // 2. Show the start menu (it will now be on the STEP_WAITING page)
+        // Show the start menu (it will now be on the STEP_WAITING page)
         pages->show(startMenu);
         });
 }

@@ -12,6 +12,47 @@ namespace assets {
 		Section locale;
 		std::string standard;
 		std::map<std::string, Config> index;
+
+
+		std::vector<std::string> keys;
+        int current_idx = 0;
+        std::vector<std::function<void()>> refresh_listeners;
+
+        /// Call this once at game startup
+		void init() {
+            if (loadLanguageList()) return;            
+            keys.clear();
+            for (auto const& [key, val] : index) {
+                keys.push_back(key);
+                // Set default index if it matches the 'default' key in langs.tlml
+                if (key == standard) current_idx = (int)keys.size() - 1;
+            }
+
+            // Load the actual text data for the current language
+            if (!keys.empty()) {
+                loadLanguage(index[keys[current_idx]].file);
+            }
+        }
+
+		/// Switches to the next available language and triggers menu refresh.
+        void next() {
+            if (keys.empty()) return;
+            current_idx = (current_idx + 1) % keys.size();
+            loadLanguage(index[keys[current_idx]].file);
+
+            // Trigger every registered menu to refresh
+            for (auto& refreshFunc : refresh_listeners) {
+                if (refreshFunc) refreshFunc();
+            }
+        }
+
+
+        /// Returns the display name of the current language (e.g. "English")
+        std::string current_name() {
+            if (keys.empty()) return "None";
+            return index[keys[current_idx]].name;
+        }
+
 	};
 	bool error = false;
 
