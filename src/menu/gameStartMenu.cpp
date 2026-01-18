@@ -93,12 +93,6 @@ GameStartMenu::GameStartMenu(Net* net) : _net(net) {
     updateUI();
 }
 
-    // 7. Na samym koñcu zaktualizuj UI
-    updateUI();
-    //generateGameCode();
-
-}
-
 /// Generates a new room code.
 void GameStartMenu::generateGameCode() {
     static std::mt19937 rng(std::random_device{}());
@@ -355,7 +349,8 @@ void GameStartMenu::nextStep() {
 
     if (_currentStep == STEP_LOBBY) {
         _currentStep = STEP_WAITING;
-        
+
+		_net->host(_currentData.maxPlayers, _currentData.roomCode);
         _pageWaitingLobby->setGameDetails(_currentData);
         _pageWaitingLobby->setAsHost(true);
         _pageWaitingLobby->updateList({ { assets::lang::locale.req(localization::Path("lobby.host_you")).get({}), sf::Color::Cyan, true, true } });
@@ -552,22 +547,7 @@ void GameStartMenu::scanMaps() {
     _scanDiagnostic = ""; 
     
     namespace fs = std::filesystem;
-    std::vector<std::string> folderAttempts = { "assets/maps/", "assets/map/" };
-    std::string foundPath = "";
-    std::string prefix = "";
-
-    // Find the folder
-    for (int i = 0; i < 3; ++i) {
-        for (auto& folder : folderAttempts) {
-            if (fs::exists(prefix + folder) && fs::is_directory(prefix + folder)) {
-                foundPath = prefix + folder;
-                goto folder_found;
-            }
-        }
-        prefix += "../";
-    }
-
-folder_found:
+    std::string foundPath = std::string(ASSET_PATH) + "/maps/";
     if (foundPath.empty()) {
         _scanDiagnostic = "assets/maps/ not found.";
         return;

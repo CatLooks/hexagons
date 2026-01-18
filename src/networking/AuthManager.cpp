@@ -76,14 +76,12 @@ void AuthManager::HandleHardwareIDLogin(const EOS_Connect_LoginCallbackInfo* Dat
         m_bIsLoggedIn = true;
         std::cout << "[AuthManager] Callback: Connect login successful." << std::endl;
 
-        // Announce to the world that we have logged in successfully!
         OnLoginSuccess.invoke(m_LocalUserId);
     }
     else
     {
         m_bIsLoggedIn = false;
         std::cerr << "[AuthManager] Callback: Connect login failed: " << EOS_EResult_ToString(Data->ResultCode) << std::endl;
-        // OnLoginFailure delegate possible here
     }
 }
 

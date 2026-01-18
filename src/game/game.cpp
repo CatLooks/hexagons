@@ -165,7 +165,7 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 	// add camera pan handler
 	game_layer->onUpdate([=](const sf::Time& delta) {
 		// set layer scale
-		game_layer->setArea(ui::DimVector(1me, 1me) * _camera.zoom(), { 0px, 0px, 1ps, 1ps });
+		game_layer->setArea(ui::DimVector(1ts, 1ts) * _camera.zoom(), { 0px, 0px, 1ps, 1ps });
 
 		// keyboard camera pan
 		if (ui::window.focused() && !_chat->active()) {

@@ -31,7 +31,7 @@ namespace gameui {
 		{
 			_redo_t = _redo->setLabel(Values::panel_text);
 			_redo_t->pos = ui::Text::ShrinkY;
-			_redo_t->position() = { -4px - 1es, 0.5as };
+			_redo_t->position() = { -4px - 1ts, 0.5as };
 			_redo_t->autosize = true;
 			_redo_t->setColor(sf::Color::Red);
 			_redo_t->setPath("param");
@@ -45,7 +45,7 @@ namespace gameui {
 		{
 			_undo_t = _undo->setLabel(Values::panel_text);
 			_undo_t->pos = ui::Text::ShrinkY;
-			_undo_t->position() = { -4px - 1es, 0.5as };
+			_undo_t->position() = { -4px - 1ts, 0.5as };
 			_undo_t->autosize = true;
 			_undo_t->setColor(sf::Color::Green);
 			_undo_t->setPath("param");

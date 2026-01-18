@@ -25,8 +25,8 @@ public:
 	std::shared_ptr<P2PManager> GetP2PConnection(EOS_ProductUserId peerId);
 	std::shared_ptr<P2PManager> GetLocalConnection() { return LocalConnection; }
 	EOS_ProductUserId GetPeerId() const { return ExternalUsers.empty() ? nullptr : ExternalUsers[0]; }
-	bool HasReceivedPacket() const { return receivedPacket; }
-	void SetReceivedPacket(bool value) { receivedPacket = value; }
+	//bool HasReceivedPacket() const { return receivedPacket; }
+	//void SetReceivedPacket(bool value) { receivedPacket = value; }
 
 	~LobbyManager();
 
@@ -65,5 +65,5 @@ private:
 
 	//duh.
 	bool isHost = false;
-	bool receivedPacket = false;
+	//bool receivedPacket = false;
 };

@@ -112,9 +112,9 @@ public:
     void setGameData(const GameData& data) { _currentData = data; updateUI(); }
 
     /// @return The max players (returns 1 if singleplayer).
-    int getMaxPlayers() const { return (_selectedMode == Mode_Host) ? _maxPlayers : 1; }
+    int getMaxPlayers() const { return (_currentData.isMultiplayer) ? _currentData.maxPlayers: 1; }
     /// @return The generated game code.
-    std::string getGameCode() const { return _gameCode; }
+    std::string getGameCode() const { return _currentData.roomCode; }
     void enterAsJoiner(const std::string& code);
 
 protected:

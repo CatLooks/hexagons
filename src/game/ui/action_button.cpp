@@ -214,7 +214,7 @@ namespace gameui {
 		if (_shake) return;
 
 		// shake displacement
-		const ui::DimVector shake_amp = { 1me / 16.f, 0px };
+		const ui::DimVector shake_amp = { 1ts / 16.f, 0px };
 
 		// store original position
 		ui::DimVector pos = position();

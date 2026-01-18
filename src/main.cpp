@@ -67,7 +67,7 @@ int main() {
 		layer_gui->add(dev::Factory::game_panel(game_instance));
 	}
 
-	MenuSystem menuSystem(itf, &game_ctx, game_instance);
+	MenuSystem menuSystem(itf, &game_ctx, game_instance, net);
 	itf.switchContext(menuSystem.context);
 
 	while (ui::window.active()) {

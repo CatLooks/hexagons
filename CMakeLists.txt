@@ -8,6 +8,7 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 set(EOS_SDK_PATH "${CMAKE_SOURCE_DIR}/EOS_SDK")
 
+
 if(WIN32)
     message(STATUS "Configuring EOS SDK for Windows")
     set(EOS_DLL "${EOS_SDK_PATH}/Bin/EOSSDK-Win64-Shipping.dll")
@@ -63,6 +64,7 @@ FetchContent_MakeAvailable(SFML)
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 add_executable(main ${SOURCES})
+
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_compile_options(main PRIVATE /wd4455)

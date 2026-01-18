@@ -17,29 +17,29 @@ namespace ui {
 
 	/// Returns dimension's true value.
 	int Dim::get(int parent_size, int element_size) const {
-		return (int)(px + ps * parent_size + es * element_size);
+		return (int)(px + ps * parent_size + ts * element_size);
 	};
 
 	/// Constructs a dimension from given values.
-	Dim::Dim(float pixels, float parent, float self) : px(pixels), ps(parent), es(self) {};
+	Dim::Dim(float pixels, float parent, float self) : px(pixels), ps(parent), ts(self) {};
 
 	/// Constructs a dimension with a base offset.
 	Dim Dim::from_px(float px) { return Dim(px, 0.f, 0.f); };
 	/// Constructs a dimension with a parent size scalar.
 	Dim Dim::from_ps(float ps) { return Dim(0, ps, 0.f); };
 	/// Constructs a dimension with an element size scalar.
-	Dim Dim::from_me(float me) { return Dim(0, 0.f, me); };
+	Dim Dim::from_ts(float ts) { return Dim(0, 0.f, ts); };
 
 	/// Adds 2 dimensions.
-	Dim Dim::operator+(const Dim& oth) const { return { px + oth.px, ps + oth.ps, es + oth.es }; };
+	Dim Dim::operator+(const Dim& oth) const { return { px + oth.px, ps + oth.ps, ts + oth.ts }; };
 	/// Subtracts 2 dimensions.
-	Dim Dim::operator-(const Dim& oth) const { return { px - oth.px, ps - oth.ps, es - oth.es }; };
+	Dim Dim::operator-(const Dim& oth) const { return { px - oth.px, ps - oth.ps, ts - oth.ts }; };
 	/// Multiplies the dimension by a factor.
-	Dim Dim::operator*(float scale) const { return { px * scale, ps * scale, es * scale }; };
+	Dim Dim::operator*(float scale) const { return { px * scale, ps * scale, ts * scale }; };
 	/// Divides the dimension by an inverted factor.
-	Dim Dim::operator/(float scale) const { return { px / scale, ps / scale, es / scale }; };
+	Dim Dim::operator/(float scale) const { return { px / scale, ps / scale, ts / scale }; };
 	/// Inverts the dimension.
-	Dim Dim::operator-() const { return { -px, -ps, -es }; };
+	Dim Dim::operator-() const { return { -px, -ps, -ts }; };
 
 	/// Adds a dimension.
 	Dim& Dim::operator+=(const Dim& oth) { return *this = *this + oth; };
@@ -154,7 +154,7 @@ ui::Dim operator""px(unsigned long long i) { return ui::Dim::from_px((float)i); 
 /// Converts a parent size scalar into a dimension.
 ui::Dim operator""ps(unsigned long long i) { return ui::Dim::from_ps((float)i); };
 /// Converts an element size scalar into a dimension.
-ui::Dim operator""me(unsigned long long i) { return ui::Dim::from_me((float)i); };
+ui::Dim operator""ts(unsigned long long i) { return ui::Dim::from_ts((float)i); };
 /// Converts a alignment scalar into a dimension.
 ui::Dim operator""as(unsigned long long i) { return ui::Dim(0, (float)i, -(float)i); };
 
@@ -163,6 +163,6 @@ ui::Dim operator""px(long double i) { return ui::Dim::from_px((float)i); };
 /// Converts a parent size scalar into a dimension.
 ui::Dim operator""ps(long double f) { return ui::Dim::from_ps((float)f); };
 /// Converts an element size scalar into a dimension.
-ui::Dim operator""me(long double f) { return ui::Dim::from_me((float)f); };
+ui::Dim operator""ts(long double f) { return ui::Dim::from_ts((float)f); };
 /// Converts a alignment scalar into a dimension.
 ui::Dim operator""as(long double f) { return ui::Dim(0, (float)f, -(float)f); };

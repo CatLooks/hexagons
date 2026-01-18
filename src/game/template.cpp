@@ -13,7 +13,7 @@ const std::vector<HexBase>& Template::tiles() const {
 /// Clears and creates a new empty map.
 void Template::clear(sf::Vector2i size) {
 	_size = size;
-	_tiles = std::vector<HexBase>(_size.x * _size.y, {});
+	_tiles = std::vector<HexBase>(static_cast<size_t>(_size.x) * static_cast<size_t>(_size.y), HexBase{});
 };
 
 /// Generates a template from the map.

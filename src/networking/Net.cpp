@@ -34,7 +34,6 @@ void Net::logout() {
 
 /// Start hosting a lobby.
 void Net::host(uint32_t maxPlayers, std::string& lobbyCode) {
-    //login();
     EOS_ProductUserId localId = m_eosManager.GetAuthManager()->GetLocalUserId();
 
     ResetHandshakeState();
@@ -54,22 +53,6 @@ void Net::host(uint32_t maxPlayers, std::string& lobbyCode) {
     else {
         std::cerr << "[Net] Failed to get LobbyManager after creation." << std::endl;
     }
-    /*
-    if (localId) {
-        m_eosManager.CreateLobbyManager(localId);
-        if (auto lobby = m_eosManager.GetLobbyManager()) {
-            AttachToLobby(lobby);
-            lobby->CreateLobby();
-            std::cout << "[Net] Hosting initiated..." << std::endl;
-        }
-        else {
-            std::cerr << "[Net] Failed to get LobbyManager after creation." << std::endl;
-        }
-    }
-    else {
-        std::cerr << "[Net] Cannot host: Not logged in." << std::endl;
-    }
-    */
 }
 
 /// Find and join a lobby as a client.
@@ -77,7 +60,6 @@ void Net::connect(std::string& roomCode) {
     ResetHandshakeState();
     m_role = Role::Client;
 
-    //login();
     EOS_ProductUserId localId = m_eosManager.GetAuthManager()->GetLocalUserId();
 
     while (!localId) {
@@ -94,21 +76,6 @@ void Net::connect(std::string& roomCode) {
     else {
         std::cerr << "[Net] Failed to get LobbyManager after creation." << std::endl;
     }
-
-    /*
-    EOS_ProductUserId localId = m_eosManager.GetAuthManager()->GetLocalUserId();
-    if (localId) {
-        m_eosManager.CreateLobbyManager(localId);
-        if (auto lobby = m_eosManager.GetLobbyManager()) {
-            AttachToLobby(lobby);
-            lobby->FindLobby();
-            std::cout << "[Net] Searching for lobby..." << std::endl;
-        }
-        else {
-            std::cerr << "[Net] Failed to get LobbyManager after creation." << std::endl;
-        }
-    }
-    */
 }
 
 /// Close connections and stop listening to lobby events.
@@ -152,7 +119,7 @@ void Net::send(const std::vector<char>& data, const std::string& targetId) {
     if (targetId.empty()) {
         if (auto local = lobby->GetLocalConnection()) {
             std::string message(data.begin(), data.end());
-            local->SendString(message);
+            local->SendPacket(message.data(), static_cast<uint32_t>(message.size()));
             return;
         }
 
@@ -160,7 +127,7 @@ void Net::send(const std::vector<char>& data, const std::string& targetId) {
 		std::vector<std::shared_ptr<P2PManager>> peers = lobby->GetAllP2PConnections();
         for (const auto& peer : peers) {
             std::string message(data.begin(), data.end());
-            peer->SendString(message);
+            peer->SendPacket(message.data(), static_cast<uint32_t>(message.size()));
         }
 		return;
     }
@@ -171,7 +138,7 @@ void Net::send(const std::vector<char>& data, const std::string& targetId) {
     // Fallback: try sending through local connection if available.
     if (auto local = lobby->GetLocalConnection()) {
         std::string message(data.begin(), data.end());
-        local->SendString(message);
+        local->SendPacket(message.data(), static_cast<uint32_t>(message.size()));
     }
 }
 
@@ -208,43 +175,39 @@ void Net::AttachToLobby(std::shared_ptr<LobbyManager> lobby) {
         m_eventQueue.push(ev);
     });
 
-    // When joining a lobby, LobbyManager creates a LocalConnection; hook its message delegate.
     lobby->OnLobbyJoined.add([this, lobby](EOS_LobbyId id) {
         auto local = lobby->GetLocalConnection();
         if (local) {
-            local->OnMessageReceived.add([this](char* data) {
+            local->OnMessageReceived.add([this](const std::string& data) {
                 NetPacket pkt;
-                std::string s(data);
-                pkt.data.assign(s.begin(), s.end());
+                pkt.data.assign(data.begin(), data.end());
                 pkt.senderId = EOSIdToString(nullptr);
                 m_eventQueue.push(pkt);
-                });
+            });
 
             if (m_role == Role::Client && !m_clientHelloSent) {
-                local->SendString("[Net] ClientHello");
+                local->SendPacket("[Net] ClientHello", static_cast<uint32_t>(strlen("[Net] ClientHello")));
                 m_clientHelloSent = true;
             }
         }
-        });
+    });
 
-    // Host-created lobby: peers will be reported via OnMemberJoined; additional hooking can be done in future.
-    lobby->OnLobbyCreated.add([this, lobby](EOS_LobbyId id) {
-        // no-op for now
-        });
+    lobby->OnLobbyCreated.add([this, lobby](EOS_LobbyId) {
+        // no-op
+    });
 
     lobby->OnMemberJoined.add([this, lobby](EOS_ProductUserId userId) {
         auto p2p = lobby->GetP2PConnection(userId);
         const std::string peerKey = EOSIdToString(userId);
         if (p2p) {
-            p2p->OnMessageReceived.add([this, userId, p2p, peerKey](char* data) {
+            p2p->OnMessageReceived.add([this, userId, p2p, peerKey](const std::string& data) {
                 NetPacket pkt;
-                std::string s(data);
-                pkt.data.assign(s.begin(), s.end());
+                pkt.data.assign(data.begin(), data.end());
                 pkt.senderId = peerKey;
                 m_eventQueue.push(pkt);
 
                 if (m_role == Role::Host && m_hostHandshakePeers.insert(peerKey).second) {
-                    p2p->SendString("[Net] HostHello");
+                    p2p->SendPacket("[Net] HostHello", static_cast<uint32_t>(strlen("[Net] HostHello")));
                 }
                 });
         }

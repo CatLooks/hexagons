@@ -5,14 +5,6 @@
 GameConnectionManager::GameConnectionManager(EOSManager& eosManager)
     : m_EosManager(eosManager)
 {
-    /*
-    auto hwid = m_EosManager.GetHwidManager();
-    if (hwid) {
-        hwid->OnLoginSuccess.Add([this](EOS_ProductUserId id) {
-            this->OnLoginCompleted(id);
-            });
-    }*/
-
     auto auth = m_EosManager.GetAuthManager();
     if (auth) {
         auth->OnLoginSuccess.add([this](EOS_ProductUserId id) {
@@ -54,15 +46,9 @@ void GameConnectionManager::OnLoginCompleted(EOS_ProductUserId newLocalUserId) {
         });
 
     if (m_IsHost) {
-        std::cout << "[Connection] Issuing command: CreateLobby" << std::endl;
-        //lobby->CreateLobby();
         lobby->OnMemberJoined.add([this](EOS_ProductUserId memberId) {
             this->OnMemberJoined(memberId);
             });
-    }
-    else {
-        std::cout << "[Connection] Issuing command: FindLobby" << std::endl;
-        //lobby->FindLobby();
     }
 }
 
@@ -78,30 +64,24 @@ void GameConnectionManager::OnLobbyJoinCompleted(const std::string& lobbyId) {
     auto lobby = m_EosManager.GetLobbyManager();
     auto local = lobby->GetLocalConnection();
 
-    local->OnMessageReceived.add([this](char* message) {
-        this->OnPacketReceived(message);
+    local->OnMessageReceived.add([this](const std::string& message) {
+        this->OnPacketReceived(const_cast<char*>(message.c_str()));
     });
 
     // Teraz wyœlij inicjaln¹ wiadomoœæ
-    local->SendString("Message from client: Joined lobby!");
+    //local->SendPacket("Message from client: Joined lobby!", static_cast<uint32_t>(strlen("Message from client: Joined lobby!")));
 }
 
 void GameConnectionManager::OnMemberJoined(EOS_ProductUserId memberId) {
     std::cout << "[Connection] EVENT: Member joined: " << memberId << std::endl;
 	auto lobby = m_EosManager.GetLobbyManager();
-    lobby->GetP2PConnection(memberId)->OnMessageReceived.add([this](char* message) {
-        this->OnPacketReceived(message);
+    lobby->GetP2PConnection(memberId)->OnMessageReceived.add([this](const std::string& message) {
+        this->OnPacketReceived(const_cast<char*>(message.c_str()));
         });
 }
 
-void GameConnectionManager::OnPacketReceived(char* message){
+void GameConnectionManager::OnPacketReceived(auto* message) { // Placeholder for actual message type
 	std::cout << "[Connection] EVENT: Packet received: " << message << std::endl;
     auto lobby = m_EosManager.GetLobbyManager();
-    if (!lobby->HasReceivedPacket()) {
-        lobby->SetReceivedPacket(true);
-        if (m_IsHost) {
-            auto peer = lobby->GetP2PConnection(lobby->GetPeerId());
-            peer->SendString("Message from host: Packet received!");
-        }
-    }
+    //TODO: Actually process the contents
 }

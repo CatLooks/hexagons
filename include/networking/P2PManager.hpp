@@ -19,10 +19,13 @@ public:
 		EOS_P2P_AddNotifyPeerConnectionRequest(P2PHandle, &IncomingConnectionOptions, this, OnIncomingConnectionRequest);
 	}
 
-	Delegate<void(char*)> OnMessageReceived;
+	Delegate<void(const std::string&)> OnMessageReceived;
 
 	EOS_ProductUserId GetPeerId() const { return PeerId; };
-	void SendString(const std::string& Message);
+	
+	template<typename T> //Temporary template function definition
+	void SendPacket(const T* Data, uint32_t DataSize);
+	
 	bool ReceivePacket();
 
 private:

@@ -3,15 +3,16 @@
 // include dependencies
 #include <SFML/Network/Packet.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <vector>
 
 /// Serialization helper functions.
 namespace Serialize {
 	/// Reads a type from the packet.
-	/// 
+	///
 	/// @tparam T Read type.
-	/// 
+	///
 	/// @param packet Target packet.
-	/// 
+	///
 	/// @return Type value.
 	template <typename T> T from(sf::Packet& packet) {
 		T var {};
