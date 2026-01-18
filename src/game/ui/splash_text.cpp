@@ -10,12 +10,16 @@ namespace gameui {
 		// set splash size
 		bounds = { 0px, 0.5as, 1ps, height };
 		scissor = true;
+		infinite = true;
 
 		// reset text queue
 		frame();
 
 		// mask events
-		onEvent([](const ui::Event& evt) {
+		onEvent([=](const ui::Event& evt) {
+			// ignore if not masking
+			if (!_inhibit) return false;
+
 			// mask LMB
 			if (auto data = evt.get<ui::Event::MousePress>())
 				if (data->button == sf::Mouse::Button::Left)
@@ -56,6 +60,9 @@ namespace gameui {
 		// activate panel
 		activate();
 		color.a = 0;
+		
+		// start blocking mouse events
+		_inhibit = true;
 
 		// create text aligning containers
 		std::vector<ui::Align*> conts;
@@ -122,6 +129,10 @@ namespace gameui {
 
 	/// Fades out the panel.
 	void Splash::fade() {
+		// stop blocking mouse events
+		_inhibit = false;
+
+		// create fade out animation
 		auto* anim = new ui::AnimColor(&color, color_in, color_out, sf::seconds(0.16f));
 		anim->setAfter([=]() {
 			// deactivate panel

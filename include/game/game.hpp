@@ -28,15 +28,14 @@ public:
 	static const sf::Vector2i unselected;
 
 private:
-	sf::Vector2i      _last; /// Last clicked tile.
-	ui::Layer*       _layer; /// Render layer.
-	ui::Camera      _camera; /// Map camera.
-	GameState&       _state; /// Current game state.
-	gameui::Panel*   _panel; /// UI control panel.
-	gameui::Bar*       _bar; /// UI resource bar.
-	gameui::State*    _view; /// UI game state viewer.
-	gameui::Chat*     _chat; /// UI game chat.
-	gameui::Splash* _splash; /// UI splash text.
+	sf::Vector2i    _last; /// Last clicked tile.
+	ui::Layer*     _layer; /// Render layer.
+	ui::Camera    _camera; /// Map camera.
+	GameState&     _state; /// Current game state.
+	gameui::Panel* _panel; /// UI control panel.
+	gameui::Bar*     _bar; /// UI resource bar.
+	gameui::State*  _view; /// UI game state viewer.
+	gameui::Chat*   _chat; /// UI game chat.
 
 	float _pulse = 0.f;      /// Map tile pulse.
 	ui::Anim* _pulse_anim;   /// Pulse animation object.
@@ -47,12 +46,14 @@ private:
 	std::optional<sf::Vector2i> _select;
 
 public:
+	gameui::Splash* splash; /// UI splash text.
+
 	/// Queues a call for the next frame.
 	/// 
 	/// @param call Callback function.
 	void queueCall(Delegate<void()>::Action call);
 
-	uint8_t  skill_idx{}; /// Skill index (for skill timers).
+	uint8_t  skill_idx {}; /// Skill index (for skill timers).
 	const Skill* skill {}; /// Current skill.
 	SkillState   state {}; /// Skill state.
 

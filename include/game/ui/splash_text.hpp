@@ -18,6 +18,8 @@ namespace gameui {
 	private:
 		/// Text element list.
 		std::deque<std::vector<std::unique_ptr<ui::Text>>> _text;
+		/// Whether to block propagation of mouse events.
+		bool _inhibit = false;
 
 		/// Fades out the panel.
 		void fade();
