@@ -402,6 +402,9 @@
     <ClCompile Include="src\game\moves\troop_merge.cpp">
       <Filter>Source Files\game\moves</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\ui\splash_text.cpp">
+      <Filter>Source Files\game\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -758,6 +761,9 @@
     </ClInclude>
     <ClInclude Include="include\game\logic\effect_types.hpp">
       <Filter>Header Files\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\ui\splash_text.hpp">
+      <Filter>Header Files\game\ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

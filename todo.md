@@ -1,12 +1,12 @@
 ## WIP List
 
+- handle game end
+
 ## To Do List
 
-(i have dementia sorry)
-
 - audio
-- network adapter
-- ai adapter
+- ai
+- network test
 
 ## Content list
 

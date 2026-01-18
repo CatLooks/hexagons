@@ -1,3 +1,6 @@
+# singular space
+space: " "
+
 # parameter text
 # displays a parameter directly
 param: "{value}"
@@ -158,6 +161,22 @@ chat {
 
 	# unknown event error
 	bad_event: "Unknown event (ID = {id})."
+}
+
+# splash text
+splash {
+	# your turn
+	your_turn: "Your turn!"
+
+	# game over
+	game_over: "Game over!"
+
+	# victor
+	victor {
+		a: "Team"
+		b: "{team}"
+		c: "wins!"
+	}
 }
 
 # debug info

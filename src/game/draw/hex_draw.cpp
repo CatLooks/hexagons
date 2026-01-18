@@ -184,7 +184,7 @@ namespace Draw {
 	/// Draws building defensive shield at a tile.
 	void Tile::drawShield(ui::RenderBuffer& target, float t) const {
 		// get returning sine easing
-		float prog = (1.f - cosf(2 * M_PI * t)) * 0.5f;
+		float prog = (1.f - cosf(float(2 * M_PI * t))) * 0.5f;
 
 		// get current opacity
 		sf::Color mask = sf::Color::White;

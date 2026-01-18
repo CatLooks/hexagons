@@ -79,6 +79,11 @@ namespace Values {
 		assets::font, 20, sf::Color::White,
 		sf::Color::Black, 2
 	};
+	/// Splash text settings.
+	const ui::TextSettings splash_text = {
+		assets::font, 48, sf::Color::White,
+		sf::Color::Black, 4
+	};
 
 	/// Unknown player nametag color.
 	const sf::Color unknown_color = sf::Color(32, 32, 32);

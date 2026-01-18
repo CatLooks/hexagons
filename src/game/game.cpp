@@ -18,9 +18,10 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 	_layer(game_layer),
 	_camera(game_layer, 17.f / 16),
 	_panel(new gameui::Panel(map.history)),
-	_bar(new gameui::Bar()),
+	_bar(new gameui::Bar),
 	_view(new gameui::State(state)),
-	_chat(new gameui::Chat(48px, 28px, 128, 20))
+	_chat(new gameui::Chat(48px, 28px, 128, 20)),
+	_splash(new gameui::Splash(120px))
 {
 	// attach reference to game state
 	_state.setRefs(&map, _chat);
@@ -30,6 +31,7 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 	ui_layer->add(_panel);
 	ui_layer->add(_bar);
 	ui_layer->add(_view);
+	chat_layer->add(_splash);
 	chat_layer->add(_chat);
 
 	// add chat callback

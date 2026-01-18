@@ -10,6 +10,7 @@
 #include "ui/resource_bar.hpp"
 #include "ui/hex_preview.hpp"
 #include "ui/state_viewer.hpp"
+#include "ui/splash_text.hpp"
 #include "ui/chat.hpp"
 
 #include "map.hpp"
@@ -27,14 +28,15 @@ public:
 	static const sf::Vector2i unselected;
 
 private:
-	sf::Vector2i    _last; /// Last clicked tile.
-	ui::Layer*     _layer; /// Render layer.
-	ui::Camera    _camera; /// Map camera.
-	GameState&     _state; /// Current game state.
-	gameui::Panel* _panel; /// UI control panel.
-	gameui::Bar*     _bar; /// UI resource bar.
-	gameui::State*  _view; /// UI game state viewer.
-	gameui::Chat*   _chat; /// UI game chat.
+	sf::Vector2i      _last; /// Last clicked tile.
+	ui::Layer*       _layer; /// Render layer.
+	ui::Camera      _camera; /// Map camera.
+	GameState&       _state; /// Current game state.
+	gameui::Panel*   _panel; /// UI control panel.
+	gameui::Bar*       _bar; /// UI resource bar.
+	gameui::State*    _view; /// UI game state viewer.
+	gameui::Chat*     _chat; /// UI game chat.
+	gameui::Splash* _splash; /// UI splash text.
 
 	float _pulse = 0.f;      /// Map tile pulse.
 	ui::Anim* _pulse_anim;   /// Pulse animation object.

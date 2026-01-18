@@ -51,6 +51,8 @@ namespace Values {
 	extern const ui::TextSettings state_text;
 	/// Game chat text settings.
 	extern const ui::TextSettings chat_text;
+	/// Splash text settings.
+	extern const ui::TextSettings splash_text;
 
 	/// Unknown player nametag color.
 	extern const sf::Color unknown_color;
