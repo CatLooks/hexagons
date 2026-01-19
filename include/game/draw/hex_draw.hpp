@@ -72,5 +72,15 @@ namespace Draw {
 		/// @param target Target render buffer.
 		/// @param t Opacity animation progression.
 		void drawShield(ui::RenderBuffer& target, float t) const;
+
+		/// Draws void tile base mask.
+		/// 
+		/// @param target Target render buffer.
+		void drawVoidBase(ui::RenderBuffer& target) const;
+
+		/// Draws void tile side mask.
+		/// 
+		/// @param target Target render buffer.
+		void drawVoidSides(ui::RenderBuffer& target) const;
 	};
 };

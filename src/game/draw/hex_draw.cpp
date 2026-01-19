@@ -194,4 +194,26 @@ namespace Draw {
 		target.quad({ origin, size }, Values::shield, mask);
 		target.forward(&assets::tilemap);
 	};
+
+	/// Draws void tile base mask.
+	void Tile::drawVoidBase(ui::RenderBuffer& target) const {
+		// get mask opacity
+		sf::Color color = sf::Color::Black;
+		color.a = (uint8_t)(hex->elevation * 128);
+
+		// draw mask
+		target.quad({ origin + Values::tileLevel(size), size }, Values::mask, color);
+		target.forward(&assets::tilemap);
+	};
+
+	/// Draws void tile side mask.
+	void Tile::drawVoidSides(ui::RenderBuffer& target) const {
+		// get mask opacity
+		sf::Color color = sf::Color::Black;
+		color.a = (uint8_t)(hex->elevation * 128);
+
+		// draw mask
+		target.quad({ origin + Values::tileLevel(size) * 2, size }, Values::sideShade, color);
+		target.forward(&assets::tilemap);
+	};
 };
