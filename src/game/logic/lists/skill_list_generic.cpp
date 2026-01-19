@@ -37,6 +37,14 @@ namespace SkillList {
 					if (ent && !now.hex->plant) {
 						// enemy override checks
 						if (now.hex->region() != tile.hex->region()) {
+							// ignore if moving onto a troop
+							if (dynamic_cast<Troop*>(ent)) {
+								// and attack is on cooldown
+								int id = sub.skill_id(sub.skill_into(ent));
+								if (id != -1 && sub.timers[id] > 0)
+									return false;
+							};
+
 							// get attacking troop damage
 							auto dmg = sub.offense(Access::Query);
 
