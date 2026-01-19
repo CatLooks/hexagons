@@ -120,6 +120,10 @@ namespace ui {
 		void erase(Direction dir);
 		/// Clears the text input.
 		void clear();
+		/// Sets text input string.
+		/// 
+		/// @param text New input string.
+		void set(const sf::String& text);
 
 		/// Emits display callbacks.
 		void display() const;

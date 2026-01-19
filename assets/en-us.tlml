@@ -196,6 +196,20 @@ splash {
 	}
 }
 
+# editor text
+edit {
+	# entity info
+	entity: "{name} [{hp} / {max}]"
+
+	# region info
+	region {
+		money: "Money"
+		berry: "Berries"
+		peach: "Peaches"
+		income: "Income"
+	}
+}
+
 # debug info
 debug {
 	fps: "{fps} FPS"

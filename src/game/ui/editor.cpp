@@ -24,7 +24,7 @@ static ui::Button* new_button(sf::IntRect icon) {
 };
 
 /// Construct editor environment.
-Editor::Editor(Game* game): _game(game) {
+Editor::Editor(Game* game, ui::Layer* text_layer): _game(game) {
 	// adds a shortcut for the button
 	auto add_shortcut = [](ui::Button* button, sf::Keyboard::Key key, bool control) {
 		button->onEvent([=](const ui::Event& evt) {
@@ -89,7 +89,7 @@ Editor::Editor(Game* game): _game(game) {
 	{
 		// void tile
 		auto* tv = new_button(Values::edit_tile_void);
-		add_shortcut(tv, sf::Keyboard::Key::Q, false);
+		add_shortcut(tv, sf::Keyboard::Key::Z, false);
 		tv->validate([this]() {
 			auto tile = tileref();
 			if (!tile.hex) return false;
@@ -98,12 +98,15 @@ Editor::Editor(Game* game): _game(game) {
 			tile.hex->type = Hex::Void;
 			tile.hex->leave();
 			_game->map.removeEntity(tile.hex);
+
+			// update resource table
+			_res_table->sync(nullptr);
 			return true;
 		});
 
 		// water tile
 		auto* tw = new_button(Values::edit_tile_water);
-		add_shortcut(tw, sf::Keyboard::Key::W, false);
+		add_shortcut(tw, sf::Keyboard::Key::X, false);
 		tw->validate([this]() {
 			auto tile = tileref();
 			if (!tile.hex) return false;
@@ -112,12 +115,15 @@ Editor::Editor(Game* game): _game(game) {
 			tile.hex->type = Hex::Water;
 			tile.hex->leave();
 			_game->map.removeEntity(tile.hex);
+
+			// update resource table
+			_res_table->sync(nullptr);
 			return true;
 		});
 
 		// ground tile
 		auto* tg = new_button(Values::edit_tile_ground);
-		add_shortcut(tg, sf::Keyboard::Key::E, false);
+		add_shortcut(tg, sf::Keyboard::Key::C, false);
 		tg->validate([this]() {
 			auto tile = tileref();
 			if (!tile.hex) return false;
@@ -132,12 +138,15 @@ Editor::Editor(Game* game): _game(game) {
 
 			// update regions
 			_game->map.updateRegions(tile, tile.hex->region(), {});
+
+			// update resource table
+			_res_table->sync(&*tile.hex->region());
 			return true;
 		});
 
 		// team cycle
 		auto* tt = new_button(Values::edit_team);
-		add_shortcut(tt, sf::Keyboard::Key::R, false);
+		add_shortcut(tt, sf::Keyboard::Key::V, false);
 		tt->attach([this]() {
 			team = static_cast<Region::Team>((team + 1) % Region::Count);
 			updateLabels();
@@ -168,6 +177,9 @@ Editor::Editor(Game* game): _game(game) {
 			auto tile = tileref();
 			if (!tile.hex) return false;
 
+			// ignore if tile is not solid
+			if (!tile.hex->solid()) return false;
+
 			// cycle troop
 			if (tile.hex->troop) {
 				auto& type = tile.hex->troop->type;
@@ -193,6 +205,9 @@ Editor::Editor(Game* game): _game(game) {
 			auto tile = tileref();
 			if (!tile.hex) return false;
 
+			// ignore if tile is not solid
+			if (!tile.hex->solid()) return false;
+
 			// cycle build
 			if (tile.hex->build) {
 				auto& type = tile.hex->build->type;
@@ -217,6 +232,9 @@ Editor::Editor(Game* game): _game(game) {
 			// get tile
 			auto tile = tileref();
 			if (!tile.hex) return false;
+
+			// ignore if tile is not solid
+			if (!tile.hex->solid()) return false;
 
 			// cycle plant
 			if (tile.hex->plant) {
@@ -336,6 +354,9 @@ Editor::Editor(Game* game): _game(game) {
 			auto tile = tileref();
 			if (!tile.hex) return false;
 
+			// ignore if tile is not solid
+			if (!tile.hex->solid()) return false;
+
 			// set new entity
 			if (auto* data = std::get_if<Troop>(&entity)) {
 				data->pos = tile.pos;
@@ -383,16 +404,22 @@ Editor::Editor(Game* game): _game(game) {
 		_show_text->pos = ui::Text::ShrinkY;
 		_show_text->autosize = true;
 		_show_text->position() = { 0.5as, -1ts - 4px };
-		_show_text->setPath("dp.entity_state.format");
+		_show_text->setPath("edit.entity");
 
 		// add entity clipboard label
 		_clip_text = cv->setLabel(Values::panel_text);
 		_clip_text->pos = ui::Text::ShrinkY;
 		_clip_text->autosize = true;
 		_clip_text->position() = { 0.5as, -1ts - 4px };
-		_clip_text->setPath("dp.entity_state.format");
+		_clip_text->setPath("edit.entity");
 	};
 	add(entity_panel);
+
+	// add resource panel
+	_res_table = new gameui::Table;
+	_res_table->position() = { 0as, 1as };
+	_res_table->size().x = 300px;
+	text_layer->add(_res_table);
 
 	// add current entity label update
 	onUpdate([=](const sf::Time&) {
@@ -458,9 +485,19 @@ void Editor::updateLabels() {
 	updateEntity(_clip_text, entity);
 };
 
+/// Selects a region.
+void Editor::region(Region* reg) {
+	_res_table->sync(reg);
+};
+
 /// Returns selected tile.
 HexRef Editor::tileref() const {
 	return _game->_select
 		? _game->map.atref(*_game->_select)
 		: HexRef{ nullptr, Game::unselected };
+};
+
+/// Whether any input field is active.
+bool Editor::input() const {
+	return _res_table->input();
 };

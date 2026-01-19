@@ -23,7 +23,7 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 	_chat(new gameui::Chat(48px, 28px, 128, 20)),
 	splash(new gameui::Splash(192px, 56px)),
 	_pb(new gameui::Progress),
-	_edit(new Editor(this))
+	_edit(new Editor(this, chat_layer))
 {
 	// hide ui elements in editor
 	if (_state.editor()) {
@@ -221,7 +221,7 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 		game_layer->setArea(ui::DimVector(1ts, 1ts) * _camera.zoom(), { 0px, 0px, 1ps, 1ps });
 
 		// keyboard camera pan
-		if (ui::window.focused() && !_chat->active()) {
+		if (ui::window.focused() && !_chat->active() && !_edit->input()) {
 			sf::Vector2i offset;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) offset.y--;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) offset.y++;
@@ -410,9 +410,23 @@ void Game::click(sf::Vector2i pos) {
 			return;
 		};
 
+		// editor mode
 		if (_state.editor()) {
-			// select tile directly
-			selectTile(pos);
+			// check if selecting the same tile
+			if (_select && *_select == pos) {
+				deselectTile();
+				_edit->region(nullptr);
+			}
+			else {
+				// select tile directly
+				selectTile(pos);
+
+				// attach region to editor
+				if (hex->region())
+					_edit->region(&*hex->region());
+				else
+					_edit->region(nullptr);
+			};
 		}
 		else {
 			// select the region

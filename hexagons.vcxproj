@@ -92,6 +92,7 @@
     <ClCompile Include="src\game\ui\move_selector.cpp" />
     <ClCompile Include="src\game\ui\progress_view.cpp" />
     <ClCompile Include="src\game\ui\resource_bar.cpp" />
+    <ClCompile Include="src\game\ui\resource_table.cpp" />
     <ClCompile Include="src\game\ui\splash_text.cpp" />
     <ClCompile Include="src\game\ui\state_viewer.cpp" />
     <ClCompile Include="src\game\values\build_values.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="include\game\ui\move_selector.hpp" />
     <ClInclude Include="include\game\ui\progress_view.hpp" />
     <ClInclude Include="include\game\ui\resource_bar.hpp" />
+    <ClInclude Include="include\game\ui\resource_table.hpp" />
     <ClInclude Include="include\game\ui\splash_text.hpp" />
     <ClInclude Include="include\game\ui\state_viewer.hpp" />
     <ClInclude Include="include\game\values\build_values.hpp" />

@@ -5,6 +5,7 @@
 #include "game/values/editor_values.hpp"
 #include "game/map.hpp"
 #include "game/moves/move.hpp"
+#include "resource_table.hpp"
 #include "assets.hpp"
 #include "ui.hpp"
 
@@ -24,6 +25,8 @@ public:
 
 private:
 	Game* _game; /// Game controller reference.
+
+	gameui::Table* _res_table; /// Resource table.
 
 	ui::Text* _team_text; /// Tile team text.
 	ui::Text* _show_text; /// Selected entity text.
@@ -45,5 +48,14 @@ public:
 	/// Construct editor environment.
 	///
 	/// @param game Game controller reference.
-	Editor(Game* game);
+	/// @param text_layer Text field layer.
+	Editor(Game* game, ui::Layer* text_layer);
+
+	/// Selects a region.
+	/// 
+	/// @param reg Region reference.
+	void region(Region* reg);
+
+	/// Whether any input field is active.
+	bool input() const;
 };
