@@ -41,10 +41,11 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 				break;
 			};
 		};
-		if (white) return;
 
 		// send message to chat
-		_state.message(text);
+		if (!white)
+			_state.message(text);
+		_chat->hide();
 	});
 
 	// setup camera
@@ -76,6 +77,11 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 			if (data->key == sf::Keyboard::Key::E) {
 				// redo a move
 				redoMove();
+				return true;
+			};
+			if (data->key == sf::Keyboard::Key::Enter && data->control) {
+				// finish the turn
+				_state.finish();
 				return true;
 			};
 			if (data->key == sf::Keyboard::Key::Slash) {
@@ -387,7 +393,7 @@ static void _disable_button(
 		button->disable();
 
 	// disable if region is dead
-	else if (!region || region->dead())
+	else if (!region || region->dead)
 		button->disable(Values::dead_digit);
 
 	// disable buy button if not enough resources
@@ -614,7 +620,7 @@ static void _construct_menu(
 			button->disable();
 		else if (tile.hex) {
 			// disable if the region is dead
-			if (tile.hex->region() && tile.hex->region()->dead())
+			if (tile.hex->region() && tile.hex->region()->dead)
 				button->disable(Values::dead_digit);
 
 			// disable if skill cannot be executed
@@ -705,7 +711,7 @@ void Game::regionMenu(const Region& region, bool targeted) {
 	updateTroop();
 
 	// disable buttons if region is dead
-	if (region.dead()) {
+	if (region.dead) {
 		_panel->actions()[2]->disable(Values::dead_digit);
 		_panel->actions()[3]->disable(Values::dead_digit);
 	};

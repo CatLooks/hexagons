@@ -71,6 +71,7 @@
     <ClCompile Include="src\game\region.cpp" />
     <ClCompile Include="src\game\serialize\s_entities.cpp" />
     <ClCompile Include="src\game\serialize\s_general.cpp" />
+    <ClCompile Include="src\game\serialize\s_map.cpp" />
     <ClCompile Include="src\game\serialize\s_messages.cpp" />
     <ClCompile Include="src\game\serialize\s_moves.cpp" />
     <ClCompile Include="src\game\skill.cpp" />
@@ -80,6 +81,7 @@
     <ClCompile Include="src\game\sync\net.cpp" />
     <ClCompile Include="src\game\sync\state.cpp" />
     <ClCompile Include="src\game\sync\test.cpp" />
+    <ClCompile Include="src\game\template.cpp" />
     <ClCompile Include="src\game\troop.cpp" />
     <ClCompile Include="src\game\ui\action_button.cpp" />
     <ClCompile Include="src\game\ui\chat.cpp" />
@@ -184,6 +186,7 @@
     <ClInclude Include="include\game\region.hpp" />
     <ClInclude Include="include\game\serialize\entities.hpp" />
     <ClInclude Include="include\game\serialize\general.hpp" />
+    <ClInclude Include="include\game\serialize\map.hpp" />
     <ClInclude Include="include\game\serialize\messages.hpp" />
     <ClInclude Include="include\game\serialize\moves.hpp" />
     <ClInclude Include="include\game\skill.hpp" />
@@ -194,6 +197,7 @@
     <ClInclude Include="include\game\sync\net.hpp" />
     <ClInclude Include="include\game\sync\state.hpp" />
     <ClInclude Include="include\game\sync\test.hpp" />
+    <ClInclude Include="include\game\template.hpp" />
     <ClInclude Include="include\game\troop.hpp" />
     <ClInclude Include="include\game\ui\action_button.hpp" />
     <ClInclude Include="include\game\ui\chat.hpp" />

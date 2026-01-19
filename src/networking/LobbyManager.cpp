@@ -212,6 +212,12 @@ void LobbyManager::HandleMemberStatusChange(const EOS_Lobby_LobbyMemberStatusRec
 	}
 }
 
+// Join -> connect (my name)
+// Start -> host (my name)
+//lobby -> refresh ()
+
+
+
 std::shared_ptr<P2PManager> LobbyManager::GetP2PConnection(EOS_ProductUserId peerId) {
 	for (const auto& connection : P2PConnections) {
 		if (connection->GetPeerId() == peerId) {

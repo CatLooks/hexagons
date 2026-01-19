@@ -351,6 +351,7 @@ void GameStartMenu::nextStep() {
         _currentStep = STEP_WAITING;
 
 		_net->host(_currentData.maxPlayers, _currentData.roomCode);
+
         _pageWaitingLobby->setGameDetails(_currentData);
         _pageWaitingLobby->setAsHost(true);
         _pageWaitingLobby->updateList({ { assets::lang::locale.req(localization::Path("lobby.host_you")).get({}), sf::Color::Cyan, true, true } });

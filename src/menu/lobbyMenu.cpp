@@ -26,6 +26,7 @@ LobbyMenu::LobbyMenu() {
 
     // List container sized to avoid covering buttons
     _listContainer = new ui::Element();
+    _listContainer->bounds = { 0.5as, 200px, 600px, 350px };
     add(_listContainer);
 
     // Leave button placed at bottom-left of content area

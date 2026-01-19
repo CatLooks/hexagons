@@ -19,6 +19,22 @@ Pool<Build>::ConstIt Map::buildList() const { return _builds.iter(); };
 /// Returns troop iterator.
 Pool<Plant>::ConstIt Map::plantList() const { return _plants.iter(); };
 
+/// Clears the map.
+void Map::clear() {
+	// clear tiles
+	HexArray::clear();
+
+	// reset indices
+	Spread::reset();
+	_select_idx = 0;
+
+	// reset other stuff
+	history.clear();
+	_selection = false;
+	_region = {};
+	pulse = {};
+};
+
 /// Generates a new selection index.
 size_t Map::newSelectionIndex() {
 	_selection = true;
