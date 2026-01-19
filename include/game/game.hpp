@@ -13,6 +13,7 @@
 #include "ui/splash_text.hpp"
 #include "ui/progress_view.hpp"
 #include "ui/chat.hpp"
+#include "ui/editor.hpp"
 
 #include "map.hpp"
 #include "dev/dev_game.hpp"
@@ -21,6 +22,7 @@
 /// Game controller object.
 class Game : public ui::Element {
 	friend dev::Factory;
+	friend Editor;
 
 public:
 	Map map; /// Game map.
@@ -38,6 +40,7 @@ private:
 	gameui::State*  _view; /// UI game state viewer.
 	gameui::Chat*   _chat; /// UI game chat.
 	gameui::Progress* _pb; /// UI progress viewer.
+	Editor*         _edit; /// UI editor.
 
 	float _pulse = 0.f;      /// Map tile pulse.
 	ui::Anim* _pulse_anim;   /// Pulse animation object.

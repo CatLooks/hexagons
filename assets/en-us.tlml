@@ -66,7 +66,7 @@ troop {
 build {
 	castle: Town Hall
 	farm  : Farm
-	mine  : Mine # unused
+	mine  : "Mine" # unused
 	tower : Watchtower
 	beacon: Beacon
 	fort  : Fortress

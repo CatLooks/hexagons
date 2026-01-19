@@ -56,7 +56,7 @@ int main() {
 		target.draw(drawStats);
 	});
 
-	GameState state(GameState::Host, new TestAdapter);
+	GameState state(GameState::Edit, new TestAdapter);
 	Game* game;
 
 	// game test
@@ -83,7 +83,7 @@ int main() {
 				"vvv  ggg  ooo g r r- ",
 				"rrvv ---   oo        ",
 				"vvv                  ",
-				"    rrrrrrgggggggg   ",
+				"    rrrrrrggggggg#   ",
 			};
 
 			map.empty({ w, h });

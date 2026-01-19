@@ -22,8 +22,15 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 	_view(new gameui::State(state)),
 	_chat(new gameui::Chat(48px, 28px, 128, 20)),
 	splash(new gameui::Splash(192px, 56px)),
-	_pb(new gameui::Progress)
+	_pb(new gameui::Progress),
+	_edit(new Editor(this))
 {
+	// hide ui elements in editor
+	if (_state.editor()) {
+		_view->deactivate();
+		_chat->deactivate();
+	};
+
 	// attach reference to game state
 	_state.setRefs(&map, _chat, splash, _pb);
 	this->state.map = &map;
@@ -32,6 +39,7 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 	ui_layer->add(_panel);
 	ui_layer->add(_bar);
 	ui_layer->add(_view);
+	ui_layer->add(_edit);
 	chat_layer->add(splash);
 	chat_layer->add(_pb);
 	chat_layer->add(_chat);
@@ -62,6 +70,7 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 
 				// update progress table values
 				_pb->update(count, _state.players());
+				_pb->recalculate();
 
 				// show progress table
 				_pb->activate();
@@ -239,6 +248,9 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 
 /// Undoes last move.
 void Game::undoMove() {
+	// ignore if in editor mode
+	if (_state.editor()) return;
+
 	// stop selection
 	if (map.isSelection())
 		deselectMenu();
@@ -260,6 +272,9 @@ void Game::undoMove() {
 
 /// Redoes last move.
 void Game::redoMove() {
+	// ignore if in editor mode
+	if (_state.editor()) return;
+
 	// stop selection
 	if (map.isSelection())
 		deselectMenu();
@@ -395,10 +410,16 @@ void Game::click(sf::Vector2i pos) {
 			return;
 		};
 
-		// select the region
-		Region::Team team = _state.team();
-		if (hex->region() && (team && hex->region()->team == team || flags::any_region))
-			selectRegion({ hex, pos });
+		if (_state.editor()) {
+			// select tile directly
+			selectTile(pos);
+		}
+		else {
+			// select the region
+			Region::Team team = _state.team();
+			if (hex->region() && (team && hex->region()->team == team || flags::any_region))
+				selectRegion({ hex, pos });
+		};
 	};
 };
 
@@ -814,6 +835,9 @@ void Game::closeMenu() {
 /// Updates menu state after a click.
 void Game::updateMenu() {
 	map.shield = {};
+
+	// ignore if in editor mode
+	if (_state.editor()) return;
 
 	// open hex menu
 	if (_select)

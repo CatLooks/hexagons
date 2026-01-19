@@ -86,6 +86,7 @@
     <ClCompile Include="src\game\troop.cpp" />
     <ClCompile Include="src\game\ui\action_button.cpp" />
     <ClCompile Include="src\game\ui\chat.cpp" />
+    <ClCompile Include="src\game\ui\editor.cpp" />
     <ClCompile Include="src\game\ui\game_panel.cpp" />
     <ClCompile Include="src\game\ui\hex_preview.cpp" />
     <ClCompile Include="src\game\ui\move_selector.cpp" />
@@ -94,6 +95,7 @@
     <ClCompile Include="src\game\ui\splash_text.cpp" />
     <ClCompile Include="src\game\ui\state_viewer.cpp" />
     <ClCompile Include="src\game\values\build_values.cpp" />
+    <ClCompile Include="src\game\values\editor_values.cpp" />
     <ClCompile Include="src\game\values\entity_values.cpp" />
     <ClCompile Include="src\game\values\hex_values.cpp" />
     <ClCompile Include="src\game\values\interface.cpp" />
@@ -207,6 +209,7 @@
     <ClInclude Include="include\game\troop.hpp" />
     <ClInclude Include="include\game\ui\action_button.hpp" />
     <ClInclude Include="include\game\ui\chat.hpp" />
+    <ClInclude Include="include\game\ui\editor.hpp" />
     <ClInclude Include="include\game\ui\game_panel.hpp" />
     <ClInclude Include="include\game\ui\hex_preview.hpp" />
     <ClInclude Include="include\game\ui\move_selector.hpp" />
@@ -215,6 +218,7 @@
     <ClInclude Include="include\game\ui\splash_text.hpp" />
     <ClInclude Include="include\game\ui\state_viewer.hpp" />
     <ClInclude Include="include\game\values\build_values.hpp" />
+    <ClInclude Include="include\game\values\editor_values.hpp" />
     <ClInclude Include="include\game\values\entity_values.hpp" />
     <ClInclude Include="include\game\values\hex_values.hpp" />
     <ClInclude Include="include\game\values\interface.hpp" />

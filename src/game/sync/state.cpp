@@ -42,7 +42,6 @@ void GameState::message(const std::string& text) {
 /// Constructs progress table.
 void GameState::progress() {
 	// construct progress table
-	// @todo
 	std::vector<Region::Team> teams;
 	for (int i = 0; i < Region::Count; i++)
 		teams.push_back(static_cast<Region::Team>(i));
@@ -70,6 +69,8 @@ void GameState::lock() {
 
 /// Initializes the game.
 void GameState::init() {
+	progress();
+
 	// ignore if not host
 	if (_mode != Host) return;
 
@@ -352,4 +353,9 @@ Region::Team GameState::team() const {
 /// Returns current turn number.
 uint32_t GameState::turn() const {
 	return _turn;
+};
+
+/// Checks whether the game is in editor mode.
+bool GameState::editor() const {
+	return _mode == Edit;
 };

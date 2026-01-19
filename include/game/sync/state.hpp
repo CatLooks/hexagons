@@ -19,8 +19,9 @@ public:
 
 	/// Game controller mode.
 	enum Mode {
-		Host,  /// Player acts as a host.
-		Client /// Player acts as a client.
+		Host,   /// Player acts as a host.
+		Client, /// Player acts as a client.
+		Edit,   /// Editor mode.
 	};
 
 	/// Current game state.
@@ -128,4 +129,7 @@ public:
 
 	/// Returns current turn number.
 	uint32_t turn() const;
+
+	/// Checks whether the game is in editor mode.
+	bool editor() const;
 };

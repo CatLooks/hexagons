@@ -1,9 +1,9 @@
 #include "game/values/editor_values.hpp"
 
 namespace Values {
-	/// Returns a tile in 16x16 texture map.
+	/// Returns a tile in 32x32 texture map.
 	sf::IntRect minicoords(int x, int y) {
-		return { x * 16, y * 16, 16, 16 };
+		return { { x * 32, y * 32 }, { 32, 32 } };
 	};
 
 	/// Editor void tile button icon.
@@ -13,7 +13,7 @@ namespace Values {
 	/// Editor water tile button icon.
 	const sf::IntRect edit_tile_water = minicoords(10, 0);
 	/// Editor tile team button icon.
-	const sf::IntRect edit_team = minicoords(14, 6);
+	const sf::IntRect edit_team = minicoords(15, 6);
 	
 	/// Editor troop button icon.
 	const sf::IntRect edit_troop = minicoords(8, 1);
@@ -21,6 +21,8 @@ namespace Values {
 	const sf::IntRect edit_build = minicoords(9, 1);
 	/// Editor plant button icon.
 	const sf::IntRect edit_plant = minicoords(10, 1);
+	/// Editor none button icon.
+	const sf::IntRect edit_none = minicoords(14, 6);
 
 	/// Editor hitpoit increase button icon.
 	const sf::IntRect edit_hp_up = minicoords(11, 0);
