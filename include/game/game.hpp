@@ -11,6 +11,7 @@
 #include "ui/hex_preview.hpp"
 #include "ui/state_viewer.hpp"
 #include "ui/splash_text.hpp"
+#include "ui/progress_view.hpp"
 #include "ui/chat.hpp"
 
 #include "map.hpp"
@@ -36,6 +37,7 @@ private:
 	gameui::Bar*     _bar; /// UI resource bar.
 	gameui::State*  _view; /// UI game state viewer.
 	gameui::Chat*   _chat; /// UI game chat.
+	gameui::Progress* _pb; /// UI progress viewer.
 
 	float _pulse = 0.f;      /// Map tile pulse.
 	ui::Anim* _pulse_anim;   /// Pulse animation object.

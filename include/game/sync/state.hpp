@@ -6,6 +6,7 @@
 #include "game/logic/turn_logic.hpp"
 #include "game/ui/chat.hpp"
 #include "game/ui/splash_text.hpp"
+#include "game/ui/progress_view.hpp"
 #include "dev/dev_game.hpp"
 #include <SFML/System/Clock.hpp>
 
@@ -42,6 +43,8 @@ private:
 	gameui::Chat* _chat;
 	/// Splash element reference.
 	gameui::Splash* _splash;
+	/// Progress table reference.
+	gameui::Progress* _prog;
 
 	std::vector<Player> _plr;     /// Player list.
 	uint32_t            _idx = 0; /// Current player index.
@@ -73,13 +76,16 @@ public:
 	/// @param map Map object reference.
 	/// @param chat Chat element reference.
 	/// @param splash Splash element reference.
-	void setRefs(Map* map, gameui::Chat* chat, gameui::Splash* splash);
+	/// @param prog Progress table reference.
+	void setRefs(Map* map, gameui::Chat* chat, gameui::Splash* splash, gameui::Progress* prog);
 
 protected:
 	/// Updates gameplay state.
 	void update();
 	/// Locks gameplay state.
 	void lock();
+	/// Constructs progress table.
+	void progress();
 
 public:
 	/// Sends a message to chat.
@@ -108,6 +114,8 @@ public:
 	/// @param event Event data.
 	void proc(const Adapter::Packet<Messages::Event>& event);
 
+	/// Returns player list.
+	const std::vector<Player>& players() const;
 	/// Returns current player info.
 	const Player* player() const;
 	/// Returns next player info.

@@ -2,15 +2,15 @@
 
 namespace dev {
 	/// Panel text settings.
-	const ui::TextSettings Panel::settings = {
+	const ui::TextSettings Section::settings = {
 		assets::font, 16, sf::Color::White, sf::Color::Black, 2.f
 	};
 
 	/// Panel text height.
-	const float Panel::height = 22;
+	const float Panel::height = 22.f;
 
 	/// Constructs a section element.
-	Section::Section() : h(0.f) {
+	Section::Section(const ui::TextSettings& sets) : h(0.f), sets(sets) {
 		// set panel color
 		color = sf::Color(0, 0, 0, 64);
 		padding.setHorizontal(8);
@@ -32,7 +32,7 @@ namespace dev {
 	/// Pushes a new text line.
 	ui::Text* Section::line(const localization::Path& path, sf::Color color) {
 		// create the label
-		ui::Text* text = new ui::Text(Panel::settings, path);
+		ui::Text* text = new ui::Text(sets, path);
 
 		// configure text label
 		text->align = ui::Text::NW;
@@ -52,14 +52,14 @@ namespace dev {
 	};
 
 	/// Pushes a new text line.
-	ui::Text* Section::extra(const localization::Path& path, sf::Color color) {
+	ui::Text* Section::extra(const localization::Path& path, ui::Dim offset, sf::Color color) {
 		// create the label
-		ui::Text* text = new ui::Text(Panel::settings, path);
+		ui::Text* text = new ui::Text(sets, path);
 
 		// configure text label
 		text->align = ui::Text::NW;
 		text->pos = ui::Text::Static;
-		text->bounds = { 0.5ps, height() - Panel::height, 1ps, Panel::height };
+		text->bounds = { offset, height() - Panel::height, 1ps, Panel::height };
 		text->use(&args);
 		text->setColor(color);
 
@@ -134,7 +134,7 @@ namespace dev {
 		// add key-value pairs
 		for (const auto& p : kv) {
 			section->line(p + ".k", sf::Color::White);
-			section->extra(p + ".v", sf::Color::White);
+			section->extra(p + ".v", 0.5ps, sf::Color::White);
 		};
 	};
 };

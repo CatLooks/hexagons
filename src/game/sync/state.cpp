@@ -4,7 +4,7 @@
 /// Constructs a game state object.
 GameState::GameState(Mode mode, Adapter* adapter):
 	_adapter(adapter), _mode(mode), _state(Init),
-	_map(nullptr), _chat(nullptr), _splash(nullptr)
+	_map(nullptr), _chat(nullptr), _splash(nullptr), _prog(nullptr)
 {
 	
 };
@@ -20,10 +20,11 @@ void GameState::addPlayer(const Messages::Player& player) {
 };
 
 /// Updates object references.
-void GameState::setRefs(Map* map, gameui::Chat* chat, gameui::Splash* splash) {
+void GameState::setRefs(Map* map, gameui::Chat* chat, gameui::Splash* splash, gameui::Progress* prog) {
 	_map = map;
 	_chat = chat;
 	_splash = splash;
+	_prog = prog;
 };
 
 /// Sends a message to chat.
@@ -36,6 +37,16 @@ void GameState::message(const std::string& text) {
 
 	// broadcast the message
 	_adapter->send(Messages::Chat{ .text = text });
+};
+
+/// Constructs progress table.
+void GameState::progress() {
+	// construct progress table
+	// @todo
+	std::vector<Region::Team> teams;
+	for (int i = 0; i < Region::Count; i++)
+		teams.push_back(static_cast<Region::Team>(i));
+	_prog->reconstruct(teams);
 };
 
 /// Updates gameplay state.
@@ -59,6 +70,9 @@ void GameState::lock() {
 
 /// Initializes the game.
 void GameState::init() {
+	// ignore if not host
+	if (_mode != Host) return;
+
 	// quit if no players
 	if (_plr.empty()) {
 		_state = Quit;
@@ -82,6 +96,9 @@ void GameState::init() {
 	_idx = 0;
 	_adapter->send(Messages::Select{ .id = _idx });
 	update();
+
+	// construct progress table
+	progress();
 };
 
 /// Attempts to finish a move.
@@ -144,7 +161,7 @@ void GameState::next() {
 		_adapter->send_list(list);
 
 		// check for game over
-		auto count = logic::count(_map);
+		auto count = logic::count(_map, _plr);
 		auto team = logic::win(count);
 		if (team != Region::Unclaimed) {
 			// find player index
@@ -236,6 +253,9 @@ void GameState::proc(const Adapter::Packet<Messages::Event>& event) {
 		_turn = 0;
 		_idx = 0;
 
+		// construct progress table
+		progress();
+
 		// wait for player selection
 		lock();
 		return;
@@ -299,6 +319,11 @@ void GameState::proc(const Adapter::Packet<Messages::Event>& event) {
 			{ "id", ext::str_int(event.value.index()) }
 		})
 	);
+};
+
+/// Returns player list.
+const std::vector<GameState::Player>& GameState::players() const {
+	return _plr;
 };
 
 /// Returns current player info.

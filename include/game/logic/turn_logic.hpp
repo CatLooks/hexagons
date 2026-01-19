@@ -3,6 +3,7 @@
 // include dependencies
 #include "game/map.hpp"
 #include "game/moves/game_turn.hpp"
+#include "game/sync/messages.hpp"
 
 namespace logic {
 	/// Executes global turn transition logic.
@@ -33,10 +34,10 @@ namespace logic {
 	/// Counts tiles for every team.
 	/// 
 	/// @param map Map reference.
-	/// @param total Total tile count.
+	/// @param players Player list.
 	/// 
 	/// @return Map tile count.
-	TileCount count(Map* map);
+	TileCount count(Map* map, const std::vector<Messages::Player>& players);
 
 	/// Returns a victor of the game.
 	/// 

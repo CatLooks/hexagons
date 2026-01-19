@@ -132,7 +132,7 @@ namespace logic {
 	};
 
 	/// Counts tiles for every team.
-	TileCount count(Map* map) {
+	TileCount count(Map* map, const std::vector<Messages::Player>& players) {
 		// create counter list
 		TileCount count;
 		for (int i = 0; i < Region::Count; i++)
@@ -152,10 +152,23 @@ namespace logic {
 			};
 		};
 
+		// find team in player list
+		auto find = [&](Region::Team team) {
+			return std::ranges::count_if(players, [=](const Messages::Player& player) {
+				return player.team == team;
+			}) != 0;
+		};
+
 		// sort list
 		std::sort(count.teams.begin(), count.teams.end(),
-			[](const TileCount::TeamInfo& a, const TileCount::TeamInfo& b)
-				{ return a.tiles > b.tiles; });
+			[&](const TileCount::TeamInfo& a, const TileCount::TeamInfo& b)
+		{
+			if (a.tiles == b.tiles) {
+				// prioritize teams with assigned players
+				return find(a.team) > find(b.team);
+			};
+			return a.tiles > b.tiles;
+		});
 		return count;
 	};
 

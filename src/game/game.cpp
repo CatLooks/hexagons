@@ -21,10 +21,11 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 	_bar(new gameui::Bar),
 	_view(new gameui::State(state)),
 	_chat(new gameui::Chat(48px, 28px, 128, 20)),
-	splash(new gameui::Splash(192px, 56px))
+	splash(new gameui::Splash(192px, 56px)),
+	_pb(new gameui::Progress)
 {
 	// attach reference to game state
-	_state.setRefs(&map, _chat, splash);
+	_state.setRefs(&map, _chat, splash, _pb);
 	this->state.map = &map;
 
 	// register interface elements
@@ -32,6 +33,7 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 	ui_layer->add(_bar);
 	ui_layer->add(_view);
 	chat_layer->add(splash);
+	chat_layer->add(_pb);
 	chat_layer->add(_chat);
 
 	// add chat callback
@@ -49,6 +51,33 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 		if (!white)
 			_state.message(text);
 		_chat->hide();
+	});
+
+	// add progress table display
+	ui_layer->onEvent([=](const ui::Event& evt) {
+		if (auto data = evt.get<ui::Event::KeyPress>()) {
+			if (data->key == sf::Keyboard::Key::Tab) {
+				// count tiles
+				auto count = logic::count(&map, _state.players());
+
+				// update progress table values
+				_pb->update(count, _state.players());
+
+				// show progress table
+				_pb->activate();
+				return true;
+			};
+		};
+		if (auto data = evt.get<ui::Event::KeyRelease>()) {
+			if (data->key == sf::Keyboard::Key::Tab) {
+				// hide progress table
+				_pb->deactivate();
+				return true;
+			};
+		};
+
+		// ignore event
+		return false;
 	});
 
 	// setup camera
