@@ -18,6 +18,8 @@ namespace gameui {
 	private:
 		/// Text element list.
 		std::deque<std::vector<std::unique_ptr<ui::Text>>> _text;
+		/// Text offset.
+		ui::Dim _offset;
 		/// Whether to block propagation of mouse events.
 		bool _inhibit = false;
 
@@ -28,7 +30,8 @@ namespace gameui {
 		/// Constructs an empty splash text element.
 		///
 		/// @param height Splash panel height.
-		Splash(ui::Dim height);
+		/// @param text Splash text offset.
+		Splash(ui::Dim height, ui::Dim text);
 
 		/// Queues a text label for display.
 		/// 
@@ -36,7 +39,7 @@ namespace gameui {
 		/// 
 		/// @param path Text localization path.
 		/// @param color Text color.
-		void queue(const localization::Path& path, sf::Color color);
+		void queue(const localization::Path& path, sf::Color color = sf::Color::White);
 
 		/// Creates a new splash frame.
 		void frame();

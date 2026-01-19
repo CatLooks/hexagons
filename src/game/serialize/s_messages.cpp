@@ -24,6 +24,11 @@ namespace Serialize {
 			packet << data->temp;
 			encodeVec<Messages::Player>(packet, data->players);
 		};
+		// game over
+		if (auto* data = std::get_if<Messages::End>(&evt)) {
+			packet << (uint8_t)E_End;
+			packet << data->id;
+		};
 		// player select
 		if (auto* data = std::get_if<Messages::Select>(&evt)) {
 			packet << (uint8_t)E_Select;
@@ -55,6 +60,11 @@ namespace Serialize {
 			{
 				.temp = from<Template>(packet),
 				.players = decodeVec<Messages::Player>(packet)
+			};
+			// game over
+			case E_End: return Messages::End
+			{
+				.id = from<uint32_t>(packet)
 			};
 			// player select
 			case E_Select: return Messages::Select

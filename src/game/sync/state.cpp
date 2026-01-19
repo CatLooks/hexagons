@@ -4,7 +4,7 @@
 /// Constructs a game state object.
 GameState::GameState(Mode mode, Adapter* adapter):
 	_adapter(adapter), _mode(mode), _state(Init),
-	_map(nullptr), _chat(nullptr)
+	_map(nullptr), _chat(nullptr), _splash(nullptr)
 {
 	
 };
@@ -20,9 +20,10 @@ void GameState::addPlayer(const Messages::Player& player) {
 };
 
 /// Updates object references.
-void GameState::setRefs(Map* map, gameui::Chat* chat) {
+void GameState::setRefs(Map* map, gameui::Chat* chat, gameui::Splash* splash) {
 	_map = map;
 	_chat = chat;
+	_splash = splash;
 };
 
 /// Sends a message to chat.
@@ -39,8 +40,15 @@ void GameState::message(const std::string& text) {
 
 /// Updates gameplay state.
 void GameState::update() {
+	// update game state
 	_state = _idx == _adapter->id ? Play : Wait;
 	_call(_idx == _adapter->id);
+
+	// display "your turn" splash if local player is selected
+	if (_state == Play) {
+		_splash->queue("splash.your_turn", Values::hex_colors[team()]);
+		_splash->display();
+	};
 };
 
 /// Locks gameplay state.
@@ -54,6 +62,13 @@ void GameState::init() {
 	// quit if no players
 	if (_plr.empty()) {
 		_state = Quit;
+
+		// send error message to chat
+		_chat->print(
+			assets::lang::locale.req("chat.host").get({}),
+			Values::host_color,
+			assets::lang::locale.req("chat.no_players").get({})
+		);
 		return;
 	};
 
@@ -83,6 +98,35 @@ bool GameState::finish() {
 	return true;
 };
 
+/// Finishes the game.
+void GameState::over(size_t id) {
+	// stop game
+	_state = Quit;
+	_call(false);
+	_clock.stop();
+
+	// get player data
+	auto& player = _plr[id];
+
+	// splash message arguments
+	_splash->args["name"] = player.name;
+	_splash->args["team"] = Values::hex_names[player.team];
+
+	// display splash message
+	_splash->queue("splash.game_over");
+	_splash->frame();
+	_splash->queue("splash.victor.a");
+	_splash->queue("space");
+	_splash->queue("splash.victor.b", Values::hex_colors[player.team]);
+	_splash->queue("space");
+	_splash->queue("splash.victor.c");
+	_splash->queue("space");
+	_splash->queue("splash.victor.d", Values::hex_colors[player.team]);
+	_splash->queue("space");
+	_splash->queue("splash.victor.e");
+	_splash->display();
+};
+
 /// Advances the game to the next player.
 void GameState::next() {
 	// lock game until a selection is received
@@ -98,6 +142,24 @@ void GameState::next() {
 		// tick & transmit player regions
 		auto list = logic::turn(_map, player()->team);
 		_adapter->send_list(list);
+
+		// check for game over
+		auto count = logic::count(_map);
+		auto team = logic::win(count);
+		if (team != Region::Unclaimed) {
+			// find player index
+			uint32_t id = 0;
+			for (const auto& player : _plr)
+				if (player.team == id)
+					break;
+
+			// switch to spectator state
+			over(id);
+
+			// send game over packet
+			_adapter->send(Messages::End{ .id = id });
+			return;
+		};
 
 		// increment player index
 		if (++_idx >= _plr.size()) {
@@ -176,6 +238,12 @@ void GameState::proc(const Adapter::Packet<Messages::Event>& event) {
 
 		// wait for player selection
 		lock();
+		return;
+	};
+
+	// game over
+	if (auto* data = std::get_if<Messages::End>(&event.value)) {
+		over(data->id);
 		return;
 	};
 

@@ -5,6 +5,7 @@
 #include "game/map.hpp"
 #include "game/logic/turn_logic.hpp"
 #include "game/ui/chat.hpp"
+#include "game/ui/splash_text.hpp"
 #include "dev/dev_game.hpp"
 #include <SFML/System/Clock.hpp>
 
@@ -39,6 +40,8 @@ private:
 
 	/// Chat element reference.
 	gameui::Chat* _chat;
+	/// Splash element reference.
+	gameui::Splash* _splash;
 
 	std::vector<Player> _plr;     /// Player list.
 	uint32_t            _idx = 0; /// Current player index.
@@ -69,7 +72,8 @@ public:
 	/// 
 	/// @param map Map object reference.
 	/// @param chat Chat element reference.
-	void setRefs(Map* map, gameui::Chat* chat);
+	/// @param splash Splash element reference.
+	void setRefs(Map* map, gameui::Chat* chat, gameui::Splash* splash);
 
 protected:
 	/// Updates gameplay state.
@@ -89,6 +93,11 @@ public:
 	///
 	/// @return Whether the attempt succeeded.
 	bool finish();
+
+	/// Finishes the game.
+	/// 
+	/// @param id Victor index.
+	void over(size_t id);
 
 	/// Advances the game to the next player.
 	void next();

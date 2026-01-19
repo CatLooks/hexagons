@@ -1,5 +1,6 @@
 #include "game/logic/turn_logic.hpp"
 #include "game/logic/skill_helper.hpp"
+#include <algorithm>
 
 namespace logic {
 	/// Executes global turn transition logic.
@@ -128,5 +129,42 @@ namespace logic {
 
 		// return map changes
 		return list;
+	};
+
+	/// Counts tiles for every team.
+	TileCount count(Map* map) {
+		// create counter list
+		TileCount count;
+		for (int i = 0; i < Region::Count; i++)
+			count.teams.push_back({ .team = static_cast<Region::Team>(i) });
+
+		// count all solid tiles
+		for (int y = 0; y < map->size().y; y++) {
+			for (int x = 0; x < map->size().x; x++) {
+				Hex* hex = map->at({ x, y });
+				if (hex && hex->solid()) {
+					// count total tiles
+					count.total++;
+
+					// count team tiles
+					count.teams[hex->team].tiles++;
+				};
+			};
+		};
+
+		// sort list
+		std::sort(count.teams.begin(), count.teams.end(),
+			[](const TileCount::TeamInfo& a, const TileCount::TeamInfo& b)
+				{ return a.tiles > b.tiles; });
+		return count;
+	};
+
+	/// Returns a victor of the game.
+	Region::Team win(const TileCount& count) {
+		for (const auto& info : count.teams) {
+			if ((float)info.tiles / count.total >= 0.7f)
+				return info.team;
+		};
+		return Region::Unclaimed;
 	};
 };

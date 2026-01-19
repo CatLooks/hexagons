@@ -1,9 +1,10 @@
 ## WIP List
 
-- handle game end
+- map percentage display (tab)
 
 ## To Do List
 
+- map editor
 - audio
 - ai
 - network test

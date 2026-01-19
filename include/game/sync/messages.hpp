@@ -22,6 +22,11 @@ namespace Messages {
 		std::vector<Player> players;
 	};
 
+	/// Game over.
+	struct End {
+		uint32_t id = 0; /// Victorious player index.
+	};
+
 	/// Player move list ignore.
 	struct Ignore {
 		uint32_t id  = 0; /// Ignore target.
@@ -42,6 +47,7 @@ namespace Messages {
 	/// Variant of all adapter events.
 	using Event = std::variant<
 		Init,
+		End,
 		Ignore,
 		Select,
 		Chat

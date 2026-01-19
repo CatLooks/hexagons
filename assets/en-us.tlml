@@ -156,11 +156,14 @@ chat {
 	# unknown player name
 	unknown: "???"
 
+	# errors
+
 	# move list ignore error
 	ignore: "Move list got ignored."
-
 	# unknown event error
 	bad_event: "Unknown event (ID = {id})."
+	# no players to start the game
+	no_players: "No players in game."
 }
 
 # splash text
@@ -175,7 +178,9 @@ splash {
 	victor {
 		a: "Team"
 		b: "{team}"
-		c: "wins!"
+		c: "/"
+		d: "{name}"
+		e: "wins!"
 	}
 }
 

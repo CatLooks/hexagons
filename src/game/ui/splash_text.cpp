@@ -6,7 +6,7 @@ namespace gameui {
 		(&assets::interface, Values::coords(3, 0), { 4, 8 }, 2);
 
 	/// Constructs an empty splash text element.
-	Splash::Splash(ui::Dim height): ui::Panel(texture) {
+	Splash::Splash(ui::Dim height, ui::Dim text): ui::Panel(texture), _offset(text) {
 		// set splash size
 		bounds = { 0px, 0.5as, 1ps, height };
 		scissor = true;
@@ -35,9 +35,9 @@ namespace gameui {
 	void Splash::queue(const localization::Path& path, sf::Color color) {
 		// create text element
 		ui::Text* text = new ui::Text(Values::splash_text, path);
-		text->pos = ui::Text::ShrinkY;
+		text->pos = ui::Text::Static;
 		text->autosize = true;
-		text->position().y = 0.5as;
+		text->position().y = _offset;
 		text->use(&args);
 		text->setColor(color);
 
@@ -57,6 +57,9 @@ namespace gameui {
 
 	/// Displays queued text labels.
 	void Splash::display() {
+		// delete any existing containers
+		clear();
+
 		// activate panel
 		activate();
 		color.a = 0;
@@ -91,7 +94,7 @@ namespace gameui {
 			anim->ease = ui::Easings::quadOut;
 			anim->setAfter([=]() {
 				// wait before exiting
-				push(new ui::AnimTimer(sf::seconds(1.f), [=]() {
+				push(new ui::AnimTimer(sf::seconds(1.4f), [=]() {
 					// activate next container
 					if (next) next->activate();
 
