@@ -319,6 +319,9 @@ void AuthManager::HandleEpicLoginComplete(const EOS_Connect_LoginCallbackInfo* D
 		EOS_EResult result = EOS_UserInfo_CopyBestDisplayNameWithPlatform(EOS_Platform_GetUserInfoInterface(Manager->m_PlatformHandle), &options, &DisplayName);
 
         if (result == EOS_EResult::EOS_Success && DisplayName) {
+            if (DisplayName->DisplayName) {
+                Manager->m_DisplayName = DisplayName->DisplayName;            
+            }
             std::cout << "User Display Name: " << (DisplayName->DisplayName ? DisplayName->DisplayName : "N/A") << std::endl;
 			EOS_UserInfo_BestDisplayName_Release(DisplayName);
         }

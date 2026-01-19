@@ -86,10 +86,11 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
         });
 
     // join menu -> join action
-    joinMenu->bindJoin([=](const std::string& code) {
+    joinMenu->bindJoinSuccess([=](const std::string& code) {
+        // 1. Configure the lobby menu as a client
         startMenu->enterAsJoiner(code);
 
-        // Show the start menu (it will now be on the STEP_WAITING page)
+        // 2. Show the lobby
         pages->show(startMenu);
-        });
+    });   
 }

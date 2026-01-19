@@ -5,7 +5,7 @@
 #include <memory>
 #include <optional>
 #include <unordered_set>
-
+#include "templated/delegate.hpp" 
 #include "networking/EOSManager.hpp"
 #include "networking/threadsafe_queue.hpp"
 
@@ -37,11 +37,11 @@ public:
     /// Destroys the Net facade and cleans up connections.
     ~Net();
 
-	/// Starts the login process.
+    /// Starts the login process.
     void login();
 
-	/// Logout and clear state.
-	void logout();
+    /// Logout and clear state.
+    void logout();
 
     /// Starts hosting a lobby.
     void host(uint32_t maxPlayers, std::string& lobbyName);
@@ -92,7 +92,18 @@ private:
     bool m_attached = false;
     std::weak_ptr<LobbyManager> m_lobby;
 
-	Role m_role = Role::None;
-	bool m_clientHelloSent = false;
-	std::unordered_set<std::string> m_hostHandshakePeers;
+    Role m_role = Role::None;
+    bool m_clientHelloSent = false;
+    std::unordered_set<std::string> m_hostHandshakePeers;
+
+public:
+    Delegate<void()> OnLobbySuccess; 
+    Delegate<void(const std::string&)> OnPlayerConnected;
+    Delegate<void(const std::string&)> OnPlayerDisconnected;
+    Delegate<void(const std::string&, sf::Packet&)> OnPacketReceived;
+    Delegate<void(const std::string&)> OnJoinFailed;
+
+    void clearHandlers();
+
+    std::string getLocalDisplayName();
 };

@@ -18,6 +18,7 @@ void Net::login() {
     auto auth = m_eosManager.GetAuthManager();
     if (auth) {
         auth->AccountPortalPersistentAuthLogin();
+        //auth->CreateDeviceId(); //temp - sorry
         std::cout << "[Net] Login initiated..." << std::endl;
     }
 }
@@ -160,13 +161,22 @@ void Net::AttachToLobby(std::shared_ptr<LobbyManager> lobby) {
         NetConnected ev;
         ev.userId = EOSIdToString(userId);
         m_eventQueue.push(ev);
+        OnPlayerConnected.invoke(ev.userId);
     });
+
+     auto local = lobby->GetLocalConnection();
+    if (local) {
+        local->OnMessageReceived.add([this](sf::Packet packet) {
+            OnPacketReceived.invoke(EOSIdToString(nullptr), packet);
+        });
+    }
 
     // Member left -> NetDisconnected
     lobby->OnMemberLeft.add([this](EOS_ProductUserId userId) {
         NetDisconnected ev;
         ev.userId = EOSIdToString(userId);
         m_eventQueue.push(ev);
+		OnPlayerDisconnected.invoke(ev.userId);
     });
 
     lobby->OnLobbyJoined.add([this, lobby](EOS_LobbyId id) {
@@ -180,12 +190,15 @@ void Net::AttachToLobby(std::shared_ptr<LobbyManager> lobby) {
                 );
                 pkt.senderId = EOSIdToString(nullptr);
                 m_eventQueue.push(pkt);
+               OnPacketReceived.invoke(pkt.senderId, packet);  
             });
         }
+        OnLobbySuccess.invoke();
+
     });
 
     lobby->OnLobbyCreated.add([this, lobby](EOS_LobbyId) {
-        // no-op
+        OnLobbySuccess.invoke();
     });
 
     lobby->OnMemberJoined.add([this, lobby](EOS_ProductUserId userId) {
@@ -200,6 +213,7 @@ void Net::AttachToLobby(std::shared_ptr<LobbyManager> lobby) {
                 );
                 pkt.senderId = EOSIdToString(nullptr);
                 m_eventQueue.push(pkt);
+				OnPacketReceived.invoke(peerKey, packet);
                 });
         }
         });
@@ -236,4 +250,18 @@ std::string Net::EOSIdToString(EOS_ProductUserId userId) {
     char buf[32];
     snprintf(buf, sizeof(buf), "%p", p);
     return std::string(buf);
+}
+
+void Net::clearHandlers() {
+        OnPlayerConnected.clear();
+        OnPlayerDisconnected.clear();
+        OnPacketReceived.clear();
+}
+
+std::string Net::getLocalDisplayName() {
+    auto auth = m_eosManager.GetAuthManager();
+    if (auth) {
+        return auth->GetDisplayName();
+    }
+    return "Unknown Player";
 }

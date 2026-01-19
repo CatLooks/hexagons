@@ -77,4 +77,9 @@ private:
     //void HandleHWIDLoginComplete(const EOS_Connect_LoginCallbackInfo* Data);
 
     void LogInWithAccountPortal();
+
+private:
+    std::string m_DisplayName = "Unknown Player";
+public:
+    std::string GetDisplayName() const { return m_DisplayName; }
 };

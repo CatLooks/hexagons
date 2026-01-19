@@ -40,6 +40,7 @@ public:
 
 private:
     Net* _net = nullptr;
+    bool _isHost = false;
 
     ui::Solid* _bg = nullptr; /// Background panel.
     ui::Solid* _sidebarBg = nullptr; /// Sidebar background panel.
@@ -149,4 +150,30 @@ private:
     void updateMapGrid();           /// Refreshes the 3 visible maps
 	void changeMapPage(int delta);  /// Changes the map page by delta
 
+    void addSelfToUI();
+    
+    // Packet Protocol
+    enum PacketType { Pkt_Hello = 100, Pkt_LobbyState = 101, Pkt_StartGame = 102 };
+
+    struct LobbyMember {
+        std::string netId;
+        PlayerData data;
+    };
+    std::vector<LobbyMember> _connectedMembers;
+
+    // Helper to setup listeners
+    void bindNetworkHandlers();
+    
+    // Logic handlers
+    void onPlayerJoined(const std::string& id);
+    void onPlayerLeft(const std::string& id);
+    void onPacket(const std::string& id, sf::Packet& pkt);
+
+    // Sync helpers
+    void sendHello();
+    void broadcastLobbyState();
+
+    std::string _localPlayerName;   /// The name this client generated for themselves.
+    bool _acknowledgedByHost = false; /// If the host has sent back our name in the lobby state.
+    sf::Clock _heartbeatTimer;      /// Timer for resending Hello packets.
 };

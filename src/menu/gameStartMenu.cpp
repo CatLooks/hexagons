@@ -40,6 +40,8 @@ static void applySettings(ui::Text* text, const ui::TextSettings& settings) {
 GameStartMenu::GameStartMenu(Net* net) : _net(net) {
     bounds = { 0, 0, 1ps, 1ps };
 
+    _isHost = false;
+
     _hasSelectedMode = false;
     _hasSelectedDiff = false;
     _currentData.selectedMapPath = ""; 
@@ -295,7 +297,8 @@ void GameStartMenu::selectMode(GameMode mode, menuui::Button* btn) {
 
     // Map UI Selection to GameData
     _currentData.isMultiplayer = (mode == Mode_Host);
-   
+    _isHost = (mode == Mode_Host);
+
      _hasSelectedMode = true; 
 
     if (_currentData.isMultiplayer) {
@@ -347,16 +350,21 @@ void GameStartMenu::nextStep() {
         }
     }
 
-    if (_currentStep == STEP_LOBBY) {
+     if (_currentStep == STEP_LOBBY) {
         _currentStep = STEP_WAITING;
 
-		_net->host(_currentData.maxPlayers, _currentData.roomCode);
+        // HOST LOGIC:
+        // We start the hosting process. OnLobbySuccess WILL fire later.
+        _net->host(_currentData.maxPlayers, _currentData.roomCode);
 
         _pageWaitingLobby->setGameDetails(_currentData);
         _pageWaitingLobby->setAsHost(true);
         _pageWaitingLobby->updateList({ { assets::lang::locale.req(localization::Path("lobby.host_you")).get({}), sf::Color::Cyan, true, true } });
         
         updateUI();
+
+        // Bind handlers, but wait for OnLobbySuccess to initialize UI fully
+        bindNetworkHandlers();
         return;
     }
 
@@ -459,28 +467,44 @@ void GameStartMenu::bindStart(Action action) {
 /// Draws the menu.
 void GameStartMenu::drawSelf(ui::RenderBuffer& target, sf::IntRect self) const {
     ui::Element::drawSelf(target, self);
+    
+	// this is AI SLOP GARBAGE GET RID OF IT PROBABLY
+    if (_currentData.isMultiplayer && !_isHost && !_acknowledgedByHost) {
+        GameStartMenu* mutableSelf = const_cast<GameStartMenu*>(this);
+        
+        if (mutableSelf->_heartbeatTimer.getElapsedTime().asSeconds() > 1.0f) {
+            mutableSelf->_heartbeatTimer.restart();
+            mutableSelf->sendHello();
+            printf("[Client] Heartbeat: Sending Hello...\n");
+        }
+    }
 }
 
 /// Enters the menu as a joiner with the given game code.
 void GameStartMenu::enterAsJoiner(const std::string& code) {
     _currentData.isMultiplayer = true;
     _currentData.roomCode = code;
-    
+    _isHost = false;
+    _acknowledgedByHost = false;
+    _localPlayerName = _net->getLocalDisplayName();     
     _currentStep = STEP_WAITING;
+    updateUI(); // Switch to the lobby page first
 
-    _pageWaitingLobby->setRoomCode(_currentData.roomCode);
-    _pageWaitingLobby->setAsHost(false);     
+    // Now update the UI elements
+    _pageWaitingLobby->setRoomCode(code);
+    _pageWaitingLobby->setAsHost(false);
     
-    PlayerData connectingMsg;
-    connectingMsg.name = assets::lang::locale.req(localization::Path("lobby.connecting")).get({});
-    connectingMsg.color = sf::Color::White;
-    connectingMsg.isHost = false;
-    connectingMsg.isReady = false;
+    // Initial "Wait" state
+    PlayerData p;
+    p.name = "Connecting...";
+    p.color = sf::Color(150, 150, 150);
+    _pageWaitingLobby->updateList({ p });
 
-    _pageWaitingLobby->updateList({ connectingMsg });
-
-    updateUI();
+    bindNetworkHandlers(); 
+    _heartbeatTimer.restart();
+    sendHello(); 
 }
+
 
 /// Refreshes all text elements for localization.
 void GameStartMenu::refreshAllText() {
@@ -695,4 +719,209 @@ void GameStartMenu::changeMapPage(int delta) {
 
     _mapPageOffset = newOffset;
     updateMapGrid();
+}
+
+void GameStartMenu::bindNetworkHandlers() {
+    _net->clearHandlers();
+
+    // HOST ONLY: Wait for lobby creation to finish
+    _net->OnLobbySuccess.add([this]() {
+        if (_isHost) { // Host
+             addSelfToUI();
+        } 
+        // Client doesn't need this, they call sendHello() manually in enterAsJoiner
+    });
+
+    // Peer Connected
+    _net->OnPlayerConnected.add([this](const std::string& id) {
+        onPlayerJoined(id);
+    });
+
+    // Peer Disconnected
+    _net->OnPlayerDisconnected.add([this](const std::string& id) {
+        onPlayerLeft(id);
+    });
+
+    // Packets
+    _net->OnPacketReceived.add([this](const std::string& id, sf::Packet& pkt) {
+        onPacket(id, pkt);
+    });
+}
+
+void GameStartMenu::onPlayerJoined(const std::string& id) {
+    std::cout << "[Lobby] Player Connected: " << id << std::endl;
+
+    if (_isHost) {
+        // A client joined. Add placeholder and send them the map info.
+        LobbyMember mem;
+        mem.netId = id;
+        mem.data.name = "Connecting..."; // Temp name until Hello packet
+        mem.data.color = sf::Color::Green;
+        mem.data.isHost = false;
+        _connectedMembers.push_back(mem);
+        
+        // Immediately broadcast state so the new client receives map info and starts loading UI.
+        broadcastLobbyState();
+    } else {
+        // IF CLIENT: Another peer joined. 
+        // We do nothing specific here; we rely on the Host sending an updated LobbyState 
+        // to update our list.
+    }
+}
+
+
+void GameStartMenu::onPlayerLeft(const std::string& id) {
+    // Remove player from list
+    _connectedMembers.erase(std::remove_if(_connectedMembers.begin(), _connectedMembers.end(),
+        [&](const LobbyMember& m) { return m.netId == id; }), 
+        _connectedMembers.end());
+
+    if (_currentData.isMultiplayer) {
+        broadcastLobbyState(); // Update remaining clients
+    }
+}
+
+void GameStartMenu::onPacket(const std::string& id, sf::Packet& pkt) {
+    int type;
+    if (!(pkt >> type)) return;
+
+    // HOST LOGIC: Handle Hello from Clients
+    if (_isHost && type == Pkt_Hello) {
+        std::string name; 
+        uint8_t r, g, b;
+        if (pkt >> name >> r >> g >> b) {
+            bool found = false;
+            for (auto& m : _connectedMembers) {
+                if (m.netId == id) {
+                    m.data.name = name;
+                    m.data.color = sf::Color(r,g,b);
+                    m.data.isReady = true;
+                    found = true;
+                }
+            }
+            // Fallback if not found in list yet
+            if (!found) {
+                LobbyMember newMem;
+                newMem.netId = id;
+                newMem.data.name = name;
+                newMem.data.color = sf::Color(r,g,b);
+                newMem.data.isReady = true;
+                _connectedMembers.push_back(newMem);
+            }
+            // Update Host UI and tell everyone the new list
+            broadcastLobbyState(); 
+        }
+    }
+
+    // CLIENT LOGIC: Handle State Update from Host
+   else if (!_isHost && type == Pkt_LobbyState) {
+    std::string mapName;
+    int diff, maxP;
+    uint32_t count;
+    
+    if (pkt >> mapName >> diff >> maxP >> count) {
+        // Update local data
+        _currentData.selectedMapName = mapName;
+        _currentData.difficulty = (GameData::Difficulty)diff;
+        _currentData.maxPlayers = (unsigned int)maxP;
+        
+        // This updates the "Map: ... Difficulty: ..." labels
+        _pageWaitingLobby->setGameDetails(_currentData); 
+
+        std::vector<PlayerData> uiList;
+        bool foundMe = false;
+
+        for(uint32_t i = 0; i < count; ++i) {
+            PlayerData p;
+            bool isHost;
+            uint8_t r, g, b; // Use SFML explicit types
+
+            if (pkt >> p.name >> isHost >> r >> g >> b) {
+                p.isHost = isHost;
+                p.color = sf::Color(r, g, b);
+                p.isReady = true;
+                uiList.push_back(p);
+                
+                // Check if the host has processed our Hello packet yet
+                if (p.name == _localPlayerName) {
+                    foundMe = true;
+                }
+            }
+        }
+        
+        if (foundMe) {
+            _acknowledgedByHost = true;
+        }
+
+        // Update the visual list (removes "Connecting...")
+        _pageWaitingLobby->updateList(uiList);
+        }
+    }
+    //START GAME LOGIC (Both)
+    else if (type == Pkt_StartGame) {
+        if (_onStartGame) _onStartGame();
+    }
+}
+
+
+void GameStartMenu::sendHello() {
+    sf::Packet pkt;
+    pkt << (int)Pkt_Hello;
+    // Send our local generated name so the host knows who we are
+    pkt << _localPlayerName;
+    pkt << (uint8_t)0 << (uint8_t)255 << (uint8_t)0; // Green color
+    _net->send(pkt);
+}
+
+
+
+
+// Helper to add the local player to the UI list (Host only uses this)
+void GameStartMenu::addSelfToUI() {
+    _connectedMembers.clear();
+    
+    // In a real app, get this from AuthManager
+    PlayerData hostMe;
+    hostMe.name = _net->getLocalDisplayName() + " (Host)"; 
+    hostMe.isHost = true;
+    hostMe.color = sf::Color::Cyan;
+    hostMe.isReady = true;
+   
+    std::vector<PlayerData> uiList;
+    uiList.push_back(hostMe);
+    _pageWaitingLobby->updateList(uiList);
+}
+
+void GameStartMenu::broadcastLobbyState() {
+    std::vector<PlayerData> allPlayers;
+    
+    // Add Host (using local data)
+    PlayerData host;
+    host.name = "Host"; 
+    host.isHost = true;
+    host.color = sf::Color::Cyan;
+    allPlayers.push_back(host);
+
+    // Add Clients from our tracked list
+    for(auto& m : _connectedMembers) {
+        allPlayers.push_back(m.data);
+    }
+
+    // Update local Host UI so the host sees the changes immediately
+    _pageWaitingLobby->updateList(allPlayers);
+
+    // Pack the packet
+    sf::Packet pkt;
+    pkt << (int)Pkt_LobbyState;
+    pkt << _currentData.selectedMapName;
+    pkt << (int)_currentData.difficulty;
+    pkt << (int)_currentData.maxPlayers;
+    pkt << (uint32_t)allPlayers.size();
+    
+    for(const auto& p : allPlayers) {
+        // Use explicit casts to ensure cross-platform serialization matches
+        pkt << p.name << p.isHost << (uint8_t)p.color.r << (uint8_t)p.color.g << (uint8_t)p.color.b;
+    }
+    
+    _net->send(pkt);
 }

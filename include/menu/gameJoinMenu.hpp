@@ -62,4 +62,12 @@ private:
 
 	/// Refreshes all text labels.
 	void refreshAllText();
+
+public:
+    // Callback for when connection is successful
+    using JoinSuccessAction = std::function<void(const std::string& code)>;
+    void bindJoinSuccess(JoinSuccessAction action);
+
+private:
+    JoinSuccessAction _onJoinSuccess;
 };
