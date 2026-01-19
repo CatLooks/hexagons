@@ -1,10 +1,9 @@
 ## WIP List
 
-- map percentage display (tab)
+- map editor
 
 ## To Do List
 
-- map editor
 - audio
 - ai
 - network test
