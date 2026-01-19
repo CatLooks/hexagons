@@ -40,8 +40,10 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-file(GLOB_RECURSE SOURCES "src/*.cpp")
-add_executable(main ${SOURCES})
+file(GLOB_RECURSE ALL_SOURCES "src/*.cpp")
+set(GAME_LOGIC_SOURCES ${ALL_SOURCES})
+list(FILTER GAME_LOGIC_SOURCES EXCLUDE REGEX "main\\.cpp$")
+add_executable(main ${ALL_SOURCES})
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_compile_options(main PRIVATE /wd4455)
@@ -57,10 +59,12 @@ target_link_libraries(main PRIVATE SFML::Graphics SFML::Window SFML::System SFML
 option(PRODUCTION_BUILD "Set to ON for release builds" OFF)
 
 if(PRODUCTION_BUILD)
-    target_compile_definitions(main PUBLIC "ASSET_PATH=\"./assets\"")
+    set(GLOBAL_ASSET_PATH "./assets/")    
 else()
-    target_compile_definitions(main PUBLIC "ASSET_PATH=\"${CMAKE_SOURCE_DIR}/assets/\"")
+    set(GLOBAL_ASSET_PATH "${CMAKE_SOURCE_DIR}/assets/")   
 endif()
+
+target_compile_definitions(main PUBLIC "ASSET_PATH=\"${GLOBAL_ASSET_PATH}\"")
 
 set(ASSET_DIR ${CMAKE_SOURCE_DIR}/assets)
 
@@ -71,3 +75,26 @@ if(PRODUCTION_BUILD)
         COMMENT "Copying assets for production build"
     )
 endif()
+
+file(GLOB TEST_FILES "tests/*.cpp")
+
+foreach(test_file ${TEST_FILES})
+    get_filename_component(test_name ${test_file} NAME_WE)
+
+    add_executable(${test_name} ${test_file} ${GAME_LOGIC_SOURCES})
+
+    target_include_directories(${test_name} PRIVATE include)
+    target_compile_features(${test_name} PRIVATE cxx_std_20)
+    
+   target_compile_definitions(${test_name} PUBLIC "ASSET_PATH=\"${GLOBAL_ASSET_PATH}\"")
+    
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        target_compile_options(${test_name} PRIVATE /wd4455)
+    else()
+        target_compile_options(${test_name} PRIVATE -Wno-literal-suffix)
+    endif()
+
+    target_link_libraries(${test_name} PRIVATE SFML::Graphics SFML::Window SFML::System SFML::Audio SFML::Network)
+
+    message(STATUS "Registered Test: test_${test_name}")
+endforeach()

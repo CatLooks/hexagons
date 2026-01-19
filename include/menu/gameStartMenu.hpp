@@ -13,6 +13,7 @@
 /// Game start configuration menu.
 class GameStartMenu : public ui::Element {
 public:
+    friend class GameStartMenuTest; 
     /// Game start menu callback type.
     using Action = std::function<void()>;
 

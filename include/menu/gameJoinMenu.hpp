@@ -10,6 +10,7 @@
 /// Game join menu for multiplayer.
 class GameJoinMenu : public ui::Element {
 public:
+    friend class GameJoinMenuTest;
     /// Callback for returning to previous menu.
     using Action = std::function<void()>;
     /// Callback for joining with a code.
