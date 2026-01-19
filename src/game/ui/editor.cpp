@@ -95,9 +95,11 @@ Editor::Editor(Game* game, ui::Layer* text_layer): _game(game) {
 			if (!tile.hex) return false;
 	
 			// change type & remove any entities
+			Regions::Ref prev = tile.hex->region();
 			tile.hex->type = Hex::Void;
 			tile.hex->leave();
 			_game->map.removeEntity(tile.hex);
+			_game->map.updateRegions(tile, prev, {});
 
 			// update resource table
 			_res_table->sync(nullptr);
@@ -112,9 +114,11 @@ Editor::Editor(Game* game, ui::Layer* text_layer): _game(game) {
 			if (!tile.hex) return false;
 
 			// change type & remove any entities
+			Regions::Ref prev = tile.hex->region();
 			tile.hex->type = Hex::Water;
 			tile.hex->leave();
 			_game->map.removeEntity(tile.hex);
+			_game->map.updateRegions(tile, prev, {});
 
 			// update resource table
 			_res_table->sync(nullptr);
@@ -129,6 +133,7 @@ Editor::Editor(Game* game, ui::Layer* text_layer): _game(game) {
 			if (!tile.hex) return false;
 
 			// change type & team
+			Regions::Ref prev = tile.hex->region();
 			tile.hex->type = Hex::Ground;
 			tile.hex->team = team;
 
@@ -137,7 +142,7 @@ Editor::Editor(Game* game, ui::Layer* text_layer): _game(game) {
 			tile.hex->join(ref);
 
 			// update regions
-			_game->map.updateRegions(tile, tile.hex->region(), {});
+			_game->map.updateRegions(tile, prev, {});
 
 			// update resource table
 			_res_table->sync(&*tile.hex->region());

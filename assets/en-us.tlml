@@ -248,6 +248,7 @@ dp {
 		mode {
 			host: "Host"
 			client: "Client"
+			edit: "Edit"
 		}
 		state {
 			quit: "Quit"

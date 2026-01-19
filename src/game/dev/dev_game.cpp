@@ -42,7 +42,8 @@ namespace dev {
 		// enum -> string tables
 		static const char* enum_mode[] = {
 			"@!dp.state.mode.host",
-			"@!dp.state.mode.client"
+			"@!dp.state.mode.client",
+			"@!dp.state.mode.edit"
 		};
 		static const char* enum_state[] = {
 			"@!dp.state.state.quit",
