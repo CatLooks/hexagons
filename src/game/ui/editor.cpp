@@ -442,6 +442,19 @@ Editor::Editor(Game* game, ui::Layer* text_layer): _game(game) {
 
 	// initial label update
 	updateLabels();
+
+	// add map loader
+	auto* loader = new gameui::Loader(game);
+	loader->onEvent([=](const ui::Event& evt) {
+		if (auto data = evt.get<ui::Event::KeyPress>()) {
+			if (data->key == sf::Keyboard::Key::Backslash) {
+				loader->reload();
+				return true;
+			};
+		};
+		return false;
+	});
+	text_layer->add(loader);
 };
 
 /// Updates entity label.

@@ -35,6 +35,7 @@ namespace ui {
 		/// Button callback delegate.
 		Delegate<void()> _call;
 
+	public:
 		/// Emits a button expansion animation.
 		Anim* emitExpand();
 		/// Emits a button expansion animation.
@@ -43,7 +44,6 @@ namespace ui {
 		/// Starts an error animation.
 		void startError();
 
-	public:
 		/// Constructs button element base.
 		/// 
 		/// @param map Button panel map.

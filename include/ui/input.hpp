@@ -140,5 +140,8 @@ namespace ui {
 		/// 
 		/// @return `true` (return value for event handler).
 		bool eventKey(const Event::KeyPress& evt);
+
+		/// Returns current string inside of text input.
+		const sf::String& get() const;
 	};
 };

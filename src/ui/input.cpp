@@ -88,7 +88,7 @@ namespace ui {
 	/// Sets text input string.
 	void TextInput::set(const sf::String& text) {
 		_string = text;
-		_cursor = text.getSize();
+		_cursor = (unsigned int)text.getSize();
 		display();
 	};
 
@@ -161,5 +161,10 @@ namespace ui {
 
 		// ignore
 		return true;
+	};
+
+	/// Returns current string inside of text input.
+	const sf::String& TextInput::get() const {
+		return _string;
 	};
 };

@@ -101,6 +101,9 @@ namespace dev {
 		/// @return New section element.
 		Section* push(std::function<bool()> predicate = []() { return true; });
 
+		/// Clears all sections.
+		void clear();
+
 		/// Attaches a global update callback.
 		/// 
 		/// @param handler Callback function.

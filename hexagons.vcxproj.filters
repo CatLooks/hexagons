@@ -417,6 +417,9 @@
     <ClCompile Include="src\game\ui\resource_table.cpp">
       <Filter>Source Files\game\ui</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\ui\map_loader.cpp">
+      <Filter>Source Files\game\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -787,6 +790,9 @@
       <Filter>Header Files\game\values</Filter>
     </ClInclude>
     <ClInclude Include="include\game\ui\resource_table.hpp">
+      <Filter>Header Files\game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\ui\map_loader.hpp">
       <Filter>Header Files\game\ui</Filter>
     </ClInclude>
   </ItemGroup>

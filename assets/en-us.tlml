@@ -208,6 +208,30 @@ edit {
 		peach: "Peaches"
 		income: "Income"
 	}
+
+	# map name filter
+	filter: "Showing {n} / {max} files."
+
+	# load filename
+	load_file: "Load {file}"
+	# load nothing
+	load_none: "No file selected"
+
+	# map info
+	map {
+		file {
+			k: "File"
+			v: "{file}"
+		}
+		name {
+			k: "Name"
+			v: "{name}"
+		}
+		author {
+			k: "Author"
+			v: "{auth}"
+		}
+	}
 }
 
 # debug info

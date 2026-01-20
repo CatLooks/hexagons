@@ -5,7 +5,10 @@
 #include "game/values/editor_values.hpp"
 #include "game/map.hpp"
 #include "game/moves/move.hpp"
+
 #include "resource_table.hpp"
+#include "map_loader.hpp"
+
 #include "assets.hpp"
 #include "ui.hpp"
 

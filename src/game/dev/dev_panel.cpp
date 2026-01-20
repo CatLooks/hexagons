@@ -95,6 +95,12 @@ namespace dev {
 		return sec;
 	};
 
+	/// Clears all sections.
+	void Panel::clear() {
+		ui::Element::clear();
+		_ctx.clear();
+	};
+
 	/// Attaches a global update callback.
 	void Panel::attach(StaticHandler handler) {
 		_upd = handler;

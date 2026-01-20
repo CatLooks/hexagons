@@ -89,6 +89,7 @@
     <ClCompile Include="src\game\ui\editor.cpp" />
     <ClCompile Include="src\game\ui\game_panel.cpp" />
     <ClCompile Include="src\game\ui\hex_preview.cpp" />
+    <ClCompile Include="src\game\ui\map_loader.cpp" />
     <ClCompile Include="src\game\ui\move_selector.cpp" />
     <ClCompile Include="src\game\ui\progress_view.cpp" />
     <ClCompile Include="src\game\ui\resource_bar.cpp" />
@@ -213,6 +214,7 @@
     <ClInclude Include="include\game\ui\editor.hpp" />
     <ClInclude Include="include\game\ui\game_panel.hpp" />
     <ClInclude Include="include\game\ui\hex_preview.hpp" />
+    <ClInclude Include="include\game\ui\map_loader.hpp" />
     <ClInclude Include="include\game\ui\move_selector.hpp" />
     <ClInclude Include="include\game\ui\progress_view.hpp" />
     <ClInclude Include="include\game\ui\resource_bar.hpp" />

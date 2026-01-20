@@ -19,10 +19,13 @@
 #include "dev/dev_game.hpp"
 #include <delegate>
 
+namespace gameui { class Loader; };
+
 /// Game controller object.
 class Game : public ui::Element {
 	friend dev::Factory;
 	friend Editor;
+	friend gameui::Loader;
 
 public:
 	Map map; /// Game map.
