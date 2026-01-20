@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 #include "menu/lobbyMenu.hpp"
+#include "menu/ui/alertPopup.hpp"
 
 class Net;
 
@@ -176,4 +177,9 @@ private:
     std::string _localPlayerName;   /// The name this client generated for themselves.
     bool _acknowledgedByHost = false; /// If the host has sent back our name in the lobby state.
     sf::Clock _heartbeatTimer;      /// Timer for resending Hello packets.
+
+	AlertPopup* _alert = nullptr; /// Alert popup for errors.
+    
+public:
+    void setAlert(AlertPopup* alert) { _alert = alert; }
 };

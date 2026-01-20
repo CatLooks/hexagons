@@ -1,6 +1,7 @@
 #include "menu.hpp"
 #include "game.hpp"
 #include "menu/gameJoinMenu.hpp"
+#include "menu/ui/alertPopup.hpp"
 
 MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game* gameInstance, Net& net)
     : context(itf.newContext())
@@ -20,6 +21,16 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
     startMenu = new GameStartMenu(&net);
     joinMenu = new GameJoinMenu(&net);
 
+	// create global alert popup
+    // Create the ONE Global Popup
+    auto* globalAlert = new AlertPopup();
+    
+    // Add it to the layer AFTER 'pages' so it draws on top and catches clicks
+    menu_layer->add(globalAlert);
+
+    // Pass it to the menus that need it
+    startMenu->setAlert(globalAlert);
+  
     // add menu pages to container
     pages->add(mainMenu);
     pages->add(optionsMenu);
@@ -48,9 +59,15 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
         });
 
     // main -> join game
-    mainMenu->bindJoin([=]() {
+    mainMenu->bindJoin([=, &net]() {
+        // CHECK: Prevent entering Join screen if not logged in
+        if (true){//!net.isLoggedIn()) {
+             globalAlert->setBackground(mainMenu); 
+            globalAlert->show("You must be logged in\nto Join a Game!");
+            return;
+        }
         pages->show(joinMenu);
-        });
+    }); 
 
     // main -> options
     mainMenu->bindOptions([=]() {

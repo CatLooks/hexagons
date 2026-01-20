@@ -79,10 +79,23 @@ GameStartMenu::GameStartMenu(Net* net) : _net(net) {
     _contentPages->add(_pageLobby);
 
     _pageWaitingLobby->bindStart([this]() { if (_onStartGame) _onStartGame(); });
+    
     _pageWaitingLobby->bindLeave([this]() {
         if (_currentData.isMultiplayer && _currentStep == STEP_WAITING) {
-            _currentStep = STEP_LOBBY;
-            updateUI();
+            
+            if (_isHost) {
+                // HOST LOGIC:
+                //_net->disconnect();               
+                _currentStep = STEP_LOBBY;
+                updateUI();
+            } else {
+                // CLIENT LOGIC:
+                //_net->disconnect(); 
+                _currentData = GameData(); 
+                _connectedMembers.clear();
+                if (_onBack) _onBack();
+            }
+
         } else if (_onBack) {
             _onBack();
         }
@@ -292,6 +305,16 @@ ui::Element* GameStartMenu::createLobbyPage() {
 
 /// Selects game mode.
 void GameStartMenu::selectMode(GameMode mode, menuui::Button* btn) {
+    
+    if (mode == Mode_Host) {
+        // Check if logged in before allowing Host selection
+        if (true){//!_net->isLoggedIn()) {
+            _alert->setBackground(_mainSwitcher); 
+            _alert->show("You must be logged in\nto play Multiplayer!");
+            return; // Stop here, do not select the button
+        }
+    }
+    
     for (auto* b : _modeButtons) b->deselect();
     btn->select();
 
@@ -482,6 +505,10 @@ void GameStartMenu::drawSelf(ui::RenderBuffer& target, sf::IntRect self) const {
 
 /// Enters the menu as a joiner with the given game code.
 void GameStartMenu::enterAsJoiner(const std::string& code) {
+    //_net->disconnect(); 
+    _net->clearHandlers();
+    _connectedMembers.clear();
+    
     _currentData.isMultiplayer = true;
     _currentData.roomCode = code;
     _isHost = false;
