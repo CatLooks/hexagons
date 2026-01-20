@@ -13,6 +13,20 @@ Net::~Net() {
 	logout();
 }
 
+void Net::leaveLobby() {
+    auto lobby = m_eosManager.GetLobbyManager();
+    if (!lobby) return;
+
+    // Host leaves => destroy lobby
+    if (m_role == Role::Host) {
+        lobby->DestroyLobby();
+    }
+    // Client leaves => leave lobby
+    else if (m_role == Role::Client) {
+        lobby->LeaveLobby();
+    }
+}
+
 /// Start the login process.
 void Net::login() {
     auto auth = m_eosManager.GetAuthManager();
@@ -201,6 +215,25 @@ void Net::AttachToLobby(std::shared_ptr<LobbyManager> lobby) {
         OnLobbySuccess.invoke();
     });
 
+    // Leaving delegates
+    lobby->OnLobbyLeft.add([this](EOS_LobbyId) {
+        // local user left (client case)
+        close();
+        OnLobbyLeft.invoke();
+    });
+
+    lobby->OnHostLobbyLeft.add([this](EOS_LobbyId) {
+        // local user destroyed lobby (host case)
+        close();
+        OnHostLobbyLeft.invoke();
+    });
+
+    lobby->OnLobbyDestroyed.add([this](EOS_LobbyId) {
+        // clients see lobby destroyed
+        close();
+        OnLobbyDestroyed.invoke();
+    });
+
     lobby->OnMemberJoined.add([this, lobby](EOS_ProductUserId userId) {
         auto p2p = lobby->GetP2PConnection(userId);
         const std::string peerKey = EOSIdToString(userId);
@@ -256,6 +289,9 @@ void Net::clearHandlers() {
         OnPlayerConnected.clear();
         OnPlayerDisconnected.clear();
         OnPacketReceived.clear();
+        OnLobbyLeft.clear();
+        OnHostLobbyLeft.clear();
+        OnLobbyDestroyed.clear();
 }
 
 std::string Net::getLocalDisplayName() {

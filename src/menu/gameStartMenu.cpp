@@ -80,13 +80,12 @@ GameStartMenu::GameStartMenu(Net* net) : _net(net) {
 
     _pageWaitingLobby->bindStart([this]() { if (_onStartGame) _onStartGame(); });
     _pageWaitingLobby->bindLeave([this]() {
-        if (_currentData.isMultiplayer && _currentStep == STEP_WAITING) {
-            _currentStep = STEP_LOBBY;
-            updateUI();
-        } else if (_onBack) {
-            _onBack();
-        }
-    });
+		if (_currentData.isMultiplayer && _currentStep == STEP_WAITING) {
+			if (_net) _net->leaveLobby();
+			return;
+		}
+		if (_onBack) _onBack();
+	});
 
     assets::lang::refresh_listeners.push_back([this]() { refreshAllText(); });
     

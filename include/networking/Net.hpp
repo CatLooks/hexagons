@@ -52,6 +52,9 @@ public:
     /// Closes connections and releases resources.
     void close();
 
+    //Leaves current lobby
+    void leaveLobby();
+
     /// Sends raw data to a specific user (or host if client).
     /// @param packet Raw bytes to send.
     void send(const sf::Packet& packet);
@@ -102,6 +105,9 @@ public:
     Delegate<void(const std::string&)> OnPlayerDisconnected;
     Delegate<void(const std::string&, sf::Packet&)> OnPacketReceived;
     Delegate<void(const std::string&)> OnJoinFailed;
+    Delegate<void()> OnLobbyLeft;
+    Delegate<void()> OnHostLobbyLeft;
+    Delegate<void()> OnLobbyDestroyed;
 
     void clearHandlers();
 

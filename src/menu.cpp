@@ -93,4 +93,19 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
         // 2. Show the lobby
         pages->show(startMenu);
     });   
+
+	// po utworzeniu stron i pokazaniu mainMenu
+
+	net.OnLobbyLeft.add([=]() {
+		pages->show(mainMenu);
+	});
+
+	net.OnHostLobbyLeft.add([=]() {
+		pages->show(mainMenu);
+	});
+
+	// Exposed only: you will implement popup later
+	net.OnLobbyDestroyed.add([=]() {
+		// intentionally empty (popup + OK -> main menu handled by you)
+	});
 }

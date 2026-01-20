@@ -10,8 +10,9 @@ LobbyManager::~LobbyManager() {
 	if (MemberStatusNotificationId != EOS_INVALID_NOTIFICATIONID) {
 		EOS_Lobby_RemoveNotifyLobbyMemberStatusReceived(LobbyHandle, MemberStatusNotificationId);
 	}
-	//shared ptrs will auto clean up
 }
+
+
 
 void LobbyManager::CreateLobby(uint32_t maxPlayers, std::string& lobbyCode) {
 	isBusy = true;
@@ -93,6 +94,48 @@ void LobbyManager::JoinLobby(EOS_HLobbyDetails LobbyDetailsHandle) {
 	EOS_Lobby_JoinLobby(LobbyHandle, &JoinOptions, this, OnJoinLobbyComplete);
 }
 
+//Executes on the client when leaving a lobby
+void LobbyManager::LeaveLobby() {
+	if (isBusy) {
+		std::cerr << "[LobbyManager] Cannot leave lobby while busy." << std::endl;
+		return;
+	}
+	if (!LobbyId) {
+		std::cerr << "[LobbyManager] Cannot leave lobby: no lobby joined." << std::endl;
+		return;
+	}
+
+	isBusy = true;
+
+	EOS_Lobby_LeaveLobbyOptions LeaveOptions = {};
+	LeaveOptions.ApiVersion = EOS_LOBBY_LEAVELOBBY_API_LATEST;
+	LeaveOptions.LocalUserId = LocalUserId;
+	LeaveOptions.LobbyId = LobbyId;
+
+	EOS_Lobby_LeaveLobby(LobbyHandle, &LeaveOptions, this, OnLeaveLobbyComplete);
+}
+
+// Executes on host when destroying a lobby
+void LobbyManager::DestroyLobby() {
+	if (isBusy) {
+		std::cerr << "[LobbyManager] Cannot destroy lobby while busy." << std::endl;
+		return;
+	}
+	if (!LobbyId) {
+		std::cerr << "[LobbyManager] Cannot destroy lobby: no lobby joined." << std::endl;
+		return;
+	}
+
+	isBusy = true;
+
+	EOS_Lobby_DestroyLobbyOptions DestroyOptions = {};
+	DestroyOptions.ApiVersion = EOS_LOBBY_DESTROYLOBBY_API_LATEST;
+	DestroyOptions.LocalUserId = LocalUserId;
+	DestroyOptions.LobbyId = LobbyId;
+
+	EOS_Lobby_DestroyLobby(LobbyHandle, &DestroyOptions, this, OnDestroyLobbyComplete);
+}
+
 void EOS_CALL LobbyManager::OnJoinLobbyComplete(const EOS_Lobby_JoinLobbyCallbackInfo* Data) {
 	if (auto Manager = static_cast<LobbyManager*>(Data->ClientData)) {
 		Manager->HandleJoinLobbyComplete(Data);
@@ -172,10 +215,11 @@ void LobbyManager::HandleFindLobbyComplete(const EOS_LobbySearch_FindCallbackInf
 void LobbyManager::HandleJoinLobbyComplete(const EOS_Lobby_JoinLobbyCallbackInfo* Data) {
 	isBusy = false;
 	if (Data->ResultCode == EOS_EResult::EOS_Success) {
-		LobbyId = Data->LobbyId;
+		LobbyIdStr = Data->LobbyId ? Data->LobbyId : "";
+		LobbyId = LobbyIdStr.empty() ? nullptr : LobbyIdStr.c_str();
+
 		std::cout << "[LobbyManager] Successfully joined lobby with ID: " << LobbyId << std::endl;
 		RegisterMemberStatusNotifications();
-
 		EOS_LobbyDetails_GetLobbyOwnerOptions OwnerOptions = {};
 		OwnerOptions.ApiVersion = EOS_LOBBYDETAILS_GETLOBBYOWNER_API_LATEST;
 		std::cout << "[DEBUG] LobbyDetailsHandle: " << LobbyDetailsHandle << std::endl;
@@ -187,6 +231,54 @@ void LobbyManager::HandleJoinLobbyComplete(const EOS_Lobby_JoinLobbyCallbackInfo
 	}
 	else {
 		std::cerr << "[LobbyManager] Failed to join lobby: " << EOS_EResult_ToString(Data->ResultCode) << std::endl;
+	}
+}
+
+void EOS_CALL LobbyManager::OnLeaveLobbyComplete(const EOS_Lobby_LeaveLobbyCallbackInfo* Data) {
+	if (auto Manager = static_cast<LobbyManager*>(Data->ClientData)) {
+		Manager->HandleLeaveLobbyComplete(Data);
+	}
+}
+
+void LobbyManager::HandleLeaveLobbyComplete(const EOS_Lobby_LeaveLobbyCallbackInfo* Data) {
+	isBusy = false;
+	if (Data->ResultCode == EOS_EResult::EOS_Success) {
+		std::cout << "[LobbyManager] Successfully left lobby with ID: " << Data->LobbyId << std::endl;
+		LobbyId = nullptr;
+		HostId = nullptr;
+		LobbyDetailsHandle = nullptr;
+		LocalConnection = nullptr;
+		ExternalUsers.clear();
+		P2PConnections.clear();
+		UnregisterMemberStatusNotifications();
+		OnLobbyLeft.invoke(Data->LobbyId);
+	}
+	else {
+		std::cerr << "[LobbyManager] Failed to leave lobby: " << EOS_EResult_ToString(Data->ResultCode) << std::endl;
+	}
+}
+
+void EOS_CALL LobbyManager::OnDestroyLobbyComplete(const EOS_Lobby_DestroyLobbyCallbackInfo* Data) {
+	if (auto Manager = static_cast<LobbyManager*>(Data->ClientData)) {
+		Manager->HandleDestroyLobbyComplete(Data);
+	}
+}
+
+void LobbyManager::HandleDestroyLobbyComplete(const EOS_Lobby_DestroyLobbyCallbackInfo* Data) {
+	isBusy = false;
+	if (Data->ResultCode == EOS_EResult::EOS_Success) {
+		std::cout << "[LobbyManager] Successfully destroyed lobby with ID: " << Data->LobbyId << std::endl;
+		LobbyId = nullptr;
+		HostId = nullptr;
+		LobbyDetailsHandle = nullptr;
+		LocalConnection = nullptr;
+		ExternalUsers.clear();
+		P2PConnections.clear();
+		UnregisterMemberStatusNotifications();
+		OnHostLobbyLeft.invoke(Data->LobbyId);
+	}
+	else {
+		std::cerr << "[LobbyManager] Failed to destroy lobby: " << EOS_EResult_ToString(Data->ResultCode) << std::endl;
 	}
 }
 
@@ -204,11 +296,38 @@ void LobbyManager::HandleMemberStatusChange(const EOS_Lobby_LobbyMemberStatusRec
 	case EOS_ELobbyMemberStatus::EOS_LMS_DISCONNECTED:
 	case EOS_ELobbyMemberStatus::EOS_LMS_KICKED:
 		std::cout << "[LobbyManager] Member left: " << Data->TargetUserId << std::endl;
+		if(isHost) {
+			ExternalUsers.erase(std::remove(ExternalUsers.begin(), ExternalUsers.end(), Data->TargetUserId), ExternalUsers.end());
+		}
 		OnMemberLeft.invoke(Data->TargetUserId);
-		// In a real game, you would find and remove the correct P2PManager from the vector here
 		break;
+		// In a real game, you would find and remove the correct P2PManager from the vector here
+
+	// Host destroyed lobby / lobby closed => all clients should receive this status.
+	case EOS_ELobbyMemberStatus::EOS_LMS_CLOSED:
+		std::cout << "[LobbyManager] Lobby closed." << std::endl;
+
+		// local cleanup (clients stop pumping stale connections)
+		LobbyId = nullptr;
+		HostId = nullptr;
+		LobbyDetailsHandle = nullptr;
+		LocalConnection = nullptr;
+		ExternalUsers.clear();
+		P2PConnections.clear();
+		UnregisterMemberStatusNotifications();
+
+		OnLobbyDestroyed.invoke(nullptr);
+		break;
+
 	default:
 		break;
+	}
+}
+
+void LobbyManager::UnregisterMemberStatusNotifications() {
+	if (MemberStatusNotificationId != EOS_INVALID_NOTIFICATIONID) {
+		EOS_Lobby_RemoveNotifyLobbyMemberStatusReceived(LobbyHandle, MemberStatusNotificationId);
+		MemberStatusNotificationId = EOS_INVALID_NOTIFICATIONID;
 	}
 }
 
