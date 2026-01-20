@@ -238,7 +238,6 @@ int main() {
 	}
 
 	EOSManager* eos = &EOSManager::GetInstance();
-	(void)eos;
 
 	Net net;
 

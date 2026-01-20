@@ -154,7 +154,7 @@ private:
     void addSelfToUI();
     
     // Packet Protocol
-    enum PacketType { Pkt_Hello = 100, Pkt_LobbyState = 101, Pkt_StartGame = 102 };
+    enum PacketType { Pkt_Hello = 100, Pkt_LobbyState = 101, Pkt_StartGame = 102, Pkt_Leave = 103, Pkt_LobbyEnded =104 };
 
     struct LobbyMember {
         std::string netId;
@@ -172,14 +172,19 @@ private:
 
     // Sync helpers
     void sendHello();
+    void sendLeavePacket();
     void broadcastLobbyState();
 
     std::string _localPlayerName;   /// The name this client generated for themselves.
     bool _acknowledgedByHost = false; /// If the host has sent back our name in the lobby state.
     sf::Clock _heartbeatTimer;      /// Timer for resending Hello packets.
-
+      
 	AlertPopup* _alert = nullptr; /// Alert popup for errors.
     
 public:
     void setAlert(AlertPopup* alert) { _alert = alert; }
+
+    void resetLobbyState();
+    void reset();
+
 };

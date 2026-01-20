@@ -30,6 +30,8 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
 
     // Pass it to the menus that need it
     startMenu->setAlert(globalAlert);
+
+     globalAlert->setBackground(pages); 
   
     // add menu pages to container
     pages->add(mainMenu);
@@ -55,17 +57,19 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
 
     // main -> game start (Host/Singleplayer)
     mainMenu->bindStart([=]() {
+        startMenu->reset(); //this will reset whenever getting to lobby (awaryjne)
         pages->show(startMenu);
         });
 
     // main -> join game
     mainMenu->bindJoin([=, &net]() {
         // CHECK: Prevent entering Join screen if not logged in
-        if (true){//!net.isLoggedIn()) {
-             globalAlert->setBackground(mainMenu); 
-            globalAlert->show("You must be logged in\nto Join a Game!");
+
+        if (!net.isLoggedIn()) {
+            globalAlert->show("You must be logged in\nto join a Game!");
             return;
         }
+        joinMenu->reset();
         pages->show(joinMenu);
     }); 
 
@@ -111,6 +115,7 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
 
     // join menu -> back
     joinMenu->bindBack([=]() {
+        joinMenu->reset(); 
         pages->show(mainMenu);
         });
 
@@ -122,4 +127,29 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
         // 2. Show the lobby
         pages->show(startMenu);
     });   
+
+	// po utworzeniu stron i pokazaniu mainMenu
+
+	net.OnLobbyLeft.add([=]() {
+        startMenu->reset(); 
+		pages->show(mainMenu);
+	});
+
+	net.OnHostLobbyLeft.add([=]() {
+        globalAlert->show("The Host has ended the game.");
+        startMenu->reset(); 
+		pages->show(mainMenu);
+	});
+
+	// Exposed only: you will implement popup later
+	net.OnLobbyDestroyed.add([=]() {
+		// intentionally empty (popup + OK -> main menu handled by you)
+        globalAlert->show("Lobby has been closed.");
+        pages->show(mainMenu);
+	});
+
+     net.OnJoinFailed.add([=](const std::string& reason) {
+        globalAlert->show("Failed to join lobby:\n" + reason);
+        pages->show(mainMenu);
+    });
 }
