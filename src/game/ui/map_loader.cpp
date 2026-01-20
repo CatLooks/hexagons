@@ -15,8 +15,8 @@ namespace gameui {
 		(&assets::interface, Values::coords(0, 0), { 6, 6 }, 1);
 
 	/// Construct a map loader.
-	Loader::Loader(Game* game):
-		ui::Panel(field_texture), _game(game),
+	Loader::Loader(Game* game, Table* table):
+		ui::Panel(field_texture), _game(game), _table(table),
 		_select_sec(nullptr), _select_temp(nullptr)
 	{
 		// configure panel
@@ -276,6 +276,10 @@ namespace gameui {
 				button->validate([=]() {
 					// clear map
 					_game->map.clear();
+					_game->centerCamera();
+
+					// deselect region resource table
+					_table->sync(nullptr);
 
 					// reset file field
 					_f_file->set("");
@@ -303,6 +307,10 @@ namespace gameui {
 		
 		// construct the map
 		_select_temp->construct(&_game->map);
+		_game->centerCamera();
+
+		// deselect region resource table
+		_table->sync(nullptr);
 
 		// store generic info in fields
 		_f_file->set(_select_file);
@@ -461,11 +469,16 @@ namespace gameui {
 		// put loader in a hidden position
 		loader->position() = { 0.5as, -1ps };
 		loader->recalculate();
-		loader->deactivate(true);
 
 		// attach below the loader
 		onRecalculate([=](const sf::Time&) {
 			position() = { 0.5as, loader->bounds.bottomLeft().y };
+
+			// disable loader on the first frame
+			if (_first) {
+				_first = false;
+				loader->deactivate(true);
+			};
 		});
 
 		// add click event
@@ -480,6 +493,14 @@ namespace gameui {
 
 			// disable grabber
 			disable();
+		});
+
+		// don't propagate mouse events
+		onEvent([=](const ui::Event& evt) {
+			if (auto data = evt.get<ui::Event::MousePress>()) {
+				return true;
+			};
+			return false;
 		});
 
 		// add loader hiding callback

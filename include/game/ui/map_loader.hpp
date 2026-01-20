@@ -13,6 +13,8 @@ namespace gameui {
 	private:
 		/// Game controller reference.
 		Game* _game;
+		/// Region resource table reference.
+		Table* _table;
 
 		/// Map list.
 		dev::Panel* _list;
@@ -53,7 +55,8 @@ namespace gameui {
 		/// Construct a map loader.
 		///
 		/// @param game Game controller reference.
-		Loader(Game* game);
+		/// @param table Region resources table.
+		Loader(Game* game, Table* table);
 
 		/// Constructs a map from template.
 		void construct();
@@ -73,6 +76,10 @@ namespace gameui {
 
 	/// Map loader grabber button.
 	class Grabber : public ui::Button {
+	private:
+		/// Whether running during the first frame.
+		bool _first = true;
+
 	public:
 		/// Constructs a grabber button.
 		///

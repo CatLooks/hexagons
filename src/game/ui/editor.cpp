@@ -444,7 +444,7 @@ Editor::Editor(Game* game, ui::Layer* text_layer): _game(game) {
 	updateLabels();
 
 	// add map loader
-	_loader = new gameui::Loader(game);
+	_loader = new gameui::Loader(game, _res_table);
 	text_layer->add(_loader);
 
 	// add loader panel grabber

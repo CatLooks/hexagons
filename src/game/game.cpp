@@ -909,6 +909,12 @@ sf::Vector2i Game::mouseToHex(sf::Vector2i mouse) const {
 	return pos;
 };
 
+/// Moves the camera to the middle of the map.
+void Game::centerCamera() {
+	auto bp = map.backplane();
+	_camera.setPosition((sf::Vector2f)bp.getCenter());
+};
+
 /// Draws the map.
 void Game::drawSelf(ui::RenderBuffer& target, sf::IntRect self) const {
 	map.draw(target, _pulse);

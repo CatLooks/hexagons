@@ -150,6 +150,9 @@ public:
 	/// @param mouse Mouse position.
 	sf::Vector2i mouseToHex(sf::Vector2i mouse) const;
 
+	/// Moves the camera to the middle of the map.
+	void centerCamera();
+
 protected:
 	/// Draws the map.
 	void drawSelf(ui::RenderBuffer& target, sf::IntRect self) const override;
