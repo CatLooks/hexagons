@@ -188,8 +188,8 @@ menu {
 
 	lobby_settings: "Lobby Settings"
 	room_code_desc: "Share this code!"
-	vsync: "VSYNC"
-	fullscreen: "FULLSCREEN"
+	vsync: "Vsync: {v}"
+	fullscreen: "Fullscreen: {v}"
 
 }
 

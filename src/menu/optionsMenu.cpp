@@ -144,7 +144,7 @@ void OptionsMenu::drawSelf(ui::RenderBuffer& target, sf::IntRect self) const {
 void OptionsMenu::updateVSyncLabel() {
     if (_vsyncBtn && _vsyncBtn->setLabel()) {
         ui::Text* lbl = _vsyncBtn->setLabel();
-        lbl->setPath("menu.vsync"); // Add "menu.vsync": "VSync: {v}" to lang file
+        lbl->setPath("menu.vsync"); // "menu.vsync": "VSync: {v}" 
         lbl->param("v", _vsyncEnabled ? "@!menu.on" : "@!menu.off");
     }
 }
@@ -152,8 +152,8 @@ void OptionsMenu::updateVSyncLabel() {
 void OptionsMenu::updateFullscreenLabel() {
     if (_fullscreenBtn && _fullscreenBtn->setLabel()) {
         ui::Text* lbl = _fullscreenBtn->setLabel();
-        lbl->setPath("menu.fullscreen"); // Add "menu.fullscreen": "Display: {v}"
-        lbl->param("v", _fullscreenEnabled ? "@!menu.fullscreen_on" : "@!menu.windowed");
+        lbl->setPath("menu.fullscreen"); // "menu.fullscreen": "Display: {v}"
+        lbl->param("v", _fullscreenEnabled  ? "@!menu.on" : "@!menu.off");
     }
 }
 
