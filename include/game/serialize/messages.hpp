@@ -43,3 +43,10 @@ namespace Serialize {
 	/// @return Read event message.
 	std::optional<Messages::Event> decodeMessage(sf::Packet& packet);
 };
+
+namespace NetworkProtocol {
+    enum PacketType : uint8_t {
+        Event = 0,
+        MoveList = 1
+    };
+}

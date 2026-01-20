@@ -233,3 +233,12 @@ Region::Team GameState::team() const {
 uint32_t GameState::turn() const {
 	return _turn;
 };
+
+void GameState::reset(Mode mode, Adapter* adapter) {
+    _mode = mode;
+    _adapter.reset(adapter);
+	_plr.clear();
+    _idx = 0;
+    _turn = 1;
+    _state = Init;
+}

@@ -111,4 +111,7 @@ public:
 
 	/// Returns current turn number.
 	uint32_t turn() const;
+
+public:
+	void reset(Mode mode, Adapter* adapter);
 };

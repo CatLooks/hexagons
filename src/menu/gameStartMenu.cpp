@@ -422,6 +422,8 @@ void GameStartMenu::nextStep() {
 
                 _currentStep = STEP_WAITING;
 
+                _localPlayerName = _net->getLocalDisplayName(); 
+
                 _pageWaitingLobby->setGameDetails(_currentData);
                 _pageWaitingLobby->setAsHost(true);
                 _pageWaitingLobby->setRoomCode(_currentData.roomCode);
@@ -446,6 +448,13 @@ void GameStartMenu::nextStep() {
     }
 
     if (_currentStep == STEP_WAITING) {
+        if (_currentData.isMultiplayer && _isHost && _net) {
+            sf::Packet pkt;
+            pkt << (int)Pkt_StartGame;
+            _net->send(pkt);
+            printf("[Host] Broadcasting StartGame packet...\n");
+        }
+
         if (_onStartGame) _onStartGame();
         return;
     }
@@ -941,15 +950,17 @@ void GameStartMenu::onPacket(const std::string& id, sf::Packet& pkt) {
     // CLIENT LOGIC: Handle State Update from Host
    else if (!_isHost && type == Pkt_LobbyState) {
     std::string mapName;
+    std::string mapPath; 
     std::string roomCode; 
     int diff, maxP;
     uint32_t count;
     
-    if (pkt >> roomCode >> mapName >> diff >> maxP >> count) {
+   if (pkt >> roomCode >> mapName >> mapPath >> diff >> maxP >> count){
         std::string savedCode = _currentData.roomCode;
         // Update local data
         _currentData.roomCode = roomCode;
         _currentData.selectedMapName = mapName;
+        _currentData.selectedMapPath = mapPath;
         _currentData.difficulty = (GameData::Difficulty)diff;
         _currentData.maxPlayers = (unsigned int)maxP;
         
@@ -983,12 +994,15 @@ void GameStartMenu::onPacket(const std::string& id, sf::Packet& pkt) {
         }
 
         // Update the visual list (removes "Connecting...")
+        _currentData.players = uiList; 
         _pageWaitingLobby->updateList(uiList);
         }
     }
     //START GAME LOGIC (Both)
     else if (type == Pkt_StartGame) {
-        if (_onStartGame) _onStartGame();
+        printf("[Client] Received StartGame packet. Switching context...\n");
+        // This triggers the EXACT SAME callback as the Host's button click
+        if (_onStartGame) _onStartGame(); 
     }
 }
 
@@ -1046,6 +1060,13 @@ void GameStartMenu::broadcastLobbyState() {
     pkt << _currentData.roomCode;
 
     pkt << _currentData.selectedMapName;
+   
+    if (_currentData.selectedMapPath.empty()) {
+        pkt << "STATIC_MAP_ID"; 
+    } else {
+        pkt << _currentData.selectedMapPath;
+    }
+
     pkt << (int)_currentData.difficulty;
     pkt << (int)_currentData.maxPlayers;
     pkt << (uint32_t)allPlayers.size();
@@ -1101,4 +1122,49 @@ void GameStartMenu::sendLeavePacket() {
     _net->send(pkt);
     
     printf("[Client] Sent Leave packet.\n");
+}
+
+
+const GameData& GameStartMenu::getGameData() {
+    // 1. Save local name
+    _currentData.localPlayerName = _localPlayerName; 
+
+    // 2. Logic to populate player list based on role
+    if (_currentData.isMultiplayer) {
+        
+        if (_isHost) {
+            // HOST LOGIC: Rebuild list from Self + Connected Members
+            _currentData.players.clear();
+
+            // A. Add Host (Me)
+            PlayerData hostMe;
+            hostMe.name = _localPlayerName + " (Host)"; 
+            hostMe.color = sf::Color::Cyan; // Or whatever color you picked
+            hostMe.isHost = true;
+            _currentData.players.push_back(hostMe);
+
+            // B. Add Clients
+            for (const auto& mem : _connectedMembers) {
+                _currentData.players.push_back(mem.data);
+            }
+        } 
+        else {
+            // CLIENT LOGIC: 
+            // Do nothing here. We received the full list (including Host and other peers)
+            // in onPacket -> Pkt_LobbyState, and we saved it to _currentData.players there.
+             if (_currentData.players.empty()) {
+                printf("[Warning] Client GameData has no players!\n");
+            }
+        }
+
+    } else {
+        // SINGLEPLAYER LOGIC
+        _currentData.players.clear();
+        PlayerData me;
+        me.name = "Player";
+        me.color = sf::Color::Red;
+        _currentData.players.push_back(me);
+    }
+
+    return _currentData;
 }

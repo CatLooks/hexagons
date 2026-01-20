@@ -43,7 +43,8 @@ struct GameData {
      std::string selectedMapPath;    /// Store the path to the selected map file
      std::string selectedMapName;    /// Store for easy UI display
 
-	unsigned int maxPlayers = 2;     /// Maximum number of players.   
+	unsigned int maxPlayers = 2;     /// Maximum number of players.
+    std::string localPlayerName;
 };;
 
 

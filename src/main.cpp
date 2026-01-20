@@ -4,9 +4,9 @@
 #include "flags.hpp"
 #include "menu.hpp"
 #include "networking/Net.hpp"
+#include "game/sync/network_adapter.hpp" 
 
 #include "game/serialize/map.hpp"
-
 static void setup_test_map(Game& game) {
 	Map& map = game.map;
 
@@ -228,6 +228,7 @@ static void setup_test_map(Game& game) {
 	};
 }
 
+
 int main() {
 	assets::lang::init();
 
@@ -292,7 +293,7 @@ int main() {
 		layer_gui->add(dev::Factory::game_panel(game));
 	}
 
-	MenuSystem menuSystem(itf, &game_ctx, game, net);
+	MenuSystem menuSystem(itf, &game_ctx, game, net, state);	
 	itf.switchContext(menuSystem.context);
 
 	while (ui::window.active()) {
