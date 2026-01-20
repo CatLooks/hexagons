@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <eos_common.h>
+#include <algorithm>
 #include <eos_lobby.h>
 #include <eos_p2p.h>
 #include "networking/P2PManager.hpp"

@@ -73,6 +73,8 @@ public:
 
 	/// Sets game details (room code, player list, etc).
      void setGameDetails(const GameData& data);
+     /// Sets the interactable state of the menu
+     void setInteractable(bool enabled);
 
 private:
     /// Creates a UI element representing a single player slot.

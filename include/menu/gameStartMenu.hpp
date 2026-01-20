@@ -99,6 +99,9 @@ private:
     menuui::Button* _mapNextBtn = nullptr;
     ui::Element* _mapGrid = nullptr;
 
+    bool _controlsLocked = false;
+    void setControlsLocked(bool locked);
+
 public:
     /// Constructs a game start menu.
     GameStartMenu(Net* net);

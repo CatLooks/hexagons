@@ -136,7 +136,7 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
 	});
 
 	net.OnHostLobbyLeft.add([=]() {
-        globalAlert->show("The Host has ended the game.");
+        //globalAlert->show("The Host has ended the game.");
         startMenu->reset(); 
 		pages->show(mainMenu);
 	});

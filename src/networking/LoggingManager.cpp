@@ -33,7 +33,7 @@ void EOS_CALL LoggingManager::OnLogMessageReceived(const EOS_LogMessage* InMessa
     LogFile << CompleteLog.str() << std::endl;
 }
 
-void LoggingManager::RegisterLoggingCallbackExample()
+void LoggingManager::RegisterLoggingCallback()
 {
     // Call the EOS SDK to set the passed in function as the logging callback.
     EOS_EResult SetLogCallbackResult = EOS_Logging_SetCallback(OnLogMessageReceived);
@@ -47,7 +47,7 @@ void LoggingManager::RegisterLoggingCallbackExample()
     }
 }
 
-void LoggingManager::SetLogLevelVeryVerboseExample()
+void LoggingManager::SetLogLevelVeryVerbose()
 {
     // Call the EOS SDK to set the log level for all log categories to the highest level.
     EOS_EResult SetLogLevelResult = EOS_Logging_SetLogLevel(EOS_ELogCategory::EOS_LC_ALL_CATEGORIES,

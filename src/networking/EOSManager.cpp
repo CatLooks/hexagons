@@ -20,8 +20,8 @@ EOSManager::EOSManager() {
     platformHandle = platformManager.GetPlatformHandle();
 
     logging = std::make_shared<LoggingManager>();
-    logging->RegisterLoggingCallbackExample();
-    logging->SetLogLevelVeryVerboseExample();
+    logging->RegisterLoggingCallback();
+    logging->SetLogLevelVeryVerbose();
 
 	auth = std::make_shared<AuthManager>(platformHandle);
 

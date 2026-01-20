@@ -158,7 +158,8 @@ void EOS_CALL LobbyManager::OnMemberStatusChange(const EOS_Lobby_LobbyMemberStat
 void LobbyManager::HandleCreateLobbyComplete(const EOS_Lobby_CreateLobbyCallbackInfo* Data) {
 	isBusy = false;
 	if (Data->ResultCode == EOS_EResult::EOS_Success) {
-		LobbyId = Data->LobbyId;
+		LobbyIdStr = Data->LobbyId ? Data->LobbyId : "";
+		LobbyId = LobbyIdStr.empty() ? nullptr : LobbyIdStr.c_str();
 		std::cout << "[LobbyManager] Lobby created with ID: " << LobbyId << std::endl;
 		RegisterMemberStatusNotifications();
 		OnLobbyCreated.invoke(LobbyId);
@@ -298,16 +299,30 @@ void LobbyManager::HandleMemberStatusChange(const EOS_Lobby_LobbyMemberStatusRec
 	case EOS_ELobbyMemberStatus::EOS_LMS_DISCONNECTED:
 	case EOS_ELobbyMemberStatus::EOS_LMS_KICKED:
 		std::cout << "[LobbyManager] Member left: " << Data->TargetUserId << std::endl;
-		if(isHost) {
-			ExternalUsers.erase(std::remove(ExternalUsers.begin(), ExternalUsers.end(), Data->TargetUserId), ExternalUsers.end());
+		if (isHost) {
+			ExternalUsers.erase(
+				std::remove(ExternalUsers.begin(), ExternalUsers.end(), Data->TargetUserId),
+				ExternalUsers.end()
+			);
+
+			P2PConnections.erase(
+				std::remove_if(
+					P2PConnections.begin(),
+					P2PConnections.end(),
+					[peerId = Data->TargetUserId](const std::shared_ptr<P2PManager>& conn) {
+						return conn && conn->GetPeerId() == peerId;
+					}
+				),
+				P2PConnections.end()
+			);
 		}
 		OnMemberLeft.invoke(Data->TargetUserId);
 		break;
-		// In a real game, you would find and remove the correct P2PManager from the vector here
 
 	// Host destroyed lobby / lobby closed => all clients should receive this status.
 	case EOS_ELobbyMemberStatus::EOS_LMS_CLOSED:
 		std::cout << "[LobbyManager] Lobby closed." << std::endl;
+		if (isHost) return;
 
 		// local cleanup (clients stop pumping stale connections)
 		LobbyId = nullptr;
@@ -332,12 +347,6 @@ void LobbyManager::UnregisterMemberStatusNotifications() {
 		MemberStatusNotificationId = EOS_INVALID_NOTIFICATIONID;
 	}
 }
-
-// Join -> connect (my name)
-// Start -> host (my name)
-//lobby -> refresh ()
-
-
 
 std::shared_ptr<P2PManager> LobbyManager::GetP2PConnection(EOS_ProductUserId peerId) {
 	for (const auto& connection : P2PConnections) {

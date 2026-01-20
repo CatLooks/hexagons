@@ -28,6 +28,18 @@ static ui::Element* makeContainer() {
     return el;
 }
 
+static void setButtonEnabled(menuui::Button* btn, bool enabled, const std::function<void()>& call) {
+    if (!btn) return;
+
+    if (enabled) {
+        btn->setCall(call, nullptr, menuui::Button::Click);
+        btn->setLabel()->setColor(sf::Color::White);
+    } else {
+        btn->setCall(nullptr, nullptr, menuui::Button::Click);
+        btn->setLabel()->setColor(sf::Color(100, 100, 100));
+    }
+}
+
 /// Applies text settings to a label.
 static void applySettings(ui::Text* text, const ui::TextSettings& settings) {
     if (!text) return;
@@ -161,6 +173,20 @@ void GameStartMenu::buildSidebar() {
         if (_onBack) _onBack();
     }, nullptr, menuui::Button::Click);
     _sidebarBg->add(_backBtn);
+}
+
+void GameStartMenu::setControlsLocked(bool locked) {
+    _controlsLocked = locked;
+
+    setButtonEnabled(_backBtn, !locked, [this]() {
+        if (_onBack) _onBack();
+    });
+
+    setButtonEnabled(_prevBtn, !locked, [this]() { prevStep(); });
+
+    // Next button jest sterowany dodatkowo przez canProceed() / etapy,
+    // wiêc po locku wymuœ updateNavigationButtons (ustawi call/kolor wg stanu).
+    updateNavigationButtons();
 }
 
 /// Builds navigation controls.
@@ -365,6 +391,7 @@ bool GameStartMenu::canProceed() const {
 
 /// Advances to next step.
 void GameStartMenu::nextStep() {
+    if (_controlsLocked) return;
     if (!canProceed()) return;
 
     if (_currentStep == STEP_MAP) {
@@ -378,21 +405,43 @@ void GameStartMenu::nextStep() {
         }
     }
 
-     if (_currentStep == STEP_LOBBY) {
-        _currentStep = STEP_WAITING;
+    if (_currentStep == STEP_LOBBY) {
+        // NIE przechodŸ do WAITING zanim EOS potwierdzi utworzenie lobby.
+        // Najpierw podpinamy callbacki jak w join flow.
+        if (_net) {
+            _net->clearHandlers();
+        }
 
-        // HOST LOGIC:
-        // We start the hosting process. OnLobbySuccess WILL fire later.
-        _net->host(_currentData.maxPlayers, _currentData.roomCode);
+        // Lock UI zanim ruszy EOS
+        setControlsLocked(true);
 
-        _pageWaitingLobby->setGameDetails(_currentData);
-        _pageWaitingLobby->setAsHost(true);
-        _pageWaitingLobby->updateList({ { assets::lang::locale.req(localization::Path("lobby.host_you")).get({}), sf::Color::Cyan, true, true } });
-        
-        updateUI();
+        if (_net) {
+            _net->OnLobbySuccess.add([this]() {
+                // Lobby istnieje w backendzie -> teraz bezpiecznie wejdŸ do ekranu lobby
+                setControlsLocked(false);
 
-        // Bind handlers, but wait for OnLobbySuccess to initialize UI fully
-        bindNetworkHandlers();
+                _currentStep = STEP_WAITING;
+
+                _pageWaitingLobby->setGameDetails(_currentData);
+                _pageWaitingLobby->setAsHost(true);
+                _pageWaitingLobby->setRoomCode(_currentData.roomCode);
+                //_pageWaitingLobby->setInteractable(true);
+
+                addSelfToUI();
+                bindNetworkHandlers();
+                updateUI();
+            });
+
+            _net->OnJoinFailed.add([this](const std::string&) {
+                // Hosting/Join nie doszed³ do skutku -> odblokuj kontrolki,
+                // zostaw usera na konfiguracji.
+                setControlsLocked(false);
+                updateUI();
+            });
+
+            _net->host(_currentData.maxPlayers, _currentData.roomCode);
+        }
+
         return;
     }
 
@@ -533,10 +582,22 @@ void GameStartMenu::enterAsJoiner(const std::string& code) {
     _pageWaitingLobby->updateList({ p });
 
     // 5. Start Logic
-    bindNetworkHandlers(); 
-    sendHello(); 
-}
+    bindNetworkHandlers();
+    sendHello();
 
+    // Odblokuj kontrolki po pierwszym backendowym potwierdzeniu stanu lobby
+    if (_net) {
+        _net->OnPacketReceived.add([this](const std::string&, sf::Packet& pkt) {
+            int type;
+            sf::Packet copy = pkt;
+            if (!(copy >> type)) return;
+
+            if (type == Pkt_LobbyState) {
+                setControlsLocked(false);
+            }
+        });
+    }
+}
 
 /// Refreshes all text elements for localization.
 void GameStartMenu::refreshAllText() {
