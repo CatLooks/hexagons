@@ -36,7 +36,7 @@ Adapter::OptPacket<History::UniqList> NetAdapter::recv_list() {
 		case EventMessage: return {};
 		default:
 			// @todo: consume invalid packet
-			return;
+			return {};
 	};
 
 	// @todo: consume packet
@@ -79,7 +79,7 @@ Adapter::OptPacket<Messages::Event> NetAdapter::recv() {
 		case MoveList: return {};
 		default:
 			// @todo: consume invalid packet
-			return;
+			return {};
 	};
 
 	// @todo: consume packet
