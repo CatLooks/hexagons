@@ -97,41 +97,44 @@ debug {
 menu {
     title: "HEXAGONS"
 
-	login: "Zaloguj"
-	logout: "Wyloguj"
+	login: "ZALOGUJ"
+	logout: "WYLOGUJ"
 
     start: "ZACZNIJ GRĘ"
     join: "DOŁĄCZ DO GRY"
     options: "OPCJE"
     exit: "WYJDŹ"
     back: "POWRÓT"
-    prev: "WRÓĆ"
-    next: "DALEJ"
+    prev: "< WRÓĆ"
+    next: "DALEJ >"
     start_game: "ZACZNIJ GRĘ"
     sound: "Dźwięk: {v}"
     lang: "Język: {v}"
-    on: "ON"
-    off: "OFF"
+    on: "WŁ"
+    off: "WYŁ"
     max_players: "Maks. Graczy"
     player_count: "{value}"
-
+	
 	select_mode: "Wybierz Tryb"
 	singleplayer: "Jednoosobowy"
 	multiplayer_host: "Wieloosobowy (Gospodarz)"
 	
-	select_difficulty: "Wybierz Poziom Trudności"
+	select_difficulty: "Wybierz Trudność"
 
 	select_map: "Wybierz Mapę"
 
 	lobby_settings: "Ustawienia Lobby"
 	room_code_desc: "Udostępnij ten kod!"
+	vsync: "Vsync: {v}"
+	fullscreen: "Pełny ekran: {v}"
 
-
+	login_required: "Musisz się zalogować,\naby grać online!"
+	no_maps: "Nie znaleziono map."
 }
 
 join {
-    title: "Dołącz do gry"
-    instruction: "Wprowadź 6-cyfrowy kod pokoju:"
+    title: "Dołącz do Gry"
+    instruction: "Wpisz 6-cyfrowy kod pokoju:"
 }
 
 start {
@@ -153,12 +156,18 @@ lobby {
     title: "LOBBY GRY"
     leave: "WYJDŹ"
     room_id: "Pokój: #{id}"
+    
+    # Format: "Map: Green Valley | Difficulty: Easy"
+    details_format: "{map}    |    {diff}    |    Rozmiar lobby: {max} "
+    
     player_name: "{name}"
     player_name_host: "{name} (Gospodarz)"
     host_you: "Gospodarz (Ty)"
     connecting: "Łączenie..."
 
-    # Format: "Map: Green Valley | Difficulty: Easy"
-    details_format: "{map}    |    {diff}    |    Rozmiar lobby: {max} "
-
+	host_ended: "Gospodarz zakończył grę."
+	closed: "Lobby zostało zamknięte."
+	join_failed: "Nie udało się dołączyć:\n{reason}"
+	host_suffix: "{name} (Gospodarz)"
+	host_default_name: "Gospodarz"
 }

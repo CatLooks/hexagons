@@ -66,7 +66,7 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
         // CHECK: Prevent entering Join screen if not logged in
 
         if (!net.isLoggedIn()) {
-            globalAlert->show("You must be logged in\nto join a Game!");
+            globalAlert->show(assets::lang::locale.req("menu.login_required").get({}));            
             return;
         }
         joinMenu->reset();
@@ -136,7 +136,7 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
 	});
 
 	net.OnHostLobbyLeft.add([=]() {
-        globalAlert->show("The Host has ended the game.");
+        globalAlert->show(assets::lang::locale.req("lobby.host_ended").get({}));
         startMenu->reset(); 
 		pages->show(mainMenu);
 	});
@@ -144,12 +144,14 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
 	// Exposed only: you will implement popup later
 	net.OnLobbyDestroyed.add([=]() {
 		// intentionally empty (popup + OK -> main menu handled by you)
-        globalAlert->show("Lobby has been closed.");
+        globalAlert->show(assets::lang::locale.req("lobby.closed").get({}));
         pages->show(mainMenu);
 	});
 
      net.OnJoinFailed.add([=](const std::string& reason) {
-        globalAlert->show("Failed to join lobby:\n" + reason);
-        pages->show(mainMenu);
+         globalAlert->show(assets::lang::locale.req("lobby.join_failed").get({
+            { "reason", reason }
+         }));
+         pages->show(mainMenu);
     });
 }
