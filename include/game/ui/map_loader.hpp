@@ -3,6 +3,7 @@
 // include dependencies
 #include "dev/dev_panel.hpp"
 #include "game/template.hpp"
+#include "resource_table.hpp"
 #include "assets.hpp"
 #include "ui.hpp"
 
@@ -19,6 +20,8 @@ namespace gameui {
 		dev::Section* _select_sec;
 		/// Selected map template.
 		const Template* _select_temp;
+		/// Selected map filename.
+		std::string _select_file;
 
 		/// Filtered map count.
 		size_t _count = 0;
@@ -30,6 +33,18 @@ namespace gameui {
 		ui::Button* _load_btn;
 		/// Load button label.
 		ui::Text* _load_txt;
+
+		Field* _f_file; /// File field.
+		Field* _f_name; /// Name field.
+		Field* _f_auth; /// Author field.
+
+		Field* _f_size;  /// Size field.
+		Field* _f_re;    /// Resize field.
+
+		Field* _f_troop; /// Troop field.
+		Field* _f_build; /// Build field.
+		Field* _f_plant; /// Plant field.
+		Field* _f_reg;   /// Region field.
 
 		/// Map templates.
 		std::list<Template> _temp;
@@ -51,5 +66,17 @@ namespace gameui {
 
 		/// Reloads map list.
 		void reload();
+
+		/// Whether any input field is active.
+		bool input() const;
+	};
+
+	/// Map loader grabber button.
+	class Grabber : public ui::Button {
+	public:
+		/// Constructs a grabber button.
+		///
+		/// @param loader Map loader reference.
+		Grabber(Loader* loader);
 	};
 };

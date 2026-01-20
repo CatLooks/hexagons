@@ -7,6 +7,8 @@ namespace Values {
 	const sf::IntRect redo_icon = coords(8, 2);
 	/// Turn finish button icon.
 	const sf::IntRect next_icon = coords(9, 2);
+	/// Map loader grabber button icon.
+	const sf::IntRect grab_icon = coords(0, 3);
 
 	/// Troop buying action texture.
 	const sf::IntRect buy_build = coords(6, 3);

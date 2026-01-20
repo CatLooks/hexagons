@@ -19,6 +19,8 @@ namespace ui {
 		sf::Color red = sf::Color(255, 32, 64);
 		/// Button expansion coefficient.
 		float exp_coef = 1.125f;
+		/// Button shake amplitude coefficient.
+		float shake_coef = 1.f / 16;
 
 	protected:
 		Solid* _overlay {}; /// Button overlay.

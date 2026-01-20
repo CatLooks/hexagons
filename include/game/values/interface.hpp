@@ -11,6 +11,8 @@ namespace Values {
 	extern const sf::IntRect redo_icon;
 	/// Turn finish button icon.
 	extern const sf::IntRect next_icon;
+	/// Map loader grabber button icon.
+	extern const sf::IntRect grab_icon;
 
 	/// Troop buying action texture.
 	extern const sf::IntRect buy_build;

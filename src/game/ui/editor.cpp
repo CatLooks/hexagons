@@ -444,17 +444,12 @@ Editor::Editor(Game* game, ui::Layer* text_layer): _game(game) {
 	updateLabels();
 
 	// add map loader
-	auto* loader = new gameui::Loader(game);
-	loader->onEvent([=](const ui::Event& evt) {
-		if (auto data = evt.get<ui::Event::KeyPress>()) {
-			if (data->key == sf::Keyboard::Key::Backslash) {
-				loader->reload();
-				return true;
-			};
-		};
-		return false;
-	});
-	text_layer->add(loader);
+	_loader = new gameui::Loader(game);
+	text_layer->add(_loader);
+
+	// add loader panel grabber
+	auto* grab = new gameui::Grabber(_loader);
+	text_layer->add(grab);
 };
 
 /// Updates entity label.
@@ -517,5 +512,5 @@ HexRef Editor::tileref() const {
 
 /// Whether any input field is active.
 bool Editor::input() const {
-	return _res_table->input();
+	return _res_table->input() || _loader->input();
 };

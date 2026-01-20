@@ -15,8 +15,8 @@
 #include "logic/build_logic.hpp"
 #include "logic/plant_logic.hpp"
 
-// template forward-declaration
 class Template;
+namespace gameui { class Loader; };
 
 /// Game map object.
 /// Stores array of tiles and lists of all dynamic objects on it.
@@ -29,6 +29,7 @@ class Map : public HexArray {
 	friend Regions;
 	friend Move;
 	friend dev::Factory;
+	friend gameui::Loader;
 
 public:
 	/// Constructs an empty game map.

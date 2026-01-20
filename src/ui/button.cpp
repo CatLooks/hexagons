@@ -27,7 +27,7 @@ namespace ui {
 		if (_shake) return;
 
 		// shake displacement
-		const ui::DimVector shake_amp = { 1ts / 16, 0px };
+		const ui::DimVector shake_amp = { 1ts * shake_coef, 0px };
 
 		// store original position
 		ui::DimVector pos = position();

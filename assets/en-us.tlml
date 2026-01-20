@@ -213,12 +213,18 @@ edit {
 	filter: "Showing {n} / {max} files."
 
 	# load filename
-	load_file: "Load {file}"
+	load_file: "Load \"{file}\""
 	# load nothing
 	load_none: "No file selected"
 
+	# save map
+	save: "Save Map"
+	# clear map
+	clear: "Clear Map"
+
 	# map info
 	map {
+		# map section info
 		file {
 			k: "File"
 			v: "{file}"
@@ -227,10 +233,27 @@ edit {
 			k: "Name"
 			v: "{name}"
 		}
-		author {
+		auth {
 			k: "Author"
 			v: "{auth}"
 		}
+
+		# map info
+		label: "Map Info"
+	}
+
+	# content info
+	content {
+		size: "Size"
+		resize: "Resize"
+		troop: "Troop Count"
+		build: "Build Count"
+		plant: "Plant Count"
+		region: "Region Count"
+
+		# content info
+		label_size: "Map Size"
+		label_stats: "Content Info"
 	}
 }
 

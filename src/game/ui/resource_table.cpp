@@ -50,6 +50,17 @@ namespace gameui {
 		};
 	};
 
+	/// Sets max amount of characters in a field.
+	void Field::limit(size_t len) {
+		_field->input.attachValidation([=](const sf::String& str, char32_t c) {
+			// accept backspace
+			if (c == '\b') return true;
+
+			// ignore if too much digits
+			return str.getSize() <= len;
+		});
+	};
+
 	/// Makes the field numeric.
 	void Field::numeric(size_t digits, std::function<void(int result)> call) {
 		_field->input.attachValidation([=](const sf::String& str, char32_t c) {
@@ -75,14 +86,72 @@ namespace gameui {
 		});
 	};
 
+	/// Attaches the field to a string.
+	void Field::string(std::function<std::string*()> target, bool save, size_t chars) {
+		limit(chars);
+		_field->input.attachTextConfirm([=](const sf::String& str) {
+			std::string* tar = target();
+
+			// write result to the target
+			*tar = get();
+
+			// unfocus text field
+			_field->focus(false);
+		});
+		if (!save) _field->onUpdate([=](const sf::Time&) {
+			// ignore if focused
+			if (_field->focused()) return;
+			std::string* tar = target();
+
+			// overwrite value
+			if (tar)
+				_field->input.set(*tar);
+			else
+				_field->input.set("-");
+			recalculate();
+		});
+	};
+
+	/// Returns field input manager.
+	ui::TextInput& Field::field() const {
+		return _field->input;
+	};
+
 	/// Sets input field value.
 	void Field::set(const std::string& text) {
 		_field->input.set(sf::String::fromUtf8(text.begin(), text.end()));
 	};
 
+	/// Returns input field value.
+	std::string Field::get() const {
+		auto u8 = _field->input.get().toUtf8();
+		std::string res;
+		res.reserve(u8.size());
+		for (uint8_t c : u8) res.push_back((char)c);
+		return res;
+	};
+
 	/// Whether any input field is active.
 	bool Field::input() const {
 		return _field->focused();
+	};
+
+	/// Unfocuses all input fields.
+	void Field::unfocus(const std::vector<Field*>& list) const {
+		_field->onFocus([=](bool focused) {
+			if (focused) for (Field* oth : list) {
+				// ignore self
+				if (this == oth) continue;
+
+				// unfocus field
+				oth->_field->focus(false);
+			};
+		});
+	};
+
+	/// Unfocuses the input field.
+	void Field::unfocus() const {
+		_field->focus(false);
 	};
 
 	/// Constructs the resource table.
@@ -95,6 +164,8 @@ namespace gameui {
 		_peach  = new Field(Values::chat_text, "edit.region.peach");
 		_berry  = new Field(Values::chat_text, "edit.region.berry");
 		_income = new Field(Values::chat_text, "edit.region.income");
+
+		std::vector<Field*> field_list = { _money, _peach, _berry, _income };
 
 		// configure fields
 		struct data {
@@ -111,6 +182,9 @@ namespace gameui {
 		for (const auto& e : list) {
 			// add icon
 			_arrow = e.field->icon(0.4f, 0.4f, &assets::interface, e.icon, 1.f);
+
+			// add unfocus callback
+			e.field->unfocus(field_list);
 
 			// add field to table
 			e.field->bounds = { 0px, y, 1ps, height };
@@ -173,6 +247,7 @@ namespace gameui {
 			if (_reg->income > 0) color = 0;
 			if (_reg->income < 0) color = 2;
 			_arrow->coords = Values::income_arrow[color];
+			recalculate();
 		});
 	};
 

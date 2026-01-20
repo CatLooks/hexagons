@@ -329,9 +329,16 @@ int main() {
 		game = new Game(layer_map, layer_gui, layer_msg, &state);
 
 		{
+			// default map
 			Map& map = game->map;
 
-			
+			map.resize({ {}, { 2, 1 } });
+			map.at({})->type = Hex::Ground;
+			map.regions.enumerate(&map);
+
+			Plant plant;
+			plant.type = Plant::Peach;
+			map.setPlant(plant);
 		};
 
 		state.addPlayer({ .name = "Koopa", .team = Region::Red });

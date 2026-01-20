@@ -30,6 +30,7 @@ private:
 	Game* _game; /// Game controller reference.
 
 	gameui::Table* _res_table; /// Resource table.
+	gameui::Loader* _loader;   /// Loader menu.
 
 	ui::Text* _team_text; /// Tile team text.
 	ui::Text* _show_text; /// Selected entity text.

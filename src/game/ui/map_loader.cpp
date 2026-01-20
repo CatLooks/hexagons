@@ -19,15 +19,14 @@ namespace gameui {
 		ui::Panel(field_texture), _game(game),
 		_select_sec(nullptr), _select_temp(nullptr)
 	{
-		// set bounds
-		bounds = { 0.5as, 0as, 640px, 1ps };
+		// configure panel
+		infinite = true;
+		bounds = { 0.5as, 0as, 660px, 1ps };
 		padding.setHorizontal(20);
-
-		// set color
 		color = sf::Color(128, 128, 128);
 
-		// map finder width
 		ui::Dim width = 300px;
+		ui::Dim pad = 20px;
 
 		// create map search
 		_search = new ui::TextField(field_texture, Values::panel_text, sf::Color::White);
@@ -75,9 +74,218 @@ namespace gameui {
 
 		// create map list
 		_list = new dev::Panel(width);
+		_list->scissor = true;
 		_list->position() = { 0px, 1as };
 		_list->size().y = 1ps - button_cont->bounds.bottomLeft().y;
 		add(_list);
+
+		// separator panel
+		auto* sep = new ui::Solid;
+		sep->bounds = { width + pad / 2.f - 0.5ts, 0px, 6px, 1ps };
+		sep->color = sf::Color(16, 16, 16);
+		add(sep);
+
+		// map info panel
+		auto* info_panel = new ui::Element;
+		info_panel->bounds = { width + pad, 0px, width, 1ps };
+		{
+			ui::Dim height = 48px;
+			ui::Dim y = 0px;
+
+			// layout an element
+			auto layout = [&](ui::Element* elem) {
+				elem->bounds = { 0px, y, 1ps, height };
+				info_panel->add(elem);
+				y += height + 4px;
+			};
+
+			// save button
+			auto* save_cont = new ui::Element;
+			save_cont->bounds = { 0px, 0px, 1ps, 64px };
+			save_cont->padding.set(4);
+			y = 64px + 4px;
+			{
+				auto* button = new ui::Button(field_texture, { 1ps, 1ps });
+				button->position() = { 0.5as, 0.5as };
+				button->exp_coef = 17.f / 16;
+				button->shake_coef = 1.f / 64;
+				{
+					auto* text = button->setLabel(Values::chat_text);
+					text->setPath("edit.save");
+				};
+				button->validate([=]() {
+					// fail if no filename
+					if (_f_file->get().empty()) return false;
+
+					// attempt to open the file
+					std::ofstream str(std::format("maps/{}.dat", _f_file->get()), std::ios::out | std::ios::binary);
+					if (str.fail()) return false;
+
+					// generate template
+					auto temp = Template::generate(&_game->map);
+					temp.header = {
+						.name = _f_name->get(),
+						.auth = _f_auth->get()
+					};
+					sf::Packet packet;
+
+					// serialize template
+					using namespace Serialize;
+					encodeSignature(packet);
+					packet << temp;
+					
+					// write to the file
+					str.write((const char*)packet.getData(), packet.getDataSize());
+					str.close();
+
+					// reload map list
+					reload();
+					return true;
+				});
+				save_cont->add(button);
+			};
+			info_panel->add(save_cont);
+
+			// map info label
+			auto* label0 = new ui::Text(Values::chat_text, "edit.map.label");
+			{
+				label0->pos = ui::Text::Static;
+				label0->align = ui::Text::C;
+			};
+
+			// header fields
+			_f_file = new Field(Values::chat_text, "edit.map.file.k");
+			_f_file->limit(16);
+			_f_name = new Field(Values::chat_text, "edit.map.name.k");
+			_f_name->limit(16);
+			_f_auth = new Field(Values::chat_text, "edit.map.auth.k");
+			_f_auth->limit(16);
+
+			// size info label
+			auto* label1 = new ui::Text(Values::chat_text, "edit.content.label_size");
+			{
+				label1->pos = ui::Text::Static;
+				label1->align = ui::Text::C;
+			};
+
+			// size fields
+			_f_size = new Field(Values::chat_text, "edit.content.size");
+			_f_re = new Field(Values::chat_text, "edit.content.resize");
+			_f_re->field().attachValidation([=](const sf::String& str, char32_t c) {
+				// accept backspace
+				if (c == '\b') return true;
+
+				// accept space if hasn't appeared before
+				std::string text = _f_re->get();
+				if (c == ' ')
+					return text.find(' ') == std::string::npos;
+
+				// accept only numbers
+				return c >= '0' && c <= '9';
+			});
+			_f_re->field().attachTextConfirm([=](const sf::String&) {
+				std::string text = _f_re->get();
+
+				// get space position
+				size_t space = text.find(' ');
+				if (space != std::string::npos) {
+					// ignore if one of numbers is empty
+					if (space > 0 && space + 1 < text.size()) {
+						int w = std::stoi(text.substr(0, space));
+						int h = std::stoi(text.substr(space + 1));
+
+						// resize the map
+						_game->map.resize({ {}, { w, h } });
+					};
+				};
+
+				// unfocus & reset text field
+				_f_re->field().clear();
+				_f_re->unfocus();
+			});
+
+			// content info label
+			auto* label2 = new ui::Text(Values::chat_text, "edit.content.label_stats");
+			{
+				label2->pos = ui::Text::Static;
+				label2->align = ui::Text::C;
+			};
+
+			// content fields
+			_f_troop = new Field(Values::chat_text, "edit.content.troop");
+			_f_build = new Field(Values::chat_text, "edit.content.build");
+			_f_plant = new Field(Values::chat_text, "edit.content.plant");
+			_f_reg   = new Field(Values::chat_text, "edit.content.region");
+		
+			// add unfocus callbacks
+			std::vector<Field*> field_list = {
+				_f_file, _f_name, _f_auth,
+				_f_size, _f_re, _f_troop, _f_build, _f_plant, _f_reg
+			};
+			bool counters = false;
+			for (Field* field : field_list) {
+				field->unfocus(field_list);
+				if (field == _f_troop) counters = true;
+
+				// custom splits
+				if (counters) field->split(0.6f, 0.4f);
+				else field->split(0.4f, 0.6f);
+			};
+
+			// layout elements
+			ui::Element* list[] = {
+				label0, _f_file, _f_name, _f_auth,
+				label1, _f_size, _f_re,
+				label2, _f_troop, _f_build, _f_plant, _f_reg
+			};
+			for (Element* field : list) layout(field);
+
+			// disable stats fields
+			_f_size->disabled = true;
+			_f_troop->disabled = true;
+			_f_build->disabled = true;
+			_f_plant->disabled = true;
+			_f_reg->disabled = true;
+
+			// add data sync to fields
+			info_panel->onUpdate([=](const sf::Time&) {
+				// update size
+				_f_size->set(ext::str_vec(_game->map.size(), " x "));
+
+				// update counters
+				_f_troop->set(ext::str_int(_game->map._troops.count()));
+				_f_build->set(ext::str_int(_game->map._builds.count()));
+				_f_plant->set(ext::str_int(_game->map._plants.count()));
+				_f_reg->set(ext::str_int(_game->map.regions._pool.count()));
+				info_panel->recalculate();
+			});
+
+			// clear button
+			auto* clear_cont = new ui::Element;
+			clear_cont->bounds = { 0px, y, 1ps, 64px };
+			clear_cont->padding.set(4);
+			{
+				auto* button = new ui::Button(field_texture, { 1ps, 1ps });
+				button->position() = { 0.5as, 0.5as };
+				button->exp_coef = 17.f / 16;
+				button->shake_coef = 1.f / 64;
+				{
+					auto* text = button->setLabel(Values::chat_text);
+					text->setPath("edit.clear");
+				};
+				button->validate([=]() {
+					// clear map
+					_game->map.clear();
+
+					// reset file field
+					_f_file->set("");
+					return true;
+				});
+				clear_cont->add(button);
+			};
+			info_panel->add(clear_cont);
+		};
+		add(info_panel);
 
 		// mask all events
 		// @note this will not mask resource table but idrc
@@ -95,6 +303,11 @@ namespace gameui {
 		
 		// construct the map
 		_select_temp->construct(&_game->map);
+
+		// store generic info in fields
+		_f_file->set(_select_file);
+		_f_name->set(_select_temp->header.name);
+		_f_auth->set(_select_temp->header.auth);
 	};
 
 	/// Selects a map from the list.
@@ -152,7 +365,6 @@ namespace gameui {
 				if (last != std::string::npos)
 					name = name.substr(0, last);
 			};
-			fprintf(stderr, "loading %s\n", name.c_str());
 
 			// open file
 			std::ifstream str(file.path(), std::ios::binary);
@@ -166,7 +378,6 @@ namespace gameui {
 				std::istreambuf_iterator<char>(str),
 				std::istreambuf_iterator<char>()
 			);
-			fprintf(stderr, "read %zu bytes\n", buffer.size());
 			str.close();
 
 			// deserialize file data
@@ -190,8 +401,8 @@ namespace gameui {
 			sec->extra("edit.map.file.v", 0.4ps, sf::Color::Magenta);
 			sec->line("edit.map.name.k");
 			sec->extra("edit.map.name.v", 0.4ps);
-			sec->line("edit.map.author.k");
-			sec->extra("edit.map.author.v", 0.4ps, sf::Color::Yellow);
+			sec->line("edit.map.auth.k");
+			sec->extra("edit.map.auth.v", 0.4ps, sf::Color::Yellow);
 
 			// set arguments
 			sec->args = {
@@ -201,11 +412,13 @@ namespace gameui {
 			};
 
 			// add selection callback
+			const Template* temp = &_temp.back();
 			sec->onEvent([=](const ui::Event& evt) {
 				if (auto data = evt.get<ui::Event::MousePress>()) {
 					if (data->button == sf::Mouse::Button::Left) {
 						// select the map
-						select(sec, &_temp.back());
+						select(sec, temp);
+						_select_file = name;
 
 						// start button animation
 						_load_btn->push(_load_btn->chain(
@@ -229,6 +442,60 @@ namespace gameui {
 				if (data->button == sf::Mouse::Button::Left) {
 					select(nullptr, nullptr);
 					return true;
+				};
+			};
+			return false;
+		});
+	};
+
+	/// Whether any input field is active.
+	bool Loader::input() const {
+		return _f_file->input() || _f_name->input() || _f_auth->input() || _f_re->input();
+	};
+
+	/// Constructs a grabber button.
+	Grabber::Grabber(Loader* loader) : ui::Button(field_texture, { 64px, 48px }) {
+		// add icon
+		setIcon(&assets::interface, Values::grab_icon);
+
+		// put loader in a hidden position
+		loader->position() = { 0.5as, -1ps };
+		loader->recalculate();
+		loader->deactivate(true);
+
+		// attach below the loader
+		onRecalculate([=](const sf::Time&) {
+			position() = { 0.5as, loader->bounds.bottomLeft().y };
+		});
+
+		// add click event
+		attach([=]() {
+			// enable loader
+			loader->activate(true);
+
+			// start animation
+			auto* anim = ui::AnimDim::to(&loader->position().y, 0ps, sf::seconds(0.33f));
+			anim->ease = ui::Easings::sineOut;
+			push(anim);
+
+			// disable grabber
+			disable();
+		});
+
+		// add loader hiding callback
+		loader->onEvent([=](const ui::Event& evt) {
+			if (auto data = evt.get<ui::Event::MousePress>()) {
+				if (data->button == sf::Mouse::Button::Left) {
+					if (!loader->rect().contains(data->position)) {
+						// start animation
+						auto* anim = ui::AnimDim::to(&loader->position().y, -1ps, sf::seconds(0.33f));
+						anim->ease = ui::Easings::sineIn;
+						anim->setAfter([=]() { loader->deactivate(true); });
+						push(anim);
+
+						// enable grabber
+						enable();
+					};
 				};
 			};
 			return false;

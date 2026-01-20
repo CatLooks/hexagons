@@ -37,19 +37,43 @@ namespace gameui {
 		/// @return Icon object.
 		ui::Image* icon(float a, float b, const sf::Texture* texture, sf::IntRect coords, float scale = 1.f);
 
+		/// Sets max amount of characters in a field.
+		/// 
+		/// @param len Max amount of characters.
+		void limit(size_t len);
+
 		/// Makes the field numeric.
 		/// 
 		/// @param digits Max amount of digits.
 		/// @param call Field confirm callback.
 		void numeric(size_t digits, std::function<void(int result)> call);
 
+		/// Attaches the field to a string.
+		/// 
+		/// @param target Target string generator.
+		/// @param save Whether to save value after unfocus.
+		/// @param chars Max amount of characters.
+		void string(std::function<std::string*()> target, bool save, size_t chars = ~0ull);
+
+		/// Returns field input manager.
+		ui::TextInput& field() const;
+
 		/// Sets input field value.
 		/// 
 		/// @param text Field value.
 		void set(const std::string& text);
+		/// Returns input field value.
+		std::string get() const;
 
 		/// Whether any input field is active.
 		bool input() const;
+
+		/// Unfocuses the input field.
+		///
+		/// @param list Input list.
+		void unfocus(const std::vector<Field*>& list) const;
+		/// Unfocuses the input field.
+		void unfocus() const;
 	};
 
 	/// Editor resource table element.
