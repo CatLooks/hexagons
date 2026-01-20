@@ -1,6 +1,7 @@
 #include "menu.hpp"
 #include "game.hpp"
 #include "menu/gameJoinMenu.hpp"
+#include "menu/ui/alertPopup.hpp"
 
 MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game* gameInstance, Net& net)
     : context(itf.newContext())
@@ -20,6 +21,18 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
     startMenu = new GameStartMenu(&net);
     joinMenu = new GameJoinMenu(&net);
 
+	// create global alert popup
+    // Create the ONE Global Popup
+    auto* globalAlert = new AlertPopup();
+    
+    // Add it to the layer AFTER 'pages' so it draws on top and catches clicks
+    menu_layer->add(globalAlert);
+
+    // Pass it to the menus that need it
+    startMenu->setAlert(globalAlert);
+
+     globalAlert->setBackground(pages); 
+  
     // add menu pages to container
     pages->add(mainMenu);
     pages->add(optionsMenu);
@@ -44,13 +57,21 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
 
     // main -> game start (Host/Singleplayer)
     mainMenu->bindStart([=]() {
+        startMenu->reset(); //this will reset whenever getting to lobby (awaryjne)
         pages->show(startMenu);
         });
 
     // main -> join game
-    mainMenu->bindJoin([=]() {
+    mainMenu->bindJoin([=, &net]() {
+        // CHECK: Prevent entering Join screen if not logged in
+
+        if (!net.isLoggedIn()) {
+            globalAlert->show("You must be logged in\nto join a Game!");
+            return;
+        }
+        joinMenu->reset();
         pages->show(joinMenu);
-        });
+    }); 
 
     // main -> options
     mainMenu->bindOptions([=]() {
@@ -67,6 +88,18 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
         pages->show(mainMenu);
         });
 
+
+    // Options -> VSync Toggle
+    optionsMenu->bindVSync([=](bool enabled) {
+        ui::window.setVSync(enabled);
+    });
+
+    // Options -> Fullscreen Toggle
+    optionsMenu->bindFullscreen([=](bool enabled) {
+        ui::window.setFullscreen(enabled);
+    });
+
+
     // start menu -> back
     startMenu->bindBack([=]() {
         pages->show(mainMenu);
@@ -82,6 +115,7 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
 
     // join menu -> back
     joinMenu->bindBack([=]() {
+        joinMenu->reset(); 
         pages->show(mainMenu);
         });
 
@@ -97,15 +131,25 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
 	// po utworzeniu stron i pokazaniu mainMenu
 
 	net.OnLobbyLeft.add([=]() {
+        startMenu->reset(); 
 		pages->show(mainMenu);
 	});
 
 	net.OnHostLobbyLeft.add([=]() {
+        globalAlert->show("The Host has ended the game.");
+        startMenu->reset(); 
 		pages->show(mainMenu);
 	});
 
 	// Exposed only: you will implement popup later
 	net.OnLobbyDestroyed.add([=]() {
 		// intentionally empty (popup + OK -> main menu handled by you)
+        globalAlert->show("Lobby has been closed.");
+        pages->show(mainMenu);
 	});
+
+     net.OnJoinFailed.add([=](const std::string& reason) {
+        globalAlert->show("Failed to join lobby:\n" + reason);
+        pages->show(mainMenu);
+    });
 }

@@ -15,16 +15,22 @@ Net::~Net() {
 
 void Net::leaveLobby() {
     auto lobby = m_eosManager.GetLobbyManager();
-    if (!lobby) return;
-
-    // Host leaves => destroy lobby
-    if (m_role == Role::Host) {
-        lobby->DestroyLobby();
-    }
+    
+    if (lobby) {
+        if (m_role == Role::Host) {
+            lobby->DestroyLobby();
+        }
     // Client leaves => leave lobby
-    else if (m_role == Role::Client) {
-        lobby->LeaveLobby();
+        else if (m_role == Role::Client) {
+            lobby->LeaveLobby();
+        }
     }
+
+    // Force Cleanup (Always runs)
+    close();
+
+    // Notify UI (MenuSystem hears this -> calls startMenu->reset() -> page switches)
+    OnLobbyLeft.invoke();
 }
 
 /// Start the login process.
@@ -286,12 +292,15 @@ std::string Net::EOSIdToString(EOS_ProductUserId userId) {
 }
 
 void Net::clearHandlers() {
-        OnPlayerConnected.clear();
-        OnPlayerDisconnected.clear();
-        OnPacketReceived.clear();
-        OnLobbyLeft.clear();
-        OnHostLobbyLeft.clear();
-        OnLobbyDestroyed.clear();
+    // Only clear handlers that are specific to a specific game session
+    OnPlayerConnected.clear();
+    OnPlayerDisconnected.clear();
+    OnPacketReceived.clear();
+    OnLobbySuccess.clear();
+
+    // OnLobbyLeft.clear();           
+    // OnHostLobbyLeft.clear();   
+    // OnLobbyDestroyed.clear();
 }
 
 std::string Net::getLocalDisplayName() {
@@ -300,4 +309,9 @@ std::string Net::getLocalDisplayName() {
         return auth->GetDisplayName();
     }
     return "Unknown Player";
+}
+
+bool Net::isLoggedIn() const {
+	//NOTE: dlaczego po wylogowaniu pozostaje logged in true? - Pytanie do Kamila za 1000 pktów
+    return m_eosManager.GetAuthManager()->IsLoggedIn();
 }

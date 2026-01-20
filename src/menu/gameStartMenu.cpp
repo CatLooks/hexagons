@@ -79,13 +79,31 @@ GameStartMenu::GameStartMenu(Net* net) : _net(net) {
     _contentPages->add(_pageLobby);
 
     _pageWaitingLobby->bindStart([this]() { if (_onStartGame) _onStartGame(); });
+    
     _pageWaitingLobby->bindLeave([this]() {
-		if (_currentData.isMultiplayer && _currentStep == STEP_WAITING) {
-			if (_net) _net->leaveLobby();
-			return;
-		}
-		if (_onBack) _onBack();
-	});
+        if (_currentData.isMultiplayer && _currentStep == STEP_WAITING) {
+            if (_net) {
+                sf::Packet pkt;
+                if (_isHost) {
+                    // HOST: Tell everyone the party is over
+                    pkt << (int)Pkt_LobbyEnded;
+                    _net->send(pkt);
+                    printf("[Host] Broadcasted LobbyEnded packet.\n");
+                } 
+                else {
+                    // CLIENT: Tell Host I am leaving (so he updates UI)
+                    pkt << (int)Pkt_Leave;
+                    _net->send(pkt);
+                }
+            }
+
+            if (_net) _net->leaveLobby();
+            
+            _currentData.isMultiplayer = false; 
+            return;
+        }
+        if (_onBack) _onBack();
+    });
 
     assets::lang::refresh_listeners.push_back([this]() { refreshAllText(); });
     
@@ -291,6 +309,17 @@ ui::Element* GameStartMenu::createLobbyPage() {
 
 /// Selects game mode.
 void GameStartMenu::selectMode(GameMode mode, menuui::Button* btn) {
+    
+    if (mode == Mode_Host) {
+        // Check if logged in before allowing Host selection
+        if (!_net->isLoggedIn()) {
+            _alert->show("You must be logged in\nto play Multiplayer!");
+            return; // Stop here, do not select the button
+        }
+        // Clean state before becoming host
+        resetLobbyState(); 
+    }
+    
     for (auto* b : _modeButtons) b->deselect();
     btn->select();
 
@@ -481,26 +510,30 @@ void GameStartMenu::drawSelf(ui::RenderBuffer& target, sf::IntRect self) const {
 
 /// Enters the menu as a joiner with the given game code.
 void GameStartMenu::enterAsJoiner(const std::string& code) {
+    // 1. Reset everything first
+    resetLobbyState();
+
+    // 2. Setup Client State
     _currentData.isMultiplayer = true;
     _currentData.roomCode = code;
-    _isHost = false;
-    _acknowledgedByHost = false;
     _localPlayerName = _net->getLocalDisplayName();     
     _currentStep = STEP_WAITING;
-    updateUI(); // Switch to the lobby page first
-
-    // Now update the UI elements
-    _pageWaitingLobby->setRoomCode(code);
+    
+    // 3. Update UI
+    updateUI(); 
+    if (_pageWaitingLobby) {
+        _pageWaitingLobby->setRoomCode(code);
+    }
     _pageWaitingLobby->setAsHost(false);
     
-    // Initial "Wait" state
+    // 4. Initial "Connecting" visual
     PlayerData p;
     p.name = "Connecting...";
     p.color = sf::Color(150, 150, 150);
     _pageWaitingLobby->updateList({ p });
 
+    // 5. Start Logic
     bindNetworkHandlers(); 
-    _heartbeatTimer.restart();
     sendHello(); 
 }
 
@@ -768,21 +801,53 @@ void GameStartMenu::onPlayerJoined(const std::string& id) {
     }
 }
 
-
 void GameStartMenu::onPlayerLeft(const std::string& id) {
-    // Remove player from list
-    _connectedMembers.erase(std::remove_if(_connectedMembers.begin(), _connectedMembers.end(),
-        [&](const LobbyMember& m) { return m.netId == id; }), 
-        _connectedMembers.end());
+    // 1. Remove player from the internal vector
+    auto it = std::remove_if(_connectedMembers.begin(), _connectedMembers.end(),
+        [&](const LobbyMember& m) { return m.netId == id; });
+    
+    bool removed = (it != _connectedMembers.end());
+    _connectedMembers.erase(it, _connectedMembers.end());
 
+    // 2. Refresh UI and Network
     if (_currentData.isMultiplayer) {
-        broadcastLobbyState(); // Update remaining clients
+        if (_isHost) {
+            if (removed) {
+                printf("[Lobby] Player %s left, updating list.\n", id.c_str());
+            }
+            // Host: Re-generates the UI list and sends new state to all clients
+            broadcastLobbyState(); 
+        } else {
+            // Client: Do nothing. The Host will notice the leave, 
+            // update their state, and send us a new Pkt_LobbyState.
+        }
     }
 }
+
 
 void GameStartMenu::onPacket(const std::string& id, sf::Packet& pkt) {
     int type;
     if (!(pkt >> type)) return;
+
+   
+    if (type == Pkt_LobbyEnded) {
+        if (!_isHost) {
+            // 1. Show Popup
+            if (_alert) _alert->show("The Host has ended the game.");
+            
+            // 2. Force Leave
+            // This triggers OnLobbyLeft -> MenuSystem switches page.
+            if (_net) _net->leaveLobby(); 
+        }
+        return;
+    }
+    // --- NEW: Handle Client Leaving (Host side) ---
+    if (type == Pkt_Leave) {
+        if (_isHost) {
+            onPlayerLeft(id);
+        }
+        return;
+    }
 
     // HOST LOGIC: Handle Hello from Clients
     if (_isHost && type == Pkt_Hello) {
@@ -815,18 +880,22 @@ void GameStartMenu::onPacket(const std::string& id, sf::Packet& pkt) {
     // CLIENT LOGIC: Handle State Update from Host
    else if (!_isHost && type == Pkt_LobbyState) {
     std::string mapName;
+    std::string roomCode; 
     int diff, maxP;
     uint32_t count;
     
-    if (pkt >> mapName >> diff >> maxP >> count) {
+    if (pkt >> roomCode >> mapName >> diff >> maxP >> count) {
+        std::string savedCode = _currentData.roomCode;
         // Update local data
+        _currentData.roomCode = roomCode;
         _currentData.selectedMapName = mapName;
         _currentData.difficulty = (GameData::Difficulty)diff;
         _currentData.maxPlayers = (unsigned int)maxP;
         
         // This updates the "Map: ... Difficulty: ..." labels
         _pageWaitingLobby->setGameDetails(_currentData); 
-
+        _pageWaitingLobby->setRoomCode(roomCode); 
+        
         std::vector<PlayerData> uiList;
         bool foundMe = false;
 
@@ -912,6 +981,9 @@ void GameStartMenu::broadcastLobbyState() {
     // Pack the packet
     sf::Packet pkt;
     pkt << (int)Pkt_LobbyState;
+
+    pkt << _currentData.roomCode;
+
     pkt << _currentData.selectedMapName;
     pkt << (int)_currentData.difficulty;
     pkt << (int)_currentData.maxPlayers;
@@ -923,4 +995,49 @@ void GameStartMenu::broadcastLobbyState() {
     }
     
     _net->send(pkt);
+}
+
+void GameStartMenu::resetLobbyState() {
+    _connectedMembers.clear();
+    _isHost = false;
+    _acknowledgedByHost = false;
+    _currentData.isMultiplayer = false;
+    _heartbeatTimer.restart();
+    _net->clearHandlers(); // Critical: Stop receiving packets for the old session
+}
+
+void GameStartMenu::reset() {
+    // 1. Reset Logic Steps
+    _currentStep = STEP_MODE;
+    _hasSelectedMode = false;
+    _hasSelectedDiff = false;
+    
+    // 2. Reset Data
+    _isHost = false;
+    _acknowledgedByHost = false;
+    _currentData.isMultiplayer = false;
+    _currentData.roomCode = "";
+    
+    // 3. Clear Network Lists
+    _connectedMembers.clear();
+    _net->clearHandlers(); // Stop listening to packets
+    
+    // 4. Reset UI Elements
+    if (_modeButtons.size() > 0) {
+        for (auto* b : _modeButtons) b->deselect();
+    }
+    
+    // 5. Apply Changes
+    generateGameCode(); // New code for next time
+    updateUI();         // This switches the view back to the Mode Selection page
+}
+
+void GameStartMenu::sendLeavePacket() {
+    if (!_net) return;
+    
+    sf::Packet pkt;
+    pkt << (int)Pkt_Leave;
+    _net->send(pkt);
+    
+    printf("[Client] Sent Leave packet.\n");
 }

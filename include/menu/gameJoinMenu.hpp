@@ -67,7 +67,7 @@ public:
     // Callback for when connection is successful
     using JoinSuccessAction = std::function<void(const std::string& code)>;
     void bindJoinSuccess(JoinSuccessAction action);
-
+    void reset();
 private:
     JoinSuccessAction _onJoinSuccess;
 };

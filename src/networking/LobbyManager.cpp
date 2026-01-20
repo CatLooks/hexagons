@@ -10,6 +10,7 @@ LobbyManager::~LobbyManager() {
 	if (MemberStatusNotificationId != EOS_INVALID_NOTIFICATIONID) {
 		EOS_Lobby_RemoveNotifyLobbyMemberStatusReceived(LobbyHandle, MemberStatusNotificationId);
 	}
+	//shared ptrs will auto clean up
 }
 
 
@@ -220,6 +221,7 @@ void LobbyManager::HandleJoinLobbyComplete(const EOS_Lobby_JoinLobbyCallbackInfo
 
 		std::cout << "[LobbyManager] Successfully joined lobby with ID: " << LobbyId << std::endl;
 		RegisterMemberStatusNotifications();
+
 		EOS_LobbyDetails_GetLobbyOwnerOptions OwnerOptions = {};
 		OwnerOptions.ApiVersion = EOS_LOBBYDETAILS_GETLOBBYOWNER_API_LATEST;
 		std::cout << "[DEBUG] LobbyDetailsHandle: " << LobbyDetailsHandle << std::endl;

@@ -112,4 +112,6 @@ public:
     void clearHandlers();
 
     std::string getLocalDisplayName();
+
+    bool isLoggedIn() const; 
 };

@@ -86,6 +86,38 @@ namespace ui {
 
 	/// Updates interface and draws a new frame.
 	void Window::frame() {
+		// Pending Fullscreen / Resolution Changes
+		if (_pending_fullscreen.has_value()) {
+			bool fs = _pending_fullscreen.value();
+			_pending_fullscreen.reset();
+
+			sf::ContextSettings settings;
+			settings.antiAliasingLevel = 2;
+
+			auto mode = fs ? sf::VideoMode::getDesktopMode() : sf::VideoMode({ 1600, 900 });
+			auto style = fs ? sf::State::Fullscreen : sf::State::Windowed;
+        
+			_win.create(mode, "Hexagons", style, settings);
+			_full = fs;
+
+			// Important: Re-apply VSync and KeyRepeat after create
+			_win.setVerticalSyncEnabled(_vsync);
+			_win.setKeyRepeatEnabled(false);
+
+			// Clear old events because mouse coordinates are now wrong
+			_evtq.clear(); 
+		}
+
+		// Pending VSync Changes
+		if (_pending_vsync.has_value()) {
+			bool vs = _pending_vsync.value();
+			_pending_vsync.reset();
+        
+			_vsync = vs;
+			_win.setVerticalSyncEnabled(vs);
+		}
+
+
 		// recalculate & update interface
 		_itf.recalculate(_win.getSize());
 		_itf.eventq(_evtq);
@@ -115,6 +147,16 @@ namespace ui {
 	bool Window::fullscreen() const {
 		return _full;
 	};
+
+	/// Sets fullscreen mode.
+	void Window::setFullscreen(bool active) {
+		_pending_fullscreen = active;
+	}
+
+	/// Sets VSync mode.
+	void Window::setVSync(bool active) {
+		_pending_vsync = active;
+	}
 
 	/// Main window.
 	ui::Window window;

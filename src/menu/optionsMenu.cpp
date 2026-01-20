@@ -40,10 +40,31 @@ OptionsMenu::OptionsMenu() {
     _title->align  = ui::Text::Center;
     add(_title);
 
+    _vsyncBtn = new menuui::Button();
+    _vsyncBtn->setSize(BUTTON_SIZE);
+    _vsyncBtn->position() = { 0.5as, 0.5as - 200px };
+    _vsyncBtn->setCall([this]() {
+        _vsyncEnabled = !_vsyncEnabled;
+        updateVSyncLabel();
+        if (_onVSyncToggle) _onVSyncToggle(_vsyncEnabled);
+    }, nullptr, menuui::Button::Click);
+    add(_vsyncBtn);
+
+    // Fullscreen Button
+    _fullscreenBtn = new menuui::Button();
+    _fullscreenBtn->setSize(BUTTON_SIZE);
+    _fullscreenBtn->position() = { 0.5as, 0.5as - 100px };
+    _fullscreenBtn->setCall([this]() {
+        _fullscreenEnabled = !_fullscreenEnabled;
+        updateFullscreenLabel();
+        if (_onFullscreenToggle) _onFullscreenToggle(_fullscreenEnabled);
+    }, nullptr, menuui::Button::Click);
+    add(_fullscreenBtn);
+
     /// Sound toggle button.
     _soundBtn = new menuui::Button();
     _soundBtn->setSize(BUTTON_SIZE);
-    _soundBtn->position() = { 0.5as, 0.5as - 100px };
+    _soundBtn->position() = { 0.5as, 0.5as };
     _soundBtn->setLabel();
     _soundBtn->setCall([this]() {
         _soundEnabled = !_soundEnabled;
@@ -54,7 +75,7 @@ OptionsMenu::OptionsMenu() {
     /// Language selection button.
     _langBtn = new menuui::Button();
     _langBtn->setSize(BUTTON_SIZE);
-    _langBtn->position() = { 0.5as, 0.5as };
+    _langBtn->position() = { 0.5as, 0.5as + 100px };
     _langBtn->setLabel();
     _langBtn->setCall([this]() {
         assets::lang::next();
@@ -65,7 +86,7 @@ OptionsMenu::OptionsMenu() {
     /// Back button.
     _backBtn = new menuui::Button();
     _backBtn->setSize(BUTTON_SIZE);
-    _backBtn->position() = { 0.5as, 0.5as + 100px };
+    _backBtn->position() = { 0.5as, 0.5as + 200px };
     _backBtn->setLabel()->setPath("menu.back");
     _backBtn->setCall([this]() { if (_onBack) _onBack(); }, nullptr, menuui::Button::Click);
     add(_backBtn);
@@ -102,7 +123,9 @@ void OptionsMenu::updateLanguageLabel() {
 void OptionsMenu::refreshAllText() {
     updateSoundLabel();
     updateLanguageLabel();
-    
+    updateVSyncLabel();
+	updateFullscreenLabel();
+
     _title->setPath("menu.options");
     _backBtn->setLabel()->setPath("menu.back");
 }
@@ -117,3 +140,23 @@ void OptionsMenu::bindBack(Action action) {
 void OptionsMenu::drawSelf(ui::RenderBuffer& target, sf::IntRect self) const {
     ui::Element::drawSelf(target, self);
 }
+
+void OptionsMenu::updateVSyncLabel() {
+    if (_vsyncBtn && _vsyncBtn->setLabel()) {
+        ui::Text* lbl = _vsyncBtn->setLabel();
+        lbl->setPath("menu.vsync"); // "menu.vsync": "VSync: {v}" 
+        lbl->param("v", _vsyncEnabled ? "@!menu.on" : "@!menu.off");
+    }
+}
+
+void OptionsMenu::updateFullscreenLabel() {
+    if (_fullscreenBtn && _fullscreenBtn->setLabel()) {
+        ui::Text* lbl = _fullscreenBtn->setLabel();
+        lbl->setPath("menu.fullscreen"); // "menu.fullscreen": "Display: {v}"
+        lbl->param("v", _fullscreenEnabled  ? "@!menu.on" : "@!menu.off");
+    }
+}
+
+void OptionsMenu::bindVSync(BoolAction action) { _onVSyncToggle = action; }
+void OptionsMenu::bindFullscreen(BoolAction action) { _onFullscreenToggle = action; }
+

@@ -196,3 +196,29 @@ void GameJoinMenu::refreshAllText() {
     _backBtn->setLabel()->setPath("menu.back");
     _joinBtn->setLabel()->setPath("menu.join");
 }
+
+void GameJoinMenu::reset() {
+    // 1. Clear the text field and grab focus
+    if (_codeField) {
+		_codeField->setText("");
+        _codeField->input.clear();
+        _codeField->focus(true);
+    }
+
+    // 2. Clear any old status/error messages
+    setStatusMessage("", false);
+
+    // 3. Reset the Join button to its "Disabled" state
+    // (We mimic the logic from attachCursorFocus here: grey color, no callback)
+    if (_joinBtn) {
+        _joinBtn->setLabel()->setColor(sf::Color(100, 100, 100));
+        _joinBtn->setCall(nullptr, nullptr, menuui::Button::Click);
+    }
+
+    // 4. Critical: Stop listening for network events
+    // If the user backed out while "Connecting...", we don't want 
+    // a delayed success packet to suddenly switch screens later.
+    if (_net) {
+        _net->clearHandlers();
+    }
+}

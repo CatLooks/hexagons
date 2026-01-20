@@ -447,3 +447,7 @@ void AuthManager::HandleDeletePersistentAuthComplete(const EOS_Auth_DeletePersis
 
 
 AuthManager::~AuthManager() {};
+
+bool AuthManager::IsLoggedIn() const {
+    return m_bIsLoggedIn;
+}
