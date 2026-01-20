@@ -7,7 +7,7 @@ namespace Serialize {
 		packet << entity.pos;
 
 		// entity health
-		packet << entity.hp;
+		packet << (int16_t)entity.hp;
 
 		// entity timers
 		for (int i = 0; i < 4; i++)
@@ -25,7 +25,7 @@ namespace Serialize {
 		packet >> entity.pos;
 
 		// entity health
-		packet >> entity.hp;
+		packet >> (int16_t&)entity.hp;
 
 		// entity timers
 		for (int i = 0; i < 4; i++)
