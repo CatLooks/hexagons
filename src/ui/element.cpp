@@ -374,24 +374,6 @@ namespace ui {
 		for (auto& element : *this)
 			element->translate();
 	};
-	/// Activates the element.
-	void Element::activate() {
-		if (_active) return;
-		_active = true;
-		onActivate();
-		for (auto& element : *this)
-			element->activate();
-	};
-	/// Deactivates the element.
-	void Element::deactivate() {
-		if (!_active) return;
-		_active = false;
-		onDeactivate();
-		for (auto& element : *this)
-			element->deactivate();
-	};
-	/// @return Whether the element is active.
-	bool Element::active() const { return _active; };
 
 	/// @return Element position.
 	DimVector& Element::position() { return bounds.position; };
@@ -409,4 +391,23 @@ namespace ui {
 	const std::list<std::unique_ptr<Element>>& Element::childrens() const { return _system; };
 	/// @return Element's parent.
 	Element* Element::parent() const { return _parent; };
+
+	/// Activates the element.
+	void Element::activate(bool inhibit_propagation) {
+		if (_active) return;
+		_active = true;
+		onActivate();
+		if (!inhibit_propagation) for (auto& element : *this)
+			element->activate(inhibit_propagation);
+	};
+	/// Deactivates the element.
+	void Element::deactivate(bool inhibit_propagation) {
+		if (!_active) return;
+		_active = false;
+		onDeactivate();
+		if (!inhibit_propagation) for (auto& element : *this)
+			element->deactivate(inhibit_propagation);
+	};
+	/// @return Whether the element is active.
+	bool Element::active() const { return _active; };
 };

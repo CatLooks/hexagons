@@ -152,12 +152,12 @@ namespace ui {
 		if (_ctx != _next) {
 			// deactivate previous context
 			for (auto& layer : *_ctx)
-				layer->deactivate();
+				layer->deactivate(true);
 
 			// activate next context
 			_ctx = _next;
 			for (auto& layer : *_ctx)
-				layer->activate();
+				layer->activate(true);
 		};
 
 		// update window rectangle
