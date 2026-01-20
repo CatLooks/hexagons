@@ -117,6 +117,10 @@ namespace gameui {
 					// fail if no filename
 					if (_f_file->get().empty()) return false;
 
+					// create map folder if one does not exist
+					if (!fs::is_directory("maps/") || !fs::exists("maps/"))
+						fs::create_directory("maps/");
+
 					// attempt to open the file
 					std::ofstream str(std::format("maps/{}.dat", _f_file->get()), std::ios::out | std::ios::binary);
 					if (str.fail()) return false;
