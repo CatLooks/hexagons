@@ -18,7 +18,7 @@ namespace flags {
 			flags::stats = !flags::stats;
 
 		// debug flags
-		if (flags::debug) {
+		if (flags::debug || true) {
 			// any region toggle
 			if (evt.code == sf::Keyboard::Key::F1 && evt.control)
 				flags::any_region = !flags::any_region;

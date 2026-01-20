@@ -1,7 +1,7 @@
 #pragma once
 
 // include dependencies
-#include "game/region.hpp"
+#include "game/template.hpp"
 #include <string>
 #include <variant>
 
@@ -15,8 +15,8 @@ namespace Messages {
 
 	/// Game initialization.
 	struct Init {
-		// map
-		// entities
+		/// Map template.
+		Template temp;
 
 		/// Player list.
 		std::vector<Player> players;

@@ -82,6 +82,7 @@ HexRef HexArray::atref(sf::Vector2i pos) const {
 void HexArray::clear() {
 	delete[] _tiles;
 	_tiles = nullptr;
+	_size = {};
 };
 
 /// Empties the array and sets the new size.

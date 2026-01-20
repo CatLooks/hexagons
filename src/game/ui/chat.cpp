@@ -84,7 +84,7 @@ namespace gameui {
 	/// Constructs a message element.
 	Chat::Message::Message(ui::Dim height): lines(1), move(nullptr) {
 		// configure message box
-		bounds = { -1es, 1as - 6px, 1ps - 12px, height };
+		bounds = { -1ts, 1as - 6px, 1ps - 12px, height };
 		color = Values::dimTint;
 		padding.setHorizontal(4);
 
@@ -116,14 +116,14 @@ namespace gameui {
 
 	/// Fades in the message.
 	void Chat::Message::fadeIn() {
-		auto* anim = new ui::AnimDim(&position().x, -1es, 6px, sf::seconds(0.5f));
+		auto* anim = new ui::AnimDim(&position().x, -1ts, 6px, sf::seconds(0.5f));
 		anim->ease = ui::Easings::sineOut;
 		parent()->push(anim);
 	};
 
 	/// Fades out the message.
 	void Chat::Message::fadeOut() {
-		auto* anim = new ui::AnimDim(&position().x, 6px, -1es, sf::seconds(0.5f));
+		auto* anim = new ui::AnimDim(&position().x, 6px, -1ts, sf::seconds(0.5f));
 		anim->ease = ui::Easings::quadOut;
 		anim->setAfter([this, parent = parent()]() {
 			// remove message from parent

@@ -1,6 +1,7 @@
 #pragma once
 
 // include dependencies
+#include <limits>
 #include "drag.hpp"
 #include "layer.hpp"
 
@@ -13,9 +14,9 @@ namespace ui {
 		Layer*     _layer; /// Controlled layer.
 
 	public:
-		float minZoom = 0.f;      /// Minimal zoom value.
-		float maxZoom = INFINITY; /// Maximal zoom value.
-		float scrollPower;        /// Scrolling coefficient.
+		float minZoom = 0.f;                                   /// Minimal zoom value.
+		float maxZoom = std::numeric_limits<float>::infinity(); /// Maximal zoom value.
+		float scrollPower;                                     /// Scrolling coefficient.
 
 	public:
 		/// Starts camera position drag event.

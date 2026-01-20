@@ -36,6 +36,9 @@ public:
 
 	sf::IntRect camera; /// Map camera.
 
+	/// Clears the map.
+	void clear();
+
 	/// Generates a new selection index.
 	/// 
 	/// All tiles with a matching selection index will be highlighted.

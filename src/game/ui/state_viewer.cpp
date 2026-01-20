@@ -25,7 +25,7 @@ namespace gameui {
 
 		// middle part element
 		_mid = new ui::Align(16);
-		_mid->bounds = { 1es, 0px, width, 1ps };
+		_mid->bounds = { 1ts, 0px, width, 1ps };
 		add(_mid);
 
 		// current player info labels

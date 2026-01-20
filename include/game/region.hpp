@@ -23,19 +23,45 @@ struct RegionRes {
 	/// 
 	/// @return New region resource object.
 	RegionRes div(int count) const;
+
+	/// Returns region resources.
+	RegionRes res() const;
+
+	/// Sets new region resources.
+	/// 
+	/// @param res Region resources.
+	void setRes(const RegionRes& res);
 };
 
 /// Region variable counters.
 struct RegionVar {
 	int farms; /// Farm count.
 	int tents; /// Tent count.
+
+	/// Returns region variable counters.
+	RegionVar var() const;
+
+	/// Sets new region counters.
+	/// 
+	/// @param var Region counters.
+	void setVar(const RegionVar& var);
+};
+
+/// Independent region data
+struct RegionData : RegionRes, RegionVar {
+	bool dead  = 0; /// Whether the region is dead.
+	
+	/// Returns region data.
+	RegionData data() const;
+
+	/// Sets new region data.
+	/// 
+	/// @param data Region data.
+	void setData(const RegionData& data);
 };
 
 /// Region statistics object.
-struct Region : RegionRes, RegionVar {
-	/// Returns region resources.
-	RegionRes res() const;
-
+struct Region : RegionData {
 	/// Region team color.
 	enum Team {
 		/// (0) No owner.
@@ -56,9 +82,6 @@ struct Region : RegionRes, RegionVar {
 
 	int income = 0; /// Income during next turn.
 	int tiles  = 0; /// Amount of tiles captured.
-
-	/// Checks whether the region is dead.
-	bool dead() const;
 
 	/// Updates money based on income.
 	void tick();

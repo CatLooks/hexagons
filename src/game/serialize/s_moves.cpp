@@ -7,9 +7,11 @@ namespace Serialize {
 	/// Encodes a move into a packet.
 	void encodeMove(sf::Packet& packet, const Move* move) {
 		// store generic info
-		packet << move->skill_pos;
-		packet << (uint8_t)move->skill_type;
 		packet << move->skill_cooldown;
+		if (move->skill_cooldown != 0) {
+			packet << move->skill_pos;
+			packet << (uint8_t)move->skill_type;
+		};
 
 		// entity place
 		IF(Moves::EntityPlace) {
@@ -77,16 +79,18 @@ namespace Serialize {
 		// region change
 		IF(Moves::RegionChange) {
 			packet << (uint8_t)M_RegionChange;
-			packet << data->state;
+			packet << data->state.res();
+			packet << data->state.var();
+			packet << data->state.dead;
 		};
 	};
 
 	/// Decodes a move from a packet.
 	std::unique_ptr<Move> decodeMove(sf::Packet& packet) {
 		// get generic info
-		auto pos = from<sf::Vector2i>(packet);
-		auto tex = from<uint8_t>(packet);
 		auto cd = from<uint8_t>(packet);
+		sf::Vector2i pos = cd ? from<sf::Vector2i>(packet) : sf::Vector2i();
+		uint8_t tex = cd ? from<uint8_t>(packet) : 0;
 
 		// ignore if bad skill type
 		if (tex >= Skills::Count) return {};
@@ -151,7 +155,11 @@ namespace Serialize {
 			}; break;
 			case M_RegionChange: {
 				auto* move = new Moves::RegionChange(pos, {});
-				move->state = from<Region>(packet);
+				move->state = {
+					from<RegionRes>(packet),
+					from<RegionVar>(packet),
+					from<bool>(packet)
+				};
 				res = move;
 			}; break;
 		};

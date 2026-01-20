@@ -390,6 +390,12 @@
     <ClCompile Include="src\game\serialize\s_moves.cpp">
       <Filter>Source Files\game\serialize</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\serialize\s_map.cpp">
+      <Filter>Source Files\game\serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\template.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -730,6 +736,12 @@
       <Filter>Header Files\game\serialize</Filter>
     </ClInclude>
     <ClInclude Include="include\game\serialize\general.hpp">
+      <Filter>Header Files\game\serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\template.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\serialize\map.hpp">
       <Filter>Header Files\game\serialize</Filter>
     </ClInclude>
   </ItemGroup>

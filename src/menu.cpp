@@ -1,10 +1,8 @@
 #include "menu.hpp"
 #include "game.hpp"
-// Include the new header
-#include "menu/gameJoinMenu.hpp" 
+#include "menu/gameJoinMenu.hpp"
 
-/// Menu system constructor.
-MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game* gameInstance)
+MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game* gameInstance, Net& net)
     : context(itf.newContext())
 {
     // switch to menu UI context
@@ -19,8 +17,8 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
     // construct pages
     mainMenu = new MainMenu();
     optionsMenu = new OptionsMenu();
-    startMenu = new GameStartMenu();
-    joinMenu = new GameJoinMenu();
+    startMenu = new GameStartMenu(&net);
+    joinMenu = new GameJoinMenu(&net);
 
     // add menu pages to container
     pages->add(mainMenu);
@@ -32,14 +30,17 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
     // show initial page
     pages->show(mainMenu);
 
-    // bind login toggle actions
-    mainMenu->bindLogin([=]() {
+
+    // bind login toggle page actions
+    mainMenu->bindLogin([=, &net]() {
+        net.login();
         mainMenu->setLoggedIn(true);
         });
 
-    mainMenu->bindLogout([=]() {
-           mainMenu->setLoggedIn(false);
-        });
+    mainMenu->bindLogout([=, &net]() {
+        mainMenu->setLoggedIn(false);
+        net.logout();
+    });
 
     // main -> game start (Host/Singleplayer)
     mainMenu->bindStart([=]() {
@@ -66,6 +67,18 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
         pages->show(mainMenu);
         });
 
+
+    // Options -> VSync Toggle
+    optionsMenu->bindVSync([=](bool enabled) {
+        ui::window.setVSync(enabled);
+    });
+
+    // Options -> Fullscreen Toggle
+    optionsMenu->bindFullscreen([=](bool enabled) {
+        ui::window.setFullscreen(enabled);
+    });
+
+
     // start menu -> back
     startMenu->bindBack([=]() {
         pages->show(mainMenu);
@@ -85,10 +98,11 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
         });
 
     // join menu -> join action
-    joinMenu->bindJoin([=](const std::string& code) {
+    joinMenu->bindJoinSuccess([=](const std::string& code) {
+        // 1. Configure the lobby menu as a client
         startMenu->enterAsJoiner(code);
 
-        // Show the start menu (it will now be on the STEP_WAITING page)
+        // 2. Show the lobby
         pages->show(startMenu);
-        });
+    });   
 }

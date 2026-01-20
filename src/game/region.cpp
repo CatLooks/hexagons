@@ -27,22 +27,48 @@ RegionRes RegionRes::div(int count) const {
 };
 
 /// Returns region resources.
-RegionRes Region::res() const {
-	return {
-		.money = money,
-		.berry = berry,
-		.peach = peach
-	};
+RegionRes RegionRes::res() const {
+	return *this;
+};
+/// Sets new region resources.
+void RegionRes::setRes(const RegionRes& res) {
+	*this = res;
 };
 
-/// Checks whether the region is dead.
-bool Region::dead() const {
-	return money <= 0 && income < 0;
+/// Returns region variable counters.
+RegionVar RegionVar::var() const {
+	return *this;
+};
+/// Sets new region counters.
+void RegionVar::setVar(const RegionVar& var) {
+	*this = var;
+};
+
+/// Returns region data.
+RegionData RegionData::data() const {
+	return *this;
+};
+/// Sets new region data.
+void RegionData::setData(const RegionData& data) {
+	*this = data;
 };
 
 /// Updates money based on income.
 void Region::tick() {
+	// ignore if dead
+	if (dead) return;
+
+	// update money
 	money += income;
+
+	// check if dead
+	if (money < 0 || (money == 0 && income < 0)) {
+		dead = true;
+		
+		// reset resources
+		income = 0;
+		setRes({});
+	};
 };
 
 /// Returns a region iterator.

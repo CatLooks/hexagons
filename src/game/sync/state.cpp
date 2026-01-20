@@ -59,6 +59,7 @@ void GameState::init() {
 
 	// send initialization packet
 	_adapter->send(Messages::Init{
+		.temp = Template::generate(_map),
 		.players = _plr
 	});
 
@@ -160,6 +161,9 @@ void GameState::tick() {
 void GameState::proc(const Adapter::Packet<Messages::Event>& event) {
 	// game initialization
 	if (auto* data = std::get_if<Messages::Init>(&event.value)) {
+		// construct game map
+		data->temp.construct(_map);
+
 		// store player list
 		_plr = data->players;
 		_turn = 0;

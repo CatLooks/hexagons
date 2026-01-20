@@ -10,6 +10,24 @@
 ///
 /// Conditionally applies a function to nearby tiles.
 struct Spread {
+private:
+	/// Last spread index.
+	static size_t _last_idx;
+
+public:
+	/// Resets spread index.
+	///
+	/// This should be invoked whenever the whole map is reset.
+	static void reset();
+
+	/// Generates a unique spread pass index.
+	/// 
+	/// Spread index is used to mark tiles as "visited".
+	/// Any tile whose spread index does not match is treated as "not visited".
+	/// 
+	/// @return New unique non-zero integer.
+	static size_t index();
+
 	/// Spread target information.
 	struct Tile : HexRef {
 		size_t left {}; /// Amount of hops left.
@@ -65,14 +83,6 @@ struct Spread {
 	Radius radius = default_radius;
 	/// Whether the spread affects the origin tile.
 	bool imm      = false;
-
-	/// Generates a unique spread pass index.
-	/// 
-	/// Spread index is used to mark tiles as "visited".
-	/// Any tile whose spread index does not match is treated as "not visited".
-	/// 
-	/// @return New unique non-zero integer.
-	static size_t index();
 
 	/// Applies the spread.
 	/// 
