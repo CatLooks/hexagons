@@ -6,6 +6,12 @@
 #include "game/template.hpp"
 
 namespace Serialize {
+	/// Serializes a template signature.
+	void encodeSignature(sf::Packet& packet);
+	/// Deserializes a template signature.
+	/// @return Whether a signature was recognized.
+	bool decodeSignature(sf::Packet& packet);
+
 	/// Serializes a hex base object.
 	sf::Packet& operator<<(sf::Packet& packet, const HexBase& hex);
 	/// Deserializes a hex base object.

@@ -13,6 +13,8 @@ namespace Values {
 		{ 6 * Values::tileTex.x, 1 * Values::tileTex.y },
 		Values::tileTex + Values::tileLevel(Values::tileTex)
 	};
+	/// Defense shield.
+	const sf::IntRect shield = coords(9, 1);
 
 	/// Water side color.
 	const sf::Color waterSide = sf::Color(0, 157, 251);

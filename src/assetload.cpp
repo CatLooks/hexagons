@@ -11,6 +11,7 @@ namespace assets {
 	namespace lang {
 		Section locale;
 		std::string standard;
+		std::vector<std::string> list;
 		std::map<std::string, Config> index;
 
 
@@ -21,17 +22,7 @@ namespace assets {
         /// Call this once at game startup
 		void init() {
             if (loadLanguageList()) return;            
-            keys.clear();
-            for (auto const& [key, val] : index) {
-                keys.push_back(key);
-                // Set default index if it matches the 'default' key in langs.tlml
-                if (key == standard) current_idx = (int)keys.size() - 1;
-            }
-
-            // Load the actual text data for the current language
-            if (!keys.empty()) {
-                loadLanguage(index[keys[current_idx]].file);
-            }
+            loadLanguage(list.front());
         }
 
 		/// Switches to the next available language and triggers menu refresh.
@@ -119,6 +110,7 @@ namespace assets {
 						root.req(std::format("langs.{}.file", entry.key)).get({})
 					};
 					lang::index[entry.key] = config;
+					lang::list.push_back(entry.key);
 				};
 				return false;
 			}
@@ -133,11 +125,23 @@ namespace assets {
 			fprintf(stderr, "section <langs> not found\n");
 			return true;
 		};
+
+		// no languages found
+		if (lang::index.empty()) {
+			fprintf(stderr, "section <langs> is empty\n");
+			return true;
+		};
 	};
 
 	/// Loads language localization file.
-	bool loadLanguage(std::string filename) {
-		std::string _path = path(filename);
+	bool loadLanguage(std::string key) {
+		// get language file
+		auto it = lang::index.find(key);
+		if (it == lang::index.cend()) {
+			fprintf(stderr, "failed to find language key <%s>\n", key.c_str());
+			return true;
+		};
+		std::string _path = path(it->second.file);
 
 		// open file stream
 		FILE* file = fopen(_path.c_str(), "r");

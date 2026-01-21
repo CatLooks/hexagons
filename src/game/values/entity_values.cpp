@@ -47,7 +47,8 @@ namespace Values {
 		"@!effect.defense",
 		"@!effect.offense",
 		"@!effect.poison",
-		"@!effect.stun"
+		"@!effect.stun",
+		"@!effect.enchant"
 	};
 
 	/// Shortened status effect names.
@@ -57,7 +58,8 @@ namespace Values {
 		"effect.short.defense",
 		"effect.short.offense",
 		"effect.short.poison",
-		"effect.short.stun"
+		"effect.short.stun",
+		"effect.short.enchant"
 	};
 
 	/// Status effect textures.
@@ -68,5 +70,6 @@ namespace Values {
 		coords(8, 3, 3, 0), // offense
 		coords(8, 3, 0, 1), // poison
 		coords(8, 3, 1, 1), // stunned
+		coords(8, 3, 2, 1), // enchant
 	};
 };

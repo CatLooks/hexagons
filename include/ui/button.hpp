@@ -19,6 +19,8 @@ namespace ui {
 		sf::Color red = sf::Color(255, 32, 64);
 		/// Button expansion coefficient.
 		float exp_coef = 1.125f;
+		/// Button shake amplitude coefficient.
+		float shake_coef = 1.f / 16;
 
 	protected:
 		Solid* _overlay {}; /// Button overlay.
@@ -35,6 +37,7 @@ namespace ui {
 		/// Button callback delegate.
 		Delegate<void()> _call;
 
+	public:
 		/// Emits a button expansion animation.
 		Anim* emitExpand();
 		/// Emits a button expansion animation.
@@ -43,7 +46,6 @@ namespace ui {
 		/// Starts an error animation.
 		void startError();
 
-	public:
 		/// Constructs button element base.
 		/// 
 		/// @param map Button panel map.

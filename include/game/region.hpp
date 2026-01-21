@@ -89,10 +89,12 @@ struct Region : RegionData {
 
 // forward declare map
 class Map;
+namespace gameui { class Loader; };
 
 /// Region manager object.
 class Regions {
 	friend dev::Factory;
+	friend gameui::Loader;
 
 public:
 	/// Shared region reference type.

@@ -8,6 +8,7 @@ namespace Serialize {
 	/// Message enumeration.
 	enum MessageType {
 		E_Init,
+		E_End,
 		E_Select,
 		E_Ignore,
 		E_Chat,

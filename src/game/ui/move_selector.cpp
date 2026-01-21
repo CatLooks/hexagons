@@ -15,14 +15,12 @@ namespace gameui {
 		// create turn button
 		_next = new ui::Button(texture, { width, width });
 		_next->setIcon(&assets::interface, Values::next_icon);
-		/*{
+		{
 			_next_t = _next->setLabel(Values::panel_text);
 			_next_t->pos = ui::Text::ShrinkY;
-			_next_t->position() = { -4px - 1es, 0.5as };
+			_next_t->position() = { -4px - 1ts, 0.5as };
 			_next_t->autosize = true;
-			_next_t->setPath("param");
-			_next_t->param("value", "0");
-		};*/
+		};
 		add(_next);
 
 		// create redo button
@@ -65,12 +63,30 @@ namespace gameui {
 				return (bool)evt.mouse();
 			});
 		};
+
+		// add turn label animation
+		_next_t->onUpdate([=](const sf::Time&) {
+			// label variants
+			static const char* states[] = {
+				".", "..", "..."
+			};
+
+			// update text label
+			_next_t->setRaw(states[_prog % 3]);
+			_next_t->recalculate();
+		});
+		enable(true);
 	};
 
 	/// Attaches callbacks to move selector element.
 	void Selector::attach(StaticHandler undo, StaticHandler redo, std::function<bool()> next) {
+		// attach callbacks
 		_undo->attach(undo);
 		_redo->attach(redo);
+
+		// attach validation
+		_undo->validate([=]() { return _enabled; });
+		_redo->validate([=]() { return _enabled; });
 		_next->validate(next);
 	};
 
@@ -83,5 +99,29 @@ namespace gameui {
 		// enable / disable buttons
 		if (moves.first) _undo->enable(); else _undo->disable();
 		if (moves.second) _redo->enable(); else _redo->disable();
+	};
+
+	/// Enables or disables the move selectors.
+	void Selector::enable(bool enabled) {
+		_enabled = enabled;
+		if (enabled) {
+			// disable pending animation
+			if (_pending) {
+				_pending->cancel();
+				_pending = nullptr;
+			};
+			_next_t->deactivate();
+		}
+		else {
+			// create pending animation
+			if (!_pending) {
+				_pending = new ui::AnimInt(&_prog, 0, 3, sf::seconds(1.f));
+				_pending->mode = ui::Anim::Loop;
+				_next_t->push(_pending);
+				_prog = 0;
+			}
+			else _pending->restart();
+			_next_t->activate();
+		};
 	};
 };

@@ -82,10 +82,14 @@ namespace ui {
 	void TextInput::clear() {
 		_string.clear();
 		_cursor = 0;
+		display();
+	};
 
-		// invoke update callbacks
-		_f_draw(_string);
-		_f_seek(_cursor);
+	/// Sets text input string.
+	void TextInput::set(const sf::String& text) {
+		_string = text;
+		_cursor = (unsigned int)text.getSize();
+		display();
 	};
 
 	/// Emits display callbacks.
@@ -157,5 +161,10 @@ namespace ui {
 
 		// ignore
 		return true;
+	};
+
+	/// Returns current string inside of text input.
+	const sf::String& TextInput::get() const {
+		return _string;
 	};
 };

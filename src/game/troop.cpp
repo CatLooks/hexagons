@@ -17,8 +17,13 @@ Entity::Damage Troop::offense(Access acc) {
 	if (useEffect(EffectType::OffenseBoost, acc))
 		pts *= 5;
 
+	// poison the attack
+	bool poison = useEffect(EffectType::Enchant, acc);
+	if (acc == Access::Use && type == Archer && !poison)
+		addEffect(EffectType::Enchant);
+
 	// return damage
-	return { pts, logic::troop_pow[type] };
+	return { pts, logic::troop_pow[type], poison };
 };
 
 /// Defends the troop against incoming damage.
@@ -29,8 +34,10 @@ Entity::Damage Troop::defend(Damage dmg, Access acc) {
 	// apply debuffs
 	if (useEffect(EffectType::Shielded, acc))
 		dmg.pts /= 2;
-	if (useEffect(EffectType::DefenseBoost, acc))
+	if (useEffect(EffectType::DefenseBoost, acc)) {
 		dmg.pts /= 10;
+		dmg.psn = false;
+	};
 	
 	// cap to 1 damage
 	if (dmg.pow >= own && dmg.pts < 1)
@@ -39,18 +46,8 @@ Entity::Damage Troop::defend(Damage dmg, Access acc) {
 };
 
 /// Returns troop skill index.
-int Troop::skill_id(Skills::Type skill) const {
-	// ignore empty skill
-	if (skill == Skills::Empty) return -1;
-
-	// check each skill slot
-	for (int i = 0; i < 4; i++) {
-		if (logic::troop_skills[type].skills[i]->type == skill)
-			return i;
-	};
-
-	// not found
-	return -1;
+Skills::Type Troop::skill_at(int idx) const {
+	return logic::troop_skills[type].skills[idx]->type;
 };
 
 /// Returns troop targeted skill index.

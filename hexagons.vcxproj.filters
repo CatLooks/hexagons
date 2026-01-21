@@ -396,6 +396,30 @@
     <ClCompile Include="src\game\template.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
+    <ClCompile Include="src\random.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\moves\troop_merge.cpp">
+      <Filter>Source Files\game\moves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\ui\splash_text.cpp">
+      <Filter>Source Files\game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\ui\progress_view.cpp">
+      <Filter>Source Files\game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\values\editor_values.cpp">
+      <Filter>Source Files\game\values</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\ui\editor.cpp">
+      <Filter>Source Files\game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\ui\resource_table.cpp">
+      <Filter>Source Files\game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\ui\map_loader.cpp">
+      <Filter>Source Files\game\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -743,6 +767,33 @@
     </ClInclude>
     <ClInclude Include="include\game\serialize\map.hpp">
       <Filter>Header Files\game\serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="include\random.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\moves\troop_merge.hpp">
+      <Filter>Header Files\game\moves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\logic\effect_types.hpp">
+      <Filter>Header Files\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\ui\splash_text.hpp">
+      <Filter>Header Files\game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\ui\progress_view.hpp">
+      <Filter>Header Files\game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\ui\editor.hpp">
+      <Filter>Header Files\game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\values\editor_values.hpp">
+      <Filter>Header Files\game\values</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\ui\resource_table.hpp">
+      <Filter>Header Files\game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\ui\map_loader.hpp">
+      <Filter>Header Files\game\ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,24 @@
 #include "game/array.hpp"
 
+/// Returns distance between 2 points.
+int HexArray::distance(sf::Vector2i a, sf::Vector2i b) {
+	// get point b relative to point a
+	sf::Vector2i r = b - a;
+	r.y = labs(r.y);
+
+	// get horizontal bounds of descend cone
+	int dxn = -((r.y + (a.y & 1)) >> 1);
+	int dxp = (r.y + (a.y & 1 ^ 1)) >> 1;
+
+	// get horizontal step count
+	int dx = 0;
+	if (r.x < dxn) dx = dxn - r.x;
+	if (r.x > dxp) dx = r.x - dxp;
+
+	// return sum of horizontal and vertical steps
+	return dx + r.y;
+};
+
 /// Returns neighbor position of a tile.
 sf::Vector2i HexArray::neighbor(sf::Vector2i pos, nbi_t nbi) {
 	// look-up tables

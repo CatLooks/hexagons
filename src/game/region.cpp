@@ -173,12 +173,13 @@ Regions::Split Regions::merge(
 	Split dist;
 
 	// store target resources
-	auto res = target->res();
+	auto res = target ? target->res() : RegionRes();
 
 	// overwrite merged regions
 	int idx = 0;
 	for (const auto& ap : aps) {
 		const Ref& apr = *ap.region;
+		if (!apr) continue;
 
 		// ignore if origin
 		if (idx++ == origin) {
@@ -188,7 +189,7 @@ Regions::Split Regions::merge(
 
 		// store & merge resources
 		dist.push_back(*apr);
-		target->add(*apr);
+		if (target) target->add(*apr);
 
 		// overwrite region for all hexes
 		Ref copy = apr;

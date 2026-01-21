@@ -11,6 +11,8 @@ namespace Values {
 	extern const sf::IntRect redo_icon;
 	/// Turn finish button icon.
 	extern const sf::IntRect next_icon;
+	/// Map loader grabber button icon.
+	extern const sf::IntRect grab_icon;
 
 	/// Troop buying action texture.
 	extern const sf::IntRect buy_build;
@@ -40,6 +42,8 @@ namespace Values {
 	extern const sf::IntRect dead_digit;
 	/// Insufficient resources digit replacement.
 	extern const sf::IntRect insufficient_digit;
+	/// Timed-out skill cooldown digit.
+	extern const sf::IntRect timeout_digit;
 
 	/// Game panel text settings.
 	extern const ui::TextSettings panel_text;
@@ -49,4 +53,11 @@ namespace Values {
 	extern const ui::TextSettings state_text;
 	/// Game chat text settings.
 	extern const ui::TextSettings chat_text;
+	/// Splash text settings.
+	extern const ui::TextSettings splash_text;
+
+	/// Unknown player nametag color.
+	extern const sf::Color unknown_color;
+	/// Host nametag color.
+	extern const sf::Color host_color;
 };

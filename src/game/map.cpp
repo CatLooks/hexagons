@@ -135,7 +135,7 @@ Regions::Split Map::updateRegions(
 		// ignore if region has been reached
 		bool found = false;
 		for (size_t idx : indices) {
-			if (hex->spread == idx) {
+			if (hex->spread[Spread::Def] == idx) {
 				found = true;
 				break;
 			};
@@ -306,8 +306,11 @@ void Map::draw(ui::RenderBuffer& target, float t) const {
 
 	// draw tile geometry
 	while (auto tile = drawer.next()) {
-		if (tile->hex->elevated()) {
-			tile->drawSides(target, sf::Color::White, sf::Color::Black);
+		if (tile->hex->elevated() && tile->hex->type != Hex::Water) {
+			if (tile->hex->type == Hex::Void)
+				tile->drawVoidSides(target);
+			else
+				tile->drawSides(target, sf::Color::White, sf::Color::Black);
 			elevated.push_back(*tile);
 		}
 		else {
@@ -330,6 +333,10 @@ void Map::draw(ui::RenderBuffer& target, float t) const {
 	while (auto tile = drawer.next()) {
 		if (tile->hex->elevated()) continue;
 		tile->drawContents(target);
+		
+		// draw shield if close enough
+		if (shield && distance(*shield, tile->coords) <= logic::defense_range)
+			tile->drawShield(target, t);
 	};
 
 	// draw tile shading
@@ -350,7 +357,10 @@ void Map::draw(ui::RenderBuffer& target, float t) const {
 
 	// draw elevated tile top & contents
 	for (auto& tile : elevated) {
-		tile.drawBase(target);
+		if (tile.hex->type == Hex::Void)
+			tile.drawVoidBase(target);
+		else
+			tile.drawBase(target);
 		tile.drawBorders(target, sf::Color::White);
 		tile.drawContents(target);
 	};

@@ -1,3 +1,6 @@
+# singular space
+space: " "
+
 # parameter text
 # displays a parameter directly
 param: "{value}"
@@ -34,6 +37,7 @@ effect {
 	offense: Offense Boost
 	poison : Poisoned
 	stun   : Stunned
+	enchant: Enchanted
 
 	# short entity effect names
 	# debug only
@@ -44,6 +48,7 @@ effect {
 		offense: OFF
 		poison : PSN
 		stun   : STN
+		enchant: ENC
 	}
 }
 
@@ -61,7 +66,7 @@ troop {
 build {
 	castle: Town Hall
 	farm  : Farm
-	mine  : Mine # unused
+	mine  : "Mine" # unused
 	tower : Watchtower
 	beacon: Beacon
 	fort  : Fortress
@@ -137,6 +142,18 @@ gp {
 	player: "{name}"
 	# next team info
 	next: "Next: {team}"
+
+	# player progress info
+	prog {
+		# position
+		pos: "{pos}"
+		# team
+		team: "{team}"
+		# name
+		name: "{name}"
+		# percentage
+		per: "{percent}"
+	}
 }
 
 # chat text
@@ -146,9 +163,98 @@ chat {
 
 	# "you" name
 	you: "You"
-
+	# "host" name
+	host: "@"
 	# unknown player name
-	unknown: "@"
+	unknown: "???"
+
+	# errors
+
+	# move list ignore error
+	ignore: "Move list got ignored."
+	# unknown event error
+	bad_event: "Unknown event (ID = {id})."
+	# no players to start the game
+	no_players: "No players in game."
+}
+
+# splash text
+splash {
+	# your turn
+	your_turn: "Your turn!"
+
+	# game over
+	game_over: "Game over!"
+
+	# victor
+	victor {
+		a: "Team"
+		b: "{team}"
+		c: "/"
+		d: "{name}"
+		e: "wins!"
+	}
+}
+
+# editor text
+edit {
+	# entity info
+	entity: "{name} [{hp} / {max}]"
+
+	# region info
+	region {
+		money: "Money"
+		berry: "Berries"
+		peach: "Peaches"
+		income: "Income"
+	}
+
+	# map name filter
+	filter: "Showing {n} / {max} files."
+
+	# load filename
+	load_file: "Load \"{file}\""
+	# load nothing
+	load_none: "No file selected"
+
+	# save map
+	save: "Save Map"
+	# clear map
+	clear: "Clear Map"
+
+	# map info
+	map {
+		# map section info
+		file {
+			k: "File"
+			v: "{file}"
+		}
+		name {
+			k: "Name"
+			v: "{name}"
+		}
+		auth {
+			k: "Author"
+			v: "{auth}"
+		}
+
+		# map info
+		label: "Map Info"
+	}
+
+	# content info
+	content {
+		size: "Size"
+		resize: "Resize"
+		troop: "Troop Count"
+		build: "Build Count"
+		plant: "Plant Count"
+		region: "Region Count"
+
+		# content info
+		label_size: "Map Size"
+		label_stats: "Content Info"
+	}
 }
 
 # debug info
@@ -243,6 +349,10 @@ dp {
 	# game state
 	state {
 		title: "[ Game State ]"
+		enums {
+			k: "State: {state}"
+			v: "Mode: {mode}"
+		}
 		turn {
 			k: "Turn: {turn}"
 			v: "Local Player: {local}"
@@ -250,6 +360,19 @@ dp {
 		player {
 			k: "Player: {plr_now} / {plr_count}"
 			v: "Team: {plr_team}"
+		}
+
+		# enums
+		mode {
+			host: "Host"
+			client: "Client"
+			edit: "Edit"
+		}
+		state {
+			quit: "Quit"
+			init: "Init"
+			play: "Play"
+			wait: "Wait"
 		}
 	}
 
@@ -336,7 +459,7 @@ dp {
 		}
 		ids {
 			k: "Select: {select_id}"
-			v: "Spread: {spread_id}"
+			v: "Spread: {spread_0}, {spread_1}"
 		}
 	}
 
@@ -372,6 +495,14 @@ dp {
 	# plant info
 	plant {
 		title: "[ Plant Info ]"
+		fresh: {
+			k: "Fresh"
+			v: "{fresh}"
+		}
+		pity {
+			k: "Growth: {stage}"
+			v: "Spread: {spread}"
+		}
 	}
 
 	# move info
@@ -388,6 +519,7 @@ dp {
 			field: "Name: {skill_name}"
 
 			troop_move: "Troop Move"
+			troop_merge: "Troop Merge"
 			troop_attack: "Troop Attack"
 			troop_heal: "Troop Heal"
 
@@ -416,6 +548,13 @@ dp {
 			to: "To: {pos}"
 			dmg: "Damage: {dmg}"
 			effects: "Before: {effects}"
+		}
+
+		# troop merge
+		troop_merge {
+			to: "To: {pos}"
+			a: "Moved: {a}"
+			b: "Replaced: {b}"
 		}
 
 		# troop heal

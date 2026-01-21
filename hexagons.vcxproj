@@ -66,6 +66,7 @@
     <ClCompile Include="src\game\moves\radius_effect.cpp" />
     <ClCompile Include="src\game\moves\troop_attack.cpp" />
     <ClCompile Include="src\game\moves\troop_heal.cpp" />
+    <ClCompile Include="src\game\moves\troop_merge.cpp" />
     <ClCompile Include="src\game\moves\troop_move.cpp" />
     <ClCompile Include="src\game\plant.cpp" />
     <ClCompile Include="src\game\region.cpp" />
@@ -85,12 +86,18 @@
     <ClCompile Include="src\game\troop.cpp" />
     <ClCompile Include="src\game\ui\action_button.cpp" />
     <ClCompile Include="src\game\ui\chat.cpp" />
+    <ClCompile Include="src\game\ui\editor.cpp" />
     <ClCompile Include="src\game\ui\game_panel.cpp" />
     <ClCompile Include="src\game\ui\hex_preview.cpp" />
+    <ClCompile Include="src\game\ui\map_loader.cpp" />
     <ClCompile Include="src\game\ui\move_selector.cpp" />
+    <ClCompile Include="src\game\ui\progress_view.cpp" />
     <ClCompile Include="src\game\ui\resource_bar.cpp" />
+    <ClCompile Include="src\game\ui\resource_table.cpp" />
+    <ClCompile Include="src\game\ui\splash_text.cpp" />
     <ClCompile Include="src\game\ui\state_viewer.cpp" />
     <ClCompile Include="src\game\values\build_values.cpp" />
+    <ClCompile Include="src\game\values\editor_values.cpp" />
     <ClCompile Include="src\game\values\entity_values.cpp" />
     <ClCompile Include="src\game\values\hex_values.cpp" />
     <ClCompile Include="src\game\values\interface.cpp" />
@@ -103,6 +110,7 @@
     <ClCompile Include="src\localization\token.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mathext.cpp" />
+    <ClCompile Include="src\random.cpp" />
     <ClCompile Include="src\ui\align.cpp" />
     <ClCompile Include="src\ui\anim\base.cpp" />
     <ClCompile Include="src\ui\anim\easing.cpp" />
@@ -162,6 +170,7 @@
     <ClInclude Include="include\game\hex.hpp" />
     <ClInclude Include="include\game\history.hpp" />
     <ClInclude Include="include\game\logic\build_logic.hpp" />
+    <ClInclude Include="include\game\logic\effect_types.hpp" />
     <ClInclude Include="include\game\logic\plant_logic.hpp" />
     <ClInclude Include="include\game\logic\skill_array.hpp" />
     <ClInclude Include="include\game\logic\skill_helper.hpp" />
@@ -181,6 +190,7 @@
     <ClInclude Include="include\game\moves\radius_effect.hpp" />
     <ClInclude Include="include\game\moves\troop_attack.hpp" />
     <ClInclude Include="include\game\moves\troop_heal.hpp" />
+    <ClInclude Include="include\game\moves\troop_merge.hpp" />
     <ClInclude Include="include\game\moves\troop_move.hpp" />
     <ClInclude Include="include\game\plant.hpp" />
     <ClInclude Include="include\game\region.hpp" />
@@ -201,12 +211,18 @@
     <ClInclude Include="include\game\troop.hpp" />
     <ClInclude Include="include\game\ui\action_button.hpp" />
     <ClInclude Include="include\game\ui\chat.hpp" />
+    <ClInclude Include="include\game\ui\editor.hpp" />
     <ClInclude Include="include\game\ui\game_panel.hpp" />
     <ClInclude Include="include\game\ui\hex_preview.hpp" />
+    <ClInclude Include="include\game\ui\map_loader.hpp" />
     <ClInclude Include="include\game\ui\move_selector.hpp" />
+    <ClInclude Include="include\game\ui\progress_view.hpp" />
     <ClInclude Include="include\game\ui\resource_bar.hpp" />
+    <ClInclude Include="include\game\ui\resource_table.hpp" />
+    <ClInclude Include="include\game\ui\splash_text.hpp" />
     <ClInclude Include="include\game\ui\state_viewer.hpp" />
     <ClInclude Include="include\game\values\build_values.hpp" />
+    <ClInclude Include="include\game\values\editor_values.hpp" />
     <ClInclude Include="include\game\values\entity_values.hpp" />
     <ClInclude Include="include\game\values\hex_values.hpp" />
     <ClInclude Include="include\game\values\interface.hpp" />
@@ -218,6 +234,7 @@
     <ClInclude Include="include\localization\parser.hpp" />
     <ClInclude Include="include\localization\token.hpp" />
     <ClInclude Include="include\mathext.hpp" />
+    <ClInclude Include="include\random.hpp" />
     <ClInclude Include="include\templated\delegate.hpp" />
     <ClInclude Include="include\templated\pool.hpp" />
     <ClInclude Include="include\templated\refpool.hpp" />
@@ -365,7 +382,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;ASSET_PATH="./assets/";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:/SFML3/include;$(ProjectDir)include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:/SFML3/include;$(ProjectDir)EOS_SDK/Include/;$(ProjectDir)include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DisableSpecificWarnings>4455;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
@@ -373,7 +390,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:/SFML3/lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-audio-d.lib;sfml-network-d.lib;sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-audio-d.lib;sfml-network-d.lib;sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;$(ProjectDir)EOS_SDK/Lib/EOSSDK-Win64-Shipping.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">

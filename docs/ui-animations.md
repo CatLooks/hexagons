@@ -72,7 +72,7 @@ Usage example:
 ```cpp
 ui::Anim* anim = ui::AnimDim::to(
 	&element->position().y, // animates element's y position
-	-1em,                   // to -element_size (i.e. off-screen)
+	-1ts,                   // to -element_size (i.e. off-screen)
 	sf::seconds(0.5f)       // in half a second
 );
 anim->setAfter([=]() {

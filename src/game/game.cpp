@@ -18,18 +18,35 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 	_layer(game_layer),
 	_camera(game_layer, 17.f / 16),
 	_panel(new gameui::Panel(map.history)),
-	_bar(new gameui::Bar()),
+	_bar(new gameui::Bar),
 	_view(new gameui::State(state)),
-	_chat(new gameui::Chat(48px, 28px, 128, 20))
+	_chat(new gameui::Chat(48px, 28px, 128, 20)),
+	splash(new gameui::Splash(192px, 56px)),
+	_pb(new gameui::Progress),
+	_edit(nullptr)
 {
 	// attach reference to game state
-	_state.setRefs(&map, _chat);
+	_state.setRefs(&map, _chat, splash, _pb);
+	this->state.map = &map;
 
 	// register interface elements
 	ui_layer->add(_panel);
 	ui_layer->add(_bar);
 	ui_layer->add(_view);
+	chat_layer->add(splash);
+	chat_layer->add(_pb);
 	chat_layer->add(_chat);
+
+	// generate editor
+	if (_state.editor()) {
+		// create editor ui
+		_edit = new Editor(this, chat_layer);
+		ui_layer->add(_edit);
+
+		// hide some gameplay elements
+		_view->deactivate();
+		_chat->deactivate();
+	};
 
 	// add chat callback
 	_chat->attach([=](const std::string& text) {
@@ -46,6 +63,34 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 		if (!white)
 			_state.message(text);
 		_chat->hide();
+	});
+
+	// add progress table display
+	ui_layer->onEvent([=](const ui::Event& evt) {
+		if (auto data = evt.get<ui::Event::KeyPress>()) {
+			if (data->key == sf::Keyboard::Key::Tab) {
+				// count tiles
+				auto count = logic::count(&map, _state.players());
+
+				// update progress table values
+				_pb->update(count, _state.players());
+				_pb->recalculate();
+
+				// show progress table
+				_pb->activate();
+				return true;
+			};
+		};
+		if (auto data = evt.get<ui::Event::KeyRelease>()) {
+			if (data->key == sf::Keyboard::Key::Tab) {
+				// hide progress table
+				_pb->deactivate();
+				return true;
+			};
+		};
+
+		// ignore event
+		return false;
 	});
 
 	// setup camera
@@ -110,12 +155,18 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 		_move = enabled;
 
 		if (!enabled) {
-			// deselect player
+			// cancel some selections
 			deselectMenu();
-			closeMenu();
 			deselectTile();
-			deselectRegion();
+
+			// reselect the region
+			if (map.selectedRegion())
+				selectRegion(map.atref(_last));
 		};
+		updateMenu();
+
+		// update move selectors
+		_panel->selector()->enable(enabled);
 	});
 
 	// add game state update handler
@@ -174,7 +225,7 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 		game_layer->setArea(ui::DimVector(1ts, 1ts) * _camera.zoom(), { 0px, 0px, 1ps, 1ps });
 
 		// keyboard camera pan
-		if (ui::window.focused() && !_chat->active()) {
+		if (ui::window.focused() && !_chat->active() && (!_edit || !_edit->input())) {
 			sf::Vector2i offset;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) offset.y--;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) offset.y++;
@@ -201,6 +252,9 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 
 /// Undoes last move.
 void Game::undoMove() {
+	// ignore if in editor mode
+	if (_state.editor()) return;
+
 	// stop selection
 	if (map.isSelection())
 		deselectMenu();
@@ -222,6 +276,9 @@ void Game::undoMove() {
 
 /// Redoes last move.
 void Game::redoMove() {
+	// ignore if in editor mode
+	if (_state.editor()) return;
+
 	// stop selection
 	if (map.isSelection())
 		deselectMenu();
@@ -357,10 +414,30 @@ void Game::click(sf::Vector2i pos) {
 			return;
 		};
 
-		// select the region
-		Region::Team team = _state.team();
-		if (hex->region() && (team && hex->region()->team == team || flags::any_region))
-			selectRegion({ hex, pos });
+		// editor mode
+		if (_state.editor()) {
+			// check if selecting the same tile
+			if (_select && *_select == pos) {
+				deselectTile();
+				_edit->region(nullptr);
+			}
+			else {
+				// select tile directly
+				selectTile(pos);
+
+				// attach region to editor
+				if (hex->region())
+					_edit->region(&*hex->region());
+				else
+					_edit->region(nullptr);
+			};
+		}
+		else {
+			// select the region
+			Region::Team team = _state.team();
+			if (hex->region() && (team && hex->region()->team == team || flags::any_region))
+				selectRegion({ hex, pos });
+		};
 	};
 };
 
@@ -516,10 +593,8 @@ static void _attach_action(
 			size_t idx = game->map.newSelectionIndex();
 
 			// create tile pulse for auto skills
-			if (skill->format == Skill::Self) {
+			if (skill->format == Skill::Self)
 				game->map.pulse = game->last();
-				game->resetPulse();
-			};
 
 			// generate tile selection
 			Spread spread = skill->select(game->state, game->map.atref(game->last()), idx);
@@ -609,8 +684,12 @@ static void _construct_menu(
 
 		// set skill cooldown
 		button->forwardOverlay();
-		button->setTimer(entity.hasEffect(EffectType::Stunned)
-			? gameui::Action::StunTimer : entity.timers[idx]);
+		if (entity.hasEffect(EffectType::Stunned))
+			button->setTimer(gameui::Action::StunTimer);
+		else if (!Skills::ticked(entity.skill_at(idx), entity.effectList()))
+			button->setTimer(gameui::Action::TimeoutTimer);
+		else
+			button->setTimer(entity.timers[idx]);
 
 		// attach skill logic
 		_attach_action(button, idx, game, data.skills[idx]);
@@ -739,6 +818,8 @@ void Game::buildMenu(const Build& build) {
 		Values::build_names[build.type],
 		build, build.hp != build.max_hp()
 	);
+	if (logic::build_guard[build.type] >= Troop::Farmer)
+		map.shield = build.pos;
 };
 /// Constructs a plant UI panel.
 void Game::plantMenu(const Plant& plant) {
@@ -771,6 +852,11 @@ void Game::closeMenu() {
 
 /// Updates menu state after a click.
 void Game::updateMenu() {
+	map.shield = {};
+
+	// ignore if in editor mode
+	if (_state.editor()) return;
+
 	// open hex menu
 	if (_select)
 		hexMenu(*map.at(*_select));
@@ -791,11 +877,6 @@ sf::Vector2i Game::last() const {
 /// Whether local player is currently making a move.
 bool Game::move() const {
 	return _move;
-};
-
-/// Resets pulse animation.
-void Game::resetPulse() const {
-	_pulse_anim->restart();
 };
 
 /// Returns hex coordinates at a mouse position.
@@ -830,6 +911,12 @@ sf::Vector2i Game::mouseToHex(sf::Vector2i mouse) const {
 		};
 	};
 	return pos;
+};
+
+/// Moves the camera to the middle of the map.
+void Game::centerCamera() {
+	auto bp = map.backplane();
+	_camera.setPosition((sf::Vector2f)bp.getCenter());
 };
 
 /// Draws the map.

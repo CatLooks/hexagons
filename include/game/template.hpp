@@ -30,6 +30,12 @@ public:
 	void clear(sf::Vector2i size);
 
 public:
+	/// Map info.
+	struct Header {
+		std::string name; /// Map name.
+		std::string auth; /// Map author.
+	} header;
+
 	/// Region construction data.
 	struct RCD {
 		RegionRes    res; /// Region resources.
