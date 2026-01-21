@@ -31,6 +31,8 @@ int main() {
 	auto* adapter = new BotAdapter(1.f);
 	GameState state(GameState::Host, adapter);
 
+	ui::Layer* pause_layer = nullptr;
+
 	auto game_ctx = itf.newContext();
 	Game* game = nullptr;
 	{
@@ -40,6 +42,8 @@ int main() {
 		auto layer_gui = itf.layer();
 		auto layer_msg = itf.layer();
 
+		pause_layer = itf.layer(); 
+
 		game = new Game(layer_map, layer_gui, layer_msg, &state);
 		adapter->map = &game->map;
 
@@ -47,7 +51,7 @@ int main() {
 		layer_gui->add(dev::Factory::game_panel(game));
 	}
 
-	MenuSystem menuSystem(itf, &game_ctx, game, net, state);	
+	MenuSystem menuSystem(itf, &game_ctx, pause_layer, game, net, state);   	
 	itf.switchContext(menuSystem.context);
 
 

@@ -8,6 +8,12 @@
 
 #include "game/sync/state.hpp"
 
+/// Header text settings.
+static const ui::TextSettings k_HeaderFont = {
+    assets::font, 60, sf::Color::White, sf::Color::Black, 3
+};
+
+
 static void setup_test_map(Game& game) {
 	Map& map = game.map;
 
@@ -231,8 +237,85 @@ static void setup_test_map(Game& game) {
 
 
 
-MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game* gameInstance, Net& net, GameState& state) : context(itf.newContext()) 
+MenuSystem:: MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, ui::Layer* pauseLayer, Game* gameInstance, Net& net, GameState& state) : context(itf.newContext()) 
 {
+       // --- PAUSE MENU SETUP (Uses the passed Game Context Layer) ---
+    
+    // 1. Create the semi-transparent background (Overlay) on the passed layer
+    auto* pauseOverlay = new ui::Solid();
+    pauseOverlay->color = sf::Color(0, 0, 0, 150);
+    pauseOverlay->bounds = { 0, 0, 1ps, 1ps };
+    pauseOverlay->deactivate(); // Hidden by default
+    pauseLayer->add(pauseOverlay);
+
+    // 2. Create the center menu panel
+    auto* pausePanel = new ui::Solid();
+    pausePanel->color = sf::Color(40, 44, 52); 
+    pausePanel->bounds = { 0.5ps - 150px, 0.5ps - 175px, 300px, 250px };
+    pauseOverlay->add(pausePanel);
+
+    // Title
+    auto* pauseTitle = ui::Text::raw(k_HeaderFont, "");
+    pauseTitle->setPath("pause.title");
+    pauseTitle->setColor(sf::Color::White);
+    pauseTitle->setSize(40);
+    pauseTitle->align = ui::Text::Center;
+    pauseTitle->bounds = { 0, 20px, 1ps, 50px };
+    pausePanel->add(pauseTitle);
+
+    // Resume Button
+    auto* btnResume = new menuui::Button();
+    btnResume->setSize({ 200px, 50px });
+    btnResume->position() = { 0.5as, 90px };
+    btnResume->setLabel()->setPath("pause.resume");
+    btnResume->setCall([=]() {
+        pauseOverlay->deactivate(); // Hide menu
+    }, nullptr, menuui::Button::Click);
+    pausePanel->add(btnResume);
+
+    // Quit Button
+    auto* btnQuit = new menuui::Button();
+    btnQuit->setSize({ 200px, 50px });
+    btnQuit->position() = { 0.5as, 160px };
+    btnQuit->setLabel()->setPath("pause.quit");
+    btnQuit->setCall([=, &itf, &net]() {
+        pauseOverlay->deactivate();
+        net.leaveLobby();
+        net.clearHandlers();
+        startMenu->reset();
+        
+        // Switch back to Menu Context
+        itf.switchContext(context); 
+        pages->show(mainMenu);
+    }, nullptr, menuui::Button::Click);
+    pausePanel->add(btnQuit);
+
+    // 3. Input Handler (The "Esc" Key Listener)
+    auto* inputCatcher = new ui::Element();
+    inputCatcher->bounds = { 0, 0, 1ps, 1ps };
+
+    inputCatcher->onEvent([=](const ui::Event& evt) {
+        if (auto key = evt.get<ui::Event::KeyPress>()) {
+            const ui::Event::KeyPress & kp = *key;
+            if (kp.key == sf::Keyboard::Key::Escape) {
+                // Toggle visibility
+                if (pauseOverlay->active()) {
+                    pauseOverlay->deactivate();
+                } else {
+                    pauseOverlay->activate();
+                }
+                return true;
+            }
+        }
+        return false;
+    });
+    // Add catcher to pauseLayer (Game Context) so it only triggers when playing
+    pauseLayer->add(inputCatcher);
+
+
+    // --- MAIN MENU SETUP (Uses the internal context) ---
+
+
     // switch to menu UI context
     itf.switchContext(context);
 
@@ -487,4 +570,6 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
          }));
          pages->show(mainMenu);
     });
+
+
 }

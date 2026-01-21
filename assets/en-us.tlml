@@ -262,6 +262,12 @@ debug {
 	fps: "{fps} FPS"
 }
 
+pause{
+	title: "Quit to menu?"
+	resume: "RESUME"
+	quit: "QUIT"
+}
+
 # menu texts
 menu {
     title: "HEXAGONS"
