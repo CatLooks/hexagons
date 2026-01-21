@@ -41,7 +41,6 @@ namespace assets {
 		/// Language config map.
 		extern std::map<std::string, Config> index;
 
-		extern std::vector<std::string> keys;
         extern int current_idx;
 
         /// Call this once at game startup

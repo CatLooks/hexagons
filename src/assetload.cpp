@@ -14,8 +14,6 @@ namespace assets {
 		std::vector<std::string> list;
 		std::map<std::string, Config> index;
 
-
-		std::vector<std::string> keys;
         int current_idx = 0;
         std::vector<std::function<void()>> refresh_listeners;
 
@@ -27,11 +25,10 @@ namespace assets {
 
 		/// Switches to the next available language and triggers menu refresh.
         void next() {
-            if (keys.empty()) return;
-            current_idx = (current_idx + 1) % keys.size();
-            loadLanguage(index[keys[current_idx]].file);
+        	if (list.empty()) return;
+            current_idx = (current_idx + 1) % list.size();
+            loadLanguage(list[current_idx]);
 
-            // Trigger every registered menu to refresh
             for (auto& refreshFunc : refresh_listeners) {
                 if (refreshFunc) refreshFunc();
             }
@@ -40,8 +37,8 @@ namespace assets {
 
         /// Returns the display name of the current language (e.g. "English")
         std::string current_name() {
-            if (keys.empty()) return "None";
-            return index[keys[current_idx]].name;
+            if (list.empty()) return "None";
+            return index[list[current_idx]].name;
         }
 
 	};
