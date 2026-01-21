@@ -6,7 +6,7 @@ namespace logic {
 	extern const int build_hp[Build::Count] = { 6, 1, 2, 3, 4, 6, 1 };
 
 	/// Building buying cost.
-	const int build_cost_base[Build::Count] = { 0, 4, 80, 15, 35, 95, 10 };
+	const int build_cost_base[Build::Count] = { 0, 6, 80, 15, 35, 95, 10 };
 
 	/// Building buying cost.
 	int build_cost(Build::Type type, const RegionVar& var) {
@@ -23,7 +23,7 @@ namespace logic {
 	};
 
 	/// Extra farm cost per farm built.
-	const int farm_cost_inc = 1;
+	const int farm_cost_inc = 3;
 	/// Extra tent cost per tent built.
 	const int tent_cost_inc = 2;
 
@@ -44,7 +44,7 @@ namespace logic {
 	const int build_bonus[Build::Count] = { 30, 5, 8, 6, 16, 43, 8 };
 
 	/// Building upkeep cost.
-	const int build_upkeep[Build::Count] = { 0, -4, 0, 2, 8, 29, 1 };
+	const int build_upkeep[Build::Count] = { 0, -2, 0, 2, 8, 29, 1 };
 
 	/// Weakest troop that can damage the building.
 	const Troop::Type build_level[Build::Count] = {

@@ -74,17 +74,16 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 
 				// update progress table values
 				_pb->update(count, _state.players());
-				_pb->recalculate();
 
 				// show progress table
-				_pb->activate();
+				_pb->activate(true);
 				return true;
 			};
 		};
 		if (auto data = evt.get<ui::Event::KeyRelease>()) {
 			if (data->key == sf::Keyboard::Key::Tab) {
 				// hide progress table
-				_pb->deactivate();
+				_pb->deactivate(true);
 				return true;
 			};
 		};
