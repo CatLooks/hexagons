@@ -297,6 +297,9 @@ menu {
 	vsync: "Vsync: {v}"
 	fullscreen: "Fullscreen: {v}"
 
+	login_required: "You must be logged in\nto play online!"
+	no_maps: "No maps found."
+
 }
 
 join {
@@ -331,6 +334,12 @@ lobby {
     player_name_host: "{name} (Host)"
     host_you: "Host (You)"
     connecting: "Connecting..."
+
+	host_ended: "The Host has ended the game."
+	closed: "Lobby has been closed."
+	join_failed: "Failed to join lobby:\n{reason}"
+	host_suffix: "{name} (Host)"
+	host_default_name: "Host"
 }
 
 ## ALL FURTHER TEXT IS DEBUG MODE ONLY

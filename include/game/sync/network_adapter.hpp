@@ -2,9 +2,10 @@
 
 #include "game/sync/adapter.hpp"
 #include "networking/Net.hpp"
-#include "game/serialize/messages.hpp" // Contains your encodeMessage/decodeMessage
-#include "game/serialize/moves.hpp"    // Contains encodeMove/decodeMove
+#include "game/serialize/messages.hpp" 
+#include "game/serialize/moves.hpp"    
 #include <queue>
+#include <cassert>
 
 class NetworkAdapter : public Adapter {
 private:
@@ -68,7 +69,6 @@ public:
 
     // --- Receiving Data (Network -> Game) ---
 
-    // GameState calls this to check for new Events
     OptPacket<Messages::Event> recv() override {
         if (_eventQueue.empty()) return std::nullopt;
         
@@ -77,7 +77,6 @@ public:
         return val;
     }
 
-    // GameState calls this to check for new Moves
     OptPacket<History::UniqList> recv_list() override {
         if (_moveListQueue.empty()) return std::nullopt;
 
@@ -90,13 +89,15 @@ private:
     // Called when Net receives bytes
     void onPacketInternal(const std::string& sender, sf::Packet& packet) {
         uint8_t type;
+        
+        // REMOVED: assert(packet.endOfPacket()); -- wrong place, packet is full here
+        
         if (!(packet >> type)) return; // Safety check
 
         uint32_t playerId;
         if (!(packet >> playerId)) return;
 
         if (type == Type_Event) {
-            // Use YOUR decodeMessage function
             auto msg = Serialize::decodeMessage(packet);
             if (msg) {
                 _eventQueue.push({ std::move(*msg), playerId });
@@ -118,5 +119,9 @@ private:
                 }
             }
         }
+
+        // CORRECT PLACE: Check that we consumed exactly what was sent.
+        // If this triggers, either the sender wrote too much or we read too little.
+        assert(packet.endOfPacket());
     }
 };

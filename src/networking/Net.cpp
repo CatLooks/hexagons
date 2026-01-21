@@ -37,8 +37,8 @@ void Net::leaveLobby() {
 void Net::login() {
     auto auth = m_eosManager.GetAuthManager();
     if (auth) {
-         auth->AccountPortalPersistentAuthLogin();
-       //auth->CreateDeviceId(); //temp - sorry
+        auth->AccountPortalPersistentAuthLogin();
+        //auth->CreateDeviceId(); //temp - sorry
         std::cout << "[Net] Login initiated..." << std::endl;
     }
 }
@@ -176,7 +176,11 @@ void Net::AttachToLobby(std::shared_ptr<LobbyManager> lobby) {
     m_lobby = lobby;
     m_attached = true;
 
-    // Member joined -> NetConnected
+    lobby->OnLobbyJoinFailed.add([this](const std::string& reason) {
+        close();
+        OnJoinFailed.invoke(reason);
+    });
+
     lobby->OnMemberJoined.add([this](EOS_ProductUserId userId) {
         NetConnected ev;
         ev.userId = EOSIdToString(userId);
@@ -184,7 +188,7 @@ void Net::AttachToLobby(std::shared_ptr<LobbyManager> lobby) {
         OnPlayerConnected.invoke(ev.userId);
     });
 
-     auto local = lobby->GetLocalConnection();
+    auto local = lobby->GetLocalConnection();
     if (local) {
         local->OnMessageReceived.add([this](sf::Packet packet) {
             OnPacketReceived.invoke(EOSIdToString(nullptr), packet);
