@@ -70,20 +70,25 @@ int main() {
 	win.setVerticalSyncEnabled(true);
 	win.setKeyRepeatEnabled(false);
 
+	// This loop is ran when the window is open
 	while (win.isOpen()) {
 		win.clear(sf::Color(29, 31, 37));
 
 		interface.recalculate(win.getSize());
 		while (const auto event = win.pollEvent()) {
+			// When user closes the window
 			if (event->is<sf::Event::Closed>()) {
+				// Closes the window
 				win.close();
 			};
 			interface.event(*event);
 		};
 
 		interface.update(sf::Mouse::getPosition(win));
+		// Draws window
 		interface.draw(win);
 
+		// Displays window
 		win.display();
 	};
 	return 0;
