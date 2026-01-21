@@ -90,7 +90,10 @@ GameStartMenu::GameStartMenu(Net* net) : _net(net) {
     _contentPages->add(_pageMap);
     _contentPages->add(_pageLobby);
 
-    _pageWaitingLobby->bindStart([this]() { if (_onStartGame) _onStartGame(); });
+    _pageWaitingLobby->bindStart([this]() { 
+        if (_onStartGame) _onStartGame(); 
+        nextStep();
+    });
     
     _pageWaitingLobby->bindLeave([this]() {
         if (_currentData.isMultiplayer && _currentStep == STEP_WAITING) {

@@ -102,7 +102,8 @@ void LobbyMenu::setRoomCode(const std::string& code) {
 
 /// Sets host state (enables start button for host).
 void LobbyMenu::setAsHost(bool isHost) {
-    if (_startBtn) _startBtn->display = isHost;
+    if (_startBtn) _startBtn->display = true;
+    setInteractable(isHost);
 }
 
 /// Bind start callback.
@@ -144,4 +145,16 @@ void LobbyMenu::refreshText() {
 void LobbyMenu::setGameDetails(const GameData& data) {
     _lastData = data;
     refreshText();
+}
+
+void LobbyMenu::setInteractable(bool enabled) {
+    if (_startBtn) {
+        if (enabled) {
+            _startBtn->setCall([this]() { if (_onStart) _onStart(); }, nullptr, menuui::Button::Click);
+            _startBtn->setLabel()->setColor(sf::Color::White);
+        } else {
+            _startBtn->setCall(nullptr, nullptr, menuui::Button::Click);
+            _startBtn->setLabel()->setColor(sf::Color(100, 100, 100));
+        }
+    }
 }
