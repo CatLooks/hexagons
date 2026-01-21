@@ -264,7 +264,8 @@ int main() {
 		target.draw(drawStats);
 	});
 
-	GameState state(GameState::Host, new TestAdapter);
+	auto* adapter = new BotAdapter(1.f);
+	GameState state(GameState::Host, adapter);
 
 	auto game_ctx = itf.newContext();
 	Game* game = nullptr;
@@ -276,6 +277,7 @@ int main() {
 		auto layer_msg = itf.layer();
 
 		game = new Game(layer_map, layer_gui, layer_msg, &state);
+		adapter->map = &game->map;
 
 		// main-branch behavior: prefilled test map + bots
 		setup_test_map(*game);
@@ -295,6 +297,9 @@ int main() {
 
 	MenuSystem menuSystem(itf, &game_ctx, game, net, state);	
 	itf.switchContext(menuSystem.context);
+
+	// testing
+	itf.switchContext(game_ctx);
 
 	while (ui::window.active()) {
 		net.fetch();
