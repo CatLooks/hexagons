@@ -19,7 +19,9 @@ namespace ui {
 
 	/// Configures intermediate rendering.
 	void Layer::setArea(DimVector size, DimRect area) {
-		_ir = ir_t(sf::RenderTexture(), size, area);
+		if (!_ir) _ir = ir_t{};
+		_ir->size = size;
+		_ir->area = area;
 	};
 	/// Removes an intermediate texture step.
 	void Layer::removeArea() {

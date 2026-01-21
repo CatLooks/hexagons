@@ -23,14 +23,8 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 	_chat(new gameui::Chat(48px, 28px, 128, 20)),
 	splash(new gameui::Splash(192px, 56px)),
 	_pb(new gameui::Progress),
-	_edit(new Editor(this, chat_layer))
+	_edit(nullptr)
 {
-	// hide ui elements in editor
-	if (_state.editor()) {
-		_view->deactivate();
-		_chat->deactivate();
-	};
-
 	// attach reference to game state
 	_state.setRefs(&map, _chat, splash, _pb);
 	this->state.map = &map;
@@ -39,10 +33,20 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 	ui_layer->add(_panel);
 	ui_layer->add(_bar);
 	ui_layer->add(_view);
-	ui_layer->add(_edit);
 	chat_layer->add(splash);
 	chat_layer->add(_pb);
 	chat_layer->add(_chat);
+
+	// generate editor
+	if (_state.editor()) {
+		// create editor ui
+		_edit = new Editor(this, chat_layer);
+		ui_layer->add(_edit);
+
+		// hide some gameplay elements
+		_view->deactivate();
+		_chat->deactivate();
+	};
 
 	// add chat callback
 	_chat->attach([=](const std::string& text) {
@@ -221,7 +225,7 @@ Game::Game(ui::Layer* game_layer, ui::Layer* ui_layer, ui::Layer* chat_layer, Ga
 		game_layer->setArea(ui::DimVector(1ts, 1ts) * _camera.zoom(), { 0px, 0px, 1ps, 1ps });
 
 		// keyboard camera pan
-		if (ui::window.focused() && !_chat->active() && !_edit->input()) {
+		if (ui::window.focused() && !_chat->active() && (!_edit || !_edit->input())) {
 			sf::Vector2i offset;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) offset.y--;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) offset.y++;

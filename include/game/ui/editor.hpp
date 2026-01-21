@@ -36,6 +36,8 @@ private:
 	ui::Text* _show_text; /// Selected entity text.
 	ui::Text* _clip_text; /// Entity clipboard text.
 
+	ui::Button* _grab; /// Map loader grabber.
+
 	/// Update text labels.
 	void updateLabels();
 
@@ -59,6 +61,9 @@ public:
 	/// 
 	/// @param reg Region reference.
 	void region(Region* reg);
+
+	/// Hides the loader grabber button.
+	void hide();
 
 	/// Whether any input field is active.
 	bool input() const;

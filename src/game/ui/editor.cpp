@@ -448,8 +448,8 @@ Editor::Editor(Game* game, ui::Layer* text_layer): _game(game) {
 	text_layer->add(_loader);
 
 	// add loader panel grabber
-	auto* grab = new gameui::Grabber(_loader);
-	text_layer->add(grab);
+	_grab = new gameui::Grabber(_loader);
+	text_layer->add(_grab);
 };
 
 /// Updates entity label.
@@ -501,6 +501,11 @@ void Editor::updateLabels() {
 /// Selects a region.
 void Editor::region(Region* reg) {
 	_res_table->sync(reg);
+};
+
+/// Hides the loader grabber button.
+void Editor::hide() {
+	_grab->deactivate(true);
 };
 
 /// Returns selected tile.
