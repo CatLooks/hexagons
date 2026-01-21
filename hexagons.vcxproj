@@ -30,6 +30,7 @@
     <ClCompile Include="src\assetload.cpp" />
     <ClCompile Include="src\assets.cpp" />
     <ClCompile Include="src\flags.cpp" />
+    <ClCompile Include="src\game\bot_ai.cpp" />
     <ClCompile Include="src\game\array.cpp" />
     <ClCompile Include="src\game\build.cpp" />
     <ClCompile Include="src\game\dev\dev_game.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="include\flags.hpp" />
     <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\game\array.hpp" />
+    <ClInclude Include="include\game\bot_ai.hpp" />
     <ClInclude Include="include\game\build.hpp" />
     <ClInclude Include="include\game\draw.hpp" />
     <ClInclude Include="include\game\draw\build_draw.hpp" />
@@ -222,6 +224,7 @@
     <ClInclude Include="include\game\sync\ai.hpp" />
     <ClInclude Include="include\game\sync\messages.hpp" />
     <ClInclude Include="include\game\sync\net.hpp" />
+    <ClInclude Include="include\game\sync\network_adapter.hpp" />
     <ClInclude Include="include\game\sync\state.hpp" />
     <ClInclude Include="include\game\sync\test.hpp" />
     <ClInclude Include="include\game\template.hpp" />
