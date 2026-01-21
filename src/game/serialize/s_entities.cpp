@@ -92,19 +92,19 @@ namespace Serialize {
 		if (auto* data = std::get_if<Moves::Empty>(&entity)) {
 			packet << (uint8_t)S_Empty;
 			packet << data->pos;
-		};
-		if (auto* data = std::get_if<Troop>(&entity)) {
+		}
+		else if (auto* data = std::get_if<Troop>(&entity)) {
 			packet << (uint8_t)S_Troop;
 			packet << *data;
-		};
-		if (auto* data = std::get_if<Build>(&entity)) {
+		}
+		else if (auto* data = std::get_if<Build>(&entity)) {
 			packet << (uint8_t)S_Build;
 			packet << *data;
-		};
-		if (auto* data = std::get_if<Plant>(&entity)) {
-			packet << (uint8_t)S_Plant;
-			packet << *data;
-		};
+		}
+		else if (auto* data = std::get_if<Plant>(&entity)) {
+				packet << (uint8_t)S_Plant;
+				packet << *data;
+			};
 		return packet;
 	};
 	/// Deserializes an entity state.
