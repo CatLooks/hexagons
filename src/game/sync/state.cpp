@@ -355,10 +355,6 @@ uint32_t GameState::turn() const {
 	return _turn;
 };
 
-/// Checks whether the game is in editor mode.
-bool GameState::editor() const {
-	return _mode == Edit;
-};
 void GameState::reset(Mode mode, Adapter* adapter) {
     _mode = mode;
     _adapter.reset(adapter);

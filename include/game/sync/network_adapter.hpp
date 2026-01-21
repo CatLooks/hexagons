@@ -2,9 +2,10 @@
 
 #include "game/sync/adapter.hpp"
 #include "networking/Net.hpp"
-#include "game/serialize/messages.hpp" // Contains your encodeMessage/decodeMessage
-#include "game/serialize/moves.hpp"    // Contains encodeMove/decodeMove
+#include "game/serialize/messages.hpp" 
+#include "game/serialize/moves.hpp"    
 #include <queue>
+#include <cassert>
 
 class NetworkAdapter : public Adapter {
 private:
@@ -90,6 +91,9 @@ private:
     // Called when Net receives bytes
     void onPacketInternal(const std::string& sender, sf::Packet& packet) {
         uint8_t type;
+        
+        // REMOVED: assert(packet.endOfPacket()); -- wrong place, packet is full here
+        
         if (!(packet >> type)) return; // Safety check
 
         uint32_t playerId;
@@ -118,5 +122,9 @@ private:
                 }
             }
         }
+
+        // CORRECT PLACE: Check that we consumed exactly what was sent.
+        // If this triggers, either the sender wrote too much or we read too little.
+        assert(packet.endOfPacket());
     }
 };
