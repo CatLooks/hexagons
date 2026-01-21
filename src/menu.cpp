@@ -2,10 +2,10 @@
 #include "game.hpp"
 #include "menu/gameJoinMenu.hpp"
 #include "menu/ui/alertPopup.hpp"
-#include "game/sync/network_adapter.hpp" 
+#include "game/sync/network_adapter.hpp"
 #include "game/serialize/map.hpp"
 
-#include "game/sync/state.hpp" 
+#include "game/sync/state.hpp"
 
 static void setup_test_map(Game& game) {
 	Map& map = game.map;
@@ -460,6 +460,7 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
 
      net.OnJoinFailed.add([=](const std::string& reason) {
         globalAlert->show("Failed to join lobby:\n" + reason);
-        pages->show(mainMenu);
+        joinMenu->reset();
+        pages->show(joinMenu);
     });
 }
