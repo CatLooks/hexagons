@@ -91,9 +91,6 @@ private:
     // Called when Net receives bytes
     void onPacketInternal(const std::string& sender, sf::Packet& packet) {
         uint8_t type;
-        
-        // REMOVED: assert(packet.endOfPacket()); -- wrong place, packet is full here
-        
         if (!(packet >> type)) return; // Safety check
 
         uint32_t playerId;

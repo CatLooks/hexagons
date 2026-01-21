@@ -130,6 +130,9 @@ public:
 	/// Returns current turn number.
 	uint32_t turn() const;
 
+	/// Checks whether the game is in editor mode.
+	bool editor() const;
+	
 public:
 	void reset(Mode mode, Adapter* adapter);
 };
