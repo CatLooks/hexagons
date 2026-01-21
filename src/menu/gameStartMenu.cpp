@@ -1040,7 +1040,7 @@ void GameStartMenu::broadcastLobbyState() {
     
     // Add Host (using local data)
     PlayerData host;
-    host.name = "Host"; 
+    host.name = _localPlayerName; 
     host.isHost = true;
     host.color = sf::Color::Cyan;
     allPlayers.push_back(host);
@@ -1138,7 +1138,7 @@ const GameData& GameStartMenu::getGameData() {
 
             // A. Add Host (Me)
             PlayerData hostMe;
-            hostMe.name = _localPlayerName + " (Host)"; 
+            hostMe.name = _localPlayerName; //+ " (Host)"; 
             hostMe.color = sf::Color::Cyan; // Or whatever color you picked
             hostMe.isHost = true;
             _currentData.players.push_back(hostMe);

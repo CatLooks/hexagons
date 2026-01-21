@@ -341,22 +341,25 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
         net.clearHandlers(); 
 
         // Helper: Map SFML Color to Game Team
-        auto colorToTeam = [](sf::Color c) -> Region::Team {
-            if (c == sf::Color::Cyan) return Region::Aqua;   // Host color
-            if (c == sf::Color::Green) return Region::Green; // Client color
-            if (c == sf::Color::Red) return Region::Red;
-            if (c == sf::Color::Blue) return Region::Blue;
-            if (c == sf::Color::Yellow) return Region::Yellow;
-            if (c == sf::Color::Magenta) return Region::Purple;
-            return Region::Red; 
-        };
+		const std::vector<Region::Team> teamOrder = {
+		Region::Red,    // Index 0 (Host)
+		Region::Green,  // Index 1
+		Region::Blue,   // Index 2
+		Region::Yellow, // Index 3
+		Region::Purple, // Index 4
+			Region::Orange, // Index 5
+			Region::Aqua    // Index 6
+		};
 
         if (data.isMultiplayer) {
             // 3. Find My ID
             uint32_t myPlayerId = 0;
             bool found = false;
-            
+           
+			printf("[Main] Local Name: '%s'\n", data.localPlayerName.c_str());
+
             for (size_t i = 0; i < data.players.size(); ++i) {
+				printf("[Main] Checking list[%d]: '%s'\n", (int)i, data.players[i].name.c_str());
                 // Compare names to find which index is "Me"
                 if (data.players[i].name == data.localPlayerName) {
                     myPlayerId = (uint32_t)i;
@@ -371,7 +374,7 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
                 myPlayerId = startMenu->_isHost ? 0 : 1; 
             }
 
-            printf("[Menu] Starting MP Game. My ID: %d, My Team: %d\n", myPlayerId, (int)colorToTeam(data.players[myPlayerId].color));
+            printf("[Menu] Starting MP Game. My ID: %d\n", myPlayerId);
 
             // 4. Setup Adapter
             auto* adapter = new NetworkAdapter(net, myPlayerId);
@@ -381,9 +384,17 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
             );
 
             // 5. Add Players
-            for (const auto& p : data.players) {
-                state.addPlayer({ .name = p.name, .team = colorToTeam(p.color) });
-            }
+           for (size_t i = 0; i < data.players.size(); ++i) {
+        // Pick team based on index (use % in case we have more players than colors)
+        Region::Team assignedTeam = teamOrder[i % teamOrder.size()];
+        
+        state.addPlayer({ 
+            .name = data.players[i].name, 
+            .team = assignedTeam 
+        });
+        
+        printf("[Main] Assigned %s to Team %d\n", data.players[i].name.c_str(), (int)assignedTeam);
+    }
 
             // 6. Init Map
             if (startMenu->_isHost) {
@@ -393,7 +404,7 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
                 state.init(); 
             } else {
                 // Client clears map and waits for E_Init packet from Host
-                gameInstance->map.clear();
+                //gameInstance->map.clear();
             }
 
         } else {
