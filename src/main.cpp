@@ -28,7 +28,24 @@ int main() {
 	ui::Interface& itf = ui::window.interface();
 	itf.clearColor(sf::Color(29, 31, 37));
 
-	auto* adapter = new BotAdapter(1.f);
+	sf::Text drawStats = sf::Text(assets::font, "", 20);
+	drawStats.setOutlineThickness(2);
+	itf.statDraw([&](sf::RenderTarget& target, const ui::RenderStats& stats) {
+		if (!flags::stats) return;
+
+		std::string format = std::format(
+			"{}Q {}T {}B {}R",
+			stats.quads,
+			stats.text + 1,
+			stats.batches,
+			stats.inters
+		);
+		drawStats.setString(format);
+		drawStats.setPosition({ ui::window.size().x - drawStats.getLocalBounds().size.x - 4, 0 });
+		target.draw(drawStats);
+	});
+
+	auto* adapter = new BotAdapter(0.f);
 	GameState state(GameState::Host, adapter);
 
 	auto game_ctx = itf.newContext();

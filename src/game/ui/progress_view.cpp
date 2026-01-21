@@ -20,13 +20,14 @@ namespace gameui {
 
 		// deactivate by default
 		scissor = true;
-		deactivate();
+		deactivate(true);
 	};
 
 	/// Constructs player info table.
 	void Progress::reconstruct(const std::vector<Region::Team>& teams) {
 		// store team list
 		this->teams = teams;
+		clear();
 
 		// construct argument lists
 		args = std::vector<ui::Text::List>(teams.size(), {});
@@ -95,5 +96,6 @@ namespace gameui {
 			args[idx]["percent"] = ext::str_percent(info.tiles, count.total);
 			idx++;
 		};
+		recalculate();
 	};
 };

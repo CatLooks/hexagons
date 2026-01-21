@@ -167,9 +167,11 @@ void GameState::next() {
 		if (team != Region::Unclaimed) {
 			// find player index
 			uint32_t id = 0;
-			for (const auto& player : _plr)
-				if (player.team == id)
+			for (const auto& player : _plr) {
+				if (player.team == team)
 					break;
+				id++;
+			};
 
 			// switch to spectator state
 			over(id);

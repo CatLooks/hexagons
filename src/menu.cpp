@@ -389,7 +389,9 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
         // --- SINGLEPLAYER SETUP ---
         
         // Create Local Test Adapter
-        state.reset(GameState::Host, new TestAdapter());
+        auto* adapter = new BotAdapter(1.f);
+        adapter->map = &gameInstance->map;
+        state.reset(GameState::Host, adapter);
         
         // Add default players
         state.addPlayer({ .name = "Player", .team = Region::Red });
