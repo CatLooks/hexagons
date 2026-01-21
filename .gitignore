@@ -12,6 +12,7 @@ out
 alg_*
 
 ## EOS SDK files
+*-Shipping.dll
 EOS_SDK/
 */eos/Config.hpp
 

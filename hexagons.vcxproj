@@ -110,6 +110,23 @@
     <ClCompile Include="src\localization\token.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mathext.cpp" />
+    <ClCompile Include="src\menu.cpp" />
+    <ClCompile Include="src\menu\gameJoinMenu.cpp" />
+    <ClCompile Include="src\menu\gameStartMenu.cpp" />
+    <ClCompile Include="src\menu\lobbyMenu.cpp" />
+    <ClCompile Include="src\menu\mainMenu.cpp" />
+    <ClCompile Include="src\menu\optionsMenu.cpp" />
+    <ClCompile Include="src\menu\ui\alertPopup.cpp" />
+    <ClCompile Include="src\menu\ui\menuButton.cpp" />
+    <ClCompile Include="src\networking\AuthManager.cpp" />
+    <ClCompile Include="src\networking\EOSManager.cpp" />
+    <ClCompile Include="src\networking\GameConnectionManager.cpp" />
+    <ClCompile Include="src\networking\HWID.cpp" />
+    <ClCompile Include="src\networking\LobbyManager.cpp" />
+    <ClCompile Include="src\networking\LoggingManager.cpp" />
+    <ClCompile Include="src\networking\Net.cpp" />
+    <ClCompile Include="src\networking\P2PManager.cpp" />
+    <ClCompile Include="src\networking\PlatformManager.cpp" />
     <ClCompile Include="src\random.cpp" />
     <ClCompile Include="src\ui\align.cpp" />
     <ClCompile Include="src\ui\anim\base.cpp" />
@@ -234,6 +251,25 @@
     <ClInclude Include="include\localization\parser.hpp" />
     <ClInclude Include="include\localization\token.hpp" />
     <ClInclude Include="include\mathext.hpp" />
+    <ClInclude Include="include\menu.hpp" />
+    <ClInclude Include="include\menu\gameJoinMenu.hpp" />
+    <ClInclude Include="include\menu\gameStartMenu.hpp" />
+    <ClInclude Include="include\menu\lobbyMenu.hpp" />
+    <ClInclude Include="include\menu\mainMenu.hpp" />
+    <ClInclude Include="include\menu\optionsMenu.hpp" />
+    <ClInclude Include="include\menu\text_field_open.hpp" />
+    <ClInclude Include="include\menu\ui\alertPopup.hpp" />
+    <ClInclude Include="include\menu\ui\menuButton.hpp" />
+    <ClInclude Include="include\networking\AuthManager.hpp" />
+    <ClInclude Include="include\networking\EOSManager.hpp" />
+    <ClInclude Include="include\networking\GameConnectionManager.hpp" />
+    <ClInclude Include="include\networking\HWID.hpp" />
+    <ClInclude Include="include\networking\LobbyManager.hpp" />
+    <ClInclude Include="include\networking\LoggingManager.hpp" />
+    <ClInclude Include="include\networking\Net.hpp" />
+    <ClInclude Include="include\networking\P2PManager.hpp" />
+    <ClInclude Include="include\networking\PlatformManager.hpp" />
+    <ClInclude Include="include\networking\threadsafe_queue.hpp" />
     <ClInclude Include="include\random.hpp" />
     <ClInclude Include="include\templated\delegate.hpp" />
     <ClInclude Include="include\templated\pool.hpp" />
@@ -379,8 +415,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;ASSET_PATH="./assets/";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;ASSET_PATH="./assets/";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:/SFML3/include;$(ProjectDir)EOS_SDK/Include/;$(ProjectDir)include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
