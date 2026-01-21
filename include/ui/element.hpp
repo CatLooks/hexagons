@@ -216,6 +216,8 @@ namespace ui {
 		void push(Anim* anim);
 		/// @return Whether the element has any animations running.
 		bool animated() const;
+		/// Stops all animations.
+		void cancel();
 		/// Chains second animation to first.
 		/// 
 		/// Second animation will start immediately when the first one finishes.

@@ -181,6 +181,10 @@ namespace ui {
 	bool Element::animated() const {
 		return !_anims.empty();
 	};
+	/// Stops all animations.
+	void Element::cancel() {
+		_anims.clear();
+	};
 	/// Chains second animation to first.
 	Anim* Element::chain(Anim* first, Anim* second) {
 		first->addAfter([=]() { push(second); });

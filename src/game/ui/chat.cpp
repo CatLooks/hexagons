@@ -202,7 +202,7 @@ namespace gameui {
 		// @todo chat line break-up
 		msg->auth->param("auth", author);
 		msg->auth->setColor(color);
-		msg->cont->setRaw(text);
+		msg->cont->setRaw(sf::String::fromUtf8(text.begin(), text.end()));
 
 		// update line count
 		msg->lines = std::count(text.cbegin(), text.cend(), '\n') + 1;

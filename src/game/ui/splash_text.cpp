@@ -59,6 +59,7 @@ namespace gameui {
 	void Splash::display() {
 		// delete any existing containers
 		clear();
+		cancel();
 
 		// activate panel
 		activate();
