@@ -233,7 +233,6 @@ int main() {
 	assets::lang::init();
 
 	assets::loadAssets();
-	// When assets don't load properly, we display that they don't load properly
 	if (assets::error) {
 		fprintf(stderr, "Critical error: Failed to load game assets.\n");
 		return 1;
@@ -243,7 +242,6 @@ int main() {
 
 	Net net;
 
-	// Creating a window 1600 x 900, otherwise the game won't display
 	ui::window.create({ 1600, 900 }, false);
 
 	ui::Interface& itf = ui::window.interface();
@@ -269,7 +267,6 @@ int main() {
 	GameState state(GameState::Host, new TestAdapter);
 
 	auto game_ctx = itf.newContext();
-	// At first, this pointer is set to null, then it's updated in the block of code below
 	Game* game = nullptr;
 	{
 		itf.switchContext(game_ctx);
@@ -299,13 +296,12 @@ int main() {
 	MenuSystem menuSystem(itf, &game_ctx, game, net, state);	
 	itf.switchContext(menuSystem.context);
 
-	// This loop only runs when the window is active
+
 	while (ui::window.active()) {
 		net.fetch();
 		ui::window.events();
 		ui::window.frame();
 	}
 
-	// Returning 0
 	return 0;
 }
