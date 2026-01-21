@@ -37,8 +37,8 @@ void Net::leaveLobby() {
 void Net::login() {
     auto auth = m_eosManager.GetAuthManager();
     if (auth) {
-         auth->AccountPortalPersistentAuthLogin();
-       //auth->CreateDeviceId(); //temp - sorry
+        auth->AccountPortalPersistentAuthLogin();
+        //auth->CreateDeviceId(); //temp - sorry
         std::cout << "[Net] Login initiated..." << std::endl;
     }
 }
