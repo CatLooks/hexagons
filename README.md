@@ -1,6 +1,6 @@
 # One of games of all time
 
-*(add description later)*
+The game is based on mechanics typical of the strategy genre, including a complex economy, a region system, both single- and multiplayer gameplay, and a map system (including a map editor).
 
 ## Dependencies
 
