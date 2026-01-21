@@ -69,8 +69,6 @@ namespace Serialize {
 
 	/// Serializes a map template object.
 	sf::Packet& operator<<(sf::Packet& packet, const Template& temp) {
-		// signature
-
 		// map header
 		packet << temp.header.name;
 		packet << temp.header.auth;

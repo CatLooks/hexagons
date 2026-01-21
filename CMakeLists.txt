@@ -64,6 +64,7 @@ FetchContent_MakeAvailable(SFML)
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 add_executable(main ${SOURCES})
 
+
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_compile_options(main PRIVATE /wd4455)
 else()

@@ -10,6 +10,8 @@ namespace assets {
 	sf::Texture tilemap;
 	/// Textures used when rendering UI.
 	sf::Texture interface;
+	/// Texture used to demonstrate the map selection.
+	sf::Texture map_example;
 
 	/// Loads all assets.
 	void loadAssets() {
@@ -20,5 +22,6 @@ namespace assets {
 		loadTexture("tilemap.png", tilemap);
 		loadTexture("interface.png", interface);
 		loadTexture("borders.png", borders);
+		loadTexture("map-example.png", map_example);
 	};
 };

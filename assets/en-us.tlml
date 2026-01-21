@@ -262,6 +262,77 @@ debug {
 	fps: "{fps} FPS"
 }
 
+# menu texts
+menu {
+    title: "HEXAGONS"
+
+	login: "LOGIN"
+	logout: "LOGOUT"
+
+    start: "START GAME"
+    join: "JOIN GAME"
+    options: "OPTIONS"
+    exit: "EXIT"
+    back: "BACK"
+    prev: "< PREV"
+    next: "NEXT >"
+    start_game: "START GAME"
+    sound: "Sound: {v}"
+    lang: "Language: {v}"
+    on: "ON"
+    off: "OFF"
+    max_players: "Max Players"
+    player_count: "{value}"
+	
+	select_mode: "Select Mode"
+	singleplayer: "Singleplayer"
+	multiplayer_host: "Multiplayer (Host)"
+	
+	select_difficulty: "Select Difficulty"
+
+	select_map: "Select Map"
+
+	lobby_settings: "Lobby Settings"
+	room_code_desc: "Share this code!"
+	vsync: "Vsync: {v}"
+	fullscreen: "Fullscreen: {v}"
+
+}
+
+join {
+    title: "Join Game"
+    instruction: "Enter 6-digit Room Code:"
+}
+
+start {
+    step1: "1. Mode"
+    step2: "2. Difficulty"
+    step3: "3. Map"
+    step4: "4. Lobby"
+
+	map1: "map 1"
+	map2: "map 2"
+	map3: "map 3"
+
+	easy  : "Easy"
+	medium: "Medium"
+	hard  : "Hard"
+}
+
+lobby {
+    title: "GAME LOBBY"
+    leave: "LEAVE"
+    room_id: "Room: #{id}"
+    
+    # Format: "Map: Green Valley | Difficulty: Easy"
+    details_format: "{map}    |    {diff}    |    Lobby size: {max} "
+    
+    player_name: "{name}"
+    player_name_host: "{name} (Host)"
+    host_you: "Host (You)"
+    connecting: "Connecting..."
+}
+
 ## ALL FURTHER TEXT IS DEBUG MODE ONLY
 ## DO NOT TRANSLATE FURTHER
 

@@ -40,6 +40,18 @@ namespace assets {
 
 		/// Language config map.
 		extern std::map<std::string, Config> index;
+
+        extern int current_idx;
+
+        /// Call this once at game startup
+		void init();
+
+		extern std::vector<std::function<void()>> refresh_listeners; /// Registered menu refresh listeners
+
+		/// Switches to the next available language and triggers menu refresh.
+		void next();
+
+		std::string current_name();
 	};
 
 	/// Whether an error occured during asset loading.

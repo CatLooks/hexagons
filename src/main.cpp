@@ -2,29 +2,26 @@
 #include "game.hpp"
 #include "assets.hpp"
 #include "flags.hpp"
+#include "menu.hpp"
+#include "networking/Net.hpp"
+#include "game/sync/network_adapter.hpp" 
 
 #include "game/serialize/map.hpp"
-#include <fstream>
+static void setup_test_map(Game& game) {
+	Map& map = game.map;
 
-/// Testing phase.
-/// 
-/// @return Whether to exit the app after testing.
-static bool test() {
-	Map map;
-
-	const int w = 21;
-	const int h = 10;
+	const int w = 18;
+	const int h = 9;
 	const char arr[h][w + 1] = {
-		"vvv  rr     bb  r r- ",
-		"rrvv   rrr  bbb  r r-",
-		"vvv  rrbb   bb  r r- ",
-		"rrvv   bbg       r r-",
-		"vvv             r r- ",
-		"rrvv rrr   vv    r r-",
-		"vvv  ggg  ooo g r r- ",
-		"rrvv ---   oo        ",
-		"vvv                  ",
-		"    rrrrrrggggggg#   ",
+		"vvv  rr     bb  rx",
+		"rrvv   rrr  bbb  r",
+		"vvv  rrbb   bb  rx",
+		"rrvv   bbg       r",
+		"vvv             rx",
+		"rrvv rrr   oo    r",
+		"vvv  ggg  ooo g rx",
+		"rrvv ---   oo     ",
+		"vvv              x"
 	};
 
 	map.empty({ w, h });
@@ -65,12 +62,12 @@ static bool test() {
 			case '#':
 				hex->type = Hex::Ground;
 				break;
-
 			default:
 				break;
 			};
 		};
 	};
+
 	map.regions.enumerate(&map);
 
 	// damage test
@@ -228,82 +225,33 @@ static bool test() {
 		plant.type = Plant::Bush;
 		plant.pos = { 16, 0 };
 		map.setPlant(plant);
-
-		plant.pos = { 18, 0 };
-		map.setPlant(plant);
 	};
+}
 
-	// move tests
-	{
-		Troop troop;
-		troop.type = Troop::Spearman;
-		troop.pos = { 9, 9 };
-		troop.hp = troop.max_hp();
-		map.setTroop(troop);
 
-		troop.type = Troop::Knight;
-		troop.pos = { 10, 9 };
-		troop.hp = troop.max_hp();
-		map.setTroop(troop);
-
-		Build build;
-		build.type = Build::Tower;
-		build.pos = { 11, 9 };
-		build.hp = build.max_hp();
-		//map.setBuild(build);
-	};
-
-	map.at({ 9, 9 })->region()->setRes({ 999, 0, 0 });
-	map.at({ 10, 9 })->region()->setRes({ 999, 0, 0 });
-
-	auto temp = Template::generate(&map);
-	temp.header.name = "Test Map";
-	temp.header.auth = "CatLooks";
-	sf::Packet packet;
-
-	using namespace Serialize;
-	encodeSignature(packet);
-	packet << temp;
-
-	std::ofstream str("maps/test.bin", std::ios::out | std::ios::binary);
-	str.write((const char*)packet.getData(), packet.getDataSize());
-	str.close();
-
-	return false;
-};
-
-/// Program entry.
-/// @return Exit code.
 int main() {
-	// testing phase
-	if (test()) return 1;
-	
-	// load languages
-	if (assets::loadLanguageList())
-		return 1;
-	if (assets::loadLanguage(assets::lang::list.front()))
-		return 1;
+	assets::lang::init();
 
-	// load assets
 	assets::loadAssets();
-	if (assets::error)
+	if (assets::error) {
+		fprintf(stderr, "Critical error: Failed to load game assets.\n");
 		return 1;
+	}
 
-	// create window
+	EOSManager* eos = &EOSManager::GetInstance();
+
+	Net net;
+
 	ui::window.create({ 1600, 900 }, false);
 
-	// create an interface
 	ui::Interface& itf = ui::window.interface();
 	itf.clearColor(sf::Color(29, 31, 37));
 
-	// draw stats
 	sf::Text drawStats = sf::Text(assets::font, "", 20);
 	drawStats.setOutlineThickness(2);
 	itf.statDraw([&](sf::RenderTarget& target, const ui::RenderStats& stats) {
-		// ignore if not needed
 		if (!flags::stats) return;
 
-		// draw stat string
 		std::string format = std::format(
 			"{}Q {}T {}B {}R",
 			stats.quads,
@@ -316,32 +264,23 @@ int main() {
 		target.draw(drawStats);
 	});
 
-	GameState state(GameState::Edit, new TestAdapter);
-	Game* game;
+	GameState state(GameState::Host, new TestAdapter);
 
-	// game test
 	auto game_ctx = itf.newContext();
+	Game* game = nullptr;
 	{
+		itf.switchContext(game_ctx);
+
 		auto layer_map = itf.layer();
 		auto layer_gui = itf.layer();
 		auto layer_msg = itf.layer();
 
 		game = new Game(layer_map, layer_gui, layer_msg, &state);
 
-		{
-			// default map
-			Map& map = game->map;
+		// main-branch behavior: prefilled test map + bots
+		setup_test_map(*game);
 
-			map.resize({ {}, { 2, 1 } });
-			map.at({})->type = Hex::Ground;
-			map.regions.enumerate(&map);
-
-			Plant plant;
-			plant.type = Plant::Peach;
-			map.setPlant(plant);
-		};
-
-		state.addPlayer({ .name = "Koopa", .team = Region::Red });
+		state.addPlayer({ .name = "Sus", .team = Region::Red });
 		state.addPlayer({ .name = "Bot 1", .team = Region::Orange });
 		state.addPlayer({ .name = "Bot 2", .team = Region::Yellow });
 		state.addPlayer({ .name = "Bot 3", .team = Region::Green });
@@ -351,59 +290,17 @@ int main() {
 		state.init();
 
 		layer_map->add(game);
-
-		// developer panel
 		layer_gui->add(dev::Factory::game_panel(game));
-	};
+	}
 
-	auto test_ctx = itf.newContext();
-	{
-		auto layer_test = itf.layer();
+	MenuSystem menuSystem(itf, &game_ctx, game, net, state);	
+	itf.switchContext(menuSystem.context);
 
-		// text field test
-		auto* input = new ui::TextField(gameui::Action::textures[0], Values::resource_text, sf::Color::White);
-		input->bounds = { 50px, 50px, 600px, 100px };
-		layer_test->add(input);
-		input->focus(true);
-
-		// key repeat test
-		auto* solid = new ui::Solid;
-		solid->bounds = { 50px, 200px, 50px, 50px };
-		solid->color = sf::Color::Green;
-		solid->onEvent([=](const ui::Event& evt) {
-			if (auto data = evt.get<ui::Event::KeyPress>()) {
-				if (data->key == sf::Keyboard::Key::Q) {
-					ui::Anim* anim = new ui::AnimSet(sf::seconds(0.5f), [=](float t) {
-						solid->bounds.position.x.px = ui::lerpf(50, 250, t);
-					});
-					solid->push(anim);
-					return true;
-				};
-			};
-			return false;
-		});
-		layer_test->add(solid);
-	};
-
-	itf.lock();
-	itf.switchContext(game_ctx);
-
-	// window main loop
 	while (ui::window.active()) {
-		// custom events
-		for (const auto& event : ui::window.events()) {
-			if (auto data = event.getIf<sf::Event::KeyPressed>()) {
-				if (data->code == sf::Keyboard::Key::F1 && !data->control) {
-					itf.switchContext(game_ctx);
-				};
-				if (data->code == sf::Keyboard::Key::F2 && !data->control) {
-					itf.switchContext(test_ctx);
-				};
-			};
-		};
-
-		// generate new frame
+		net.fetch();
+		ui::window.events();
 		ui::window.frame();
-	};
+	}
+
 	return 0;
-};
+}

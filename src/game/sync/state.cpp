@@ -359,3 +359,11 @@ uint32_t GameState::turn() const {
 bool GameState::editor() const {
 	return _mode == Edit;
 };
+void GameState::reset(Mode mode, Adapter* adapter) {
+    _mode = mode;
+    _adapter.reset(adapter);
+	_plr.clear();
+    _idx = 0;
+    _turn = 1;
+    _state = Init;
+}

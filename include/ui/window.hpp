@@ -18,6 +18,7 @@ namespace ui {
 		Interface _itf;
 		/// Whether the window is fullscreen.
 		bool _full = false;
+		bool _vsync = false;
 
 	public:
 		/// Returns a reference to window interface object.
@@ -63,6 +64,16 @@ namespace ui {
 		bool focused() const;
 		/// Checks whether the window is fullscreen.
 		bool fullscreen() const;
+
+	private:
+    std::optional<bool> _pending_fullscreen;
+    std::optional<bool> _pending_vsync;
+
+	public:
+		/// Sets fullscreen mode.
+		void setFullscreen(bool active);
+		/// Sets VSync mode.
+		void setVSync(bool active);
 	};
 
 	/// Main window.

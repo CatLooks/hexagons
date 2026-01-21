@@ -1,4 +1,5 @@
 #include "assetload.hpp"
+#include <cstring>
 
 namespace assets {
 	/// Returns asset path.
@@ -12,6 +13,34 @@ namespace assets {
 		std::string standard;
 		std::vector<std::string> list;
 		std::map<std::string, Config> index;
+
+        int current_idx = 0;
+        std::vector<std::function<void()>> refresh_listeners;
+
+        /// Call this once at game startup
+		void init() {
+            if (loadLanguageList()) return;            
+            loadLanguage(list.front());
+        }
+
+		/// Switches to the next available language and triggers menu refresh.
+        void next() {
+        	if (list.empty()) return;
+            current_idx = (current_idx + 1) % list.size();
+            loadLanguage(list[current_idx]);
+
+            for (auto& refreshFunc : refresh_listeners) {
+                if (refreshFunc) refreshFunc();
+            }
+        }
+
+
+        /// Returns the display name of the current language (e.g. "English")
+        std::string current_name() {
+            if (list.empty()) return "None";
+            return index[list[current_idx]].name;
+        }
+
 	};
 	bool error = false;
 
@@ -61,7 +90,7 @@ namespace assets {
 
 		// print errors
 		for (const auto& err : state.list) {
-			fprintf(stderr, "error at line %llu column %llu: ", err->line, err->column);
+			fprintf(stderr, "error at line %zu column %zu: ", err->line, err->column);
 			err->print(stderr);
 			fprintf(stderr, "\n");
 		};
@@ -125,7 +154,7 @@ namespace assets {
 
 		// print errors
 		for (const auto& err : state.list) {
-			fprintf(stderr, "error at line %llu column %llu: ", err->line, err->column);
+			fprintf(stderr, "error at line %zu column %zu: ", err->line, err->column);
 			err->print(stderr);
 			fprintf(stderr, "\n");
 		};
