@@ -23,7 +23,7 @@ void LobbyManager::CreateLobby(uint32_t maxPlayers, std::string& lobbyCode) {
 	options.MaxLobbyMembers = maxPlayers;
 	options.PermissionLevel = EOS_ELobbyPermissionLevel::EOS_LPL_PUBLICADVERTISED;
 	std::cout << "[LobbyManager] Creating lobby with room code: " << lobbyCode.c_str() << std::endl;
-	options.BucketId = lobbyCode.c_str(); 
+	options.BucketId = lobbyCode.c_str();
 	options.bPresenceEnabled = EOS_TRUE;
 	options.bAllowInvites = EOS_TRUE;
 	options.bDisableHostMigration = EOS_FALSE;
@@ -42,6 +42,7 @@ void EOS_CALL LobbyManager::OnCreateLobbyComplete(const EOS_Lobby_CreateLobbyCal
 
 void LobbyManager::FindLobby(std::string& roomCode) {
 	isBusy = true;
+	LastSearchCode = roomCode;
 
 	if (LobbySearchHandle) {
 		EOS_LobbySearch_Release(LobbySearchHandle);
@@ -55,6 +56,7 @@ void LobbyManager::FindLobby(std::string& roomCode) {
 	if (EOS_Lobby_CreateLobbySearch(LobbyHandle, &SearchOptions, &LobbySearchHandle) != EOS_EResult::EOS_Success) {
 		std::cerr << "[LobbyManager] Failed to create lobby search." << std::endl;
 		isBusy = false;
+		OnLobbyJoinFailed.invoke("Lobby search creation failed.");
 		return;
 	}
 
@@ -178,6 +180,7 @@ void LobbyManager::HandleFindLobbyComplete(const EOS_LobbySearch_FindCallbackInf
 			EOS_LobbySearch_Release(LobbySearchHandle);
 			LobbySearchHandle = nullptr;
 		}
+		OnLobbyJoinFailed.invoke(std::string("Lobby search failed: ") + EOS_EResult_ToString(Data->ResultCode));
 		return;
 	}
 
@@ -190,6 +193,7 @@ void LobbyManager::HandleFindLobbyComplete(const EOS_LobbySearch_FindCallbackInf
 	if (searchResultCount == 0) {
 		std::cout << "[LobbyManager] No lobbies found." << std::endl;
 		isBusy = false;
+		OnLobbyJoinFailed.invoke("No lobby found for code: " + LastSearchCode);
 	}
 	else {
 		EOS_HLobbyDetails LobbyDetailsHandle;
@@ -204,10 +208,10 @@ void LobbyManager::HandleFindLobbyComplete(const EOS_LobbySearch_FindCallbackInf
 		else {
 			std::cerr << "[LobbyManager] Failed to copy lobby details." << std::endl;
 			isBusy = false;
+			OnLobbyJoinFailed.invoke("Failed to copy lobby details.");
 		}
 	}
 
-	// ALWAYS release the search handle when the operation is complete.
 	if (LobbySearchHandle) {
 		EOS_LobbySearch_Release(LobbySearchHandle);
 		LobbySearchHandle = nullptr;
@@ -234,6 +238,7 @@ void LobbyManager::HandleJoinLobbyComplete(const EOS_Lobby_JoinLobbyCallbackInfo
 	}
 	else {
 		std::cerr << "[LobbyManager] Failed to join lobby: " << EOS_EResult_ToString(Data->ResultCode) << std::endl;
+		OnLobbyJoinFailed.invoke(std::string("Failed to join lobby: ") + EOS_EResult_ToString(Data->ResultCode));
 	}
 }
 

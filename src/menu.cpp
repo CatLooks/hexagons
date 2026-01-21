@@ -2,11 +2,11 @@
 #include "game.hpp"
 #include "menu/gameJoinMenu.hpp"
 #include "menu/ui/alertPopup.hpp"
-#include "game/sync/network_adapter.hpp" 
+#include "game/sync/network_adapter.hpp"
 #include "game/serialize/map.hpp"
 #include "game/loader.hpp" 
 
-#include "game/sync/state.hpp" 
+#include "game/sync/state.hpp"
 
 static void setup_test_map(Game& game) {
 	Map& map = game.map;

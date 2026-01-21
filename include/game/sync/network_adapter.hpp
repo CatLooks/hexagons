@@ -69,7 +69,6 @@ public:
 
     // --- Receiving Data (Network -> Game) ---
 
-    // GameState calls this to check for new Events
     OptPacket<Messages::Event> recv() override {
         if (_eventQueue.empty()) return std::nullopt;
         
@@ -78,7 +77,6 @@ public:
         return val;
     }
 
-    // GameState calls this to check for new Moves
     OptPacket<History::UniqList> recv_list() override {
         if (_moveListQueue.empty()) return std::nullopt;
 
@@ -91,13 +89,15 @@ private:
     // Called when Net receives bytes
     void onPacketInternal(const std::string& sender, sf::Packet& packet) {
         uint8_t type;
+        
+        // REMOVED: assert(packet.endOfPacket()); -- wrong place, packet is full here
+        
         if (!(packet >> type)) return; // Safety check
 
         uint32_t playerId;
         if (!(packet >> playerId)) return;
 
         if (type == Type_Event) {
-            // Use YOUR decodeMessage function
             auto msg = Serialize::decodeMessage(packet);
             if (msg) {
                 _eventQueue.push({ std::move(*msg), playerId });
