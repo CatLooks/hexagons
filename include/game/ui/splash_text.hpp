@@ -22,9 +22,14 @@ namespace gameui {
 		ui::Dim _offset;
 		/// Whether to block propagation of mouse events.
 		bool _inhibit = false;
+		/// Display wait animation.
+		ui::Anim* _wait = nullptr;
 
 		/// Fades out the panel.
 		void fade();
+
+		/// Starts next text block display.
+		void next(ui::Align* _prev, ui::Align* _next);
 
 	public:
 		/// Constructs an empty splash text element.

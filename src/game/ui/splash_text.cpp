@@ -20,10 +20,17 @@ namespace gameui {
 			// ignore if not masking
 			if (!_inhibit) return false;
 
-			// mask LMB
-			if (auto data = evt.get<ui::Event::MousePress>())
-				if (data->button == sf::Mouse::Button::Left)
+			// on mouse event
+			if (auto data = evt.get<ui::Event::MousePress>()) {
+				if (data->button == sf::Mouse::Button::Left) {
+					// force fade out
+					if (_wait) {
+						_wait->end();
+						_wait = nullptr;
+					};
 					return true;
+				};
+			};
 			return false;
 		});
 
@@ -55,11 +62,30 @@ namespace gameui {
 	/// Opaque white.
 	static const sf::Color color_in = sf::Color(255, 255, 255, 255);
 
+	/// Starts next text block display.
+	void Splash::next(ui::Align* _prev, ui::Align* _next) {
+		// activate next container
+		if (_next) _next->activate();
+
+		// create exit animation
+		auto* anim = new ui::AnimDim(&_prev->position().y, 0ps, 1ps, sf::seconds(0.25f));
+		anim->ease = ui::Easings::quadIn;
+		anim->setAfter([=]() {
+			// deactivate container
+			_prev->deactivate();
+
+			// fade out panel
+			if (!_next) fade();
+		});
+		push(anim);
+	};
+
 	/// Displays queued text labels.
 	void Splash::display() {
 		// delete any existing containers
 		clear();
 		cancel();
+		_wait = nullptr;
 
 		// activate panel
 		activate();
@@ -95,21 +121,9 @@ namespace gameui {
 			anim->ease = ui::Easings::quadOut;
 			anim->setAfter([=]() {
 				// wait before exiting
-				push(new ui::AnimTimer(sf::seconds(1.4f), [=]() {
-					// activate next container
-					if (next) next->activate();
-
-					// create exit animation
-					auto* anim = new ui::AnimDim(&prev->position().y, 0ps, 1ps, sf::seconds(0.25f));
-					anim->ease = ui::Easings::quadIn;
-					anim->setAfter([=]() {
-						// deactivate container
-						prev->deactivate();
-
-						// fade out panel
-						if (!next) fade();
-					});
-					push(anim);
+				push(_wait = new ui::AnimTimer(sf::seconds(1.4f), [=]() {
+					_wait = nullptr;
+					this->next(prev, next);
 				}));
 			});
 			prev->push(anim);
