@@ -3,6 +3,7 @@
 // include dependencies
 #include "dev/dev_panel.hpp"
 #include "game/template.hpp"
+#include "game/loader.hpp"
 #include "resource_table.hpp"
 #include "assets.hpp"
 #include "ui.hpp"
@@ -11,6 +12,9 @@ namespace gameui {
 	/// Map loader element.
 	class Loader : public ui::Panel {
 	private:
+		/// Map loader.
+		::Loader loader;
+
 		/// Game controller reference.
 		Game* _game;
 		/// Region resource table reference.
@@ -47,9 +51,6 @@ namespace gameui {
 		Field* _f_build; /// Build field.
 		Field* _f_plant; /// Plant field.
 		Field* _f_reg;   /// Region field.
-
-		/// Map templates.
-		std::list<Template> _temp;
 
 	public:
 		/// Construct a map loader.

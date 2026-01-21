@@ -1,11 +1,6 @@
 #include "game/ui/map_loader.hpp"
 #include "game/game.hpp"
-
 #include "game/values/interface.hpp"
-#include "game/serialize/map.hpp"
-
-#include <filesystem>
-#include <fstream>
 
 namespace fs = std::filesystem;
 
@@ -41,7 +36,7 @@ namespace gameui {
 		_filter->pos = ui::Text::Static;
 		_filter->align = ui::Text::C;
 		_filter->paramHook("n", [=]() { return ext::str_int(_count); });
-		_filter->paramHook("max", [=]() { return ext::str_int(_temp.size()); });
+		_filter->paramHook("max", [=]() { return ext::str_int(loader.list.size()); });
 		add(_filter);
 
 		// load button
@@ -114,33 +109,13 @@ namespace gameui {
 					text->setPath("edit.save");
 				};
 				button->validate([=]() {
-					// fail if no filename
-					if (_f_file->get().empty()) return false;
-
-					// create map folder if one does not exist
-					if (!fs::is_directory("maps/") || !fs::exists("maps/"))
-						fs::create_directory("maps/");
-
-					// attempt to open the file
-					std::ofstream str(std::format("maps/{}.dat", _f_file->get()), std::ios::out | std::ios::binary);
-					if (str.fail()) return false;
-
 					// generate template
 					auto temp = Template::generate(&_game->map);
 					temp.header = {
 						.name = _f_name->get(),
 						.auth = _f_auth->get()
 					};
-					sf::Packet packet;
-
-					// serialize template
-					using namespace Serialize;
-					encodeSignature(packet);
-					packet << temp;
-					
-					// write to the file
-					str.write((const char*)packet.getData(), packet.getDataSize());
-					str.close();
+					::Loader::save(::Loader::File{ _f_file->get(), temp });
 
 					// reload map list
 					reload();
@@ -348,62 +323,19 @@ namespace gameui {
 
 	/// Reloads map list.
 	void Loader::reload() {
-		fs::path map_folder = "./maps/";
-
 		// clear list
 		_list->clear();
-		_temp.clear();
 		select(nullptr, nullptr);
 
-		// check if folder exists
-		if (!fs::exists(map_folder)) {
-			fprintf(stderr, "map folder does not exist\n");
-			return;
-		};
+		// load maps
+		loader.reload();
 
-		// check if folder is a directory
-		if (!fs::is_directory(map_folder)) {
-			fprintf(stderr, "map folder is not a directory\n");
-			return;
-		};
-
-		// iterate through all files
-		for (const auto& file : fs::directory_iterator(map_folder)) {
-			// get filename
-			std::string name = file.path().filename().generic_string();
-			{
-				// remove extension
-				size_t last = name.find_last_of(".");
-				if (last != std::string::npos)
-					name = name.substr(0, last);
-			};
-
-			// open file
-			std::ifstream str(file.path(), std::ios::binary);
-			if (!str) {
-				fprintf(stderr, "failed to open file\n");
-				continue;
-			};
-
-			// read file contents
-			std::vector<char> buffer = std::vector<char>(
-				std::istreambuf_iterator<char>(str),
-				std::istreambuf_iterator<char>()
-			);
-			str.close();
-
-			// deserialize file data
-			sf::Packet packet;
-			packet.append(buffer.data(), buffer.size());
-			if (!Serialize::decodeSignature(packet)) {
-				fprintf(stderr, "signature check failed\n");
-			}
-			else _temp.push_back(Serialize::from<Template>(packet));
-
+		// display maps
+		for (const auto& file : loader.list) {
 			// add map section
 			auto* sec = _list->push([=]() {
 				// show if filename contains substring
-				bool _ = name.find(_search->input.get()) != std::string::npos;
+				bool _ = file.name.find(_search->input.get()) != std::string::npos;
 				if (_) _count++;
 				return _;
 			});
@@ -418,19 +350,19 @@ namespace gameui {
 
 			// set arguments
 			sec->args = {
-				{ "file", name },
-				{ "name", _temp.back().header.name },
-				{ "auth", _temp.back().header.auth }
+				{ "file", file.name },
+				{ "name", file.temp.header.name },
+				{ "auth", file.temp.header.auth }
 			};
 
 			// add selection callback
-			const Template* temp = &_temp.back();
+			const Template* temp = &file.temp;
 			sec->onEvent([=](const ui::Event& evt) {
 				if (auto data = evt.get<ui::Event::MousePress>()) {
 					if (data->button == sf::Mouse::Button::Left) {
 						// select the map
 						select(sec, temp);
-						_select_file = name;
+						_select_file = file.name;
 
 						// start button animation
 						_load_btn->push(_load_btn->chain(

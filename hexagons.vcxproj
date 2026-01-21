@@ -46,6 +46,7 @@
     <ClCompile Include="src\game\game.cpp" />
     <ClCompile Include="src\game\hex.cpp" />
     <ClCompile Include="src\game\history.cpp" />
+    <ClCompile Include="src\game\loader.cpp" />
     <ClCompile Include="src\game\logic\build_logic.cpp" />
     <ClCompile Include="src\game\logic\lists\skill_list_attack.cpp" />
     <ClCompile Include="src\game\logic\lists\skill_list_effect.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="include\game\game.hpp" />
     <ClInclude Include="include\game\hex.hpp" />
     <ClInclude Include="include\game\history.hpp" />
+    <ClInclude Include="include\game\loader.hpp" />
     <ClInclude Include="include\game\logic\build_logic.hpp" />
     <ClInclude Include="include\game\logic\effect_types.hpp" />
     <ClInclude Include="include\game\logic\plant_logic.hpp" />
