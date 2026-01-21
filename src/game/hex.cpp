@@ -1,5 +1,10 @@
 #include "game/hex.hpp"
 
+/// Returns hex base.
+HexBase HexBase::base() const {
+	return *this;
+};
+
 /// Adds the tile to the region.
 void Hex::join(Regions::Ref ref) {
 	// leave previous region

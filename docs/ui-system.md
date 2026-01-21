@@ -32,16 +32,16 @@ P: |==================|       |==================|       |==================|
 E: ####                                 ####                                 ####
 ```
 
-* Element scalar `ps`
+* Element scalar `ts`
 ```
-   0es -> 4 * 0               1es -> 4 * 1               -0.5es -> 4 * (-0.5)
+   0ts -> 4 * 0               1ts -> 4 * 1               -0.5ts -> 4 * (-0.5)
 P: |==================|       |==================|       |==================|
 E: ####                           ####                 ####
 ```
 
 * Alignment scalar `as`
 
-  Alignment scalar is defined as `as = ps - es` and is used to align elements *within* the parent element.
+  Alignment scalar is defined as `as = ps - ts` and is used to align elements *within* the parent element.
 
 ```
    0as -> (20 - 4) * 0       0.5as -> (20 - 4) * 0.5     1as -> (20 - 4) * 1

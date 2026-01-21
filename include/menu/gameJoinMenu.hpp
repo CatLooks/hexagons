@@ -4,6 +4,7 @@
 #include "ui/text.hpp"
 #include "menu/text_field_open.hpp"
 #include "menu/ui/menuButton.hpp"
+#include "networking/Net.hpp"
 #include <functional>
 #include <string>
 
@@ -17,6 +18,8 @@ public:
     using JoinAction = std::function<void(const std::string&)>;
 
 private:
+    Net* _net = nullptr;               /// Network manager instance.
+
     ui::Solid* _bg = nullptr;           /// Background panel.
     ui::Text* _title = nullptr;        /// Menu title.
     ui::Text* _lblInstruction = nullptr; /// Instruction label.
@@ -32,7 +35,7 @@ private:
 
 public:
     /// Constructs the join menu.
-    GameJoinMenu();
+    GameJoinMenu(Net* net);
 
     /// Binds back button callback.
     void bindBack(Action action);
@@ -60,4 +63,12 @@ private:
 
 	/// Refreshes all text labels.
 	void refreshAllText();
+
+public:
+    // Callback for when connection is successful
+    using JoinSuccessAction = std::function<void(const std::string& code)>;
+    void bindJoinSuccess(JoinSuccessAction action);
+    void reset();
+private:
+    JoinSuccessAction _onJoinSuccess;
 };

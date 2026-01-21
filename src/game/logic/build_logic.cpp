@@ -37,6 +37,9 @@ namespace logic {
 	/// Beacon stun skill range.
 	const size_t stun_range = 3;
 
+	/// Building defense range.
+	const int defense_range = 2;
+
 	/// Building destruction bonus.
 	const int build_bonus[Build::Count] = { 30, 5, 8, 6, 16, 43, 8 };
 
@@ -52,6 +55,17 @@ namespace logic {
 		/* beacon */ Troop::Baron,
 		/* fort   */ Troop::Knight,
 		/* tent   */ Troop::Lumberjack
+	};
+
+	/// Weakest troop that can be in range of the building.
+	extern const Troop::Type build_guard[Build::Count] = {
+		/* castle */ Troop::Farmer,
+		/* farm   */ Troop::Farmer,
+		/* mine   */ Troop::Farmer,
+		/* tower  */ Troop::Archer,
+		/* beacon */ Troop::Baron,
+		/* fort   */ Troop::Knight,
+		/* tent   */ Troop::Farmer
 	};
 
 	// skill array

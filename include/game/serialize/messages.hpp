@@ -8,6 +8,7 @@ namespace Serialize {
 	/// Message enumeration.
 	enum MessageType {
 		E_Init,
+		E_End,
 		E_Select,
 		E_Ignore,
 		E_Chat,
@@ -43,3 +44,10 @@ namespace Serialize {
 	/// @return Read event message.
 	std::optional<Messages::Event> decodeMessage(sf::Packet& packet);
 };
+
+namespace NetworkProtocol {
+    enum PacketType : uint8_t {
+        Event = 0,
+        MoveList = 1
+    };
+}

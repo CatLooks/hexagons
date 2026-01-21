@@ -11,12 +11,21 @@ namespace SkillList {
 				// ignore if the same team
 				if (now.hex->team == tile.hex->team) return false;
 
-				// ignore if no entity
-				if (!(now.hex->troop || now.hex->build)) return false;
+				// check if troop power levels are close enough
+				if (now.hex->troop) {
+					int off_pow = logic::troop_pow[tile.hex->troop->type];
+					int def_pow = logic::troop_pow[now.hex->troop->type];
+					return off_pow - def_pow >= -1;
+				};
 
-				// @todo add attack cancel if entity levels are too far apart
-				// p.s. like build_level
-				return true;
+				// check if troop is powerful enough to attack a building
+				if (now.hex->build) {
+					Troop::Type guard = logic::build_level[now.hex->build->type];
+					return tile.hex->troop->type >= guard;
+				};
+
+				// no entity
+				return false;
 			},
 			.effect = skillf::selectTile(idx)
 		};

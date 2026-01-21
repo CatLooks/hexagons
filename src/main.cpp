@@ -3,10 +3,14 @@
 #include "assets.hpp"
 #include "flags.hpp"
 #include "menu.hpp"
+#include "networking/Net.hpp"
+#include "game/sync/network_adapter.hpp" 
+#include "game/loader.hpp"
 
 
+
+#include "game/serialize/map.hpp"
 int main() {
-	// This automatically calls loadLanguageList() and loadLanguage() for the default entry.
 	assets::lang::init();
 
 	assets::loadAssets();
@@ -15,32 +19,22 @@ int main() {
 		return 1;
 	}
 
+	EOSManager* eos = &EOSManager::GetInstance();
+
+	Net net;
+
 	ui::window.create({ 1600, 900 }, false);
 
 	ui::Interface& itf = ui::window.interface();
 	itf.clearColor(sf::Color(29, 31, 37));
 
-	sf::Text drawStats = sf::Text(assets::font, "", 20);
-	drawStats.setOutlineThickness(2);
-	itf.statDraw([&](sf::RenderTarget& target, const ui::RenderStats& stats) {
-		if (!flags::stats) return;
+	auto* adapter = new BotAdapter(1.f);
+	GameState state(GameState::Host, adapter);
 
-		std::string format = std::format(
-			"{}Q {}T {}B {}R",
-			stats.quads,
-			stats.text + 1,
-			stats.batches,
-			stats.inters
-		);
-		drawStats.setString(format);
-		drawStats.setPosition({ ui::window.size().x - drawStats.getLocalBounds().size.x - 4, 0 });
-		target.draw(drawStats);
-	});
+	ui::Layer* pause_layer = nullptr;
 
-	// Game State and Context Setup
-	GameState state(GameState::Host, new TestAdapter);
 	auto game_ctx = itf.newContext();
-	Game* game_instance = nullptr; 
+	Game* game = nullptr;
 	{
 		itf.switchContext(game_ctx);
 
@@ -48,23 +42,21 @@ int main() {
 		auto layer_gui = itf.layer();
 		auto layer_msg = itf.layer();
 
-		game_instance = new Game(layer_map, layer_gui, layer_msg, &state);
-		
-		state.addPlayer({ .name = "Player", .team = Region::Red });
-		state.addPlayer({ .name = "Bot 1", .team = Region::Orange });
-		state.init();
+		pause_layer = itf.layer(); 
 
-		game_instance->map.empty({ 24, 7 });
-		game_instance->map.regions.enumerate(&game_instance->map);
+		game = new Game(layer_map, layer_gui, layer_msg, &state);
+		adapter->map = &game->map;
 
-		layer_map->add(game_instance);
-		layer_gui->add(dev::Factory::game_panel(game_instance));
+		layer_map->add(game);
+		layer_gui->add(dev::Factory::game_panel(game));
 	}
 
-	MenuSystem menuSystem(itf, &game_ctx, game_instance);
+	MenuSystem menuSystem(itf, &game_ctx, pause_layer, game, net, state);   	
 	itf.switchContext(menuSystem.context);
 
+
 	while (ui::window.active()) {
+		net.fetch();
 		ui::window.events();
 		ui::window.frame();
 	}

@@ -27,22 +27,48 @@ RegionRes RegionRes::div(int count) const {
 };
 
 /// Returns region resources.
-RegionRes Region::res() const {
-	return {
-		.money = money,
-		.berry = berry,
-		.peach = peach
-	};
+RegionRes RegionRes::res() const {
+	return *this;
+};
+/// Sets new region resources.
+void RegionRes::setRes(const RegionRes& res) {
+	*this = res;
 };
 
-/// Checks whether the region is dead.
-bool Region::dead() const {
-	return money <= 0 && income < 0;
+/// Returns region variable counters.
+RegionVar RegionVar::var() const {
+	return *this;
+};
+/// Sets new region counters.
+void RegionVar::setVar(const RegionVar& var) {
+	*this = var;
+};
+
+/// Returns region data.
+RegionData RegionData::data() const {
+	return *this;
+};
+/// Sets new region data.
+void RegionData::setData(const RegionData& data) {
+	*this = data;
 };
 
 /// Updates money based on income.
 void Region::tick() {
+	// ignore if dead
+	if (dead) return;
+
+	// update money
 	money += income;
+
+	// check if dead
+	if (money < 0 || (money == 0 && income < 0)) {
+		dead = true;
+		
+		// reset resources
+		income = 0;
+		setRes({});
+	};
 };
 
 /// Returns a region iterator.
@@ -147,12 +173,13 @@ Regions::Split Regions::merge(
 	Split dist;
 
 	// store target resources
-	auto res = target->res();
+	auto res = target ? target->res() : RegionRes();
 
 	// overwrite merged regions
 	int idx = 0;
 	for (const auto& ap : aps) {
 		const Ref& apr = *ap.region;
+		if (!apr) continue;
 
 		// ignore if origin
 		if (idx++ == origin) {
@@ -162,7 +189,7 @@ Regions::Split Regions::merge(
 
 		// store & merge resources
 		dist.push_back(*apr);
-		target->add(*apr);
+		if (target) target->add(*apr);
 
 		// overwrite region for all hexes
 		Ref copy = apr;
@@ -180,8 +207,11 @@ void Regions::split(Map* map, const std::vector<AccessPoint>& aps, const Split& 
 	RegionRes split;
 
 	// generate split amount for empty distribution
-	if (dist.empty())
+	if (dist.empty()) {
+		// ignore if splitting unassigned region
+		if (!*aps[0].region) return;
 		split = (*aps[0].region)->div((int)aps.size());
+	};
 
 	// overwrite region parts
 	for (size_t i = 1; i < aps.size(); i++) {

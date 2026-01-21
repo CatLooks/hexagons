@@ -13,6 +13,8 @@ namespace Values {
 	extern const sf::IntRect mask;
 	/// Hex pulse.
 	extern const sf::IntRect pulse;
+	/// Defense shield.
+	extern const sf::IntRect shield;
 
 	/// Water side color.
 	extern const sf::Color waterSide;

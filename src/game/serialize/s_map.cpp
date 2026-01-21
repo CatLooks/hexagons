@@ -1,14 +1,32 @@
+#include "game/serialize/entities.hpp"
 #include "game/serialize/map.hpp"
 
 namespace Serialize {
-	/// Serializes a hex object.
-	sf::Packet& operator<<(sf::Packet& packet, const Hex& hex) {
+	/// Map signature.
+	static const uint8_t SIGN[4] = { 'h', 'e', 'x', '?' };
+
+	/// Serializes a template signature.
+	void encodeSignature(sf::Packet& packet) {
+		for (int i = 0; i < 4; i++)
+			packet << SIGN[i];
+	};
+	/// Deserializes a template signature.
+	bool decodeSignature(sf::Packet& packet) {
+		for (int i = 0; i < 4; i++) {
+			if (from<uint8_t>(packet) != SIGN[i])
+				return false;
+		};
+		return true;
+	};
+
+	/// Serializes a hex base object.
+	sf::Packet& operator<<(sf::Packet& packet, const HexBase& hex) {
 		uint8_t byte = hex.team << 4 | hex.type;
 		packet << byte;
 		return packet;
 	};
-	/// Deserializes a hex object.
-	sf::Packet& operator>>(sf::Packet& packet, Hex& hex) {
+	/// Deserializes a hex base object.
+	sf::Packet& operator>>(sf::Packet& packet, HexBase& hex) {
 		auto byte = from<uint8_t>(packet);
 
 		// read data
@@ -49,22 +67,60 @@ namespace Serialize {
 		return packet;
 	};
 
-	/// Serializes a region object.
-	sf::Packet& operator<<(sf::Packet& packet, const Region& reg) {
-		packet << (const RegionRes&)reg;
-		packet << reg.income;
-		packet << reg.tiles;
-		packet << reg.farms;
-		packet << reg.tents;
+	/// Serializes a map template object.
+	sf::Packet& operator<<(sf::Packet& packet, const Template& temp) {
+		// map header
+		packet << temp.header.name;
+		packet << temp.header.auth;
+
+		// tile data
+		packet << temp.size();
+		for (int y = 0; y < temp.size().y; y++)
+			for (int x = 0; x < temp.size().x; x++)
+				packet << temp.at(x, y);
+
+		// entity lists
+		encodeVec(packet, temp.troops);
+		encodeVec(packet, temp.builds);
+		encodeVec(packet, temp.plants);
+
+		// region construction data
+		packet << (int)temp.regions.size();
+		for (const auto& rcd : temp.regions) {
+			packet << rcd.res;
+			packet << rcd.pos;
+		};
 		return packet;
 	};
-	/// Deserializes a region object.
-	sf::Packet& operator>>(sf::Packet& packet, Region& reg) {
-		packet >> (RegionRes&)reg;
-		packet >> reg.income;
-		packet >> reg.tiles;
-		packet >> reg.farms;
-		packet >> reg.tents;
+	/// Deserializes a map template object.
+	sf::Packet& operator>>(sf::Packet& packet, Template& temp) {
+		// map header
+		packet >> temp.header.name;
+		packet >> temp.header.auth;
+
+		// tile data
+		sf::Vector2i size = from<sf::Vector2i>(packet);
+		temp.clear(size);
+		for (int y = 0; y < size.y; y++)
+			for (int x = 0; x < size.x; x++)
+				packet >> temp.at(x, y);
+		
+		// entity lists
+		temp.troops = decodeVec<Troop>(packet);
+		temp.builds = decodeVec<Build>(packet);
+		temp.plants = decodeVec<Plant>(packet);
+
+		// region construction data
+		int count = from<int>(packet);
+		{
+			temp.regions.reserve(count);
+			for (int i = 0; i < count; i++) {
+				temp.regions.push_back({
+					from<RegionRes>(packet),
+					from<sf::Vector2i>(packet)
+				});
+			};
+		};
 		return packet;
 	};
 };

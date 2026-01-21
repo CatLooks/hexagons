@@ -6,6 +6,7 @@
 #include "moves/entity_place.hpp"
 #include "moves/entity_withdraw.hpp"
 #include "moves/troop_move.hpp"
+#include "moves/troop_merge.hpp"
 #include "moves/troop_attack.hpp"
 #include "moves/troop_heal.hpp"
 #include "moves/plant_cut.hpp"

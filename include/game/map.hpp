@@ -15,8 +15,8 @@
 #include "logic/build_logic.hpp"
 #include "logic/plant_logic.hpp"
 
-// template forward-declaration
 class Template;
+namespace gameui { class Loader; };
 
 /// Game map object.
 /// Stores array of tiles and lists of all dynamic objects on it.
@@ -29,12 +29,16 @@ class Map : public HexArray {
 	friend Regions;
 	friend Move;
 	friend dev::Factory;
+	friend gameui::Loader;
 
 public:
 	/// Constructs an empty game map.
 	Map();
 
 	sf::IntRect camera; /// Map camera.
+
+	/// Clears the map.
+	void clear();
 
 	/// Generates a new selection index.
 	/// 
@@ -80,6 +84,10 @@ public:
 	Regions regions;
 	/// Tile pulse annotation.
 	std::optional<sf::Vector2i> pulse;
+	/// Defensive building position.
+	///
+	/// Used to display shield icons around the position.
+	std::optional<sf::Vector2i> shield;
 
 	/// Selects a region.
 	/// 

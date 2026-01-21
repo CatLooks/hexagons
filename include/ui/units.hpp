@@ -41,7 +41,7 @@ namespace ui {
 	struct Dim {
 		float px; /// Base value (in pixels).
 		float ps; /// Parent size scalar.
-		float es; /// Element size scalar.
+		float ts; /// Element size scalar.
 
 		/// Returns dimension's true value.
 		/// 
@@ -63,7 +63,7 @@ namespace ui {
 		/// Constructs a dimension with a parent size scalar.
 		static Dim from_ps(float ps);
 		/// Constructs a dimension with an element size scalar.
-		static Dim from_es(float es);
+		static Dim from_ts(float ts);
 
 		/// Adds 2 dimensions.
 		Dim operator+(const Dim& oth) const;
@@ -177,13 +177,13 @@ namespace ui {
 		sf::IntRect get(sf::IntRect parent) const;
 		/// Returns dimension rectangle's true value.
 		/// 
-		/// This method can set value for `size`'s `es` scalar.
+		/// This method can set value for `size`'s `ts` scalar.
 		/// 
 		/// @param parent Parent element bounding box.
-		/// @param es `size`'s `es` scaling value.
+		/// @param ts `size`'s `ts` scaling value.
 		/// 
 		/// @return Recalculated bounding box.
-		sf::IntRect get_es(sf::IntRect parent, sf::Vector2i es) const;
+		sf::IntRect get_es(sf::IntRect parent, sf::Vector2i ts) const;
 
 		/// Constructs an empty rectangle.
 		DimRect();
@@ -224,7 +224,7 @@ ui::Dim operator""px(unsigned long long i);
 /// Converts a parent size scalar into a dimension.
 ui::Dim operator""ps(unsigned long long i);
 /// Converts an element size scalar into a dimension.
-ui::Dim operator""es(unsigned long long i);
+ui::Dim operator""ts(unsigned long long i);
 /// Converts a alignment scalar into a dimension.
 ui::Dim operator""as(unsigned long long i);
 
@@ -233,6 +233,6 @@ ui::Dim operator""px(long double i);
 /// Converts a parent size scalar into a dimension.
 ui::Dim operator""ps(long double f);
 /// Converts an element size scalar into a dimension.
-ui::Dim operator""es(long double f);
+ui::Dim operator""ts(long double f);
 /// Converts a alignment scalar into a dimension.
 ui::Dim operator""as(long double f);

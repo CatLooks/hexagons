@@ -290,12 +290,6 @@ namespace ui {
 
 		/// Updates UI language.
 		void translate();
-		/// Activates the element.
-		void activate();
-		/// Deactivates the element.
-		void deactivate();
-		/// @return Whether the element is active.
-		bool active() const;
 
 		/// @return Element position.
 		DimVector& position();
@@ -312,6 +306,17 @@ namespace ui {
 		const std::list<std::unique_ptr<Element>>& children() const;
 		/// @return Element's parent.
 		Element* parent() const;
+
+		/// Activates the element.
+		///
+		/// @param inhibit_propagation Whether to inhibit propagation to children.
+		void activate(bool inhibit_propagation = false);
+		/// Deactivates the element.
+		///
+		/// @param inhibit_propagation Whether to inhibit propagation to children.
+		void deactivate(bool inhibit_propagation = false);
+		/// @return Whether the element is active.
+		bool active() const;
 
 	protected:
 		/// Returns element's system children.

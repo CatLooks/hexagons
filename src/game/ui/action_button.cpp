@@ -22,6 +22,8 @@ namespace gameui {
 
 	/// Stunned timer value.
 	const uint8_t Action::StunTimer = 0xFF;
+	/// Timed-out timer value.
+	const uint8_t Action::TimeoutTimer = 0xFE;
 
 	/// Action button texture maps.
 	const ui::Panel::Map Action::textures[2] = {
@@ -148,7 +150,7 @@ namespace gameui {
 	/// Adds a timer icon to the action button.
 	void Action::setTimer(uint8_t timer) {
 		// cap timer
-		if (timer > 10 && timer != StunTimer)
+		if (timer > 10 && timer != StunTimer && timer != TimeoutTimer)
 			timer = 10;
 
 		// store timer
@@ -156,7 +158,11 @@ namespace gameui {
 		if (!_timer) return;
 		
 		// disable the button
-		disable(timer > 10 ? Values::stun_digit : Values::digits[timer]);
+		switch (timer) {
+			case StunTimer   : disable(Values::stun_digit);   break;
+			case TimeoutTimer: disable(Values::timeout_digit); break;
+			default          : disable(Values::digits[timer]); break;
+		};
 	};
 
 	/// Adds an image to the action button.
@@ -214,7 +220,7 @@ namespace gameui {
 		if (_shake) return;
 
 		// shake displacement
-		const ui::DimVector shake_amp = { 1es / 16, 0px };
+		const ui::DimVector shake_amp = { 1ts / 16.f, 0px };
 
 		// store original position
 		ui::DimVector pos = position();

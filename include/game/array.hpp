@@ -25,6 +25,12 @@ public:
 		UpperLeft  = 5, /// Neighbor on upper left.
 	};
 
+	/// Returns distance between 2 points.
+	/// 
+	/// @param a Point A.
+	/// @param b Point B.
+	static int distance(sf::Vector2i a, sf::Vector2i b);
+
 	/// Returns neighbor position of a tile.
 	///
 	/// @param pos Tile position.

@@ -1,5 +1,8 @@
 #include "menu/gameJoinMenu.hpp"
 #include "assets.hpp"
+#include "menu/text_field_open.hpp"
+#include <SFML/System/String.hpp>
+#include <string>
 
 /// Title text settings.
 static const ui::TextSettings k_TitleFont = {
@@ -24,7 +27,7 @@ static ui::Panel::Map makeInputPanelMap() {
 }
 
 /// Constructs a game join menu.
-GameJoinMenu::GameJoinMenu() {
+GameJoinMenu::GameJoinMenu(Net* net) : _net(net) {
     bounds = { 0, 0, 1ps, 1ps };
 
     /// Background.
@@ -104,6 +107,7 @@ void GameJoinMenu::buildForm() {
         attemptJoin();
     });
 
+
     _codeField->focus(true);
     add(_codeField);
 
@@ -124,17 +128,44 @@ void GameJoinMenu::onInputUpdate(const sf::String& string) {
 
 /// Attempts to join a game.
 void GameJoinMenu::attemptJoin() {
-    setStatusMessage("Connecting...", false);
-    if (!_onJoin) return;
-
     std::string code;
-    if (_codeField) {
-        if (auto open = dynamic_cast<ui::TextFieldOpen*>(_codeField)) {
-            code = open->text().toAnsiString();
-        }
+    if (auto open = dynamic_cast<ui::TextFieldOpen*>(_codeField)) {
+        code = open->text().toAnsiString();
     }
 
-    _onJoin(code);
+    if (code.length() != 6) {
+        setStatusMessage("Invalid Code Length", true);
+        return;
+    }
+
+    setStatusMessage("Connecting...", false);
+
+    // Clear any old handlers
+    _net->clearHandlers();
+
+    // Bind Success Handler
+    _net->OnLobbySuccess.add([this, code]() {
+        // Unbind self (GameStartMenu will take over)
+        //_net->clearHandlers(); 
+        
+        // Trigger the screen switch
+        if (_onJoinSuccess) _onJoinSuccess(code);
+    });
+
+    // 3. Bind Failure Handler (idk, trza pewnie dodaæ...)
+    /* 
+    _net->OnJoinFailed.add([this](const std::string& error) {
+        setStatusMessage("Error: " + error, true);
+        _joinBtn->setLabel()->setColor(sf::Color::White); // Re-enable button
+    });
+    */
+
+    // Start Connection
+    _net->connect(code);
+}
+
+void GameJoinMenu::bindJoinSuccess(JoinSuccessAction action) {
+    _onJoinSuccess = action;
 }
 
 /// Sets status message.
@@ -164,4 +195,30 @@ void GameJoinMenu::refreshAllText() {
     _lblInstruction->setPath("join.instruction");
     _backBtn->setLabel()->setPath("menu.back");
     _joinBtn->setLabel()->setPath("menu.join");
+}
+
+void GameJoinMenu::reset() {
+    // 1. Clear the text field and grab focus
+    if (_codeField) {
+		_codeField->setText("");
+        _codeField->input.clear();
+        _codeField->focus(true);
+    }
+
+    // 2. Clear any old status/error messages
+    setStatusMessage("", false);
+
+    // 3. Reset the Join button to its "Disabled" state
+    // (We mimic the logic from attachCursorFocus here: grey color, no callback)
+    if (_joinBtn) {
+        _joinBtn->setLabel()->setColor(sf::Color(100, 100, 100));
+        _joinBtn->setCall(nullptr, nullptr, menuui::Button::Click);
+    }
+
+    // 4. Critical: Stop listening for network events
+    // If the user backed out while "Connecting...", we don't want 
+    // a delayed success packet to suddenly switch screens later.
+    if (_net) {
+        _net->clearHandlers();
+    }
 }

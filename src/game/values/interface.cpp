@@ -7,6 +7,8 @@ namespace Values {
 	const sf::IntRect redo_icon = coords(8, 2);
 	/// Turn finish button icon.
 	const sf::IntRect next_icon = coords(9, 2);
+	/// Map loader grabber button icon.
+	const sf::IntRect grab_icon = coords(0, 3);
 
 	/// Troop buying action texture.
 	const sf::IntRect buy_build = coords(6, 3);
@@ -56,28 +58,37 @@ namespace Values {
 	const sf::IntRect dead_digit = coords(9, 3, 0, 3);
 	/// Insufficient resources digit replacement.
 	const sf::IntRect insufficient_digit = coords(9, 3, 1, 3);
+	/// Timed-out skill cooldown digit.
+	const sf::IntRect timeout_digit = coords(9, 3, 2, 3);
 
 	/// Game panel text settings.
 	const ui::TextSettings panel_text = {
 		assets::font, 24, sf::Color::White,
 		sf::Color::Black, 2
 	};
-
 	/// Resource bar text settings.
 	const ui::TextSettings resource_text = {
 		assets::font, 32, sf::Color::White,
 		sf::Color::Black, 4
 	};
-
 	/// Game state viewer text settings.
 	const ui::TextSettings state_text = {
 		assets::font, 30, sf::Color::White,
 		sf::Color::Black, 3
 	};
-
 	/// Game chat text settings.
 	const ui::TextSettings chat_text = {
 		assets::font, 20, sf::Color::White,
 		sf::Color::Black, 2
 	};
+	/// Splash text settings.
+	const ui::TextSettings splash_text = {
+		assets::font, 48, sf::Color::White,
+		sf::Color::Black, 4
+	};
+
+	/// Unknown player nametag color.
+	const sf::Color unknown_color = sf::Color(32, 32, 32);
+	/// Host nametag color.
+	const sf::Color host_color = sf::Color(192, 0, 0);
 };

@@ -41,9 +41,12 @@ public:
 	/// 
 	/// @param args Action argument list.
 	void invoke(Args... args) const {
-		for (const auto& f : _list)
+		// Snapshot to avoid iterator invalidation if callbacks mutate the list.
+		auto list = _list;
+		for (const auto& f : list) {
 			f(args...);
-	};
+		}
+    };
 };
 
 /// Invalid delegate.
@@ -101,7 +104,9 @@ public:
 	/// 
 	/// @return Value reduced from invoked actions.
 	A reduce(A acc, Args... args) const {
-		for (const auto& f : _list)
+		// Snapshot to avoid iterator invalidation if callbacks mutate the list.
+		auto list = _list;
+		for (const auto& f : list)
 			if (_reduce(acc, f(args...)))
 				break;
 		return acc;

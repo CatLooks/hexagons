@@ -17,14 +17,27 @@ public:
 	/// Returns a span of map tiles.
 	const std::vector<HexBase>& tiles() const;
 
+	/// Returns hex data at position.
+	/// 
+	/// @param x X coordinate.
+	/// @param y Y coordinate.
+	HexBase& at(int x, int y);
+	const HexBase& at(int x, int y) const;
+
 	/// Clears and creates a new empty map.
 	///
 	/// @param size New map size.
 	void clear(sf::Vector2i size);
 
 public:
+	/// Map info.
+	struct Header {
+		std::string name; /// Map name.
+		std::string auth; /// Map author.
+	} header;
+
 	/// Region construction data.
-	struct RegionData {
+	struct RCD {
 		RegionRes    res; /// Region resources.
 		sf::Vector2i pos; /// Region access point.
 	};
@@ -34,7 +47,7 @@ public:
 	std::vector<Plant> plants; /// Plant list.
 
 	/// Region resource list.
-	std::vector<RegionData> regions;
+	std::vector<RCD> regions;
 
 	/// Generates a template from the map.
 	///

@@ -6,6 +6,7 @@
 #include "region.hpp"
 #include "moves/move.hpp"
 #include "logic/skill_types.hpp"
+#include "logic/effect_types.hpp"
 
 /// Skill enumeration container.
 namespace Skills {
@@ -19,10 +20,17 @@ namespace Skills {
 
 	/// Skill resource label text path.
 	extern const char* withLabel[4];
+
+	/// Checks whether a skill cooldown can be decreased.
+	///
+	/// @param type Skill type.
+	/// @param effects Entity effect list.
+	bool ticked(Type type, const std::vector<EffectType>& effects);
 };
 
 /// Data required for skill calculations.
 struct SkillState {
+	Map* map       {}; /// Map reference.
 	int build     = 0; /// Current building index in shop.
 	int troop     = 0; /// Current troop index in shop.
 	Region* region {}; /// Currently selected region.

@@ -22,6 +22,26 @@ int SkillState::with(Skills::Resource resource) const {
 	};
 };
 
+namespace Skills {
+	/// Checks whether a skill cooldown can be decreased.
+	bool ticked(Type type, const std::vector<EffectType>& effects) {
+		// check if list has an effect
+		auto check = [&](EffectType eff) {
+			for (EffectType e : effects)
+				if (e == eff) return true;
+			return false;
+		};
+
+		// check effect skills
+		switch (type) {
+			case RangeBoost: return !check(EffectType::RangeBoost);
+			case DefenseBoost: return !check(EffectType::DefenseBoost);
+			case OffenseBoost: return !check(EffectType::OffenseBoost);
+		};
+		return true;
+	};
+};
+
 /// Returns region variable counters.
 RegionVar SkillState::var() const {
 	return region ? *region : RegionVar();

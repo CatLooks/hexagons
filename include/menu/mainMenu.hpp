@@ -39,7 +39,8 @@ private:
     Action _onExit;    /// Exit callback.
     Action _onOptions; /// Options callback.
     Action _onLogin;   /// Login callback.
-	Action _onLogout;  /// Logout callback.
+    Action _onLogout;  /// Logout callback.
+
 public:
     /// Constructs a main menu.
     MainMenu();

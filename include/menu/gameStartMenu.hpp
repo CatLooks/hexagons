@@ -5,10 +5,14 @@
 #include "ui/solid.hpp"
 #include "ui/pages.hpp" 
 #include "menu/ui/menuButton.hpp"
+#include "networking/Net.hpp"
 #include <functional>
 #include <vector>
 #include <string>
 #include "menu/lobbyMenu.hpp"
+#include "menu/ui/alertPopup.hpp"
+
+class Net;
 
 /// Game start configuration menu.
 class GameStartMenu : public ui::Element {
@@ -36,7 +40,12 @@ public:
     /// Container for sidebar, content pages and navigation area.
     ui::Element* _setupContainer; /// Setup container.
 
+	bool _isHost = false;
+
+
 private:
+    Net* _net = nullptr;
+
     ui::Solid* _bg = nullptr; /// Background panel.
     ui::Solid* _sidebarBg = nullptr; /// Sidebar background panel.
     ui::Pages* _contentPages = nullptr; /// Content page container.
@@ -93,9 +102,12 @@ private:
     menuui::Button* _mapNextBtn = nullptr;
     ui::Element* _mapGrid = nullptr;
 
+    bool _controlsLocked = false;
+    void setControlsLocked(bool locked);
+
 public:
     /// Constructs a game start menu.
-    GameStartMenu();
+    GameStartMenu(Net* net);
 
     /// Binds back button callback.
     void bindBack(Action action);
@@ -103,10 +115,14 @@ public:
     void bindStart(Action action);
 
 	/// @return Current game data.
-    const GameData& getGameData() const { return _currentData; }
-	/// Sets current game data.
+    const GameData& getGameData();
+    /// Sets current game data.
     void setGameData(const GameData& data) { _currentData = data; updateUI(); }
 
+    /// @return The max players (returns 1 if singleplayer).
+    int getMaxPlayers() const { return (_currentData.isMultiplayer) ? _currentData.maxPlayers: 1; }
+    /// @return The generated game code.
+    std::string getGameCode() const { return _currentData.roomCode; }
     void enterAsJoiner(const std::string& code);
 
 protected:
@@ -141,4 +157,42 @@ private:
     void updateMapGrid();           /// Refreshes the 3 visible maps
 	void changeMapPage(int delta);  /// Changes the map page by delta
 
+    void addSelfToUI();
+    
+    // Packet Protocol
+    enum PacketType { Pkt_Hello = 100, Pkt_LobbyState = 101, Pkt_StartGame = 102, Pkt_Leave = 103, Pkt_LobbyEnded =104 };
+
+    struct LobbyMember {
+        std::string netId;
+        PlayerData data;
+    };
+    std::vector<LobbyMember> _connectedMembers;
+
+    // Helper to setup listeners
+    void bindNetworkHandlers();
+    
+    // Logic handlers
+    void onPlayerJoined(const std::string& id);
+    void onPlayerLeft(const std::string& id);
+    void onPacket(const std::string& id, sf::Packet& pkt);
+
+    // Sync helpers
+    void sendHello();
+    void sendLeavePacket();
+    void broadcastLobbyState();
+
+    std::string _localPlayerName;   /// The name this client generated for themselves.
+    bool _acknowledgedByHost = false; /// If the host has sent back our name in the lobby state.
+    sf::Clock _heartbeatTimer;      /// Timer for resending Hello packets.
+      
+	AlertPopup* _alert = nullptr; /// Alert popup for errors.
+    
+public:
+    void setAlert(AlertPopup* alert) { _alert = alert; }
+
+    void resetLobbyState();
+    void reset();
+    
+    const std::vector<LobbyMember>& getConnectedMembers() const { return _connectedMembers; }
+    std::string getLocalPlayerName() const { return _localPlayerName; }
 };
