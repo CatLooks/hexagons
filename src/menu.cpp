@@ -4,6 +4,7 @@
 #include "menu/ui/alertPopup.hpp"
 #include "game/sync/network_adapter.hpp" 
 #include "game/serialize/map.hpp"
+#include "game/loader.hpp" 
 
 #include "game/sync/state.hpp" 
 
@@ -333,95 +334,117 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
 
     // start menu -> start game
 	startMenu->bindStart([&itf, gameCtx, gameInstance, this, &net, &state]() {
+    
+    // 1. Get Data from the menu
+    const GameData& data = startMenu->getGameData();
+
+    // 2. STOP listening to Lobby Packets
+    net.clearHandlers(); 
+
+    // Define Team Order
+    const std::vector<Region::Team> teamOrder = {
+        Region::Red, Region::Green, Region::Blue, Region::Yellow, 
+        Region::Purple, Region::Orange, Region::Aqua
+    };
+
+    // --- A. NETWORK/ADAPTER SETUP ---
+    if (data.isMultiplayer) {
+        // --- MULTIPLAYER SETUP ---
         
-        // 1. Get Data (Populated correctly via fix in GameStartMenu::getGameData)
-        const GameData& data = startMenu->getGameData();
-
-        // 2. STOP listening to Lobby Packets immediately to prevent conflicts
-        net.clearHandlers(); 
-
-        // Helper: Map SFML Color to Game Team
-		const std::vector<Region::Team> teamOrder = {
-		Region::Red,    // Index 0 (Host)
-		Region::Green,  // Index 1
-		Region::Blue,   // Index 2
-		Region::Yellow, // Index 3
-		Region::Purple, // Index 4
-			Region::Orange, // Index 5
-			Region::Aqua    // Index 6
-		};
-
-        if (data.isMultiplayer) {
-            // 3. Find My ID
-            uint32_t myPlayerId = 0;
-            bool found = false;
-           
-			printf("[Main] Local Name: '%s'\n", data.localPlayerName.c_str());
-
-            for (size_t i = 0; i < data.players.size(); ++i) {
-				printf("[Main] Checking list[%d]: '%s'\n", (int)i, data.players[i].name.c_str());
-                // Compare names to find which index is "Me"
-                if (data.players[i].name == data.localPlayerName) {
-                    myPlayerId = (uint32_t)i;
-                    found = true;
-                    break;
-                }
-            }
-
-            // Fallback if logic fails (e.g. testing with same account)
-            if (!found) {
-                printf("[CRITICAL] Could not find local player '%s' in player list!\n", data.localPlayerName.c_str());
-                myPlayerId = startMenu->_isHost ? 0 : 1; 
-            }
-
-            printf("[Menu] Starting MP Game. My ID: %d\n", myPlayerId);
-
-            // 4. Setup Adapter
-            auto* adapter = new NetworkAdapter(net, myPlayerId);
-            state.reset(
-                startMenu->_isHost ? GameState::Host : GameState::Client, 
-                adapter
-            );
-
-            // 5. Add Players
-           for (size_t i = 0; i < data.players.size(); ++i) {
-        // Pick team based on index (use % in case we have more players than colors)
-        Region::Team assignedTeam = teamOrder[i % teamOrder.size()];
+        // Find My ID based on local name
+        uint32_t myPlayerId = 0;
+        bool found = false;
         
-        state.addPlayer({ 
-            .name = data.players[i].name, 
-            .team = assignedTeam 
-        });
-        
-        printf("[Main] Assigned %s to Team %d\n", data.players[i].name.c_str(), (int)assignedTeam);
-    }
-
-            // 6. Init Map
-            if (startMenu->_isHost) {
-                // Host loads the map logic locally
-                setup_test_map(*gameInstance); 
-                // Host sends the map Template to Clients via E_Init packet
-                state.init(); 
-            } else {
-                // Client clears map and waits for E_Init packet from Host
-                //gameInstance->map.clear();
+        for (size_t i = 0; i < data.players.size(); ++i) {
+            if (data.players[i].name == data.localPlayerName) {
+                myPlayerId = (uint32_t)i;
+                found = true;
+                break;
             }
-
-        } else {
-            // Singleplayer Setup
-            state.reset(GameState::Host, new TestAdapter());
-            state.addPlayer({ .name = "Player", .team = Region::Red });
-            state.addPlayer({ .name = "Bot", .team = Region::Blue });
-            
-            setup_test_map(*gameInstance);
-            state.init();
+        }
+        
+        if (!found) {
+            printf("[Main] Warning: Could not find local player in list. Defaulting ID.\n");
+            myPlayerId = startMenu->_isHost ? 0 : 1; 
         }
 
-        // Switch context to Game
-        gameInstance->activate();
-        itf.switchContext(*gameCtx);
-    });
+        printf("[Main] Starting MP Game. My ID: %d\n", myPlayerId);
 
+        // Create Network Adapter
+        auto* adapter = new NetworkAdapter(net, myPlayerId);
+        state.reset(
+            startMenu->_isHost ? GameState::Host : GameState::Client, 
+            adapter
+        );
+
+        // Add Players to State
+        for (size_t i = 0; i < data.players.size(); ++i) {
+            state.addPlayer({ 
+                .name = data.players[i].name, 
+                .team = teamOrder[i % teamOrder.size()] 
+            });
+        }
+    } 
+    else {
+        // --- SINGLEPLAYER SETUP ---
+        
+        // Create Local Test Adapter
+        state.reset(GameState::Host, new TestAdapter());
+        
+        // Add default players
+        state.addPlayer({ .name = "Player", .team = Region::Red });
+        state.addPlayer({ .name = "Bot", .team = Region::Green });
+    }
+
+    // --- B. MAP LOADING LOGIC ---
+    
+    // Only the Authority (Host or Singleplayer) loads the map from disk.
+    // Clients do NOTHING here; they receive the map via network in state.init().
+    if (startMenu->_isHost || !data.isMultiplayer) {
+        
+        bool mapLoaded = false;
+
+        // 1. Check if a valid map file was selected in the menu
+        if (!data.selectedMapPath.empty() && data.selectedMapPath != "STATIC_MAP_ID") {
+            printf("[Main] Attempting to load map: %s\n", data.selectedMapPath.c_str());
+            
+            // 2. Use the Loader to read the file
+            auto fileInfo = Loader::load(data.selectedMapPath);
+            
+            if (fileInfo.has_value()) {
+                // 3. Clear existing data and construct the new map
+                gameInstance->map.clear();
+                fileInfo->temp.construct(&gameInstance->map);
+                
+                // 4. Center camera and flag success
+                gameInstance->centerCamera();
+                mapLoaded = true;
+                printf("[Main] Map loaded successfully.\n");
+            } else {
+                printf("[Main] Failed to load map file!\n");
+            }
+        }
+
+        // 5. Fallback: If no file selected or load failed, use the hardcoded test map
+        if (!mapLoaded) {
+            printf("[Main] Using fallback hardcoded map.\n");
+            setup_test_map(*gameInstance);
+        }
+
+        // 6. Initialize State 
+        // (If Host: Serializes map to send to clients. If Singleplayer: Just starts.)
+        state.init(); 
+    } 
+    else {
+        // --- CLIENT LOGIC ---
+        // Clients wait for the 'E_Init' packet from the Host, 
+        // which contains the map data loaded above.
+    }
+
+    // --- C. SWITCH TO GAME ---
+    gameInstance->activate();
+    itf.switchContext(*gameCtx);
+});
 
     // join menu -> back
     joinMenu->bindBack([=]() {

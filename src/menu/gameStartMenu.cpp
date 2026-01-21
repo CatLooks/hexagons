@@ -677,18 +677,31 @@ void GameStartMenu::scanMaps() {
     _scanDiagnostic = ""; 
     
     namespace fs = std::filesystem;
-    std::string foundPath = std::string(ASSET_PATH) + "/maps/";
+    
+    // The Loader class uses "./maps/", so we scan that.
+    #ifndef MAP_PATH
+    #define MAP_PATH "./maps/"
+    #endif
+
+    std::string foundPath = MAP_PATH;
+
+    // Create directory if it doesn't exist (prevents crash on first run)
+    if (!fs::exists(foundPath)) {
+        fs::create_directory(foundPath);
+    }
+
     if (foundPath.empty()) {
-        _scanDiagnostic = "assets/maps/ not found.";
+        _scanDiagnostic = "maps/ folder not found.";
         return;
     }
 
     for (const auto& entry : fs::directory_iterator(foundPath)) {
-        // Check for JSON
         std::string ext = entry.path().extension().string();
+        // Convert to lower case for comparison
         std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
 
-        if (ext == ".json") {
+        // CHANGE: Look for .dat files (binary map templates)
+        if (ext == ".dat") {
             MapInfo info;
             info.filePath = entry.path().string();
             info.id = entry.path().stem().string();
@@ -698,17 +711,15 @@ void GameStartMenu::scanMaps() {
             std::replace(name.begin(), name.end(), '_', ' ');
             if (!name.empty()) name[0] = std::toupper(name[0]);
 			info.displayName = name; 
-            // TODO: should probably be read from JSON in future
 
+            // Attempt to load a matching .png for preview
             auto pngPath = entry.path().parent_path() / (info.id + ".png");
             info.previewPath = pngPath.string();
             info.texture = std::make_shared<sf::Texture>();
           
- 
             if (info.texture->loadFromFile(info.previewPath)) {
-                //printf("[SUCCESS] Loaded map preview: %s\n", info.previewPath.c_str());
+                // Texture loaded
             } else {
-                printf("[FAILED]  Could not load image: %s\n", info.previewPath.c_str());
                 info.texture = nullptr; 
             }
 

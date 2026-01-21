@@ -3,8 +3,12 @@
 #include <fstream>
 #include <format>
 
+#ifndef MAP_PATH
+#define MAP_PATH "./maps/"
+#endif
+
 /// Map folder.
-const fs::path Loader::folder = "./maps/";
+const fs::path Loader::folder = MAP_PATH;
 
 /// Loads a map from a file.
 std::optional<Loader::File> Loader::load(fs::path path) {
