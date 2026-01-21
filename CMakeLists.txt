@@ -87,8 +87,10 @@ option(PRODUCTION_BUILD "Set to ON for release builds" OFF)
 
 if(PRODUCTION_BUILD)
     target_compile_definitions(main PUBLIC "ASSET_PATH=\"./assets\"")
+    target_compile_definitions(main PUBLIC "MAP_PATH=\"./maps/\"")    
 else()
     target_compile_definitions(main PUBLIC "ASSET_PATH=\"${CMAKE_SOURCE_DIR}/assets/\"")
+    target_compile_definitions(main PUBLIC "MAP_PATH=\"${CMAKE_SOURCE_DIR}/maps/\"")
 endif()
 
 add_custom_command(TARGET main POST_BUILD
@@ -98,11 +100,18 @@ add_custom_command(TARGET main POST_BUILD
 )
 
 set(ASSET_DIR ${CMAKE_SOURCE_DIR}/assets)
+set(MAP_DIR ${CMAKE_SOURCE_DIR}/maps) 
 
 if(PRODUCTION_BUILD)
     add_custom_command(TARGET main POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${ASSET_DIR} $<TARGET_FILE_DIR:main>/assets
         COMMENT "Copying assets for production build"
+    )
+
+    add_custom_command(TARGET main POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${MAP_DIR} $<TARGET_FILE_DIR:main>/maps
+        COMMENT "Copying maps for production build"
     )
 endif()

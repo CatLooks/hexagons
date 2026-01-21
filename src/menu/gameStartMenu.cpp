@@ -90,7 +90,10 @@ GameStartMenu::GameStartMenu(Net* net) : _net(net) {
     _contentPages->add(_pageMap);
     _contentPages->add(_pageLobby);
 
-    _pageWaitingLobby->bindStart([this]() { if (_onStartGame) _onStartGame(); });
+    _pageWaitingLobby->bindStart([this]() { 
+        if (_onStartGame) _onStartGame(); 
+        nextStep();
+    });
     
     _pageWaitingLobby->bindLeave([this]() {
         if (_currentData.isMultiplayer && _currentStep == STEP_WAITING) {
@@ -339,7 +342,7 @@ void GameStartMenu::selectMode(GameMode mode, menuui::Button* btn) {
     if (mode == Mode_Host) {
         // Check if logged in before allowing Host selection
         if (!_net->isLoggedIn()) {
-            _alert->show("You must be logged in\nto play Multiplayer!");
+            _alert->show(assets::lang::locale.req("menu.login_required").get({}));            
             return; // Stop here, do not select the button
         }
         // Clean state before becoming host
@@ -586,7 +589,7 @@ void GameStartMenu::enterAsJoiner(const std::string& code) {
     
     // 4. Initial "Connecting" visual
     PlayerData p;
-    p.name = "Connecting...";
+    p.name = assets::lang::locale.req("lobby.connecting").get({});
     p.color = sf::Color(150, 150, 150);
     _pageWaitingLobby->updateList({ p });
 
@@ -674,18 +677,31 @@ void GameStartMenu::scanMaps() {
     _scanDiagnostic = ""; 
     
     namespace fs = std::filesystem;
-    std::string foundPath = std::string(ASSET_PATH) + "/maps/";
+    
+    // The Loader class uses "./maps/", so we scan that.
+    #ifndef MAP_PATH
+    #define MAP_PATH "./maps/"
+    #endif
+
+    std::string foundPath = MAP_PATH;
+
+    // Create directory if it doesn't exist (prevents crash on first run)
+    if (!fs::exists(foundPath)) {
+        fs::create_directory(foundPath);
+    }
+
     if (foundPath.empty()) {
-        _scanDiagnostic = "assets/maps/ not found.";
+        _scanDiagnostic = "maps/ folder not found.";
         return;
     }
 
     for (const auto& entry : fs::directory_iterator(foundPath)) {
-        // Check for JSON
         std::string ext = entry.path().extension().string();
+        // Convert to lower case for comparison
         std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
 
-        if (ext == ".json") {
+        // CHANGE: Look for .dat files (binary map templates)
+        if (ext == ".dat") {
             MapInfo info;
             info.filePath = entry.path().string();
             info.id = entry.path().stem().string();
@@ -695,17 +711,15 @@ void GameStartMenu::scanMaps() {
             std::replace(name.begin(), name.end(), '_', ' ');
             if (!name.empty()) name[0] = std::toupper(name[0]);
 			info.displayName = name; 
-            // TODO: should probably be read from JSON in future
 
+            // Attempt to load a matching .png for preview
             auto pngPath = entry.path().parent_path() / (info.id + ".png");
             info.previewPath = pngPath.string();
             info.texture = std::make_shared<sf::Texture>();
           
- 
             if (info.texture->loadFromFile(info.previewPath)) {
-                //printf("[SUCCESS] Loaded map preview: %s\n", info.previewPath.c_str());
+                // Texture loaded
             } else {
-                printf("[FAILED]  Could not load image: %s\n", info.previewPath.c_str());
                 info.texture = nullptr; 
             }
 
@@ -754,7 +768,10 @@ void GameStartMenu::updateMapGrid() {
     _mapButtons.clear();
 
     if (_availableMaps.empty()) {
-        auto* lbl = ui::Text::raw(k_SidebarFont, _scanDiagnostic.empty() ? "No maps found." : _scanDiagnostic);
+        std::string msg = _scanDiagnostic.empty() 
+            ? assets::lang::locale.req("menu.no_maps").get({}) 
+            : _scanDiagnostic;
+        auto* lbl = ui::Text::raw(k_SidebarFont, msg);
         lbl->bounds = { 20px, 0.4ps, 1ps - 40px, 0 };
         lbl->align = ui::Text::Center;
         _mapGrid->add(lbl);
@@ -857,7 +874,7 @@ void GameStartMenu::onPlayerJoined(const std::string& id) {
         // A client joined. Add placeholder and send them the map info.
         LobbyMember mem;
         mem.netId = id;
-        mem.data.name = "Connecting..."; // Temp name until Hello packet
+        mem.data.name = assets::lang::locale.req("lobby.connecting").get({});  // Temp name until Hello packet
         mem.data.color = sf::Color::Green;
         mem.data.isHost = false;
         _connectedMembers.push_back(mem);
@@ -903,8 +920,8 @@ void GameStartMenu::onPacket(const std::string& id, sf::Packet& pkt) {
     if (type == Pkt_LobbyEnded) {
         if (!_isHost) {
             // 1. Show Popup
-            if (_alert) _alert->show("The Host has ended the game.");
-            
+            if (_alert) _alert->show(assets::lang::locale.req("lobby.host_ended").get({}));
+
             // 2. Force Leave
             // This triggers OnLobbyLeft -> MenuSystem switches page.
             if (_net) _net->leaveLobby(); 
@@ -1025,7 +1042,9 @@ void GameStartMenu::addSelfToUI() {
     
     // In a real app, get this from AuthManager
     PlayerData hostMe;
-    hostMe.name = _net->getLocalDisplayName() + " (Host)"; 
+    hostMe.name = assets::lang::locale.req("lobby.host_suffix").get({ 
+        { "name", _net->getLocalDisplayName() } 
+    });    
     hostMe.isHost = true;
     hostMe.color = sf::Color::Cyan;
     hostMe.isReady = true;

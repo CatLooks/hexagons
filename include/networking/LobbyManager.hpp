@@ -18,6 +18,7 @@ public:
 	Delegate<void(EOS_LobbyId)> OnLobbyLeft;
 	Delegate<void(EOS_LobbyId)> OnLobbyDestroyed;
 	Delegate<void(EOS_LobbyId)> OnHostLobbyLeft;
+	Delegate<void(const std::string&)> OnLobbyJoinFailed;
 
 	bool isBusy = false;
 	LobbyManager(EOS_HLobby handle, EOS_ProductUserId id, EOS_HP2P p2p);
@@ -32,8 +33,6 @@ public:
 	std::shared_ptr<P2PManager> GetP2PConnection(EOS_ProductUserId peerId);
 	std::shared_ptr<P2PManager> GetLocalConnection() { return LocalConnection; }
 	EOS_ProductUserId GetPeerId() const { return ExternalUsers.empty() ? nullptr : ExternalUsers[0]; }
-	//bool HasReceivedPacket() const { return receivedPacket; }
-	//void SetReceivedPacket(bool value) { receivedPacket = value; }
 
 	~LobbyManager();
 
@@ -68,6 +67,7 @@ private:
 	EOS_HLobbyDetails LobbyDetailsHandle = nullptr;
 	EOS_HLobbySearch LobbySearchHandle = nullptr;
 	EOS_NotificationId MemberStatusNotificationId = EOS_INVALID_NOTIFICATIONID;
+	std::string LastSearchCode;
 
 	//Client connection manager for communication with host
 	std::shared_ptr<P2PManager> LocalConnection = nullptr;

@@ -5,7 +5,7 @@
 #include <memory>
 #include <optional>
 #include <unordered_set>
-#include "templated/delegate.hpp" 
+#include "templated/delegate.hpp"
 #include "networking/EOSManager.hpp"
 #include "networking/threadsafe_queue.hpp"
 
@@ -100,7 +100,7 @@ private:
     std::unordered_set<std::string> m_hostHandshakePeers;
 
 public:
-    Delegate<void()> OnLobbySuccess; 
+    Delegate<void()> OnLobbySuccess;
     Delegate<void(const std::string&)> OnPlayerConnected;
     Delegate<void(const std::string&)> OnPlayerDisconnected;
     Delegate<void(const std::string&, sf::Packet&)> OnPacketReceived;
@@ -109,9 +109,12 @@ public:
     Delegate<void()> OnHostLobbyLeft;
     Delegate<void()> OnLobbyDestroyed;
 
+    // Fired when host migration is detected (original host left -> game over).
+    Delegate<void()> OnHostLeft;
+
     void clearHandlers();
 
     std::string getLocalDisplayName();
 
-    bool isLoggedIn() const; 
+    bool isLoggedIn() const;
 };
