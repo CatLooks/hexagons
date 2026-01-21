@@ -9,6 +9,7 @@
 #include <iostream>
 
 class Game;
+class GameState; 
 
 /// Menu system controller.
 ///
@@ -32,5 +33,5 @@ public:
     /// @param gameCtx      Game context id.
     /// @param gameInstance Game controller instance.
     /// @param net          Networking facade instance from main().
-    MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game* gameInstance, Net& net);
+    MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game* gameInstance, Net& net, GameState& state);
 };

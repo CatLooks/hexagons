@@ -39,9 +39,11 @@ public:
     /// Container for sidebar, content pages and navigation area.
     ui::Element* _setupContainer; /// Setup container.
 
+	bool _isHost = false;
+
+
 private:
     Net* _net = nullptr;
-    bool _isHost = false;
 
     ui::Solid* _bg = nullptr; /// Background panel.
     ui::Solid* _sidebarBg = nullptr; /// Sidebar background panel.
@@ -99,6 +101,9 @@ private:
     menuui::Button* _mapNextBtn = nullptr;
     ui::Element* _mapGrid = nullptr;
 
+    bool _controlsLocked = false;
+    void setControlsLocked(bool locked);
+
 public:
     /// Constructs a game start menu.
     GameStartMenu(Net* net);
@@ -109,8 +114,8 @@ public:
     void bindStart(Action action);
 
 	/// @return Current game data.
-    const GameData& getGameData() const { return _currentData; }
-	/// Sets current game data.
+    const GameData& getGameData();
+    /// Sets current game data.
     void setGameData(const GameData& data) { _currentData = data; updateUI(); }
 
     /// @return The max players (returns 1 if singleplayer).
@@ -186,5 +191,7 @@ public:
 
     void resetLobbyState();
     void reset();
-
+    
+    const std::vector<LobbyMember>& getConnectedMembers() const { return _connectedMembers; }
+    std::string getLocalPlayerName() const { return _localPlayerName; }
 };

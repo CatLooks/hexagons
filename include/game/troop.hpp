@@ -26,8 +26,8 @@ struct Troop : Entity {
 	/// Defends the troop against incoming damage.
 	Damage defend(Damage dmg, Access acc) override;
 
-	/// Returns troop skill index.
-	int skill_id(Skills::Type skill) const override;
+	/// Returns troop skill at index.
+	Skills::Type skill_at(int idx) const override;
 	/// Returns troop targeted skill index.
 	Skills::Type skill_into(const Entity* entity) const override;
 };

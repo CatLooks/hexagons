@@ -8,7 +8,6 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 set(EOS_SDK_PATH "${CMAKE_SOURCE_DIR}/EOS_SDK")
 
-
 if(WIN32)
     message(STATUS "Configuring EOS SDK for Windows")
     set(EOS_DLL "${EOS_SDK_PATH}/Bin/EOSSDK-Win64-Shipping.dll")

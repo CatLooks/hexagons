@@ -1,7 +1,8 @@
 #include "game/entity.hpp"
+#include "game/skill.hpp"
 
 /// Ticks entity state.
-void Entity::tick() {};
+void Entity::tick(Map* map) {};
 
 /// Adds cooldown to entity skill if present.
 void Entity::add_cooldown(Skills::Type skill, uint8_t time) {
@@ -26,6 +27,7 @@ Entity::Damage Entity::defend(Damage dmg, Access acc) { return dmg; };
 Entity::Damage Entity::damage(Damage dmg) {
 	dmg = defend(dmg, Access::Use);
 	hp -= dmg.pts;
+	if (dmg.psn) addEffect(EffectType::Poisoned);
 	return dmg;
 };
 
@@ -37,8 +39,23 @@ bool Entity::instakill(Damage dmg) {
 	return hp - defend(dmg, Access::Query).pts <= 0;
 };
 
+/// Returns skill type at index.
+Skills::Type Entity::skill_at(int idx) const { return Skills::Empty; };
+
 /// Returns index of an entity skill.
-int Entity::skill_id(Skills::Type skill) const { return -1; };
+int Entity::skill_id(Skills::Type skill) const {
+	// ignore invalid skill
+	if (skill == Skills::Empty)
+		return -1;
+
+	// check each skill slot
+	for (int i = 0; i < 4; i++)
+		if (skill_at(i) == skill)
+			return i;
+
+	// skill not found
+	return -1;
+};
 
 /// Returns index of an entity skill for targeting another entity.
 Skills::Type Entity::skill_into(const Entity* entity) const { return Skills::Empty; };
@@ -86,10 +103,10 @@ const Entity::Effects& Entity::effectList() const {
 };
 
 /// Ticks entity state.
-void Entity::tickState() {
+void Entity::tickState(Map* map) {
 	// tick timers
 	for (int i = 0; i < 4; i++) {
-		if (timers[i] > 0)
+		if (timers[i] > 0 && Skills::ticked(skill_at(i), _effects))
 			timers[i]--;
 	};
 
@@ -99,5 +116,5 @@ void Entity::tickState() {
 	removeEffect(EffectType::Stunned);
 
 	// special tick
-	tick();
+	tick(map);
 };

@@ -2,6 +2,23 @@
 #include "game/serialize/map.hpp"
 
 namespace Serialize {
+	/// Map signature.
+	static const uint8_t SIGN[4] = { 'h', 'e', 'x', '?' };
+
+	/// Serializes a template signature.
+	void encodeSignature(sf::Packet& packet) {
+		for (int i = 0; i < 4; i++)
+			packet << SIGN[i];
+	};
+	/// Deserializes a template signature.
+	bool decodeSignature(sf::Packet& packet) {
+		for (int i = 0; i < 4; i++) {
+			if (from<uint8_t>(packet) != SIGN[i])
+				return false;
+		};
+		return true;
+	};
+
 	/// Serializes a hex base object.
 	sf::Packet& operator<<(sf::Packet& packet, const HexBase& hex) {
 		uint8_t byte = hex.team << 4 | hex.type;
@@ -52,6 +69,10 @@ namespace Serialize {
 
 	/// Serializes a map template object.
 	sf::Packet& operator<<(sf::Packet& packet, const Template& temp) {
+		// map header
+		packet << temp.header.name;
+		packet << temp.header.auth;
+
 		// tile data
 		packet << temp.size();
 		for (int y = 0; y < temp.size().y; y++)
@@ -73,6 +94,10 @@ namespace Serialize {
 	};
 	/// Deserializes a map template object.
 	sf::Packet& operator>>(sf::Packet& packet, Template& temp) {
+		// map header
+		packet >> temp.header.name;
+		packet >> temp.header.auth;
+
 		// tile data
 		sf::Vector2i size = from<sf::Vector2i>(packet);
 		temp.clear(size);

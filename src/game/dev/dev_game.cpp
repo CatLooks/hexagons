@@ -28,12 +28,10 @@ namespace dev {
 
 	/// Creates sections for game state.
 	void Factory::attach_state(Panel* panel, Game* game) {
-		// turn
-		// player
-		// team
 		static const SectionLayout layout = {
 			.title = "dp.state.title",
 			.kv = {
+				"dp.state.enums",
 				"dp.state.turn",
 				"dp.state.player"
 			}
@@ -41,9 +39,26 @@ namespace dev {
 		auto* sec = panel->push();
 		layout.construct(sec);
 
+		// enum -> string tables
+		static const char* enum_mode[] = {
+			"@!dp.state.mode.host",
+			"@!dp.state.mode.client",
+			"@!dp.state.mode.edit"
+		};
+		static const char* enum_state[] = {
+			"@!dp.state.state.quit",
+			"@!dp.state.state.init",
+			"@!dp.state.state.wait",
+			"@!dp.state.state.play"
+		};
+
 		// attach info update
 		sec->attach([=]() {
 			sec->args = {
+				// enums
+				{ "state", enum_state[game->_state._state] },
+				{ "mode", enum_mode[game->_state._mode] },
+
 				// general
 				{ "turn", ext::str_int(game->_state.turn()) },
 				{ "local", ext::str_int(game->_state._adapter->id) },
@@ -193,7 +208,8 @@ namespace dev {
 					{ "pos", ext::str_vec(tile.pos) },
 					{ "team", Values::hex_names[tile.hex->team] },
 					{ "select_id", ext::str_int(tile.hex->selected) },
-					{ "spread_id", ext::str_int(tile.hex->spread) }
+					{ "spread_0", ext::str_int(tile.hex->spread[0]) },
+					{ "spread_1", ext::str_int(tile.hex->spread[1]) },
 				};
 			});
 		};
@@ -292,7 +308,9 @@ namespace dev {
 			static const SectionLayout layout = {
 				.title = "dp.plant.title",
 				.kv = {
-					"dp.entity.type"
+					"dp.entity.type",
+					"dp.plant.fresh",
+					"dp.plant.pity"
 				}
 			};
 			auto* sec = panel->push([=]() {
@@ -308,7 +326,11 @@ namespace dev {
 				// set arguments
 				sec->args = {
 					{ "id", ext::str_int((int)plant->type) },
-					{ "type", Values::plant_names[plant->type] }
+					{ "type", Values::plant_names[plant->type] },
+
+					{ "fresh", plant->fresh ? "@!yes" : "@!no" },
+					{ "stage", ext::str_int(plant->stage) },
+					{ "spread", ext::str_int(plant->spread) }
 				};
 			});
 		};

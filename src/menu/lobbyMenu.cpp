@@ -135,7 +135,7 @@ void LobbyMenu::refreshText() {
 
         _detailsLbl->param("map", mapName);
         _detailsLbl->param("diff", assets::lang::locale.req(localization::Path(diffKey)).get({}));
-        _detailsLbl->param("max",std::to_string(_lastData.maxPlayers));
+        _detailsLbl->param("max", std::to_string(_lastData.maxPlayers));
 
     }
 }

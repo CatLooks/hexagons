@@ -13,20 +13,28 @@ namespace dev {
 	class Section : public ui::Solid {
 		friend Panel;
 
-	private:
+	public:
+		/// Panel text settings.
+		static const ui::TextSettings settings;
+
+	protected:
 		/// Text lines.
 		std::vector<ui::Text*> lines;
 		/// Argument update function.
 		StaticHandler argupdate;
 		/// Height.
 		float h;
+		/// Text settings.
+		ui::TextSettings sets;
 
 	public:
 		/// Shared text argument list.
 		ui::Text::List args;
 
 		/// Constructs a section element.
-		Section();
+		///
+		/// @param settings Text label settings.
+		Section(const ui::TextSettings& sets = settings);
 
 		/// Clears the section.
 		void clear();
@@ -45,10 +53,11 @@ namespace dev {
 		/// Adds an extra text line to the last normal text line.
 		/// 
 		/// @param path Text label localization path.
+		/// @param offset Label offset.
 		/// @param color Text color (white by default).
 		/// 
 		/// @return Text element reference.
-		ui::Text* extra(const localization::Path& path, sf::Color color = sf::Color::White);
+		ui::Text* extra(const localization::Path& path, ui::Dim offset = 0.5ps, sf::Color color = sf::Color::White);
 
 		/// Returns section height.
 		float height() const;
@@ -62,8 +71,6 @@ namespace dev {
 	/// Developer panel.
 	class Panel : public ui::Solid {
 	public:
-		/// Panel text settings.
-		static const ui::TextSettings settings;
 		/// Panel text height.
 		static const float height;
 
@@ -93,6 +100,9 @@ namespace dev {
 		/// 
 		/// @return New section element.
 		Section* push(std::function<bool()> predicate = []() { return true; });
+
+		/// Clears all sections.
+		void clear();
 
 		/// Attaches a global update callback.
 		/// 

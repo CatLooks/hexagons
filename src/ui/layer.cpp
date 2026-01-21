@@ -19,7 +19,9 @@ namespace ui {
 
 	/// Configures intermediate rendering.
 	void Layer::setArea(DimVector size, DimRect area) {
-		_ir = ir_t(sf::RenderTexture(), size, area);
+		if (!_ir) _ir = ir_t{};
+		_ir->size = size;
+		_ir->area = area;
 	};
 	/// Removes an intermediate texture step.
 	void Layer::removeArea() {
@@ -152,12 +154,12 @@ namespace ui {
 		if (_ctx != _next) {
 			// deactivate previous context
 			for (auto& layer : *_ctx)
-				layer->deactivate();
+				layer->deactivate(true);
 
 			// activate next context
 			_ctx = _next;
 			for (auto& layer : *_ctx)
-				layer->activate();
+				layer->activate(true);
 		};
 
 		// update window rectangle
@@ -261,7 +263,10 @@ namespace ui {
 		};
 
 		// render stats
-		if (_info) _info(target, stats);
+		if (_info) {
+			target.setView(_view);
+			_info(target, stats);
+		};
 	};
 
 	/// Updates interface language.

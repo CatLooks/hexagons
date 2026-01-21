@@ -13,6 +13,28 @@ namespace logic {
 	/// Amount of berries needed to heal 1 HP.
 	const int berry_per_hp = 3;
 
+	/// Next plant in plant growth stage.
+	const Plant::Type plant_grow[Plant::Count] = {
+		/* bush  */ Plant::Berry,
+		/* berry */ {},
+		/* sap   */ Plant::Tree,
+		/* tree  */ Plant::Peach,
+		/* peach */ {},
+		/* pine  */ {},
+		/* grave */ {},
+	};
+
+	/// Plant to place when spreading.
+	const Plant::Type plant_spread[Plant::Count] = {
+		/* bush  */ Plant::Bush,
+		/* berry */ Plant::Bush,
+		/* sap   */ {},
+		/* tree  */ Plant::Sapling,
+		/* peach */ Plant::Sapling,
+		/* pine  */ Plant::Pine,
+		/* grave */ {},
+	};
+
 	// plant skill
 	const SkillArray plant_skill = { SkillArray::L00, {} };
 };

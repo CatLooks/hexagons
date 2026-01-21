@@ -5,6 +5,8 @@
 #include "game/map.hpp"
 #include "game/logic/turn_logic.hpp"
 #include "game/ui/chat.hpp"
+#include "game/ui/splash_text.hpp"
+#include "game/ui/progress_view.hpp"
 #include "dev/dev_game.hpp"
 #include <SFML/System/Clock.hpp>
 
@@ -17,8 +19,9 @@ public:
 
 	/// Game controller mode.
 	enum Mode {
-		Host,  /// Player acts as a host.
-		Client /// Player acts as a client.
+		Host,   /// Player acts as a host.
+		Client, /// Player acts as a client.
+		Edit,   /// Editor mode.
 	};
 
 	/// Current game state.
@@ -39,6 +42,10 @@ private:
 
 	/// Chat element reference.
 	gameui::Chat* _chat;
+	/// Splash element reference.
+	gameui::Splash* _splash;
+	/// Progress table reference.
+	gameui::Progress* _prog;
 
 	std::vector<Player> _plr;     /// Player list.
 	uint32_t            _idx = 0; /// Current player index.
@@ -69,13 +76,17 @@ public:
 	/// 
 	/// @param map Map object reference.
 	/// @param chat Chat element reference.
-	void setRefs(Map* map, gameui::Chat* chat);
+	/// @param splash Splash element reference.
+	/// @param prog Progress table reference.
+	void setRefs(Map* map, gameui::Chat* chat, gameui::Splash* splash, gameui::Progress* prog);
 
 protected:
 	/// Updates gameplay state.
 	void update();
 	/// Locks gameplay state.
 	void lock();
+	/// Constructs progress table.
+	void progress();
 
 public:
 	/// Sends a message to chat.
@@ -90,6 +101,11 @@ public:
 	/// @return Whether the attempt succeeded.
 	bool finish();
 
+	/// Finishes the game.
+	/// 
+	/// @param id Victor index.
+	void over(size_t id);
+
 	/// Advances the game to the next player.
 	void next();
 	/// Processes incoming messages.
@@ -99,6 +115,8 @@ public:
 	/// @param event Event data.
 	void proc(const Adapter::Packet<Messages::Event>& event);
 
+	/// Returns player list.
+	const std::vector<Player>& players() const;
 	/// Returns current player info.
 	const Player* player() const;
 	/// Returns next player info.
@@ -111,4 +129,10 @@ public:
 
 	/// Returns current turn number.
 	uint32_t turn() const;
+
+	/// Checks whether the game is in editor mode.
+	bool editor() const;
+	
+public:
+	void reset(Mode mode, Adapter* adapter);
 };

@@ -28,6 +28,18 @@ static ui::Element* makeContainer() {
     return el;
 }
 
+static void setButtonEnabled(menuui::Button* btn, bool enabled, const std::function<void()>& call) {
+    if (!btn) return;
+
+    if (enabled) {
+        btn->setCall(call, nullptr, menuui::Button::Click);
+        btn->setLabel()->setColor(sf::Color::White);
+    } else {
+        btn->setCall(nullptr, nullptr, menuui::Button::Click);
+        btn->setLabel()->setColor(sf::Color(100, 100, 100));
+    }
+}
+
 /// Applies text settings to a label.
 static void applySettings(ui::Text* text, const ui::TextSettings& settings) {
     if (!text) return;
@@ -161,6 +173,20 @@ void GameStartMenu::buildSidebar() {
         if (_onBack) _onBack();
     }, nullptr, menuui::Button::Click);
     _sidebarBg->add(_backBtn);
+}
+
+void GameStartMenu::setControlsLocked(bool locked) {
+    _controlsLocked = locked;
+
+    setButtonEnabled(_backBtn, !locked, [this]() {
+        if (_onBack) _onBack();
+    });
+
+    setButtonEnabled(_prevBtn, !locked, [this]() { prevStep(); });
+
+    // Next button jest sterowany dodatkowo przez canProceed() / etapy,
+    // wiêc po locku wymuœ updateNavigationButtons (ustawi call/kolor wg stanu).
+    updateNavigationButtons();
 }
 
 /// Builds navigation controls.
@@ -365,6 +391,7 @@ bool GameStartMenu::canProceed() const {
 
 /// Advances to next step.
 void GameStartMenu::nextStep() {
+    if (_controlsLocked) return;
     if (!canProceed()) return;
 
     if (_currentStep == STEP_MAP) {
@@ -378,25 +405,56 @@ void GameStartMenu::nextStep() {
         }
     }
 
-     if (_currentStep == STEP_LOBBY) {
-        _currentStep = STEP_WAITING;
+    if (_currentStep == STEP_LOBBY) {
+        // NIE przechodŸ do WAITING zanim EOS potwierdzi utworzenie lobby.
+        // Najpierw podpinamy callbacki jak w join flow.
+        if (_net) {
+            _net->clearHandlers();
+        }
 
-        // HOST LOGIC:
-        // We start the hosting process. OnLobbySuccess WILL fire later.
-        _net->host(_currentData.maxPlayers, _currentData.roomCode);
+        // Lock UI zanim ruszy EOS
+        setControlsLocked(true);
 
-        _pageWaitingLobby->setGameDetails(_currentData);
-        _pageWaitingLobby->setAsHost(true);
-        _pageWaitingLobby->updateList({ { assets::lang::locale.req(localization::Path("lobby.host_you")).get({}), sf::Color::Cyan, true, true } });
-        
-        updateUI();
+        if (_net) {
+            _net->OnLobbySuccess.add([this]() {
+                // Lobby istnieje w backendzie -> teraz bezpiecznie wejdŸ do ekranu lobby
+                setControlsLocked(false);
 
-        // Bind handlers, but wait for OnLobbySuccess to initialize UI fully
-        bindNetworkHandlers();
+                _currentStep = STEP_WAITING;
+
+                _localPlayerName = _net->getLocalDisplayName(); 
+
+                _pageWaitingLobby->setGameDetails(_currentData);
+                _pageWaitingLobby->setAsHost(true);
+                _pageWaitingLobby->setRoomCode(_currentData.roomCode);
+                //_pageWaitingLobby->setInteractable(true);
+
+                addSelfToUI();
+                bindNetworkHandlers();
+                updateUI();
+            });
+
+            _net->OnJoinFailed.add([this](const std::string&) {
+                // Hosting/Join nie doszed³ do skutku -> odblokuj kontrolki,
+                // zostaw usera na konfiguracji.
+                setControlsLocked(false);
+                updateUI();
+            });
+
+            _net->host(_currentData.maxPlayers, _currentData.roomCode);
+        }
+
         return;
     }
 
     if (_currentStep == STEP_WAITING) {
+        if (_currentData.isMultiplayer && _isHost && _net) {
+            sf::Packet pkt;
+            pkt << (int)Pkt_StartGame;
+            _net->send(pkt);
+            printf("[Host] Broadcasting StartGame packet...\n");
+        }
+
         if (_onStartGame) _onStartGame();
         return;
     }
@@ -533,10 +591,22 @@ void GameStartMenu::enterAsJoiner(const std::string& code) {
     _pageWaitingLobby->updateList({ p });
 
     // 5. Start Logic
-    bindNetworkHandlers(); 
-    sendHello(); 
-}
+    bindNetworkHandlers();
+    sendHello();
 
+    // Odblokuj kontrolki po pierwszym backendowym potwierdzeniu stanu lobby
+    if (_net) {
+        _net->OnPacketReceived.add([this](const std::string&, sf::Packet& pkt) {
+            int type;
+            sf::Packet copy = pkt;
+            if (!(copy >> type)) return;
+
+            if (type == Pkt_LobbyState) {
+                setControlsLocked(false);
+            }
+        });
+    }
+}
 
 /// Refreshes all text elements for localization.
 void GameStartMenu::refreshAllText() {
@@ -883,15 +953,17 @@ void GameStartMenu::onPacket(const std::string& id, sf::Packet& pkt) {
     // CLIENT LOGIC: Handle State Update from Host
    else if (!_isHost && type == Pkt_LobbyState) {
     std::string mapName;
+    std::string mapPath; 
     std::string roomCode; 
     int diff, maxP;
     uint32_t count;
     
-    if (pkt >> roomCode >> mapName >> diff >> maxP >> count) {
+   if (pkt >> roomCode >> mapName >> mapPath >> diff >> maxP >> count){
         std::string savedCode = _currentData.roomCode;
         // Update local data
         _currentData.roomCode = roomCode;
         _currentData.selectedMapName = mapName;
+        _currentData.selectedMapPath = mapPath;
         _currentData.difficulty = (GameData::Difficulty)diff;
         _currentData.maxPlayers = (unsigned int)maxP;
         
@@ -925,12 +997,15 @@ void GameStartMenu::onPacket(const std::string& id, sf::Packet& pkt) {
         }
 
         // Update the visual list (removes "Connecting...")
+        _currentData.players = uiList; 
         _pageWaitingLobby->updateList(uiList);
         }
     }
     //START GAME LOGIC (Both)
     else if (type == Pkt_StartGame) {
-        if (_onStartGame) _onStartGame();
+        printf("[Client] Received StartGame packet. Switching context...\n");
+        // This triggers the EXACT SAME callback as the Host's button click
+        if (_onStartGame) _onStartGame(); 
     }
 }
 
@@ -970,7 +1045,7 @@ void GameStartMenu::broadcastLobbyState() {
     
     // Add Host (using local data)
     PlayerData host;
-    host.name = assets::lang::locale.req("lobby.host_default_name").get({});     
+    host.name = _localPlayerName; 
     host.isHost = true;
     host.color = sf::Color::Cyan;
     allPlayers.push_back(host);
@@ -990,6 +1065,13 @@ void GameStartMenu::broadcastLobbyState() {
     pkt << _currentData.roomCode;
 
     pkt << _currentData.selectedMapName;
+   
+    if (_currentData.selectedMapPath.empty()) {
+        pkt << "STATIC_MAP_ID"; 
+    } else {
+        pkt << _currentData.selectedMapPath;
+    }
+
     pkt << (int)_currentData.difficulty;
     pkt << (int)_currentData.maxPlayers;
     pkt << (uint32_t)allPlayers.size();
@@ -1045,4 +1127,49 @@ void GameStartMenu::sendLeavePacket() {
     _net->send(pkt);
     
     printf("[Client] Sent Leave packet.\n");
+}
+
+
+const GameData& GameStartMenu::getGameData() {
+    // 1. Save local name
+    _currentData.localPlayerName = _localPlayerName; 
+
+    // 2. Logic to populate player list based on role
+    if (_currentData.isMultiplayer) {
+        
+        if (_isHost) {
+            // HOST LOGIC: Rebuild list from Self + Connected Members
+            _currentData.players.clear();
+
+            // A. Add Host (Me)
+            PlayerData hostMe;
+            hostMe.name = _localPlayerName; //+ " (Host)"; 
+            hostMe.color = sf::Color::Cyan; // Or whatever color you picked
+            hostMe.isHost = true;
+            _currentData.players.push_back(hostMe);
+
+            // B. Add Clients
+            for (const auto& mem : _connectedMembers) {
+                _currentData.players.push_back(mem.data);
+            }
+        } 
+        else {
+            // CLIENT LOGIC: 
+            // Do nothing here. We received the full list (including Host and other peers)
+            // in onPacket -> Pkt_LobbyState, and we saved it to _currentData.players there.
+             if (_currentData.players.empty()) {
+                printf("[Warning] Client GameData has no players!\n");
+            }
+        }
+
+    } else {
+        // SINGLEPLAYER LOGIC
+        _currentData.players.clear();
+        PlayerData me;
+        me.name = "Player";
+        me.color = sf::Color::Red;
+        _currentData.players.push_back(me);
+    }
+
+    return _currentData;
 }

@@ -1,17 +1,12 @@
 ## WIP List
 
-- add proper locale interface
+- map editor
 
 ## To Do List
 
-(i have dementia sorry)
-
 - audio
-- effect moves should start cooldown after use
-- fix move selectors
-
-- network adapter
-- ai adapter
+- ai
+- network test
 
 ## Content list
 

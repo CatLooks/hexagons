@@ -19,6 +19,14 @@ namespace logic {
 	/// Amount of berries needed to heal 1 HP.
 	extern const int berry_per_hp;
 
+	/// Next plant in plant growth stage.
+	/// @param id Plant type.
+	extern const Plant::Type plant_grow[Plant::Count];
+
+	/// Plant to place when spreading.
+	/// @param id Plant type.
+	extern const Plant::Type plant_spread[Plant::Count];
+
 	/// Plant skill.
 	/// Applied for every plant.
 	extern const SkillArray plant_skill;

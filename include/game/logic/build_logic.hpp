@@ -37,6 +37,9 @@ namespace logic {
 	/// Beacon stun skill range.
 	extern const size_t stun_range;
 
+	/// Building defense range.
+	extern const int defense_range;
+
 	/// Building destruction bonus.
 	/// @param id Building type.
 	extern const int build_bonus[Build::Count];
@@ -48,6 +51,10 @@ namespace logic {
 	/// Weakest troop that can damage the building.
 	/// @param id Building type.
 	extern const Troop::Type build_level[Build::Count];
+
+	/// Weakest troop that can be in range of the building.
+	/// @param id Building type.
+	extern const Troop::Type build_guard[Build::Count];
 
 	/// Building skills.
 	extern const SkillArray build_skills[Build::Count];

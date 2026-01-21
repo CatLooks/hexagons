@@ -18,10 +18,10 @@ public:
     ~LoggingManager();
 
     /** Registers the logging callback. */
-    void RegisterLoggingCallbackExample();
+    void RegisterLoggingCallback();
 
     /** Sets the log level. */
-    void SetLogLevelVeryVerboseExample();
+    void SetLogLevelVeryVerbose();
 
 private:
     /** A variable that handles writing to the log file. */

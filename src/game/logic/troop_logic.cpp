@@ -60,4 +60,14 @@ namespace logic {
 	const int troop_effect_cost[Troop::Count] = {
 		0, 0, 2, 8, 10, 12
 	};
+
+	/// Troop merge result.
+	const Troop::Type troop_merge[Troop::Count][Troop::Count] = {
+		{ Troop::Spearman, Troop::Archer, Troop::Baron , Troop::Count , Troop::Knight, Troop::Count },
+		{ Troop::Archer  , Troop::Baron , Troop::Count , Troop::Knight, Troop::Count , Troop::Count },
+		{ Troop::Baron   , Troop::Count , Troop::Knight, Troop::Count , Troop::Count , Troop::Count },
+		{ Troop::Count   , Troop::Knight, Troop::Count , Troop::Count , Troop::Count , Troop::Count },
+		{ Troop::Knight  , Troop::Count , Troop::Count , Troop::Count , Troop::Count , Troop::Count },
+		{ Troop::Count   , Troop::Count , Troop::Count , Troop::Count , Troop::Count , Troop::Count }
+	};
 };

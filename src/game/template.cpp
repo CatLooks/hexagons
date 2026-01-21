@@ -16,7 +16,7 @@ HexBase& Template::at(int x, int y) {
 };
 const HexBase& Template::at(int x, int y) const {
 	return _tiles[y * (size_t)_size.x + x];
-};;
+};
 
 /// Clears and creates a new empty map.
 void Template::clear(sf::Vector2i size) {
@@ -66,7 +66,7 @@ Template Template::generate(const Map* map) {
 void Template::construct(Map* map) const {
 	// clear the map
 	map->clear();
-	map->resize({ {}, _size });
+	map->empty(_size);
 
 	// copy tile data
 	for (int y = 0; y < _size.y; y++) {

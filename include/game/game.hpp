@@ -10,15 +10,22 @@
 #include "ui/resource_bar.hpp"
 #include "ui/hex_preview.hpp"
 #include "ui/state_viewer.hpp"
+#include "ui/splash_text.hpp"
+#include "ui/progress_view.hpp"
 #include "ui/chat.hpp"
+#include "ui/editor.hpp"
 
 #include "map.hpp"
 #include "dev/dev_game.hpp"
 #include <delegate>
 
+namespace gameui { class Loader; };
+
 /// Game controller object.
 class Game : public ui::Element {
 	friend dev::Factory;
+	friend Editor;
+	friend gameui::Loader;
 
 public:
 	Map map; /// Game map.
@@ -35,6 +42,8 @@ private:
 	gameui::Bar*     _bar; /// UI resource bar.
 	gameui::State*  _view; /// UI game state viewer.
 	gameui::Chat*   _chat; /// UI game chat.
+	gameui::Progress* _pb; /// UI progress viewer.
+	Editor*         _edit; /// UI editor.
 
 	float _pulse = 0.f;      /// Map tile pulse.
 	ui::Anim* _pulse_anim;   /// Pulse animation object.
@@ -45,12 +54,14 @@ private:
 	std::optional<sf::Vector2i> _select;
 
 public:
+	gameui::Splash* splash; /// UI splash text.
+
 	/// Queues a call for the next frame.
 	/// 
 	/// @param call Callback function.
 	void queueCall(Delegate<void()>::Action call);
 
-	uint8_t  skill_idx{}; /// Skill index (for skill timers).
+	uint8_t  skill_idx {}; /// Skill index (for skill timers).
 	const Skill* skill {}; /// Current skill.
 	SkillState   state {}; /// Skill state.
 
@@ -134,13 +145,13 @@ public:
 	/// Whether local player is currently making a move.
 	bool move() const;
 
-	/// Resets pulse animation.
-	void resetPulse() const;
-
 	/// Returns hex coordinates at a mouse position.
 	///
 	/// @param mouse Mouse position.
 	sf::Vector2i mouseToHex(sf::Vector2i mouse) const;
+
+	/// Moves the camera to the middle of the map.
+	void centerCamera();
 
 protected:
 	/// Draws the map.

@@ -126,7 +126,7 @@ namespace Draw {
 		};
 		// spread index text
 		if (flags::spread) {
-			std::string label = std::format("{}", hex->spread);
+			std::string label = std::format("{}/{}", hex->spread[0], hex->spread[1]);
 			sf::Text text(assets::font, label, 20);
 			text.setPosition((sf::Vector2f)origin + sf::Vector2f(size.x * 3.f / 4, size.y / 2.f + 22));
 			text.setOutlineThickness(2);
@@ -178,6 +178,42 @@ namespace Draw {
 			sf::Vector2i nsize = sf::Vector2i(sf::Vector2f(asize) * scale);
 			target.quad({ origin - (nsize - asize) / 2, nsize }, Values::pulse, color);
 		};
+		target.forward(&assets::tilemap);
+	};
+
+	/// Draws building defensive shield at a tile.
+	void Tile::drawShield(ui::RenderBuffer& target, float t) const {
+		// get returning sine easing
+		float prog = (1.f - cosf(float(2 * M_PI * t))) * 0.5f;
+
+		// get current opacity
+		sf::Color mask = sf::Color::White;
+		mask.a = ui::lerpi(96, 240, prog);
+
+		// draw shield
+		target.quad({ origin, size }, Values::shield, mask);
+		target.forward(&assets::tilemap);
+	};
+
+	/// Draws void tile base mask.
+	void Tile::drawVoidBase(ui::RenderBuffer& target) const {
+		// get mask opacity
+		sf::Color color = sf::Color::Black;
+		color.a = (uint8_t)(hex->elevation * 128);
+
+		// draw mask
+		target.quad({ origin + Values::tileLevel(size), size }, Values::mask, color);
+		target.forward(&assets::tilemap);
+	};
+
+	/// Draws void tile side mask.
+	void Tile::drawVoidSides(ui::RenderBuffer& target) const {
+		// get mask opacity
+		sf::Color color = sf::Color::Black;
+		color.a = (uint8_t)(hex->elevation * 128);
+
+		// draw mask
+		target.quad({ origin + Values::tileLevel(size) * 2, size }, Values::sideShade, color);
 		target.forward(&assets::tilemap);
 	};
 };

@@ -23,6 +23,11 @@ namespace gameui {
 		ui::Text* _redo_t {}; /// Amount of moves reverted.
 		ui::Text* _next_t {}; /// Current turn.
 
+		ui::AnimInt* _pending {}; /// Turn button pending text.
+		int _prog = 0;            /// Animation progress counter.
+
+		bool _enabled = true; /// Whether move selectors are active.
+
 	public:
 		/// Constructs the move selector element.
 		Selector();
@@ -38,5 +43,8 @@ namespace gameui {
 		/// 
 		/// @param moves Amount of moves done / reverted.
 		void update(const std::pair<size_t, size_t>& moves) const;
+
+		/// Enables or disables the move selectors.
+		void enable(bool enabled);
 	};
 };

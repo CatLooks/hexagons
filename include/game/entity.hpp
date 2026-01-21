@@ -5,17 +5,9 @@
 #include <stdint.h>
 #include <vector>
 #include "logic/skill_types.hpp"
+#include "logic/effect_types.hpp"
 
-/// Effect enumeration.
-enum class EffectType {
-	Shielded,     /// Shield for a spearman.
-	RangeBoost,   /// Range boost for an archer.
-	DefenseBoost, /// Defense boost for a baron.
-	OffenseBoost, /// Attack boost for a knight.
-	Poisoned,     /// Poisoned by an archer.
-	Stunned,      /// Stunned by a beacon.
-	Count
-};
+class Map;
 
 /// Property access pattern.
 ///
@@ -33,14 +25,17 @@ struct Entity {
 
 	/// Entity damage info.
 	struct Damage {
-		int pts = 0; /// Points of damage dealt.
-		int pow = 0; /// Damage power level.
+		int  pts = 0; /// Points of damage dealt.
+		int  pow = 0; /// Damage power level.
+		bool psn = 0; /// Whether the attack is poisoned.
 	};
 
 protected:
 	/// Ticks entity state.
 	/// Specific to the entity.
-	virtual void tick();
+	/// 
+	/// @param map Map reference.
+	virtual void tick(Map* map);
 
 public:
 	/// Entity position on map.
@@ -94,10 +89,14 @@ public:
 	/// Checks whether the entity is dead.
 	virtual bool dead() const;
 
+	/// Returns skill type at index.
+	///
+	/// @param idx Skill index.
+	virtual Skills::Type skill_at(int idx) const;
 	/// Returns index of an entity skill or `-1` if entity does not have the skill.
 	/// 
 	/// @param skill Skill type.
-	virtual int skill_id(Skills::Type skill) const;
+	int skill_id(Skills::Type skill) const;
 	/// Returns entity skill for targeting another entity.
 	/// 
 	/// @param entity Other entity pointer.
@@ -144,5 +143,7 @@ public:
 	const Effects& effectList() const;
 
 	/// Ticks entity state.
-	void tickState();
+	/// 
+	/// @param map Map reference.
+	void tickState(Map* map);
 };
