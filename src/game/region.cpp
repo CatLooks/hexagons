@@ -207,8 +207,11 @@ void Regions::split(Map* map, const std::vector<AccessPoint>& aps, const Split& 
 	RegionRes split;
 
 	// generate split amount for empty distribution
-	if (dist.empty())
+	if (dist.empty()) {
+		// ignore if splitting unassigned region
+		if (!*aps[0].region) return;
 		split = (*aps[0].region)->div((int)aps.size());
+	};
 
 	// overwrite region parts
 	for (size_t i = 1; i < aps.size(); i++) {
