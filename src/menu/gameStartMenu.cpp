@@ -800,10 +800,16 @@ void GameStartMenu::updateMapGrid() {
             img->tint = sf::Color::White;
             btn->add(img);
         } else {
-            auto* placeholder = new ui::Solid();
+            // add missing texture
+            auto* img = new ui::Image(&assets::tilemap, Values::missing);
+            img->position() = { 0.5as, 0.4as };
+            img->size() *= 2;
+            btn->add(img);
+
+            /*auto* placeholder = new ui::Solid();
             placeholder->color = sf::Color(50, 50, 50);
             placeholder->bounds = { 0.1ps, 0.1ps, 0.8ps, 0.6ps };
-            btn->add(placeholder);
+            btn->add(placeholder);*/
         }
 
         btn->setLabel()->setRaw(map.displayName);
