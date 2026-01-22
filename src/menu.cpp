@@ -389,7 +389,13 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
         // --- SINGLEPLAYER SETUP ---
         
         // Create Local Test Adapter
-        auto* adapter = new BotAdapter(1.f);
+        float difficulty = 0.f;
+        switch (data.difficulty) {
+            case GameData::Difficulty::Easy: difficulty = 0.0f; break;
+            case GameData::Difficulty::Medium: difficulty = 0.5f; break;
+            case GameData::Difficulty::Hard: difficulty = 1.0f; break;
+        };
+        auto* adapter = new BotAdapter(difficulty);
         adapter->map = &gameInstance->map;
         state.reset(GameState::Host, adapter);
         
