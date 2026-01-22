@@ -242,6 +242,11 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, ui::
     pages->bounds = { 0, 0, 1ps, 1ps };
     menu_layer->add(pages);
 
+    // add exit callback
+    menu_layer->add(new ui::Exit([=]() {
+    	ui::window.close();
+    }, 0px));
+
     // construct pages
     mainMenu = new MainMenu();
     optionsMenu = new OptionsMenu();
@@ -472,6 +477,12 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, ui::
     // --- C. SWITCH TO GAME ---
     gameInstance->activate();
     itf.switchContext(*gameCtx);
+
+    // add exit to game
+    gameInstance->add(new ui::Exit([&]() {
+    	itf.switchContext(context);
+    	pages->show(mainMenu);
+    }, 120px));
 });
 
     // join menu -> back

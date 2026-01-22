@@ -84,6 +84,10 @@ int main() {
 	MenuSystem menuSystem(itf, &game_ctx, &edit_ctx, game, net, state);	
 	itf.switchContext(menuSystem.context);
 
+	// add exit to editor
+	edit_game->add(new ui::Exit([&]() {
+		itf.switchContext(menuSystem.context);
+	}, 0px));
 
 	while (ui::window.active()) {
 		net.fetch();

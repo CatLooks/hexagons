@@ -1,6 +1,9 @@
 # singular space
 space: " "
 
+# exit string
+exit: "Exiting..."
+
 # parameter text
 # displays a parameter directly
 param: "{value}"
