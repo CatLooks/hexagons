@@ -231,7 +231,7 @@ static void setup_test_map(Game& game) {
 
 
 
-MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, ui::Interface::Context* editCtx, Game* gameInstance, Net& net, GameState& state) : context(itf.newContext())
+MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, ui::Interface::Context* editCtx, Game* gameInstance, Net& net, GameState& state, Game* edit_game ) : context(itf.newContext())
 {
     // switch to menu UI context
     itf.switchContext(context);
@@ -308,6 +308,7 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, ui::
     // main -> editor
     mainMenu->bindEdit([=, &itf]() {
         itf.switchContext(*editCtx);
+        edit_game->getEdit()->refreshAllText();
     });
 
     // main -> options

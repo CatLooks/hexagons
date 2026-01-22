@@ -41,6 +41,10 @@ private:
 	/// Update text labels.
 	void updateLabels();
 
+public:
+	void refreshAllText();
+
+private:
 	/// Updates entity label.
 	/// 
 	/// @param text Label element.
