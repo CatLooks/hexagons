@@ -135,6 +135,7 @@ void MainMenu::refreshAllText() {
     _startBtn->setLabel()->setPath("menu.start");
     _joinBtn->setLabel()->setPath("menu.join");
     _optionsBtn->setLabel()->setPath("menu.options");
+	_editBtn->setLabel()->setPath("menu.editor");
     _exitBtn->setLabel()->setPath("menu.exit");
     _loginBtn->setLabel()->setPath("menu.login");
     _logoutBtn->setLabel()->setPath("menu.logout");

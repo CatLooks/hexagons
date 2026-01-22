@@ -1,5 +1,20 @@
+# singular space
+space: " "
+
 # parameter text
+# displays a parameter directly
 param: "{value}"
+
+# boolean values
+yes: "Yes"
+no: "No"
+
+# time units
+time {
+	h: 'h' # hour
+	m: 'm' # minute
+	s: 's' # second
+}
 
 # team names
 team {
@@ -70,22 +85,150 @@ skill {
 	stun   : Stun
 }
 
+# currency symbols
+currency {
+	coin: "$"
+	berry: "B"
+	peach: "P"
+}
+
 # gameplay text
 gp {
 	# cost previews
 	cost {
-		coins: "{cost} $"
-		berry: "{cost} B"
-		peach: "{cost} P"
+		coins: "{cost} $(currency.coin)"
+		berry: "{cost} $(currency.berry)"
+		peach: "{cost} $(currency.peach)"
 	}
 
 	# team name preview
 	team: "Team {team}"
 
 	# buy a building
-	buy_build: "Buy Building"
+	buy_build: "Kup Budynek"
 	# buy a troop
-	buy_troop: "Buy Troop"
+	buy_troop: "Kup jednostkę"
+
+	# turn number
+	turn: "Tura {turn}"
+	# player info
+	player: "{name}"
+	# next team info
+	next: "Następny: {team}"
+	# bot player name
+	bot: "Bot"
+
+	# player progress info
+	prog {
+		# position
+		pos: "{pos}"
+		# team
+		team: "{team}"
+		# name
+		name: "{name}"
+		# percentage
+		per: "{percent}"
+	}
+}
+
+# chat text
+chat {
+	# author name
+	author: "[{auth}]: "
+
+	# "you" name
+	you: "Ty"
+	# "host" name
+	host: "@"
+	# unknown player name
+	unknown: "???"
+
+	# errors
+
+	# move list ignore error
+	ignore: "Lista ruchów została zignorowana."
+	# unknown event error
+	bad_event: "Nieznane zdarzenie (ID = {id})."
+	# no players to start the game
+	no_players: "Brak graczy do rozpoczęcia gry."
+}
+
+# splash text
+splash {
+	# your turn
+	your_turn: "Twoja kolej!"
+
+	# game over
+	game_over: "Koniec gry!"
+
+	# victor
+	victor {
+		a: "Team"
+		b: "{team}"
+		c: "/"
+		d: "{name}"
+		e: "wins!"
+	}
+}
+
+# editor text
+edit {
+	# entity info
+	entity: "{name} [{hp} / {max}]"
+
+	# region info
+	region {
+		money: "Pieniądze"
+		berry: "Jagody"
+		peach: "Brzoskwinie"
+		income: "Przychód"
+	}
+
+	# map name filter
+	filter: "Pokazywanie {n} / {max} plików."
+
+	# load filename
+	load_file: "Wczytaj \"{file}\""
+	# load nothing
+	load_none: "Nie wybrano pliku"
+
+	# save map
+	save: "Zapisz Mapę"
+	# clear map
+	clear: "Wyczyść Mapę"
+
+	# map info
+	map {
+		# map section info
+		file {
+			k: "Plik"
+			v: "{file}"
+		}
+		name {
+			k: "Nazwa"
+			v: "{name}"
+		}
+		auth {
+			k: "Autor"
+			v: "{auth}"
+		}
+
+		# map info
+		label: "Informacje o Mapie"
+	}
+
+	# content info
+	content {
+		size: "Rozmiar"
+		resize: "Zmień rozmiar"
+		troop: "Liczba jednostek"
+		build: "Liczba budynków"
+		plant: "Liczba roślin"
+		region: "Liczba regionów"
+		# content info
+		label_size: "Rozmiar mapy"
+		label_stats: "Zawartość"
+	}
 }
 
 # debug info
@@ -103,6 +246,7 @@ menu {
     start: "ZACZNIJ GRĘ"
     join: "DOŁĄCZ DO GRY"
     options: "OPCJE"
+	editor: "EDYTOR MAP"
     exit: "WYJDŹ"
     back: "POWRÓT"
     prev: "< WRÓĆ"
