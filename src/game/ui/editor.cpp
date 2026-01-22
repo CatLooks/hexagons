@@ -450,6 +450,8 @@ Editor::Editor(Game* game, ui::Layer* text_layer): _game(game) {
 	// add loader panel grabber
 	_grab = new gameui::Grabber(_loader);
 	text_layer->add(_grab);
+
+	refreshAllText();
 };
 
 /// Updates entity label.
@@ -519,3 +521,19 @@ HexRef Editor::tileref() const {
 bool Editor::input() const {
 	return _res_table->input() || _loader->input();
 };
+
+void Editor::refreshAllText() {
+    // 1. Refresh Hover/Clipboard Labels
+    _show_text->setPath("edit.entity");
+    _clip_text->setPath("edit.entity");
+
+    // 2. Refresh Team Label
+    // This is already dynamic, but calling updateLabels forces a redraw 
+    // of the text parameters (like "Red", "Blue") if they are translated.
+    updateLabels();
+
+    // 3. Pass the refresh down to the Loader
+    if (_loader) {
+        _loader->refreshStrings();
+    }
+}

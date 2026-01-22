@@ -156,4 +156,9 @@ public:
 protected:
 	/// Draws the map.
 	void drawSelf(ui::RenderBuffer& target, sf::IntRect self) const override;
+
+public:
+	Editor* getEdit() {
+		return _edit;
+	}
 };

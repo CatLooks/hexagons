@@ -324,6 +324,7 @@ namespace gameui {
 	/// Reloads map list.
 	void Loader::reload() {
 		// clear list
+
 		_list->clear();
 		select(nullptr, nullptr);
 
@@ -354,6 +355,7 @@ namespace gameui {
 				{ "name", file.temp.header.name },
 				{ "auth", file.temp.header.auth }
 			};
+
 
 			// add selection callback
 			const Template* temp = &file.temp;
@@ -458,4 +460,65 @@ namespace gameui {
 			return false;
 		});
 	};
+
+	void Loader::reloadText(){
+		if (!_list) return;
+
+		// display maps
+		for (const auto& file : loader.list) {
+			// add map section
+			auto* sec = _list->push([=]() {
+				// show if filename contains substring
+				bool _ = file.name.find(_search->input.get()) != std::string::npos;
+				if (_) _count++;
+				return _;
+				});
+
+			// add map info
+			sec->line("edit.map.file.k");
+			sec->extra("edit.map.file.v", 0.4ps, sf::Color::Magenta);
+			sec->line("edit.map.name.k");
+			sec->extra("edit.map.name.v", 0.4ps);
+			sec->line("edit.map.auth.k");
+			sec->extra("edit.map.auth.v", 0.4ps, sf::Color::Yellow);
+
+			// set arguments
+			sec->args = {
+				{ "file", file.name },
+				{ "name", file.temp.header.name },
+				{ "auth", file.temp.header.auth }
+			};
+		}
+
+
+		_list->recalculate();
+	}
+
+	// In Loader class
+void Loader::refreshStrings() {
+    // 1. Refresh the Filter Label
+    // Assuming setText or setPath triggers the lookup
+    _filter->setPath("edit.filter"); 
+    _filter->recalculate(); // specific to your UI lib to redraw size
+
+    // 2. Refresh the Load Button
+    // Logic copied from select() to ensure correct state text
+    if (!_select_temp) {
+        _load_txt->setPath("edit.load_none");
+    } else {
+        _load_txt->setPath("edit.load_file");
+        // Param is likely preserved, but safe to re-set if needed
+        _load_txt->param("file", _select_temp->header.name);
+    }
+    _load_btn->recalculate();
+
+
+
+    // 4. Refresh the Map List
+    // This destroys and recreates the list items with new translated strings
+    reload(); 
+}
 };
+
+
+

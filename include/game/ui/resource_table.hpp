@@ -99,5 +99,7 @@ namespace gameui {
 
 		/// Whether any input field is active.
 		bool input() const;
+
+		void refreshAllText();
 	};
 };

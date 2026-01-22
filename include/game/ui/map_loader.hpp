@@ -73,6 +73,9 @@ namespace gameui {
 
 		/// Whether any input field is active.
 		bool input() const;
+
+		void reloadText();
+		void refreshStrings();
 	};
 
 	/// Map loader grabber button.

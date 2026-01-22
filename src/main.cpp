@@ -75,13 +75,12 @@ int main() {
 		auto layer_msg = itf.layer();
 
 		edit_game = new Game(layer_map, layer_gui, layer_msg, &edit_state);
-		edit_adapter->map = &game->map;
-
+		edit_game->getEdit()->refreshAllText();
 		layer_map->add(edit_game);
 		layer_gui->add(dev::Factory::game_panel(edit_game));
 	};
 
-	MenuSystem menuSystem(itf, &game_ctx, &edit_ctx, game, net, state);	
+	MenuSystem menuSystem(itf, &game_ctx, &edit_ctx, game, net, state, edit_game);	
 	itf.switchContext(menuSystem.context);
 
 	// add exit to editor
