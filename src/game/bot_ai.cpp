@@ -1,6 +1,10 @@
 #include "game/bot_ai.hpp"
 #include "random.hpp"
 #include "ui/units.hpp"
+
+#include "game/values/troop_values.hpp"
+#include "game/values/build_values.hpp"
+#include "game/values/plant_values.hpp"
 #include <map>
 
 namespace ai {
@@ -102,6 +106,9 @@ namespace ai {
 			// ignore if not target region
 			if (reg.team != team) return;
 
+			// total region power
+			int power = 0;
+
 			// search for entities in region
 			Spread spread = {
 				// spread in the same region
@@ -112,6 +119,12 @@ namespace ai {
 				.pass = [=](const Spread::Tile& tile)
 					{ return tile.hex->entity(); },
 
+				// add tile power
+				.effect = [&power](const Spread::Tile& tile) {
+					if (tile.hex->troop)
+						power += tile.hex->troop->type;
+				},
+
 				// don't ignore point of entry
 				.imm = true
 			};
@@ -119,6 +132,41 @@ namespace ai {
 
 			// dummy skill state
 			SkillState skill_state = { .map = &map, .region = &reg };
+
+			// buy a new troop
+			if (Random::chance(reg.income * 10.f / power * diff)) {
+				// find an empty spot
+				Spread spr = {
+					.hop = [=](const Spread::Tile& tile)
+						{ return tile.hex->solid() && tile.hex->team == team; },
+					.pass = [=](const Spread::Tile& tile)
+						{ return !tile.hex->entity(); },
+					.imm = true
+				};
+				auto emp = spr.applylist(map, pos);
+				if (!emp.empty()) {
+					// pick a unit for reinforcement
+					int unit = Troop::Knight;
+					while (
+						(logic::troop_cost[unit] * 2 > reg.money
+							|| logic::troop_upkeep[unit] * 2 > reg.income)
+						&& unit >= 0
+						) unit--;
+
+					// place reinforcement unit
+					if (unit >= 0) {
+						sf::Vector2i pos = emp[Random::u16() % emp.size()];
+						//printf("[AI] Buying reinforcement %s at %d, %d\n", Values::troop_names[unit], pos.x, pos.y);
+
+						Troop troop;
+						troop.type = static_cast<Troop::Type>(unit);
+						troop.hp = troop.max_hp();
+						troop.pos = pos;
+						auto* move = new Moves::EntityPlace(troop, reg);
+						map.executeSkill(move, troop.pos, &SkillList::buy_troop);
+					};
+				};
+			};
 
 			// for each entity
 			for (sf::Vector2i pos : list) {
@@ -140,6 +188,14 @@ namespace ai {
 					auto target = get(list, [=, &map](sf::Vector2i pos, int& rank) {
 						Hex* now = map.at(pos);
 
+						// add danger level
+						skillf::checkAround(&map, pos, 2, [=, &rank, &troop](const Spread::Tile& tile) {
+							if (tile.hex->team != hex->team && tile.hex->troop)
+								rank += (hex->troop->offense(Access::Query).pts
+									- tile.hex->troop->offense(Access::Query).pts) * 5;
+							return false;
+						}, Spread::Def);
+						
 						// add plant bonus
 						if (now->plant) {
 							static const int table[Plant::Count]
@@ -161,7 +217,7 @@ namespace ai {
 							) - 1;
 
 							// add troop kill bonus
-							if (now->troop) rank += now->troop->type;
+							if (now->troop) rank += now->troop->type * 2;
 
 							// add building destroy bonus
 							if (now->build) rank += 2;
@@ -172,8 +228,6 @@ namespace ai {
 					if (target) {
 						auto* move = new Moves::TroopMove(*target);
 						map.executeSkill(move, troop.pos, &SkillList::move);
-
-						printf("?\n");
 
 						// resample hex
 						hex = map.at(*target);
@@ -240,8 +294,8 @@ namespace ai {
 								// pick a unit for reinforcement
 								int unit = (int)(rank / 2.f + ui::lerpf(-0.75f, 0.75f, Random::uniform()));
 								while (
-									(logic::troop_cost[unit] < reg.money * 2
-										|| logic::troop_upkeep[unit] < reg.income * 1.5)
+									(logic::troop_cost[unit] * 2 > reg.money
+										|| logic::troop_upkeep[unit] * 2 > reg.income)
 									&& unit > 0
 									) unit--;
 

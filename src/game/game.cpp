@@ -817,7 +817,7 @@ void Game::buildMenu(const Build& build) {
 		Values::build_names[build.type],
 		build, build.hp != build.max_hp()
 	);
-	if (logic::build_guard[build.type] >= Troop::Farmer)
+	if (logic::build_guard[build.type] > Troop::Farmer)
 		map.shield = build.pos;
 };
 /// Constructs a plant UI panel.

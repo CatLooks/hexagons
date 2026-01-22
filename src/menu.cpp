@@ -403,20 +403,10 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, ui::
         auto* adapter = new BotAdapter(difficulty);
         adapter->map = &gameInstance->map;
         state.reset(GameState::Host, adapter);
-        
-        // get team list
-        // map isn't loaded here yet so idk
-        /*auto teams = ai::teams(gameInstance->map, Region::Red);
-        for (Region::Team team : teams) {
-            state.addPlayer({
-                .name = assets::lang::locale.req("gp.bot").get({}),
-                .team = team
-            });
-        };*/
 
         // Add default players
-        state.addPlayer({ .name = "Player", .team = Region::Red });
-        state.addPlayer({ .name = "Bot", .team = Region::Green });
+        //state.addPlayer({ .name = "Player", .team = Region::Red });
+        //state.addPlayer({ .name = "Bot", .team = Region::Blue });
     }
 
     // --- B. MAP LOADING LOGIC ---
@@ -438,6 +428,21 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, ui::
                 // 3. Clear existing data and construct the new map
                 gameInstance->map.clear();
                 fileInfo->temp.construct(&gameInstance->map);
+
+                // add bot players
+                if (!data.isMultiplayer) {
+                    auto teams = ai::teams(gameInstance->map, Region::Red);
+                    for (Region::Team team : teams) {
+                        state.addPlayer({
+                            .name = team == Region::Red
+                                ? (data.localPlayerName.empty()
+                                    ? assets::lang::locale.req("gp.player_default").get({})
+                                    : data.localPlayerName)
+                                : assets::lang::locale.req("gp.bot").get({}),
+                            .team = team
+                        });
+                    };
+                };
                 
                 // 4. Center camera and flag success
                 gameInstance->centerCamera();

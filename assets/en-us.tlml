@@ -144,6 +144,8 @@ gp {
 	next: "Next: {team}"
 	# bot player name
 	bot: "Bot"
+	# default player name
+	player_default: "Player"
 
 	# player progress info
 	prog {
