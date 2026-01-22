@@ -8,6 +8,11 @@ namespace ui {
     public:
         using TextField::TextField;
 
+        /// Sets cursor visual position.
+        void setCursorVisual(unsigned int pos) {
+             _cursor->position().x = _label->position().x + _label->charpos(pos).x;
+        };
+
         /// Returns pointer to the internal label element.
         ui::Text* label() { return _label; }
 

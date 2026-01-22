@@ -100,6 +100,7 @@ void GameJoinMenu::buildForm() {
             _joinBtn->setLabel()->setColor(sf::Color(100, 100, 100));
             _joinBtn->setCall(nullptr, nullptr, menuui::Button::Click);
         }
+        _codeField->setCursorVisual(cursor);
     });
 
     /// Text confirm: handle enter key.

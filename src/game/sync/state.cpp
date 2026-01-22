@@ -368,4 +368,5 @@ void GameState::reset(Mode mode, Adapter* adapter) {
     _idx = 0;
     _turn = 1;
     _state = Init;
+	_clock.restart();
 }
