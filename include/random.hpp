@@ -2,6 +2,7 @@
 
 // include dependencies
 #include <stdint.h>
+#include <cstddef>
 
 /// Randomness generator namespace.
 namespace Random {

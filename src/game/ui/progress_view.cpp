@@ -30,7 +30,7 @@ namespace gameui {
 		clear();
 
 		// construct argument lists
-		args = std::vector<ui::Text::List>(teams.size(), {});
+		args = std::vector<ui::Text::List>(teams.size(), ui::Text::List{});
 
 		// construct table
 		for (size_t i = 0; i < teams.size(); i++) {
