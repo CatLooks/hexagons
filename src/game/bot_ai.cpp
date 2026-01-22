@@ -173,6 +173,8 @@ namespace ai {
 						auto* move = new Moves::TroopMove(*target);
 						map.executeSkill(move, troop.pos, &SkillList::move);
 
+						printf("?\n");
+
 						// resample hex
 						hex = map.at(*target);
 						pos = *target;
@@ -327,5 +329,25 @@ namespace ai {
 
 		// return empty list lol
 		return {};
+	};
+
+	/// Returns a list of all map teams.
+	std::vector<Region::Team> teams(Map& map, Region::Team first) {
+		std::vector<Region::Team> list;
+		Regions::foreach(&map, [first, &list](Region& reg, sf::Vector2i pos) {
+			// ignore unclaimed regions
+			if (reg.team == Region::Unclaimed) return;
+
+			// check if team has not been added
+			if (std::find(list.begin(), list.end(), reg.team) == list.cend()) {
+				// add team to list
+				list.push_back(reg.team);
+
+				// swap with first team if prioritized
+				if (reg.team == first)
+					std::swap(list[0], list[list.size() - 1]);
+			};
+		});
+		return list;
 	};
 };

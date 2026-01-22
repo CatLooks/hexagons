@@ -64,7 +64,24 @@ int main() {
 		layer_gui->add(dev::Factory::game_panel(game));
 	}
 
-	MenuSystem menuSystem(itf, &game_ctx, game, net, state);	
+	auto* edit_adapter = new BotAdapter(0.f);
+	GameState edit_state(GameState::Edit, edit_adapter);
+
+	auto edit_ctx = itf.newContext();
+	Game* edit_game = nullptr;
+	{
+		auto layer_map = itf.layer();
+		auto layer_gui = itf.layer();
+		auto layer_msg = itf.layer();
+
+		edit_game = new Game(layer_map, layer_gui, layer_msg, &edit_state);
+		edit_adapter->map = &game->map;
+
+		layer_map->add(edit_game);
+		layer_gui->add(dev::Factory::game_panel(edit_game));
+	};
+
+	MenuSystem menuSystem(itf, &game_ctx, &edit_ctx, game, net, state);	
 	itf.switchContext(menuSystem.context);
 
 

@@ -142,6 +142,8 @@ gp {
 	player: "{name}"
 	# next team info
 	next: "Next: {team}"
+	# bot player name
+	bot: "Bot"
 
 	# player progress info
 	prog {
@@ -271,6 +273,7 @@ menu {
 
     start: "START GAME"
     join: "JOIN GAME"
+    editor: "MAP EDITOR"
     options: "OPTIONS"
     exit: "EXIT"
     back: "BACK"

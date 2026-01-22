@@ -31,7 +31,8 @@ public:
     ///
     /// @param itf          UI interface.
     /// @param gameCtx      Game context id.
+    /// @param editCtx      Editor context id.
     /// @param gameInstance Game controller instance.
     /// @param net          Networking facade instance from main().
-    MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game* gameInstance, Net& net, GameState& state);
+    MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, ui::Interface::Context* editCtx, Game* gameInstance, Net& net, GameState& state);
 };

@@ -5,8 +5,8 @@
 #include "game/sync/network_adapter.hpp"
 #include "game/serialize/map.hpp"
 #include "game/loader.hpp" 
-
 #include "game/sync/state.hpp"
+#include "game/bot_ai.hpp"
 
 static void setup_test_map(Game& game) {
 	Map& map = game.map;
@@ -231,7 +231,7 @@ static void setup_test_map(Game& game) {
 
 
 
-MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game* gameInstance, Net& net, GameState& state) : context(itf.newContext()) 
+MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, ui::Interface::Context* editCtx, Game* gameInstance, Net& net, GameState& state) : context(itf.newContext())
 {
     // switch to menu UI context
     itf.switchContext(context);
@@ -299,6 +299,11 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
         joinMenu->reset();
         pages->show(joinMenu);
     }); 
+
+    // main -> editor
+    mainMenu->bindEdit([=, &itf]() {
+        itf.switchContext(*editCtx);
+    });
 
     // main -> options
     mainMenu->bindOptions([=]() {
@@ -399,6 +404,16 @@ MenuSystem::MenuSystem(ui::Interface& itf, ui::Interface::Context* gameCtx, Game
         adapter->map = &gameInstance->map;
         state.reset(GameState::Host, adapter);
         
+        // get team list
+        // map isn't loaded here yet so idk
+        /*auto teams = ai::teams(gameInstance->map, Region::Red);
+        for (Region::Team team : teams) {
+            state.addPlayer({
+                .name = assets::lang::locale.req("gp.bot").get({}),
+                .team = team
+            });
+        };*/
+
         // Add default players
         state.addPlayer({ .name = "Player", .team = Region::Red });
         state.addPlayer({ .name = "Bot", .team = Region::Green });

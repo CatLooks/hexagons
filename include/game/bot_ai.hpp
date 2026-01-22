@@ -57,4 +57,10 @@ namespace ai {
 	/// 
 	/// @return Move list.
 	History::UniqList generate(Map& map, Region::Team team, float diff);
+
+	/// Returns a list of all map teams.
+	/// 
+	/// @param map Map reference.
+	/// @param first Team to place in first place.
+	std::vector<Region::Team> teams(Map& map, Region::Team first);
 };

@@ -30,6 +30,7 @@ private:
 
     menuui::Button* _startBtn   = nullptr; /// "Start game" button.
     menuui::Button* _joinBtn    = nullptr; /// "Join game" button.
+    menuui::Button* _editBtn    = nullptr; /// "Editor" button.
     menuui::Button* _optionsBtn = nullptr; /// "Options" button.
     menuui::Button* _exitBtn    = nullptr; /// "Exit" button.
 
@@ -37,6 +38,7 @@ private:
     Action _onStart;   /// Start callback.
     Action _onJoin;    /// Join callback.
     Action _onExit;    /// Exit callback.
+    Action _onEdit;    /// Editor callback.
     Action _onOptions; /// Options callback.
     Action _onLogin;   /// Login callback.
     Action _onLogout;  /// Logout callback.
@@ -54,6 +56,9 @@ public:
     /// Binds exit button callback.
     /// @param action Callback invoked when the exit button is pressed.
     void bindExit(Action action);
+    /// Binds editor button callback.
+    /// @param action Callback invoked when the editor button is pressed.
+    void bindEdit(Action action);
     /// Binds options button callback.
     /// @param action Callback invoked when the options button is pressed.
     void bindOptions(Action action);
