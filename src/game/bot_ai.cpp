@@ -133,8 +133,45 @@ namespace ai {
 			// dummy skill state
 			SkillState skill_state = { .map = &map, .region = &reg };
 
+			// buy a new farm
+			if (reg.money > logic::build_cost(Build::Farm, reg)) {
+				// increase chance if low income
+				float bias = 4.f / reg.income;
+				if (Random::chance(bias + diff * 0.25f)) {
+					// find an empty spot
+					Spread spr = {
+						.hop = [=](const Spread::Tile& tile)
+							{ return tile.hex->solid() && tile.hex->team == team; },
+						.pass = [=](const Spread::Tile& tile)
+							{ return !tile.hex->entity(); },
+						.imm = true
+					};
+					auto emp = spr.applylist(map, pos);
+
+					// get random position
+					auto target = get(emp, [=, &map](sf::Vector2i pos, int& rank) {
+						Hex* hex = map.at(pos);
+
+						// rank danger level
+						skillf::checkAround(&map, pos, 2, [=, &rank](const Spread::Tile& tile) {
+							if (tile.hex->team != team && tile.hex->troop)
+								rank -= tile.hex->troop->offense(Access::Query).pts;
+							return false;
+						}, Spread::Alt);
+					}, Spread::Def);
+					if (target) {
+						// place farm
+						Build farm;
+						farm.type = Build::Farm;
+						farm.pos = *target;
+						auto* move = new Moves::EntityPlace(farm, reg);
+						map.executeSkill(move, farm.pos, &SkillList::buy_build);
+					};
+				};
+			};
+
 			// buy a new troop
-			if (Random::chance(reg.income * 10.f / power * diff)) {
+			if (!power || Random::chance(reg.income * 10.f / power * diff)) {
 				// find an empty spot
 				Spread spr = {
 					.hop = [=](const Spread::Tile& tile)
@@ -156,7 +193,6 @@ namespace ai {
 					// place reinforcement unit
 					if (unit >= 0) {
 						sf::Vector2i pos = emp[Random::u16() % emp.size()];
-						//printf("[AI] Buying reinforcement %s at %d, %d\n", Values::troop_names[unit], pos.x, pos.y);
 
 						Troop troop;
 						troop.type = static_cast<Troop::Type>(unit);
