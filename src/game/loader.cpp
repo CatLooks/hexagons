@@ -91,6 +91,10 @@ void Loader::reload() {
 
 	// iterate through all files
 	for (const auto& file : fs::directory_iterator(folder)) {
+		// ignore if extension is not `.dat`
+		if (file.path().extension().generic_string() != ".dat")
+			continue;
+
 		// try to load each file
 		auto info = load(file.path());
 		if (info) list.push_back(*info);
